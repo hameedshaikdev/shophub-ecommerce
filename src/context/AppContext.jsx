@@ -1,154 +1,86 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../config/supabase';
 
-const AppContext = createContext();
+const AppContext = createContext(null);
 
-export const useApp = () => {
+// ── Hook ────────────────────────────────────────────────────────────────────
+export function useApp() {
   const context = useContext(AppContext);
-  if (!context) {
-    throw new Error('useApp must be used within AppProvider');
-  }
+  if (!context) throw new Error('useApp must be used within AppProvider');
   return context;
-};
+}
 
-export const AppProvider = ({ children }) => {
-  // Category state - 'tailoring' or 'fashion'
+// ── Provider ─────────────────────────────────────────────────────────────────
+export function AppProvider({ children }) {
   const [activeCategory, setActiveCategory] = useState('tailoring');
-  
-  // Cart state - shared across both categories
-  const [cart, setCart] = useState([]);
-  
-  // Wishlist state
-  const [wishlist, setWishlist] = useState([]);
-  
-  // Auth state
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [cart,           setCart]           = useState([]);
+  const [wishlist,       setWishlist]       = useState([]);
+  const [user,           setUser]           = useState(null);
+  const [loading,        setLoading]        = useState(true);
 
-  // Load cart and wishlist from localStorage on mount
+  // Load cart + wishlist from localStorage
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    const savedWishlist = localStorage.getItem('wishlist');
-    
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
-    }
-    if (savedWishlist) {
-      setWishlist(JSON.parse(savedWishlist));
-    }
+    try {
+      const c = localStorage.getItem('cart');
+      const w = localStorage.getItem('wishlist');
+      if (c) setCart(JSON.parse(c));
+      if (w) setWishlist(JSON.parse(w));
+    } catch { /* ignore */ }
   }, []);
 
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
+  useEffect(() => { localStorage.setItem('cart',     JSON.stringify(cart));    }, [cart]);
+  useEffect(() => { localStorage.setItem('wishlist', JSON.stringify(wishlist)); }, [wishlist]);
 
-  // Save wishlist to localStorage whenever it changes
+  // Auth — handles page refresh, Google OAuth redirect, normal login
   useEffect(() => {
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
-
-  // Check for existing session
-  useEffect(() => {
+    // Check current session immediately
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    // Listen for all auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        setUser(session?.user ?? null);
+      }
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+      }
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Cart functions
+  // Cart
   const addToCart = (product, quantity = 1) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      }
-      return [...prevCart, { ...product, quantity }];
+    setCart(prev => {
+      const found = prev.find(i => i.id === product.id);
+      if (found) return prev.map(i => i.id === product.id ? { ...i, quantity: i.quantity + quantity } : i);
+      return [...prev, { ...product, quantity }];
     });
   };
-
-  const removeFromCart = (productId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  const removeFromCart     = (id) => setCart(prev => prev.filter(i => i.id !== id));
+  const clearCart          = ()   => setCart([]);
+  const updateCartQuantity = (id, qty) => {
+    if (qty <= 0) { removeFromCart(id); return; }
+    setCart(prev => prev.map(i => i.id === id ? { ...i, quantity: qty } : i));
   };
+  const getCartTotal = () => cart.reduce((t, i) => t + i.price * i.quantity, 0);
+  const getCartCount = () => cart.reduce((t, i) => t + i.quantity, 0);
 
-  const updateCartQuantity = (productId, quantity) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
-      )
-    );
-  };
-
-  const clearCart = () => {
-    setCart([]);
-  };
-
-  const getCartTotal = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
-  const getCartCount = () => {
-    return cart.reduce((total, item) => total + item.quantity, 0);
-  };
-
-  // Wishlist functions
-  const addToWishlist = (product) => {
-    setWishlist((prevWishlist) => {
-      const exists = prevWishlist.find((item) => item.id === product.id);
-      if (exists) return prevWishlist;
-      return [...prevWishlist, product];
-    });
-  };
-
-  const removeFromWishlist = (productId) => {
-    setWishlist((prevWishlist) =>
-      prevWishlist.filter((item) => item.id !== productId)
-    );
-  };
-
-  const isInWishlist = (productId) => {
-    return wishlist.some((item) => item.id === productId);
-  };
+  // Wishlist
+  const addToWishlist      = (p)  => setWishlist(prev => prev.find(i => i.id === p.id) ? prev : [...prev, p]);
+  const removeFromWishlist = (id) => setWishlist(prev => prev.filter(i => i.id !== id));
+  const isInWishlist       = (id) => wishlist.some(i => i.id === id);
 
   const value = {
-    // Category
-    activeCategory,
-    setActiveCategory,
-    
-    // Cart
-    cart,
-    addToCart,
-    removeFromCart,
-    updateCartQuantity,
-    clearCart,
-    getCartTotal,
-    getCartCount,
-    
-    // Wishlist
-    wishlist,
-    addToWishlist,
-    removeFromWishlist,
-    isInWishlist,
-    
-    // Auth
-    user,
-    setUser,
-    loading,
+    activeCategory, setActiveCategory,
+    cart, addToCart, removeFromCart, updateCartQuantity, clearCart, getCartTotal, getCartCount,
+    wishlist, addToWishlist, removeFromWishlist, isInWishlist,
+    user, setUser, loading,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
-};
+}

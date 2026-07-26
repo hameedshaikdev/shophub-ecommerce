@@ -6,13 +6,15 @@ import { supabase } from '../config/supabase';
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, setUser, getCartCount } = useApp();
+  const { user, setUser, loading } = useApp();
 
   useEffect(() => {
-    if (!user) navigate('/login');
-  }, [user, navigate]);
+    // Only redirect if loading is done AND user is still null
+    if (!loading && !user) navigate('/login');
+  }, [user, loading, navigate]);
 
-  if (!user) return null;
+  // Show nothing while auth is loading
+  if (loading || !user) return null;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

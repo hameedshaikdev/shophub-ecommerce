@@ -51,12 +51,11 @@ export default function Login() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}${redirect}`,
+          redirectTo: `${window.location.origin}/auth/callback`,
           queryParams: { access_type: 'offline', prompt: 'consent' },
         },
       });
       if (error) throw error;
-      // Redirects automatically — no need to do anything
     } catch (err) {
       setError('Google sign-in failed. Please try again.');
       setGoogleLoad(false);

@@ -35,15 +35,15 @@ const UPI_APPS = [
 
 const Checkout = () => {
   const navigate  = useNavigate();
-  const { cart, getCartTotal, user, clearCart } = useApp();
+  const { cart, getCartTotal, user, clearCart, loading: authLoading } = useApp();
 
-  const [step,        setStep]        = useState(1); // 1=address 2=payment 3=success
+  const [step,        setStep]        = useState(1);
   const [loading,     setLoading]     = useState(false);
   const [savedOrder,  setSavedOrder]  = useState(null);
   const [errors,      setErrors]      = useState({});
   const [touched,     setTouched]     = useState({});
-  const [pendingApp,  setPendingApp]  = useState(null); // which app was clicked
-  const [orderCount,  setOrderCount]  = useState(247); // social proof
+  const [pendingApp,  setPendingApp]  = useState(null);
+  const [orderCount,  setOrderCount]  = useState(247);
 
   const [form, setForm] = useState({
     fullName:   user?.user_metadata?.full_name || '',
@@ -58,9 +58,10 @@ const Checkout = () => {
   });
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user)             { navigate('/login?redirect=/checkout'); return; }
     if (cart.length === 0) { navigate('/cart'); }
-  }, [user, cart]);
+  }, [user, authLoading, cart]);
 
   // Fetch real order count for social proof
   useEffect(() => {

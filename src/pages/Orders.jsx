@@ -14,14 +14,15 @@ const statusConfig = {
 
 const Orders = () => {
   const navigate = useNavigate();
-  const { user } = useApp();
-  const [orders, setOrders] = useState([]);
+  const { user, loading: authLoading } = useApp();
+  const [orders,  setOrders]  = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return; // wait for auth to finish
     if (!user) { navigate('/login'); return; }
     fetchOrders();
-  }, [user]);
+  }, [user, authLoading]);
 
   const fetchOrders = async () => {
     setLoading(true);
