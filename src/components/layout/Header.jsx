@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, ShoppingCart, Heart, User, LogOut, Menu, X, Shield } from 'lucide-react';
+import { Search, ShoppingCart, User, LogOut, Shield, Menu, X, ChevronRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { supabase } from '../../config/supabase';
 
@@ -12,235 +12,270 @@ export default function Header() {
   const location  = useLocation();
   const isHome    = location.pathname === '/';
   const { activeCategory, setActiveCategory, getCartCount, user, setUser } = useApp();
-  const [q, setQ]               = useState('');
-  const [open, setOpen]         = useState(false);
+  const [q,        setQ]        = useState('');
   const [dropdown, setDropdown] = useState(false);
-  const dropRef                 = useRef(null);
+  const [drawer,   setDrawer]   = useState(false);
+  const dropRef = useRef(null);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', activeCategory);
   }, [activeCategory]);
 
-  // Close dropdown on outside click
   useEffect(() => {
-    const handler = (e) => {
+    const h = (e) => {
       if (dropRef.current && !dropRef.current.contains(e.target)) setDropdown(false);
     };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
   }, []);
+
+  // Close drawer on route change
+  useEffect(() => { setDrawer(false); }, [location.pathname]);
 
   const logout = async () => {
     await supabase.auth.signOut();
-    setUser(null); navigate('/'); setDropdown(false);
+    setUser(null); navigate('/'); setDropdown(false); setDrawer(false);
   };
 
   const search = (e) => {
     e.preventDefault();
-    if (q.trim()) navigate(`/?q=${encodeURIComponent(q)}`);
+    if (q.trim()) { navigate(`/?q=${encodeURIComponent(q)}`); setQ(''); }
   };
 
   return (
-    <header className="sh-header">
-      <div className="sh-container">
-        <nav className="sh-navbar">
+    <>
+      <header className="sh-header">
+        <div className="sh-container">
+          <nav className="sh-navbar">
 
-          {/* ── Logo ── */}
-          <Link to="/" className="sh-logo" style={{ marginRight: '24px' }}>ShopHub</Link>
+            {/* ── Logo ── */}
+            <Link to="/" className="sh-logo">AS HUB</Link>
 
-          {/* ── Nav Links ── */}
-          <div style={{ display:'flex', gap:'4px', alignItems:'center' }}>
-            {[['/', 'Home'], ['/about', 'About']].map(([p, l]) => (
-              <Link key={p} to={p}
-                className={`sh-nav-link${location.pathname === p ? ' active' : ''}`}>{l}</Link>
-            ))}
-          </div>
-
-          {/* ── Search Bar (center, flex grows) ── */}
-          <form onSubmit={search} style={{ flex:1, maxWidth:'420px', margin:'0 20px' }}>
-            <div className="sh-search-wrap" style={{ width:'100%' }}>
-              <Search size={17} color="var(--text-3)" />
-              <input
-                value={q}
-                onChange={e => setQ(e.target.value)}
-                placeholder={activeCategory === 'tailoring' ? 'Search tailoring tools…' : 'Search fashion items…'}
-              />
-            </div>
-          </form>
-
-          {/* ── Action Icons ── */}
-          <div style={{ display:'flex', alignItems:'center', gap:'8px', flexShrink:0 }}>
-            {user ? (
-              <>
-                {/* Wishlist */}
-                <Link to="/wishlist" className="sh-icon-btn" title="Wishlist">
-                  <Heart size={18} color="var(--text-2)" />
+            {/* ── Desktop Nav Links ── */}
+            <div className="sh-desktop-only" style={{ display:'flex', gap:'4px', alignItems:'center' }}>
+              {[['/', 'Home'], ['/about', 'About']].map(([p, l]) => (
+                <Link key={p} to={p}
+                  className={`sh-nav-link${location.pathname === p ? ' active' : ''}`}>{l}
                 </Link>
-
-                {/* Cart */}
-                <Link to="/cart" className="sh-icon-btn" title="Cart" style={{ position:'relative' }}>
-                  <ShoppingCart size={18} color="var(--text-2)" />
-                  {getCartCount() > 0 && (
-                    <span className="sh-badge">{getCartCount() > 9 ? '9+' : getCartCount()}</span>
-                  )}
-                </Link>
-
-                {/* User dropdown */}
-                <div style={{ position:'relative' }} ref={dropRef}>
-                  <button className="sh-icon-btn" onClick={() => setDropdown(!dropdown)} title="Account">
-                    <User size={18} color="var(--text-2)" />
-                  </button>
-                  {dropdown && (
-                    <div className="sh-surface" style={{
-                      position:'absolute', right:0, top:'calc(100% + 10px)',
-                      width:'210px', overflow:'hidden', zIndex:300,
-                      animation:'sh-scaleIn .2s var(--spring)'
-                    }}>
-                      {/* User info */}
-                      <div style={{ padding:'14px 16px', borderBottom:'1px solid var(--border)', background:'#fafafa' }}>
-                        <p style={{ fontSize:'13px', fontWeight:800, color:'var(--text)' }}>
-                          {user.user_metadata?.full_name || 'My Account'}
-                        </p>
-                        <p style={{ fontSize:'11px', color:'var(--text-3)', marginTop:'2px' }}>{user.email}</p>
-                      </div>
-
-                      {[['My Profile','/profile'],['My Orders','/orders'],['Wishlist','/wishlist'],['Cart','/cart']].map(([l, p]) => (
-                        <Link key={p} to={p} onClick={() => setDropdown(false)}
-                          style={{ display:'block', padding:'11px 16px', fontSize:'14px', fontWeight:600, color:'var(--text)', borderBottom:'1px solid var(--border)' }}
-                          onMouseEnter={e => e.currentTarget.style.background = '#fafafa'}
-                          onMouseLeave={e => e.currentTarget.style.background = 'white'}>
-                          {l}
-                        </Link>
-                      ))}
-
-                      {user.email === 'as.businezzz@gmail.com' && (
-                        <Link to="/admin" onClick={() => setDropdown(false)}
-                          style={{ display:'flex', alignItems:'center', gap:'8px', padding:'11px 16px', fontSize:'14px', fontWeight:700, color:'var(--purple)', borderBottom:'1px solid var(--border)' }}
-                          onMouseEnter={e => e.currentTarget.style.background = '#fafafa'}
-                          onMouseLeave={e => e.currentTarget.style.background = 'white'}>
-                          <Shield size={14} /> Admin Panel
-                        </Link>
-                      )}
-
-                      <button onClick={logout}
-                        style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px', padding:'11px 16px', fontSize:'14px', fontWeight:700, color:'var(--danger)', background:'none' }}>
-                        <LogOut size={14} /> Sign Out
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Show cart icon even for guests */}
-                <Link to="/cart" className="sh-icon-btn" title="Cart" style={{ position:'relative' }}>
-                  <ShoppingCart size={18} color="var(--text-2)" />
-                  {getCartCount() > 0 && (
-                    <span className="sh-badge">{getCartCount() > 9 ? '9+' : getCartCount()}</span>
-                  )}
-                </Link>
-                <Link to="/login" className="sh-btn sh-btn-sm">Login</Link>
-              </>
-            )}
-
-            {/* Hamburger — mobile only */}
-            <button
-              className="sh-icon-btn"
-              onClick={() => setOpen(!open)}
-              style={{ display:'none' }}
-              id="sh-hamburger"
-            >
-              {open ? <X size={18} /> : <Menu size={18} />}
-            </button>
-          </div>
-        </nav>
-
-        {/* ── Mobile Search ── */}
-        <div id="sh-mobile-search" style={{ paddingBottom:'12px', display:'none' }}>
-          <form onSubmit={search}>
-            <div className="sh-search-wrap" style={{ maxWidth:'100%' }}>
-              <Search size={17} color="var(--text-3)" />
-              <input
-                value={q}
-                onChange={e => setQ(e.target.value)}
-                placeholder={activeCategory === 'tailoring' ? 'Search tailoring tools…' : 'Search fashion items…'}
-              />
-            </div>
-          </form>
-        </div>
-      </div>
-
-      {/* ── Mobile Menu ── */}
-      {open && (
-        <div style={{ background:'white', borderTop:'1px solid var(--border)', padding:'12px 0' }}>
-          <div className="sh-container" style={{ display:'flex', flexDirection:'column', gap:'4px' }}>
-            {[['/', 'Home'], ['/about', 'About']].map(([p, l]) => (
-              <Link key={p} to={p} onClick={() => setOpen(false)}
-                style={{ padding:'12px 16px', borderRadius:'12px', fontWeight:600, fontSize:'15px',
-                  color: location.pathname === p ? 'var(--primary)' : 'var(--text)',
-                  background: location.pathname === p ? 'rgba(252,128,25,.06)' : 'transparent' }}>
-                {l}
-              </Link>
-            ))}
-            {user ? (
-              <>
-                {[['My Profile','/profile'],['My Orders','/orders'],['Wishlist','/wishlist']].map(([l, p]) => (
-                  <Link key={p} to={p} onClick={() => setOpen(false)}
-                    style={{ padding:'12px 16px', borderRadius:'12px', fontWeight:600, fontSize:'15px', color:'var(--text)' }}>
-                    {l}
-                  </Link>
-                ))}
-                <button onClick={logout}
-                  style={{ padding:'12px 16px', borderRadius:'12px', fontWeight:700, fontSize:'15px', color:'var(--danger)', background:'none', textAlign:'left', border:'none', cursor:'pointer' }}>
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <Link to="/login" onClick={() => setOpen(false)} className="sh-btn"
-                style={{ margin:'8px 0', justifyContent:'center' }}>
-                Login / Sign Up
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* ── Category Switcher (home only) ── */}
-      {isHome && (
-        <div className="sh-switcher-wrap"
-          style={{ background: activeCategory === 'tailoring' ? TAILORING_BG : FASHION_BG }}>
-          <div className="sh-container" style={{ display:'flex', justifyContent:'center', paddingBottom:'20px' }}>
-            <div className="sh-switcher">
-              {[
-                { id:'tailoring', label:'Tailoring Tools', emoji:'🪡' },
-                { id:'fashion',   label:"Women's Fashion", emoji:'👗' },
-              ].map(cat => (
-                <button key={cat.id}
-                  className={`sh-switcher-btn${activeCategory === cat.id ? ' active' : ''}`}
-                  onClick={() => setActiveCategory(cat.id)}
-                  style={activeCategory === cat.id ? {
-                    color: cat.id === 'tailoring' ? '#4A1572' : '#1a6fc4'
-                  } : {}}>
-                  <span className="sh-switcher-emoji">{cat.emoji}</span>
-                  <span className="sh-switcher-label">{cat.label}</span>
-                </button>
               ))}
             </div>
+
+            {/* ── Desktop Search ── */}
+            <form onSubmit={search} className="sh-desktop-only" style={{ flex:1, maxWidth:'360px', margin:'0 12px' }}>
+              <div className="sh-search-wrap">
+                <Search size={17} color="var(--text-3)" />
+                <input value={q} onChange={e => setQ(e.target.value)}
+                  placeholder={activeCategory === 'tailoring' ? 'Search tailoring tools…' : 'Search fashion…'} />
+              </div>
+            </form>
+
+            {/* ── Actions ── */}
+            <div style={{ display:'flex', alignItems:'center', gap:'8px', marginLeft:'auto' }}>
+
+              {user ? (
+                <>
+                  {/* Cart — desktop only (mobile has bottom nav) */}
+                  <Link to="/cart" className="sh-icon-btn sh-desktop-only" title="Cart" style={{ position:'relative' }}>
+                    <ShoppingCart size={18} color="var(--text-2)" />
+                    {getCartCount() > 0 && (
+                      <span className="sh-badge">{getCartCount() > 9 ? '9+' : getCartCount()}</span>
+                    )}
+                  </Link>
+
+                  {/* Profile dropdown — desktop */}
+                  <div className="sh-desktop-only" style={{ position:'relative' }} ref={dropRef}>
+                    <button className="sh-icon-btn" onClick={() => setDropdown(!dropdown)}>
+                      <User size={18} color="var(--text-2)" />
+                    </button>
+                    {dropdown && (
+                      <div className="sh-surface" style={{
+                        position:'absolute', right:0, top:'calc(100% + 10px)',
+                        width:'210px', overflow:'hidden', zIndex:300,
+                        animation:'sh-scaleIn .2s var(--spring)'
+                      }}>
+                        <div style={{ padding:'14px 16px', borderBottom:'1px solid var(--border)', background:'#fafafa' }}>
+                          <p style={{ fontSize:'13px', fontWeight:800, color:'var(--text)' }}>
+                            {user.user_metadata?.full_name || 'My Account'}
+                          </p>
+                          <p style={{ fontSize:'11px', color:'var(--text-3)', marginTop:'2px' }}>{user.email}</p>
+                        </div>
+                        {[['My Profile','/profile'],['My Orders','/orders'],['Wishlist','/wishlist']].map(([l, p]) => (
+                          <Link key={p} to={p} onClick={() => setDropdown(false)}
+                            style={{ display:'block', padding:'11px 16px', fontSize:'14px', fontWeight:600, color:'var(--text)', borderBottom:'1px solid var(--border)' }}
+                            onMouseEnter={e => e.currentTarget.style.background='#fafafa'}
+                            onMouseLeave={e => e.currentTarget.style.background='white'}>
+                            {l}
+                          </Link>
+                        ))}
+                        {user.email === 'as.businezzz@gmail.com' && (
+                          <Link to="/admin" onClick={() => setDropdown(false)}
+                            style={{ display:'flex', alignItems:'center', gap:'8px', padding:'11px 16px', fontSize:'14px', fontWeight:700, color:'var(--primary)', borderBottom:'1px solid var(--border)' }}
+                            onMouseEnter={e => e.currentTarget.style.background='#fafafa'}
+                            onMouseLeave={e => e.currentTarget.style.background='white'}>
+                            <Shield size={14} /> Admin Panel
+                          </Link>
+                        )}
+                        <button onClick={logout}
+                          style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px', padding:'11px 16px', fontSize:'14px', fontWeight:700, color:'#ef4444', background:'none' }}>
+                          <LogOut size={14} /> Sign Out
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <Link to="/login" className="sh-btn sh-btn-sm sh-desktop-only">Login</Link>
+              )}
+
+              {/* Hamburger — mobile only */}
+              <button className="sh-icon-btn sh-mobile-only" onClick={() => setDrawer(true)}>
+                <Menu size={20} color="var(--text-2)" />
+              </button>
+            </div>
+          </nav>
+
+          {/* ── Mobile Search Bar (below nav) ── */}
+          <div className="sh-mobile-only" style={{ paddingBottom:'12px' }}>
+            <form onSubmit={search}>
+              <div className="sh-search-wrap" style={{ maxWidth:'100%' }}>
+                <Search size={17} color="var(--text-3)" />
+                <input value={q} onChange={e => setQ(e.target.value)}
+                  placeholder={activeCategory === 'tailoring' ? 'Search tailoring tools…' : 'Search fashion…'} />
+              </div>
+            </form>
           </div>
         </div>
+
+        {/* ── Category Switcher (home only) ── */}
+        {isHome && (
+          <div className="sh-switcher-wrap"
+            style={{ background: activeCategory === 'tailoring' ? TAILORING_BG : FASHION_BG }}>
+            <div className="sh-container" style={{ display:'flex', justifyContent:'center', paddingBottom:'20px' }}>
+              <div className="sh-switcher">
+                {[
+                  { id:'tailoring', label:'Tailoring Tools', emoji:'🪡' },
+                  { id:'fashion',   label:"Women's Fashion", emoji:'👗' },
+                ].map(cat => (
+                  <button key={cat.id}
+                    className={`sh-switcher-btn${activeCategory === cat.id ? ' active' : ''}`}
+                    onClick={() => setActiveCategory(cat.id)}>
+                    <span className="sh-switcher-emoji">{cat.emoji}</span>
+                    <span className="sh-switcher-label">{cat.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* ══ Mobile Side Drawer ══════════════════════════════════════════════ */}
+      {drawer && (
+        <>
+          {/* Backdrop */}
+          <div onClick={() => setDrawer(false)} style={{
+            position:'fixed', inset:0, background:'rgba(0,0,0,.5)',
+            zIndex:1000, backdropFilter:'blur(4px)'
+          }} />
+
+          {/* Drawer panel */}
+          <div style={{
+            position:'fixed', top:0, right:0, bottom:0, width:'78vw', maxWidth:'320px',
+            background:'white', zIndex:1001, overflowY:'auto',
+            boxShadow:'-8px 0 40px rgba(0,0,0,.18)',
+            animation:'sh-slideIn .3s var(--spring)'
+          }}>
+            {/* Header */}
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'20px 20px 16px', borderBottom:'1px solid var(--border)' }}>
+              <div>
+                {user ? (
+                  <>
+                    <p style={{ fontSize:'16px', fontWeight:900, color:'var(--text)' }}>
+                      {user.user_metadata?.full_name || 'Welcome!'}
+                    </p>
+                    <p style={{ fontSize:'12px', color:'var(--text-3)', marginTop:'2px' }}>{user.email}</p>
+                  </>
+                ) : (
+                  <p style={{ fontSize:'18px', fontWeight:900, color:'var(--text)' }}>AS HUB</p>
+                )}
+              </div>
+              <button onClick={() => setDrawer(false)} style={{ padding:'8px', borderRadius:'12px', background:'var(--secondary)' }}>
+                <X size={20} color="var(--text-2)" />
+              </button>
+            </div>
+
+            {/* User avatar if logged in */}
+            {user && (
+              <div style={{ padding:'16px 20px', display:'flex', alignItems:'center', gap:'12px', background:'#fafafa', borderBottom:'1px solid var(--border)' }}>
+                <div style={{ width:'48px', height:'48px', borderRadius:'50%', background:'var(--primary-grad)', display:'flex', alignItems:'center', justifyContent:'center', color:'white', fontWeight:900, fontSize:'20px' }}>
+                  {(user.user_metadata?.full_name || user.email)?.[0]?.toUpperCase()}
+                </div>
+                <div>
+                  <p style={{ fontWeight:800, fontSize:'15px', color:'var(--text)' }}>{user.user_metadata?.full_name || 'User'}</p>
+                  <p style={{ fontSize:'12px', color:'var(--text-3)' }}>View Profile</p>
+                </div>
+              </div>
+            )}
+
+            {/* Nav items */}
+            <div style={{ padding:'8px 0' }}>
+              {[
+                { to:'/', label:'🏠 Home' },
+                { to:'/about', label:'ℹ️ About' },
+                ...(user ? [
+                  { to:'/profile', label:'👤 My Profile' },
+                  { to:'/orders',  label:'📦 My Orders' },
+                  { to:'/wishlist',label:'❤️ Wishlist' },
+                  { to:'/cart',    label:`🛒 Cart${getCartCount() > 0 ? ` (${getCartCount()})` : ''}` },
+                ] : []),
+                ...(user?.email === 'as.businezzz@gmail.com' ? [{ to:'/admin', label:'🛡️ Admin Panel', admin:true }] : []),
+              ].map(({ to, label, admin }) => (
+                <Link key={to} to={to}
+                  style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 20px', fontSize:'15px', fontWeight:700, color: admin ? 'var(--primary)' : 'var(--text)', borderBottom:'1px solid #f5f5f5' }}
+                  onMouseEnter={e => e.currentTarget.style.background='#f9f9f9'}
+                  onMouseLeave={e => e.currentTarget.style.background='white'}>
+                  {label}
+                  <ChevronRight size={16} color="var(--text-3)" />
+                </Link>
+              ))}
+            </div>
+
+            {/* Bottom buttons */}
+            <div style={{ padding:'16px 20px', marginTop:'auto', borderTop:'1px solid var(--border)' }}>
+              {user ? (
+                <button onClick={logout}
+                  style={{ width:'100%', padding:'14px', borderRadius:'16px', background:'#FEF2F2', color:'#EF4444', fontWeight:800, fontSize:'15px', border:'1px solid #FECACA' }}>
+                  Sign Out
+                </button>
+              ) : (
+                <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+                  <Link to="/login"
+                    style={{ display:'block', textAlign:'center', padding:'14px', borderRadius:'16px', background:'var(--primary-grad)', color:'white', fontWeight:800, fontSize:'15px' }}>
+                    Login
+                  </Link>
+                  <Link to="/signup"
+                    style={{ display:'block', textAlign:'center', padding:'14px', borderRadius:'16px', border:'1.5px solid var(--primary)', color:'var(--primary)', fontWeight:800, fontSize:'15px' }}>
+                    Create Account
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
       )}
 
-      {/* ── Responsive CSS injected via style tag ── */}
       <style>{`
-        @media (max-width: 768px) {
-          #sh-hamburger  { display: flex !important; }
-          #sh-mobile-search { display: block !important; }
+        .sh-mobile-only  { display: flex !important; }
+        .sh-desktop-only { display: none !important; }
+        @media(min-width: 768px) {
+          .sh-mobile-only  { display: none !important; }
+          .sh-desktop-only { display: flex !important; }
         }
-        @media (min-width: 769px) {
-          #sh-hamburger  { display: none !important; }
-          #sh-mobile-search { display: none !important; }
+        @keyframes sh-slideIn {
+          from { transform: translateX(100%); opacity: 0; }
+          to   { transform: translateX(0);    opacity: 1; }
         }
       `}</style>
-    </header>
+    </>
   );
 }

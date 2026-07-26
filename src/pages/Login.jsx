@@ -37,7 +37,7 @@ export default function Login() {
 
         <div style={{ position:'relative', color:'white', textAlign:'center' }}>
           <div style={{ fontSize:'64px', marginBottom:'24px' }}>🛍️</div>
-          <h2 style={{ fontSize:'36px', fontWeight:900, marginBottom:'16px', lineHeight:1.2 }}>Welcome to<br/>ShopHub</h2>
+          <h2 style={{ fontSize:'36px', fontWeight:900, marginBottom:'16px', lineHeight:1.2 }}>Welcome to<br/>AS HUB</h2>
           <p style={{ opacity:.8, fontSize:'16px', lineHeight:1.7, marginBottom:'40px' }}>
             Quality tailoring tools &<br/>trendy women's fashion
           </p>

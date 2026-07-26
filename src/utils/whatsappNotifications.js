@@ -2,10 +2,9 @@
 // Using WhatsApp Business API or services like Twilio, MessageBird, etc.
 
 const WHATSAPP_CONFIG = {
-  // Your WhatsApp Business number for receiving order notifications
-  adminPhone: '+919173963720', // Updated with your phone number
-  apiEndpoint: 'https://api.whatsapp.com/send', // For direct WhatsApp links
-  // For WhatsApp Business API, use your provider's endpoint
+  adminPhone: '+917013942909',
+  upiId: '7995747250@ptyes',
+  apiEndpoint: 'https://api.whatsapp.com/send',
 };
 
 /**

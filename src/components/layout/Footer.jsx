@@ -1,166 +1,128 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MessageCircle } from 'lucide-react';
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-
-  const handleNewsletter = (e) => {
-    e.preventDefault();
-    if (email.trim()) {
-      alert(`Thanks! We'll keep you updated.`);
-      setEmail('');
-    }
-  };
-
   return (
-    <footer>
-      <div className="footer-container">
+    <footer style={{
+      background:'linear-gradient(180deg,#1b1b1b,#0d0d0d)',
+      color:'white',
+      borderTopLeftRadius:'32px',
+      borderTopRightRadius:'32px',
+      marginTop:'40px',
+      // Extra bottom padding on mobile so bottom nav doesn't overlap
+      paddingBottom:'80px',
+    }}>
+      <div style={{ maxWidth:'1250px', margin:'0 auto', padding:'48px 24px 24px' }}>
 
-        {/* ── Brand ── */}
-        <div>
-          <div className="footer-logo">ShopHub</div>
-          <p className="footer-description">
-            Premium tailoring tools and women's fashion accessories
-            designed with quality, trust and affordability in mind.
-          </p>
-          <div className="footer-social">
-            <a href="https://facebook.com/shophub" target="_blank" rel="noopener noreferrer" title="Facebook">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-              </svg>
-            </a>
-            <a href="https://instagram.com/shophub" target="_blank" rel="noopener noreferrer" title="Instagram">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5"/>
-                <circle cx="12" cy="12" r="4"/>
-                <circle cx="17.5" cy="6.5" r="1.5" fill="white" stroke="none"/>
-              </svg>
-            </a>
-            <a href="https://twitter.com/shophub" target="_blank" rel="noopener noreferrer" title="Twitter / X">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-            </a>
-            <a href="https://youtube.com/@shophub" target="_blank" rel="noopener noreferrer" title="YouTube">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
-                <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#1b1b1b"/>
-              </svg>
-            </a>
-          </div>
-        </div>
+        {/* ── Mobile: Compact layout ── */}
+        <div style={{ display:'flex', flexDirection:'column', gap:'32px' }}>
 
-        {/* ── Quick Links ── */}
-        <div>
-          <h3 className="footer-title">Quick Links</h3>
-          <div className="footer-links">
-            <Link to="/">Home</Link>
-            <Link to="/">Products</Link>
-            <Link to="/about">About</Link>
-            <Link to="/cart">Cart</Link>
-            <Link to="/wishlist">Wishlist</Link>
-          </div>
-        </div>
-
-        {/* ── Policies ── */}
-        <div>
-          <h3 className="footer-title">Policies</h3>
-          <div className="footer-links">
-            <span style={{ color:'#c8c8c8', fontSize:'14px', fontWeight:500, cursor:'pointer', transition:'color .3s' }}
-              onMouseEnter={e=>e.currentTarget.style.color='#ff6b00'}
-              onMouseLeave={e=>e.currentTarget.style.color='#c8c8c8'}>Privacy Policy</span>
-            <span style={{ color:'#c8c8c8', fontSize:'14px', fontWeight:500, cursor:'pointer', transition:'color .3s' }}
-              onMouseEnter={e=>e.currentTarget.style.color='#ff6b00'}
-              onMouseLeave={e=>e.currentTarget.style.color='#c8c8c8'}>Shipping Policy</span>
-            <span style={{ color:'#c8c8c8', fontSize:'14px', fontWeight:500, cursor:'pointer', transition:'color .3s' }}
-              onMouseEnter={e=>e.currentTarget.style.color='#ff6b00'}
-              onMouseLeave={e=>e.currentTarget.style.color='#c8c8c8'}>Return Policy</span>
-            <span style={{ color:'#c8c8c8', fontSize:'14px', fontWeight:500, cursor:'pointer', transition:'color .3s' }}
-              onMouseEnter={e=>e.currentTarget.style.color='#ff6b00'}
-              onMouseLeave={e=>e.currentTarget.style.color='#c8c8c8'}>Terms &amp; Conditions</span>
-          </div>
-        </div>
-
-        {/* ── Support / Contact ── */}
-        <div>
-          <h3 className="footer-title">Support</h3>
-
-          <div className="footer-contact">
-            <div className="footer-contact-icon"><Mail size={15} /></div>
-            <div>
-              <span style={{ display:'block', fontSize:'10px', color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'.5px', marginBottom:'3px' }}>Email</span>
-              <a href="mailto:support@shophub.com" className="footer-contact-link">support@shophub.com</a>
+          {/* Brand */}
+          <div style={{ textAlign:'center' }}>
+            <div style={{ fontSize:'30px', fontWeight:900, color:'#FC8019', marginBottom:'8px' }}>AS HUB</div>
+            <p style={{ color:'#aaa', fontSize:'14px', lineHeight:1.7, maxWidth:'300px', margin:'0 auto' }}>
+              Premium tailoring tools &amp; women's fashion — quality you can trust
+            </p>
+            {/* Social icons */}
+            <div style={{ display:'flex', justifyContent:'center', gap:'12px', marginTop:'16px' }}>
+              {[
+                { href:'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr', emoji:'📘' },
+                { href:'https://www.instagram.com/as_tailoring_tools_textiles', emoji:'📷' },
+                { href:'https://youtube.com/@astailoringtoolstextiles?si=pJxUJtUY7ykHlpSK', emoji:'▶️' },
+              ].map(({ href, emoji }) => (
+                <a key={href} href={href} target="_blank" rel="noopener noreferrer"
+                  style={{ width:'44px', height:'44px', borderRadius:'50%', background:'#242424', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'20px', textDecoration:'none', transition:'background .3s' }}
+                  onMouseEnter={e => e.currentTarget.style.background='#FC8019'}
+                  onMouseLeave={e => e.currentTarget.style.background='#242424'}>
+                  {emoji}
+                </a>
+              ))}
             </div>
           </div>
 
-          <div className="footer-contact">
-            <div className="footer-contact-icon"><Phone size={15} /></div>
+          {/* Quick Links + Contact — side by side on mobile */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'24px' }}>
             <div>
-              <span style={{ display:'block', fontSize:'10px', color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'.5px', marginBottom:'3px' }}>Phone</span>
-              <a href="tel:+919876543210" className="footer-contact-link">+91 98765 43210</a>
+              <h3 style={{ fontSize:'15px', fontWeight:800, color:'white', marginBottom:'14px', position:'relative', paddingBottom:'8px' }}>
+                Quick Links
+                <span style={{ position:'absolute', bottom:0, left:0, width:'30px', height:'3px', background:'#FC8019', borderRadius:'99px' }} />
+              </h3>
+              <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+                {[['/', 'Home'], ['/about', 'About'], ['/cart', 'Cart'], ['/wishlist', 'Wishlist'], ['/orders', 'Orders']].map(([to, label]) => (
+                  <Link key={to} to={to} style={{ color:'#c8c8c8', fontSize:'13px', fontWeight:500, textDecoration:'none', transition:'color .2s' }}
+                    onMouseEnter={e => e.currentTarget.style.color='#FC8019'}
+                    onMouseLeave={e => e.currentTarget.style.color='#c8c8c8'}>
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 style={{ fontSize:'15px', fontWeight:800, color:'white', marginBottom:'14px', position:'relative', paddingBottom:'8px' }}>
+                Contact
+                <span style={{ position:'absolute', bottom:0, left:0, width:'30px', height:'3px', background:'#FC8019', borderRadius:'99px' }} />
+              </h3>
+              <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
+                <a href="mailto:as.businezzz@gmail.com" style={{ display:'flex', alignItems:'flex-start', gap:'8px', textDecoration:'none' }}>
+                  <Mail size={14} color="#FC8019" style={{ marginTop:'2px', flexShrink:0 }} />
+                  <span style={{ color:'#c8c8c8', fontSize:'12px', wordBreak:'break-all' }}>as.businezzz@gmail.com</span>
+                </a>
+                <a href="tel:+917013942909" style={{ display:'flex', alignItems:'center', gap:'8px', textDecoration:'none' }}>
+                  <Phone size={14} color="#FC8019" style={{ flexShrink:0 }} />
+                  <span style={{ color:'#c8c8c8', fontSize:'12px' }}>+91 70139 42909</span>
+                </a>
+                <a href="https://wa.me/917013942909" target="_blank" rel="noopener noreferrer"
+                  style={{ display:'flex', alignItems:'center', gap:'8px', textDecoration:'none' }}>
+                  <MessageCircle size={14} color="#25D366" style={{ flexShrink:0 }} />
+                  <span style={{ color:'#25D366', fontSize:'12px', fontWeight:700 }}>WhatsApp Us</span>
+                </a>
+              </div>
             </div>
           </div>
 
-          <div className="footer-contact">
-            <div className="footer-contact-icon"><MessageCircle size={15} /></div>
-            <div>
-              <span style={{ display:'block', fontSize:'10px', color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'.5px', marginBottom:'3px' }}>WhatsApp</span>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="footer-contact-link">Chat with us</a>
+          {/* Payment methods */}
+          <div style={{ textAlign:'center' }}>
+            <p style={{ color:'#666', fontSize:'11px', marginBottom:'10px', textTransform:'uppercase', letterSpacing:'.5px' }}>We Accept</p>
+            <div style={{ display:'flex', justifyContent:'center', flexWrap:'wrap', gap:'8px' }}>
+              {['UPI','GPay','PhonePe','Paytm'].map(p => (
+                <span key={p} style={{ padding:'4px 12px', borderRadius:'8px', background:'rgba(255,255,255,.07)', fontSize:'11px', fontWeight:700, color:'#ccc', border:'1px solid rgba(255,255,255,.1)' }}>
+                  {p}
+                </span>
+              ))}
             </div>
           </div>
 
-          <div className="footer-contact">
-            <div className="footer-contact-icon"><MapPin size={15} /></div>
-            <div>
-              <span style={{ display:'block', fontSize:'10px', color:'#555', fontWeight:700, textTransform:'uppercase', letterSpacing:'.5px', marginBottom:'3px' }}>Location</span>
-              <span style={{ color:'#d4d4d4', fontSize:'13px' }}>Hyderabad, India</span>
-            </div>
+          {/* Divider + copyright */}
+          <div style={{ borderTop:'1px solid rgba(255,255,255,.08)', paddingTop:'20px', textAlign:'center' }}>
+            <p style={{ color:'#555', fontSize:'12px' }}>© 2026 AS HUB. All Rights Reserved.</p>
+            <p style={{ color:'#444', fontSize:'11px', marginTop:'4px' }}>Made with ❤️ in India</p>
           </div>
 
-          {/* Newsletter inside footer */}
-          <div style={{ marginTop:'20px' }}>
-            <p style={{ color:'#aaa', fontSize:'12px', fontWeight:600, marginBottom:'10px', textTransform:'uppercase', letterSpacing:'.5px' }}>Newsletter</p>
-            <form className="newsletter" onSubmit={handleNewsletter}>
-              <input
-                type="email"
-                placeholder="Your email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-              />
-              <button type="submit">Go</button>
-            </form>
-          </div>
         </div>
       </div>
 
-      {/* ── Divider ── */}
-      <div style={{ maxWidth:'1250px', margin:'0 auto', padding:'0 30px' }}>
-        <div className="footer-divider"></div>
-
-        {/* ── Bottom Bar ── */}
-        <div className="footer-bottom">
-          <p>© 2026 ShopHub. All Rights Reserved.</p>
-          <div className="footer-payments">
-            <span style={{ fontSize:'12px', color:'#555', marginRight:'8px' }}>We accept:</span>
-            {['Visa','Mastercard','RuPay','UPI','Net Banking'].map(p => (
-              <span key={p} className="payment-pill">{p}</span>
-            ))}
-          </div>
-          <p>Made with ❤️ in India</p>
-        </div>
-      </div>
-
+      {/* Desktop grid layout */}
       <style>{`
-        .footer-contact-link {
-          color: #ff6b00;
-          text-decoration: none;
-          font-size: 13px;
-          font-weight: 600;
-          transition: color .3s;
+        @media(min-width: 768px) {
+          footer > div > div {
+            display: grid !important;
+            grid-template-columns: 2fr 1fr 1fr !important;
+            gap: 48px !important;
+          }
+          footer > div > div > div:first-child {
+            text-align: left !important;
+          }
+          footer > div > div > div:first-child > div {
+            justify-content: flex-start !important;
+          }
+          footer > div > div > div:nth-child(2) {
+            grid-column: span 1 !important;
+          }
+          footer {
+            padding-bottom: 24px !important;
+          }
         }
-        .footer-contact-link:hover { color: #ff9540; text-decoration: underline; }
       `}</style>
     </footer>
   );
