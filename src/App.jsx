@@ -16,6 +16,7 @@ import Profile from './pages/Profile';
 import Orders from './pages/Orders';
 import AdminPanel from './pages/AdminPanel';
 import About from './pages/About';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
                 <Route path="/orders"      element={<Orders />} />
                 <Route path="/admin"       element={<AdminPanel />} />
                 <Route path="/about"       element={<About />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
               </Routes>
             </main>
             <Footer />
