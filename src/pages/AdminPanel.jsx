@@ -9,9 +9,10 @@ import { useApp } from '../context/AppContext';
 
 const ADMIN_EMAIL = 'as.businezzz@gmail.com';
 const ORDER_TABS = [
+  { key:'all_pending',       label:'All New',   emoji:'🆕', color:'#F59E0B' },
   { key:'payment_submitted', label:'Verify',    emoji:'🔍', color:'#3B82F6' },
   { key:'confirmed',         label:'Confirmed', emoji:'✅', color:'#16A34A' },
-  { key:'preparing',         label:'Preparing', emoji:'📦', color:'#F59E0B' },
+  { key:'preparing',         label:'Preparing', emoji:'📦', color:'#8B5CF6' },
   { key:'shipped',           label:'Shipped',   emoji:'🚚', color:'#8B5CF6' },
   { key:'delivered',         label:'Delivered', emoji:'🏠', color:'#6B7280' },
   { key:'payment_rejected',  label:'Rejected',  emoji:'❌', color:'#EF4444' },
@@ -374,7 +375,7 @@ function OrderCard({ order, onConfirm, onReject, onStatus, confirming }) {
   const [reject, setReject] = useState(false);
   const [reason, setReason] = useState('');
   const addr = order.shipping_address || {};
-  const isPending = order.payment_status === 'submitted';
+  const isPending = order.payment_status === 'submitted' || order.status === 'pending_payment';
 
   function waCustomer(msg) {
     window.open(`https://wa.me/91${addr.phone}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -559,7 +560,7 @@ export default function AdminPanel() {
   const { user, setUser } = useApp();
 
   const [mainTab,    setMainTab]    = useState('orders');
-  const [orderTab,   setOrderTab]   = useState('payment_submitted');
+  const [orderTab,   setOrderTab]   = useState('all_pending');
   const [orders,     setOrders]     = useState([]);
   const [products,   setProducts]   = useState([]);
   const [counts,     setCounts]     = useState({});
@@ -594,9 +595,16 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       let q = supabase.from('orders').select('*').order('created_at',{ascending:false});
-      if (orderTab === 'payment_submitted') q = q.eq('payment_status','submitted');
-      else if (orderTab === 'payment_rejected') q = q.eq('payment_status','rejected');
-      else q = q.eq('status', orderTab);
+      if (orderTab === 'all_pending') {
+        // Show all orders that are pending_payment or payment_submitted
+        q = q.in('status', ['pending_payment','payment_submitted']);
+      } else if (orderTab === 'payment_submitted') {
+        q = q.eq('payment_status','submitted');
+      } else if (orderTab === 'payment_rejected') {
+        q = q.eq('payment_status','rejected');
+      } else {
+        q = q.eq('status', orderTab);
+      }
       const { data, error } = await q;
       if (error) throw error;
       setOrders(data || []);
@@ -610,6 +618,10 @@ export default function AdminPanel() {
       if (!data) return;
       const c = {};
       data.forEach(o => {
+        // All new/pending orders (pending_payment + payment_submitted)
+        if (['pending_payment','payment_submitted'].includes(o.status)) {
+          c.all_pending = (c.all_pending||0)+1;
+        }
         if (o.payment_status === 'submitted') c.payment_submitted = (c.payment_submitted||0)+1;
         else if (o.payment_status === 'rejected') c.payment_rejected = (c.payment_rejected||0)+1;
         else c[o.status] = (c[o.status]||0)+1;
@@ -751,9 +763,9 @@ export default function AdminPanel() {
             <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)',
               gap:'10px', marginBottom:'16px' }}>
               {[
-                { l:'Pending',   v:counts.payment_submitted||0, c:'#3B82F6' },
-                { l:'Confirmed', v:(counts.confirmed||0)+(counts.preparing||0), c:'#16A34A' },
-                { l:'Shipped',   v:counts.shipped||0, c:'#8B5CF6' },
+                { l:'New Orders', v:counts.all_pending||0,                              c:'#F59E0B' },
+                { l:'Confirmed',  v:(counts.confirmed||0)+(counts.preparing||0),        c:'#16A34A' },
+                { l:'Shipped',    v:counts.shipped||0,                                  c:'#8B5CF6' },
               ].map(({ l, v, c }) => (
                 <div key={l} style={{ background:'white', borderRadius:'14px',
                   padding:'14px', textAlign:'center', boxShadow:'var(--shadow-xs)',
