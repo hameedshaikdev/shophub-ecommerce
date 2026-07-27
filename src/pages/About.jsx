@@ -1,95 +1,105 @@
-import { Link } from 'react-router-dom';
-import { Mail, Phone, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MessageCircle, ExternalLink } from 'lucide-react';
 
-const About = () => {
+export default function About() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold text-center mb-2">About AS HUB</h1>
-      <p className="text-center text-gray-500 mb-10">(Temporary name — coming soon with our official brand!)</p>
+    <div style={{ minHeight:'100vh', background:'var(--bg)', paddingBottom:'80px' }}>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-10">
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6">
-          <div className="text-4xl mb-3">🪡</div>
-          <h3 className="text-xl font-bold mb-2">Tailoring Tools</h3>
-          <p className="text-gray-600">Professional sewing machines, precision scissors, quality threads, needles, and measuring equipment for all tailoring needs.</p>
-        </div>
-        <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-6">
-          <div className="text-4xl mb-3">👗</div>
-          <h3 className="text-xl font-bold mb-2">Women's Fashion</h3>
-          <p className="text-gray-600">Trendy dresses, elegant tops, comfortable bottoms, ethnic wear, and stylish accessories at great prices.</p>
+      {/* Hero */}
+      <div style={{ background:'linear-gradient(135deg,#FC8019,#FF9F1C)', padding:'48px 24px 40px' }}>
+        <div className="container-center" style={{ maxWidth:'720px', textAlign:'center' }}>
+          <p style={{ fontSize:'40px', marginBottom:'12px' }}>🏪</p>
+          <h1 style={{ fontSize:'32px', fontWeight:900, color:'white', marginBottom:'8px' }}>
+            About AS HUB
+          </h1>
+          <p style={{ color:'rgba(255,255,255,.85)', fontSize:'15px', lineHeight:1.6 }}>
+            Your one-stop destination for premium tailoring tools and women's fashion
+          </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm p-8 mb-8">
-        <h2 className="text-2xl font-bold mb-4">Why Choose Us?</h2>
-        <ul className="space-y-3">
+      <div className="container-center" style={{ maxWidth:'720px', padding:'24px 16px' }}>
+
+        {/* Categories */}
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginBottom:'16px' }}>
           {[
-            '✅ Quality products from trusted manufacturers',
-            '✅ Competitive pricing with regular discounts',
-            '✅ Free delivery on all orders',
-            '✅ Easy UPI payment — no extra charges',
-            '✅ Fast order confirmation via WhatsApp',
-            '✅ Dedicated customer support',
-          ].map(item => (
-            <li key={item} className="text-gray-700 font-medium">{item}</li>
+            { emoji:'🪡', title:'Tailoring Tools', text:'Sewing machines, scissors, threads, needles & measuring tools for professionals.' },
+            { emoji:'👗', title:"Women's Fashion", text:'Trendy dresses, ethnic wear, tops, bottoms and stylish accessories.' },
+          ].map(c => (
+            <div key={c.title} style={{ background:'white', borderRadius:'16px', padding:'18px', boxShadow:'var(--shadow-sm)', border:'1px solid var(--border)' }}>
+              <div style={{ fontSize:'32px', marginBottom:'8px' }}>{c.emoji}</div>
+              <h3 style={{ fontSize:'14px', fontWeight:900, color:'var(--text)', marginBottom:'6px' }}>{c.title}</h3>
+              <p style={{ fontSize:'12px', color:'var(--text-2)', lineHeight:1.6 }}>{c.text}</p>
+            </div>
           ))}
-        </ul>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-sm p-8">
-        <h2 className="text-2xl font-bold mb-6">Contact Us</h2>
-        <div className="space-y-4">
-          <a href="mailto:as.businezzz@gmail.com"
-            className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
-            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Mail size={20} className="text-blue-600" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Email</p>
-              <p className="font-bold text-gray-900">as.businezzz@gmail.com</p>
-            </div>
-          </a>
-
-          <a href="tel:+917013942909"
-            className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
-            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-              <Phone size={20} className="text-green-600" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Phone</p>
-              <p className="font-bold text-gray-900">+91 70139 42909</p>
-            </div>
-          </a>
-
-          <a href="https://wa.me/917013942909" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-4 p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-colors">
-            <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
-              <MessageCircle size={20} className="text-white" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">WhatsApp</p>
-              <p className="font-bold text-gray-900">Chat with us on WhatsApp</p>
-            </div>
-          </a>
         </div>
 
-        <div className="mt-6 flex gap-4">
-          <a href="https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors">
-            📘 Facebook
-          </a>
-          <a href="https://www.instagram.com/as_tailoring_tools_textiles" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-pink-600 text-white rounded-xl font-bold text-sm hover:bg-pink-700 transition-colors">
-            📷 Instagram
-          </a>
-          <a href="https://youtube.com/@astailoringtoolstextiles?si=pJxUJtUY7ykHlpSK" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-colors">
-            ▶️ YouTube
-          </a>
+        {/* Why us */}
+        <div style={{ background:'white', borderRadius:'20px', padding:'20px', boxShadow:'var(--shadow-sm)', border:'1px solid var(--border)', marginBottom:'16px' }}>
+          <h2 style={{ fontSize:'17px', fontWeight:900, color:'var(--text)', marginBottom:'14px' }}>Why Choose Us?</h2>
+          <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+            {[
+              { e:'✅', t:'Quality products from trusted manufacturers' },
+              { e:'💰', t:'Competitive pricing with regular discounts' },
+              { e:'🚚', t:'Free delivery on all orders' },
+              { e:'📱', t:'Easy UPI payment — no extra charges' },
+              { e:'💬', t:'Fast order confirmation via WhatsApp' },
+              { e:'🎯', t:'Dedicated customer support' },
+            ].map(({ e, t }) => (
+              <div key={t} style={{ display:'flex', alignItems:'center', gap:'12px', padding:'10px 14px', background:'var(--bg)', borderRadius:'12px' }}>
+                <span style={{ fontSize:'18px', flexShrink:0 }}>{e}</span>
+                <span style={{ fontSize:'13px', fontWeight:600, color:'var(--text-2)' }}>{t}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Contact */}
+        <div style={{ background:'white', borderRadius:'20px', padding:'20px', boxShadow:'var(--shadow-sm)', border:'1px solid var(--border)', marginBottom:'16px' }}>
+          <h2 style={{ fontSize:'17px', fontWeight:900, color:'var(--text)', marginBottom:'14px' }}>Contact Us</h2>
+          <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+            {[
+              { href:'mailto:as.businezzz@gmail.com', icon:<Mail size={18} color="#3B82F6"/>, label:'Email', value:'as.businezzz@gmail.com', bg:'#EFF6FF' },
+              { href:'tel:+917013942909',              icon:<Phone size={18} color="#16A34A"/>, label:'Phone', value:'+91 70139 42909',       bg:'#F0FDF4' },
+              { href:'https://wa.me/917013942909', target:'_blank', icon:<MessageCircle size={18} color="#25D366"/>, label:'WhatsApp', value:'Chat with us', bg:'#F0FDF4' },
+            ].map(({ href, icon, label, value, bg, target }) => (
+              <a key={label} href={href} target={target} rel="noopener noreferrer"
+                style={{ display:'flex', alignItems:'center', gap:'14px', padding:'14px 16px', background:bg, borderRadius:'14px', textDecoration:'none', transition:'opacity .2s' }}
+                onMouseEnter={e => e.currentTarget.style.opacity='.8'}
+                onMouseLeave={e => e.currentTarget.style.opacity='1'}>
+                <div style={{ width:'40px', height:'40px', background:'white', borderRadius:'12px', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, boxShadow:'var(--shadow-xs)' }}>
+                  {icon}
+                </div>
+                <div>
+                  <p style={{ fontSize:'11px', fontWeight:700, color:'var(--text-3)', textTransform:'uppercase', letterSpacing:'.4px', marginBottom:'2px' }}>{label}</p>
+                  <p style={{ fontSize:'14px', fontWeight:800, color:'var(--text)' }}>{value}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Social */}
+        <div style={{ background:'white', borderRadius:'20px', padding:'20px', boxShadow:'var(--shadow-sm)', border:'1px solid var(--border)' }}>
+          <h2 style={{ fontSize:'17px', fontWeight:900, color:'var(--text)', marginBottom:'14px' }}>Follow Us</h2>
+          <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+            {[
+              { href:'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr', emoji:'📘', label:'Facebook', handle:'AS HUB', color:'#1877F2', bg:'#EFF6FF' },
+              { href:'https://www.instagram.com/as_tailoring_tools_textiles', emoji:'📷', label:'Instagram', handle:'@as_tailoring_tools_textiles', color:'#E1306C', bg:'#FDF2F8' },
+              { href:'https://youtube.com/@astailoringtoolstextiles?si=pJxUJtUY7ykHlpSK', emoji:'▶️', label:'YouTube', handle:'@astailoringtoolstextiles', color:'#FF0000', bg:'#FEF2F2' },
+            ].map(({ href, emoji, label, handle, color, bg }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                style={{ display:'flex', alignItems:'center', gap:'14px', padding:'14px 16px', background:bg, borderRadius:'14px', textDecoration:'none' }}>
+                <span style={{ fontSize:'24px', flexShrink:0 }}>{emoji}</span>
+                <div style={{ flex:1 }}>
+                  <p style={{ fontSize:'14px', fontWeight:800, color:'var(--text)' }}>{label}</p>
+                  <p style={{ fontSize:'12px', color:'var(--text-3)' }}>{handle}</p>
+                </div>
+                <ExternalLink size={16} color={color} />
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default About;
+}

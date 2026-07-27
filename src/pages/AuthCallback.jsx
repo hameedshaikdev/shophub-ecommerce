@@ -2,100 +2,112 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabase';
 
-// This page handles the OAuth redirect from Google
-// Supabase sends the user back here with a code in the URL
 export default function AuthCallback() {
-  const navigate  = useNavigate();
-  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const [error,  setError] = useState('');
 
   useEffect(() => {
-    const handleCallback = async () => {
-      try {
-        // Get the code from the URL query params
-        const params   = new URLSearchParams(window.location.search);
-        const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
-        const code     = params.get('code') || hashParams.get('code');
-        const errorMsg = params.get('error_description') || hashParams.get('error_description');
+    console.log('=== AuthCallback mounted ===');
+    console.log('Full URL:', window.location.href);
+    console.log('Search params:', window.location.search);
+    console.log('Hash:', window.location.hash);
 
-        if (errorMsg) {
-          setError(errorMsg);
-          setTimeout(() => navigate('/login'), 3000);
+    // Error comes back in HASH from Supabase, code comes in search params
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashParams   = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+
+    const code      = searchParams.get('code');
+    const errorCode = searchParams.get('error')        || hashParams.get('error');
+    const errorDesc = searchParams.get('error_description') || hashParams.get('error_description');
+
+    console.log('code:', code ? code.substring(0, 20) + '...' : 'NONE');
+    console.log('error:', errorCode);
+    console.log('error_description:', errorDesc);
+
+    // If there's an error in the URL, show it immediately — don't spin forever
+    if (errorCode) {
+      let msg = 'Google sign-in failed. Please try again.';
+      if (errorDesc?.includes('Unable to exchange external code')) {
+        msg = 'Google sign-in configuration error. Please contact support.';
+      }
+      setError(msg);
+      setTimeout(() => navigate('/login', { replace: true }), 3000);
+      return;
+    }
+
+    let redirected = false;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log('=== Auth event:', event, '| session:', session ? 'YES' : 'NO');
+        if (redirected) return;
+
+        if (event === 'SIGNED_IN' && session) {
+          redirected = true;
+          navigate('/', { replace: true });
           return;
         }
 
-        if (code) {
-          // Exchange the code for a session
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-          if (error) throw error;
-          if (data?.session) {
-            // Session established — redirect to home
-            navigate('/', { replace: true });
-            return;
-          }
+        if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+          redirected = true;
+          setError('Login was cancelled or failed. Please try again.');
+          setTimeout(() => navigate('/login', { replace: true }), 2500);
         }
-
-        // Fallback: check if session was already set (implicit flow)
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          navigate('/', { replace: true });
-        } else {
-          // No session — something went wrong
-          setError('Login failed. Please try again.');
-          setTimeout(() => navigate('/login'), 3000);
-        }
-      } catch (err) {
-        console.error('Auth callback error:', err);
-        setError(err.message || 'Login failed. Please try again.');
-        setTimeout(() => navigate('/login'), 3000);
       }
-    };
+    );
 
-    handleCallback();
-  }, []);
+    // Also check if the session is already available
+    // (SDK may have already exchanged the code synchronously)
+    supabase.auth.getSession().then(({ data: { session }, error: err }) => {
+      console.log('=== getSession result:', session ? 'HAS SESSION' : 'NO SESSION', '| error:', err?.message);
+      if (redirected) return;
+      if (err) {
+        redirected = true;
+        setError(err.message);
+        setTimeout(() => navigate('/login', { replace: true }), 2500);
+        return;
+      }
+      if (session) {
+        redirected = true;
+        navigate('/', { replace: true });
+      }
+    });
+
+    // Safety timeout — if nothing fires after 10 seconds, something is wrong
+    const timeout = setTimeout(() => {
+      if (!redirected) {
+        redirected = true;
+        setError('Login timed out. Please try again.');
+        navigate('/login', { replace: true });
+      }
+    }, 10000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
+  }, [navigate]);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: '#F8FAFC',
-      gap: '16px',
-    }}>
-      <div style={{
-        fontSize: '36px',
-        fontWeight: 900,
-        background: 'linear-gradient(135deg,#FC8019,#FF9F1C)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
-      }}>
+    <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#F8FAFC', gap:'16px' }}>
+      <div style={{ fontSize:'36px', fontWeight:900, background:'linear-gradient(135deg,#FC8019,#FF9F1C)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
         AS HUB
       </div>
 
       {error ? (
-        <div style={{ textAlign: 'center', padding: '0 24px' }}>
-          <div style={{ fontSize: '40px', marginBottom: '12px' }}>❌</div>
-          <p style={{ color: '#EF4444', fontWeight: 700, marginBottom: '8px' }}>{error}</p>
-          <p style={{ color: '#94A3B8', fontSize: '14px' }}>Redirecting to login...</p>
+        <div style={{ textAlign:'center', padding:'0 24px' }}>
+          <div style={{ fontSize:'40px', marginBottom:'12px' }}>❌</div>
+          <p style={{ color:'#EF4444', fontWeight:700, marginBottom:'8px' }}>{error}</p>
+          <p style={{ color:'#94A3B8', fontSize:'14px' }}>Redirecting to login...</p>
         </div>
       ) : (
         <>
-          <div style={{
-            width: '40px', height: '40px',
-            border: '3px solid #E2E8F0',
-            borderTop: '3px solid #FC8019',
-            borderRadius: '50%',
-            animation: 'spin .8s linear infinite',
-          }} />
-          <p style={{ color: '#64748B', fontSize: '14px', fontWeight: 600 }}>
-            Signing you in...
-          </p>
+          <div style={{ width:'40px', height:'40px', border:'3px solid #E2E8F0', borderTop:'3px solid #FC8019', borderRadius:'50%', animation:'spin .8s linear infinite' }} />
+          <p style={{ color:'#64748B', fontSize:'14px', fontWeight:600 }}>Signing you in with Google...</p>
         </>
       )}
 
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`@keyframes spin { to { transform:rotate(360deg); } }`}</style>
     </div>
   );
 }

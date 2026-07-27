@@ -53,7 +53,7 @@ export default function Cart() {
                 <div key={item.id} style={{ background:'white', borderRadius:'20px', padding:'16px', display:'flex', gap:'16px', boxShadow:'var(--shadow-sm)', border:'1px solid var(--border)', alignItems:'center' }}>
                   {/* Image */}
                   <div style={{ width:'80px', height:'80px', borderRadius:'14px', overflow:'hidden', background:'#f8f9fa', flexShrink:0 }}>
-                    <img src={item.image_url || 'https://via.placeholder.com/80'} alt={item.name}
+                    <img src={item.image_url || 'https://placehold.co/80x80?text=?'} alt={item.name}
                       style={{ width:'100%', height:'100%', objectFit:'cover' }} />
                   </div>
 

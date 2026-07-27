@@ -7,6 +7,52 @@ import { supabase } from '../../config/supabase';
 const TAILORING_BG = 'linear-gradient(180deg,#2D1250 0%,#4A1572 60%,#3B0F6B 100%)';
 const FASHION_BG   = 'linear-gradient(180deg,#B8D4F0 0%,#DCEEFF 100%)';
 
+const CATS = [
+  { id:'tailoring', label:'Tailoring Tools', emoji:'🪡' },
+  { id:'fashion',   label:"Women's Fashion", emoji:'👗' },
+];
+
+/* ── Sliding switcher ── */
+function SwitcherPills({ activeCategory, setActiveCategory }) {
+  const containerRef = useRef(null);
+  const btn0Ref      = useRef(null);
+  const btn1Ref      = useRef(null);
+  const btnRefs      = [btn0Ref, btn1Ref];
+  const [slider, setSlider] = useState({ left:5, width:100 });
+
+  // Recalculate slider position whenever active changes or on mount
+  useEffect(() => {
+    const idx = CATS.findIndex(c => c.id === activeCategory);
+    const btn = btnRefs[idx]?.current;
+    const wrap = containerRef.current;
+    if (!btn || !wrap) return;
+    const wRect = wrap.getBoundingClientRect();
+    const bRect = btn.getBoundingClientRect();
+    setSlider({
+      left:  bRect.left - wRect.left,
+      width: bRect.width,
+    });
+  }, [activeCategory]);
+
+  return (
+    <div ref={containerRef} className="sh-switcher">
+      {/* The white sliding pill */}
+      <div className="sh-switcher-slider" style={{ left: slider.left, width: slider.width }} />
+
+      {CATS.map((cat, i) => (
+        <button
+          key={cat.id}
+          ref={btnRefs[i]}
+          className={`sh-switcher-btn${activeCategory === cat.id ? ' active' : ''}`}
+          onClick={() => setActiveCategory(cat.id)}>
+          <span className="sh-switcher-emoji">{cat.emoji}</span>
+          <span className="sh-switcher-label">{cat.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function Header() {
   const navigate  = useNavigate();
   const location  = useLocation();
@@ -151,19 +197,10 @@ export default function Header() {
           <div className="sh-switcher-wrap"
             style={{ background: activeCategory === 'tailoring' ? TAILORING_BG : FASHION_BG }}>
             <div className="sh-container" style={{ display:'flex', justifyContent:'center', paddingBottom:'20px' }}>
-              <div className="sh-switcher">
-                {[
-                  { id:'tailoring', label:'Tailoring Tools', emoji:'🪡' },
-                  { id:'fashion',   label:"Women's Fashion", emoji:'👗' },
-                ].map(cat => (
-                  <button key={cat.id}
-                    className={`sh-switcher-btn${activeCategory === cat.id ? ' active' : ''}`}
-                    onClick={() => setActiveCategory(cat.id)}>
-                    <span className="sh-switcher-emoji">{cat.emoji}</span>
-                    <span className="sh-switcher-label">{cat.label}</span>
-                  </button>
-                ))}
-              </div>
+              <SwitcherPills
+                activeCategory={activeCategory}
+                setActiveCategory={setActiveCategory}
+              />
             </div>
           </div>
         )}

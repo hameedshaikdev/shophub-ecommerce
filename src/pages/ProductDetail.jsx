@@ -93,7 +93,7 @@ const ProductDetail = () => {
           <div className="relative">
             <div className="bg-white rounded-3xl overflow-hidden shadow-sm aspect-square">
               <img
-                src={product.image_url || 'https://via.placeholder.com/500'}
+                src={product.image_url || 'https://placehold.co/500x500?text=No+Image'}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />

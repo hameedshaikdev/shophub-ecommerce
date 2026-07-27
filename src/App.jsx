@@ -18,6 +18,7 @@ import AdminPanel from './pages/AdminPanel';
 import About from './pages/About';
 import ResetPassword from './pages/ResetPassword';
 import AuthCallback from './pages/AuthCallback';
+import OrderStatus from './pages/OrderStatus';
 
 // Inner app — has access to AppContext
 function AppInner() {
@@ -52,8 +53,9 @@ function AppInner() {
           <Route path="/orders"        element={<Orders />} />
           <Route path="/admin"         element={<AdminPanel />} />
           <Route path="/about"         element={<About />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/auth/callback"  element={<AuthCallback />} />
+          <Route path="/reset-password"  element={<ResetPassword />} />
+          <Route path="/auth/callback"   element={<AuthCallback />} />
+          <Route path="/order-status/:id" element={<OrderStatus />} />
         </Routes>
       </main>
       <Footer />

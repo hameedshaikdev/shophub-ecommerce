@@ -26,7 +26,7 @@ export default function ProductCard({ product }) {
   return (
     <Link to={`/product/${product.id}`} className="sh-card sh-fade-up">
       <div className="sh-card-img">
-        <img src={product.image_url || 'https://via.placeholder.com/300'} alt={product.name} loading="lazy" />
+        <img src={product.image_url || 'https://placehold.co/300x300?text=No+Image'} alt={product.name} loading="lazy" />
 
         {discount && <span className="sh-card-discount">{discount}% OFF</span>}
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
 import ProductCard from '../components/products/ProductCard';
@@ -39,6 +40,8 @@ const CONTENT = {
 
 export default function Home() {
   const { activeCategory } = useApp();
+  const [searchParams]            = useSearchParams();
+  const searchQuery                = searchParams.get('q') || '';
   const [products, setProducts]   = useState([]);
   const [loading,  setLoading]    = useState(true);
   const [sub,      setSub]        = useState('all');
@@ -54,13 +57,17 @@ export default function Home() {
         let q = supabase.from('products').select('*')
           .eq('category', activeCategory).eq('active', true);
         if (sub !== 'all') q = q.eq('sub_category', sub);
+        // Apply search filter if query exists
+        if (searchQuery.trim()) {
+          q = q.ilike('name', `%${searchQuery.trim()}%`);
+        }
         const { data, error } = await q.order('created_at', { ascending: false });
         if (error) throw error;
         setProducts(data || []);
       } catch(e) { console.error(e); }
       finally { setLoading(false); }
     })();
-  }, [activeCategory, sub]);
+  }, [activeCategory, sub, searchQuery]);
 
   return (
     <div style={{ background:'var(--bg)' }}>
@@ -119,7 +126,9 @@ export default function Home() {
       <div className="sh-container sh-section" style={{ paddingTop:'32px' }}>
         <div className="sh-section-header">
           <h2 className="sh-section-title">
-            {sub === 'all' ? 'All Products' : c.subs.find(s=>s.id===sub)?.label}
+            {searchQuery
+              ? `Results for "${searchQuery}"`
+              : sub === 'all' ? 'All Products' : c.subs.find(s=>s.id===sub)?.label}
           </h2>
           {!loading && <span className="sh-section-count">{products.length} items</span>}
         </div>
@@ -147,12 +156,15 @@ export default function Home() {
           </div>
         )}
 
-        {/* Empty */}
         {!loading && products.length === 0 && (
           <div className="sh-empty sh-scale-in">
-            <div className="sh-empty-icon">🛍️</div>
-            <h3 className="sh-empty-title">No products yet</h3>
-            <p className="sh-empty-sub">Check back soon for new arrivals in this category</p>
+            <div className="sh-empty-icon">🔍</div>
+            <h3 className="sh-empty-title">
+              {searchQuery ? `No results for "${searchQuery}"` : 'No products yet'}
+            </h3>
+            <p className="sh-empty-sub">
+              {searchQuery ? 'Try a different search term' : 'Check back soon for new arrivals'}
+            </p>
           </div>
         )}
       </div>

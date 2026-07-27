@@ -186,7 +186,8 @@ body {
   display: inline-flex;
   border-radius: 99px;
   padding: 5px;
-  gap: 4px;
+  gap: 0;
+  position: relative;
 }
 /* dark bg (tailoring) */
 [data-theme="tailoring"] .sh-switcher {
@@ -198,28 +199,42 @@ body {
   background: rgba(100,160,220,.2);
   backdrop-filter: blur(16px);
 }
+
+/* ── Sliding pill indicator ── */
+.sh-switcher-slider {
+  position: absolute;
+  top: 5px; bottom: 5px;
+  border-radius: 99px;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0,0,0,.12);
+  transition: left .4s cubic-bezier(.34,1.56,.64,1),
+              width .4s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+  z-index: 0;
+  will-change: left, width;
+}
+
 .sh-switcher-btn {
   display: flex; align-items: center; gap: 10px;
   padding: 12px 28px; border-radius: 99px;
   font-size: 14px; font-weight: 700;
-  transition: all .35s var(--spring);
+  transition: color .35s var(--ease);
   position: relative;
+  z-index: 1;
+  cursor: pointer;
+  background: none !important;
+  user-select: none;
 }
-/* inactive on dark */
-[data-theme="tailoring"] .sh-switcher-btn { color: rgba(255,255,255,.7); }
-[data-theme="tailoring"] .sh-switcher-btn:not(.active):hover {
-  color: white; background: rgba(255,255,255,.12);
-}
-/* inactive on light */
-[data-theme="fashion"] .sh-switcher-btn { color: rgba(26,80,140,.65); }
-[data-theme="fashion"] .sh-switcher-btn:not(.active):hover {
-  color: #1a3a5c; background: rgba(26,80,140,.1);
-}
-.sh-switcher-btn.active {
-  background: white;
-  box-shadow: 0 4px 20px rgba(0,0,0,.15);
-  transform: scale(1.02);
-}
+
+/* tailoring theme text */
+[data-theme="tailoring"] .sh-switcher-btn { color: rgba(255,255,255,1); }
+/* fashion theme text */
+[data-theme="fashion"]   .sh-switcher-btn { color: #1a3a6c; }
+
+/* active button text */
+[data-theme="tailoring"] .sh-switcher-btn.active { color: #4A1572; }
+[data-theme="fashion"]   .sh-switcher-btn.active { color: #1a6fc4; }
+
 .sh-switcher-emoji { font-size: 22px; line-height: 1; }
 .sh-switcher-label { font-weight: 800; }
 
@@ -1220,4 +1235,13 @@ footer {
     padding-bottom: calc(env(safe-area-inset-bottom) + 8px) !important;
     height: calc(64px + env(safe-area-inset-bottom)) !important;
   }
+}
+
+/* ── Hide all scrollbars globally ────────────────────────────── */
+* {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge */
+}
+*::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari / Opera */
 }

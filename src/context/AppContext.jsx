@@ -33,24 +33,39 @@ export function AppProvider({ children }) {
 
   // Auth — handles page refresh, Google OAuth redirect, normal login
   useEffect(() => {
-    // Check current session immediately
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // onAuthStateChange fires first with the exchanged session when PKCE
+    // is used — including the INITIAL_SESSION event on every page load.
+    // We rely solely on this listener to set user + clear loading.
+    // getSession() is only used as a quick synchronous check to avoid
+    // a blank flash on normal refreshes (non-OAuth pages).
 
-    // Listen for all auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-        setUser(session?.user ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        // INITIAL_SESSION fires on every mount (normal refresh or post-OAuth)
+        if (event === 'INITIAL_SESSION') {
+          setUser(session?.user ?? null);
+          setLoading(false);
+          return;
+        }
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+          setUser(session?.user ?? null);
+          setLoading(false);
+          return;
+        }
+        if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setLoading(false);
+        }
       }
-      if (event === 'SIGNED_OUT') {
-        setUser(null);
-      }
-      setLoading(false);
-    });
+    );
 
-    return () => subscription.unsubscribe();
+    // Safety net: if INITIAL_SESSION hasn't fired after 3 s, stop blocking
+    const fallback = setTimeout(() => setLoading(false), 3000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(fallback);
+    };
   }, []);
 
   // Cart
