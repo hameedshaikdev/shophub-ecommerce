@@ -92,10 +92,35 @@ export default function Header() {
     <>
       <header className="sh-header">
         <div className="sh-container">
-          <nav className="sh-navbar">
+          <nav className="sh-navbar" style={{ display:'flex', alignItems:'center', gap:'8px' }}>
 
             {/* ── Logo ── */}
-            <Link to="/" className="sh-logo">AS HUB</Link>
+            <Link to="/" style={{ display:'flex', alignItems:'center', gap:'10px',
+              flexShrink:0, flex:1, textDecoration:'none' }}>
+              <img
+                src="/logo.png"
+                alt="AS HUB"
+                style={{ width:'42px', height:'42px', borderRadius:'50%',
+                  objectFit:'cover', objectPosition:'center',
+                  border:'1.5px solid #1A1A2E', flexShrink:0,
+                  transform:'scale(1.3)', transformOrigin:'center' }}
+                onError={e => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              {/* Fallback */}
+              <div style={{ display:'none', width:'42px', height:'42px', borderRadius:'50%',
+                background:'linear-gradient(135deg,#1A1A2E,#0F3460)',
+                alignItems:'center', justifyContent:'center',
+                fontSize:'16px', fontWeight:900, color:'white', flexShrink:0 }}>
+                A
+              </div>
+              <span style={{ fontSize:'18px', fontWeight:900, color:'#0A0A0A',
+                letterSpacing:'-0.5px' }}>
+                AS HUB
+              </span>
+            </Link>
 
             {/* ── Desktop Nav Links ── */}
             <div className="sh-desktop-only" style={{ display:'flex', gap:'4px', alignItems:'center' }}>
@@ -106,7 +131,8 @@ export default function Header() {
               ))}
             </div>
 
-            {/* ── Desktop Search ── */}
+            {/* ── Search: inline on mobile (flex:1), desktop version separate ── */}
+            {/* Desktop search */}
             <form onSubmit={search} className="sh-desktop-only" style={{ flex:1, maxWidth:'360px', margin:'0 12px' }}>
               <div className="sh-search-wrap">
                 <Search size={17} color="var(--text-3)" />
@@ -115,8 +141,18 @@ export default function Header() {
               </div>
             </form>
 
+            {/* Mobile search — inline in navbar */}
+            <form onSubmit={search} className="sh-mobile-search-inline sh-mobile-only" style={{ flex:1 }}>
+              <div className="sh-search-wrap" style={{ width:'100%', height:'36px', borderRadius:'99px', padding:'0 12px' }}>
+                <Search size={15} color="var(--text-3)" />
+                <input value={q} onChange={e => setQ(e.target.value)}
+                  placeholder={activeCategory === 'tailoring' ? 'Search…' : 'Search…'}
+                  style={{ fontSize:'13px' }} />
+              </div>
+            </form>
+
             {/* ── Actions ── */}
-            <div style={{ display:'flex', alignItems:'center', gap:'8px', marginLeft:'auto' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'8px', flexShrink:0 }}>
 
               {user ? (
                 <>
@@ -180,16 +216,7 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* ── Mobile Search Bar (below nav) ── */}
-          <div className="sh-mobile-only" style={{ paddingBottom:'12px' }}>
-            <form onSubmit={search}>
-              <div className="sh-search-wrap" style={{ maxWidth:'100%' }}>
-                <Search size={17} color="var(--text-3)" />
-                <input value={q} onChange={e => setQ(e.target.value)}
-                  placeholder={activeCategory === 'tailoring' ? 'Search tailoring tools…' : 'Search fashion…'} />
-              </div>
-            </form>
-          </div>
+          {/* Mobile search below nav — hidden, search is now inline */}
         </div>
 
         {/* ── Category Switcher (home only) ── */}
@@ -222,19 +249,25 @@ export default function Header() {
             boxShadow:'-8px 0 40px rgba(0,0,0,.18)',
             animation:'sh-slideIn .3s var(--spring)'
           }}>
-            {/* Header */}
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'20px 20px 16px', borderBottom:'1px solid var(--border)' }}>
-              <div>
-                {user ? (
-                  <>
-                    <p style={{ fontSize:'16px', fontWeight:900, color:'var(--text)' }}>
-                      {user.user_metadata?.full_name || 'Welcome!'}
-                    </p>
-                    <p style={{ fontSize:'12px', color:'var(--text-3)', marginTop:'2px' }}>{user.email}</p>
-                  </>
-                ) : (
-                  <p style={{ fontSize:'18px', fontWeight:900, color:'var(--text)' }}>AS HUB</p>
-                )}
+            {/* Drawer header logo */}
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px 20px', borderBottom:'1px solid var(--border)' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                <img src="/logo.png" alt="AS HUB"
+                  style={{ width:'36px', height:'36px', borderRadius:'50%',
+                    objectFit:'cover', objectPosition:'center 20%',
+                    border:'1.5px solid #E2E8F0' }} />
+                <div>
+                  {user ? (
+                    <>
+                      <p style={{ fontSize:'15px', fontWeight:900, color:'var(--text)' }}>
+                        {user.user_metadata?.full_name || 'Welcome!'}
+                      </p>
+                      <p style={{ fontSize:'11px', color:'var(--text-3)' }}>{user.email}</p>
+                    </>
+                  ) : (
+                    <p style={{ fontSize:'17px', fontWeight:900, color:'var(--text)' }}>AS HUB</p>
+                  )}
+                </div>
               </div>
               <button onClick={() => setDrawer(false)} style={{ padding:'8px', borderRadius:'12px', background:'var(--secondary)' }}>
                 <X size={20} color="var(--text-2)" />
@@ -308,6 +341,33 @@ export default function Header() {
           .sh-mobile-only  { display: none !important; }
           .sh-desktop-only { display: flex !important; }
         }
+
+        /* ── Mobile header — single row: logo | search | menu ── */
+        @media(max-width: 767px) {
+          .sh-navbar {
+            height: 56px !important;
+            gap: 10px !important;
+          }
+          .sh-logo { font-size: 20px !important; }
+
+          /* Mobile search: inline in navbar, flex:1 */
+          .sh-mobile-search-inline {
+            flex: 1;
+            display: flex !important;
+            align-items: center;
+          }
+          .sh-mobile-search-inline .sh-search-wrap {
+            width: 100% !important;
+            height: 36px !important;
+            border-radius: 99px !important;
+            padding: 0 12px !important;
+          }
+          /* Hide the below-nav search div on mobile */
+          .sh-mobile-search-below {
+            display: none !important;
+          }
+        }
+
         @keyframes sh-slideIn {
           from { transform: translateX(100%); opacity: 0; }
           to   { transform: translateX(0);    opacity: 1; }

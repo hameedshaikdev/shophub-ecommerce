@@ -83,10 +83,15 @@ export default function Checkout() {
   const [touched,    setTouched]    = useState({});
 
   const [form, setForm] = useState({
-    fullName:   user?.user_metadata?.full_name || '',
-    email:      user?.email || '',
-    phone:      (user?.user_metadata?.phone || '').replace('+91','').replace(/\s/g,''),
-    houseNo:'', streetArea:'', landmark:'', city:'', state:'', pincode:'',
+    fullName:   '',
+    email:      '',
+    phone:      '',
+    houseNo:    '',
+    streetArea: '',
+    landmark:   '',
+    city:       '',
+    state:      '',
+    pincode:    '',
   });
 
   useEffect(() => {
@@ -327,7 +332,7 @@ export default function Checkout() {
                       left:'12px', top:'50%', transform:'translateY(-50%)' }} />
                     <input name="fullName" value={form.fullName}
                       onChange={handleChange} onBlur={handleBlur}
-                      placeholder="Abdul Hameed"
+                      placeholder="e.g. Ramesh Kumar"
                       style={{ ...fieldStyle('fullName'), paddingLeft:'36px' }} />
                   </div>
                   <FieldError name="fullName" errors={errors} touched={touched} />
@@ -342,7 +347,7 @@ export default function Checkout() {
                       fontWeight:800, color:'#64748B' }}>+91</span>
                     <input name="phone" value={form.phone}
                       onChange={handleChange} onBlur={handleBlur}
-                      placeholder="9876543210" maxLength={10}
+                      placeholder="e.g. 9876543210" maxLength={10}
                       style={{ ...fieldStyle('phone'), paddingLeft:'44px' }} />
                   </div>
                   <FieldError name="phone" errors={errors} touched={touched} />
@@ -356,7 +361,7 @@ export default function Checkout() {
                       left:'12px', top:'50%', transform:'translateY(-50%)' }} />
                     <input name="email" type="email" value={form.email}
                       onChange={handleChange} onBlur={handleBlur}
-                      placeholder="you@email.com"
+                      placeholder="e.g. ramesh@gmail.com"
                       style={{ ...fieldStyle('email'), paddingLeft:'36px' }} />
                   </div>
                   <FieldError name="email" errors={errors} touched={touched} />
@@ -367,7 +372,7 @@ export default function Checkout() {
                     color:'var(--text-2)', marginBottom:'6px' }}>House / Flat No. *</label>
                   <input name="houseNo" value={form.houseNo}
                     onChange={handleChange} onBlur={handleBlur}
-                    placeholder="H.No 25-2-1709" style={fieldStyle('houseNo')} />
+                    placeholder="e.g. Flat 3A / H.No 10-2-304" style={fieldStyle('houseNo')} />
                   <FieldError name="houseNo" errors={errors} touched={touched} />
                 </div>
 
@@ -376,7 +381,7 @@ export default function Checkout() {
                     color:'var(--text-2)', marginBottom:'6px' }}>Street / Area *</label>
                   <input name="streetArea" value={form.streetArea}
                     onChange={handleChange} onBlur={handleBlur}
-                    placeholder="Pragati Nagar" style={fieldStyle('streetArea')} />
+                    placeholder="e.g. Gandhi Nagar, Banjara Hills" style={fieldStyle('streetArea')} />
                   <FieldError name="streetArea" errors={errors} touched={touched} />
                 </div>
 
@@ -390,7 +395,7 @@ export default function Checkout() {
                       left:'12px', top:'50%', transform:'translateY(-50%)' }} />
                     <input name="landmark" value={form.landmark}
                       onChange={handleChange} onBlur={handleBlur}
-                      placeholder="Near Big Bazaar"
+                      placeholder="e.g. Near Railway Station"
                       style={{ ...fieldStyle('landmark'), paddingLeft:'36px' }} />
                   </div>
                   <FieldError name="landmark" errors={errors} touched={touched} />
@@ -401,7 +406,7 @@ export default function Checkout() {
                     color:'var(--text-2)', marginBottom:'6px' }}>City *</label>
                   <input name="city" value={form.city}
                     onChange={handleChange} onBlur={handleBlur}
-                    placeholder="Hyderabad" style={fieldStyle('city')} />
+                    placeholder="e.g. Hyderabad" style={fieldStyle('city')} />
                   <FieldError name="city" errors={errors} touched={touched} />
                 </div>
 
@@ -410,7 +415,7 @@ export default function Checkout() {
                     color:'var(--text-2)', marginBottom:'6px' }}>State *</label>
                   <input name="state" value={form.state}
                     onChange={handleChange} onBlur={handleBlur}
-                    placeholder="Telangana" style={fieldStyle('state')} />
+                    placeholder="e.g. Telangana" style={fieldStyle('state')} />
                   <FieldError name="state" errors={errors} touched={touched} />
                 </div>
 
@@ -419,7 +424,7 @@ export default function Checkout() {
                     color:'var(--text-2)', marginBottom:'6px' }}>Pincode *</label>
                   <input name="pincode" value={form.pincode}
                     onChange={handleChange} onBlur={handleBlur}
-                    placeholder="500072" maxLength={6} style={fieldStyle('pincode')} />
+                    placeholder="e.g. 500034" maxLength={6} style={fieldStyle('pincode')} />
                   <FieldError name="pincode" errors={errors} touched={touched} />
                 </div>
               </div>

@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   RefreshCw, MessageCircle, Phone, CheckCircle, XCircle,
   Plus, Edit2, Trash2, Eye, LogOut, Upload, X, Save,
-} from 'lucide-react';
-import { supabase } from '../config/supabase';
+} from 'lucide-react';import { supabase } from '../config/supabase';
 import { useApp } from '../context/AppContext';
 
 const ADMIN_EMAIL = 'as.businezzz@gmail.com';
@@ -370,7 +369,7 @@ function ProductModal({ product, onClose, onSave }) {
 }
 
 /* ─── Order Card ──────────────────────────────────────────── */
-function OrderCard({ order, onConfirm, onReject, onStatus, confirming }) {
+function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming }) {
   const [open,   setOpen]   = useState(false);
   const [reject, setReject] = useState(false);
   const [reason, setReason] = useState('');
@@ -548,6 +547,13 @@ function OrderCard({ order, onConfirm, onReject, onStatus, confirming }) {
               gap:'6px', textDecoration:'none' }}>
             <Phone size={14} /> Call
           </a>
+          <button onClick={() => onDelete(order.id)}
+            style={{ padding:'10px 14px', borderRadius:'12px',
+              background:'#FEF2F2', color:'#EF4444', fontWeight:800,
+              fontSize:'13px', border:'1px solid #FECACA', cursor:'pointer',
+              display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <Trash2 size={14} />
+          </button>
         </div>
       </div>
     </div>
@@ -678,6 +684,35 @@ export default function AdminPanel() {
       fetchOrders(); fetchCounts();
     } catch (err) { alert('Error: ' + err.message); }
   }
+
+  async function handleDeleteOrder(id) {
+    if (!window.confirm('Delete this order permanently? This cannot be undone.')) return;
+    try {
+      const { error } = await supabase.from('orders').delete().eq('id', id);
+      if (error) throw error;
+      fetchOrders(); fetchCounts();
+    } catch (err) { alert('Error deleting order: ' + err.message); }
+  }
+
+  // Group orders by month
+  function groupByMonth(orders) {
+    const groups = {};
+    orders.forEach(o => {
+      const d    = new Date(o.created_at);
+      const key  = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      const label = d.toLocaleDateString('en-IN', { month:'long', year:'numeric' });
+      if (!groups[key]) groups[key] = { label, orders:[], total:0 };
+      groups[key].orders.push(o);
+      groups[key].total += o.total_amount || 0;
+    });
+    return Object.values(groups).sort((a,b) => b.label.localeCompare(a.label));
+  }
+
+  // Count orders placed this month
+  const thisMonth = new Date().toLocaleDateString('en-IN',{ month:'long', year:'numeric' });
+  const thisMonthCount = orders.filter(o =>
+    new Date(o.created_at).toLocaleDateString('en-IN',{ month:'long', year:'numeric' }) === thisMonth
+  ).length;
 
   async function handleDeleteProduct(id) {
     if (!window.confirm('Delete this product? This cannot be undone.')) return;
@@ -821,13 +856,58 @@ export default function AdminPanel() {
                 </p>
               </div>
             ) : (
-              orders.map(o => (
-                <OrderCard key={o.id} order={o}
-                  onConfirm={handleConfirm}
-                  onReject={handleReject}
-                  onStatus={handleStatus}
-                  confirming={confirming === o.id} />
-              ))
+              <>
+                {/* This month summary */}
+                <div style={{ background:'linear-gradient(135deg,#FC8019,#FF9F1C)',
+                  borderRadius:'16px', padding:'14px 18px', marginBottom:'16px',
+                  display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                  <div>
+                    <p style={{ color:'rgba(255,255,255,.85)', fontSize:'12px', fontWeight:700 }}>
+                      {thisMonth}
+                    </p>
+                    <p style={{ color:'white', fontSize:'22px', fontWeight:900 }}>
+                      {thisMonthCount} order{thisMonthCount !== 1 ? 's' : ''} this month
+                    </p>
+                  </div>
+                  <div style={{ fontSize:'36px' }}>📊</div>
+                </div>
+
+                {/* Month-wise grouped orders */}
+                {groupByMonth(orders).map(group => (
+                  <div key={group.label} style={{ marginBottom:'8px' }}>
+                    {/* Month header */}
+                    <div style={{ display:'flex', alignItems:'center',
+                      justifyContent:'space-between', padding:'10px 4px',
+                      marginBottom:'8px' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                        <div style={{ width:'4px', height:'20px', borderRadius:'99px',
+                          background:'var(--primary)' }} />
+                        <p style={{ fontSize:'15px', fontWeight:900, color:'var(--text)' }}>
+                          {group.label}
+                        </p>
+                        <span style={{ background:'var(--primary)', color:'white',
+                          fontSize:'11px', fontWeight:800, borderRadius:'99px',
+                          padding:'2px 9px' }}>
+                          {group.orders.length}
+                        </span>
+                      </div>
+                      <p style={{ fontSize:'13px', fontWeight:700, color:'var(--text-2)' }}>
+                        ₹{group.total.toFixed(0)} total
+                      </p>
+                    </div>
+
+                    {/* Orders in this month */}
+                    {group.orders.map(o => (
+                      <OrderCard key={o.id} order={o}
+                        onConfirm={handleConfirm}
+                        onReject={handleReject}
+                        onStatus={handleStatus}
+                        onDelete={handleDeleteOrder}
+                        confirming={confirming === o.id} />
+                    ))}
+                  </div>
+                ))}
+              </>
             )}
           </>
         )}

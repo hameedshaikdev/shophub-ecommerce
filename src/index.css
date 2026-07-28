@@ -15,44 +15,45 @@ input, textarea, select { outline:none; border:none; font-family:inherit; backgr
 
 /* ── Design Tokens ── */
 :root {
-  --primary:       #FC8019;
-  --primary-2:     #FF9F1C;
-  --primary-hover: #e06a0e;
-  --primary-grad:  linear-gradient(135deg,#FC8019,#FF9F1C);
-  --accent:        #FC8019;
-  --accent-2:      #FF9F1C;
-  --accent-grad:   linear-gradient(135deg,#FC8019,#FF9F1C);
+  /* ── Premium Charcoal / Ink palette ── */
+  --primary:       #1A1A2E;
+  --primary-2:     #16213E;
+  --primary-hover: #0F3460;
+  --primary-grad:  linear-gradient(135deg,#1A1A2E,#0F3460);
+  --accent:        #E94560;
+  --accent-2:      #F05672;
+  --accent-grad:   linear-gradient(135deg,#E94560,#F05672);
 
   --tab-tailoring-from:  #111827;
   --tab-tailoring-to:    #1F2937;
   --tab-fashion-from:    #fdf6e3;
   --tab-fashion-to:      #f5e6c8;
 
-  --bg:            #F0F4F8;
+  --bg:            #FAFAFA;
   --surface:       #FFFFFF;
-  --secondary:     #F1F5F9;
-  --text:          #0F172A;
-  --text-2:        #64748B;
-  --text-3:        #94A3B8;
+  --secondary:     #F5F5F7;
+  --text:          #0A0A0A;
+  --text-2:        #555555;
+  --text-3:        #8E8E93;
 
-  --success:       #0FAF8D;
-  --danger:        #EF4444;
-  --purple:        #FC8019;
+  --success:       #30D158;
+  --danger:        #FF3B30;
+  --purple:        #1A1A2E;
 
-  --border:        #E2E8F0;
+  --border:        #E8E8E8;
 
-  --shadow-xs:     0 2px 8px  rgba(15,23,42,.05);
-  --shadow-sm:     0 8px 30px rgba(15,23,42,.06);
-  --shadow:        0 15px 45px rgba(15,23,42,.10);
-  --shadow-lg:     0 20px 50px rgba(15,23,42,.14);
-  --shadow-xl:     0 32px 64px rgba(15,23,42,.18);
-  --shadow-color:  0 12px 30px rgba(252,128,25,.25);
+  --shadow-xs:     0 1px 4px  rgba(0,0,0,.06);
+  --shadow-sm:     0 4px 16px rgba(0,0,0,.08);
+  --shadow:        0 8px 32px rgba(0,0,0,.10);
+  --shadow-lg:     0 16px 48px rgba(0,0,0,.14);
+  --shadow-xl:     0 24px 64px rgba(0,0,0,.18);
+  --shadow-color:  0 8px 24px rgba(233,69,96,.25);
 
-  --r-xs:   10px;
-  --r-sm:   14px;
-  --r:      18px;
-  --r-lg:   24px;
-  --r-xl:   28px;
+  --r-xs:   8px;
+  --r-sm:   12px;
+  --r:      16px;
+  --r-lg:   20px;
+  --r-xl:   24px;
   --r-2xl:  32px;
 
   --ease:   cubic-bezier(.4,0,.2,1);
@@ -90,10 +91,10 @@ body {
 /* ── Glass Navbar ── */
 .sh-header {
   position: sticky; top: 0; z-index: 999;
-  background: rgba(255,255,255,.78);
+  background: rgba(255,255,255,.95);
   backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
-  border-bottom: 1px solid rgba(255,255,255,.5);
-  box-shadow: var(--shadow-sm);
+  border-bottom: none;
+  box-shadow: none;
   transition: all .3s var(--ease);
 }
 .sh-navbar {
@@ -145,7 +146,7 @@ body {
 .sh-icon-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: rgba(255,107,0,.3); }
 .sh-badge {
   position: absolute; top: -5px; right: -5px;
-  background: #FC8019; color: white;
+  background: #2563EB; color: white;
   font-size: 9px; font-weight: 800;
   min-width: 18px; height: 18px; border-radius: 99px;
   display: flex; align-items: center; justify-content: center;
@@ -158,11 +159,11 @@ body {
   padding: 0 24px; height: 48px; border-radius: 18px;
   background: var(--primary-grad); color: white;
   font-size: 14px; font-weight: 800; letter-spacing: .2px;
-  box-shadow: 0 8px 24px rgba(252,128,25,.3);
+  box-shadow: 0 8px 24px rgba(37,99,235,.3);
   transition: all .25s var(--spring);
   position: relative; overflow: hidden;
 }
-.sh-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(252,128,25,.4); }
+.sh-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(37,99,235,.4); }
 .sh-btn:active { transform: translateY(0) scale(.97); }
 .sh-btn::after {
   content:''; position:absolute; inset:0;
@@ -241,14 +242,14 @@ body {
 /* ── Sub-tabs — theme aware ── */
 .sh-subtabs {
   position: sticky; top: 72px; z-index: 40;
-  background: rgba(255,255,255,.92);
+  background: white;
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 4px 16px rgba(15,23,42,.04);
+  border-bottom: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
 }
 [data-theme="fashion"] .sh-subtabs {
-  background: rgba(224,231,255,.92);
-  border-bottom: 1px solid rgba(99,102,241,.15);
+  background: white;
+  border-bottom: none;
 }
 .sh-subtabs-inner {
   display: flex; gap: 4px;
@@ -269,7 +270,7 @@ body {
   color: white;
   background: var(--primary-grad);
   border-color: transparent;
-  box-shadow: 0 4px 14px rgba(252,128,25,.3);
+  box-shadow: 0 4px 14px rgba(37,99,235,.3);
 }
 [data-theme="fashion"] .sh-subtab.active {
   color: white;
@@ -374,10 +375,10 @@ body {
 /* badges on card */
 .sh-card-discount {
   position: absolute; top: 10px; left: 10px;
-  background: linear-gradient(135deg,#FC8019,#FF9F1C); color: white;
+  background: linear-gradient(135deg,#2563EB,#3B82F6); color: white;
   font-size: 10px; font-weight: 800;
   padding: 3px 9px; border-radius: 99px;
-  box-shadow: 0 4px 12px rgba(252,128,25,.4);
+  box-shadow: 0 4px 12px rgba(37,99,235,.4);
 }
 .sh-card-wish {
   position: absolute; top: 10px; right: 10px;
@@ -921,7 +922,7 @@ footer {
 .footer-logo {
   font-size: 34px;
   font-weight: 900;
-  color: #FC8019;
+  color: #2563EB;
   margin-bottom: 18px;
 }
 
@@ -1152,10 +1153,10 @@ footer {
   padding: 12px 24px; border-radius: 14px;
   background: var(--primary-grad); color: white;
   font-size: 14px; font-weight: 800;
-  box-shadow: 0 8px 24px rgba(252,128,25,.3);
+  box-shadow: 0 8px 24px rgba(37,99,235,.3);
   transition: all .25s var(--spring);
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(252,128,25,.4); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,99,235,.4); }
 .btn-secondary {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 12px 24px; border-radius: 14px;
@@ -1173,7 +1174,7 @@ footer {
   font-size: 14px; font-weight: 500; color: var(--text);
   background: white; transition: all .2s var(--ease);
 }
-.input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(252,128,25,.1); outline: none; }
+.input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); outline: none; }
 
 /* ══ MOBILE FIXES ══════════════════════════════════════════════════════════ */
 

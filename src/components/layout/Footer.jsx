@@ -1,129 +1,120 @@
-import { Link } from 'react-router-dom';
-import { Mail, Phone, MessageCircle } from 'lucide-react';
-
 export default function Footer() {
   return (
-    <footer style={{
-      background:'linear-gradient(180deg,#1b1b1b,#0d0d0d)',
-      color:'white',
-      borderTopLeftRadius:'32px',
-      borderTopRightRadius:'32px',
-      marginTop:'40px',
-      // Extra bottom padding on mobile so bottom nav doesn't overlap
-      paddingBottom:'80px',
-    }}>
-      <div style={{ maxWidth:'1250px', margin:'0 auto', padding:'48px 24px 24px' }}>
+    <footer style={{ background:'#0F172A', paddingBottom:'80px' }}>
+      <div style={{ maxWidth:'560px', margin:'0 auto',
+        padding:'48px 24px 40px', textAlign:'center',
+        display:'flex', flexDirection:'column', alignItems:'center', gap:'22px' }}>
 
-        {/* ── Mobile: Compact layout ── */}
-        <div style={{ display:'flex', flexDirection:'column', gap:'32px' }}>
-
-          {/* Brand */}
-          <div style={{ textAlign:'center' }}>
-            <div style={{ fontSize:'30px', fontWeight:900, color:'#FC8019', marginBottom:'8px' }}>AS HUB</div>
-            <p style={{ color:'#aaa', fontSize:'14px', lineHeight:1.7, maxWidth:'300px', margin:'0 auto' }}>
-              Premium tailoring tools &amp; women's fashion — quality you can trust
+        {/* Logo + name */}
+        <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+          <img src="/logo.png" alt="AS HUB"
+            style={{ width:'48px', height:'48px', borderRadius:'50%',
+              objectFit:'cover', objectPosition:'center',
+              border:'2.5px solid #1A1A2E', flexShrink:0 }}
+            onError={e => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }} />
+          <div style={{ display:'none', width:'48px', height:'48px', borderRadius:'50%',
+            background:'linear-gradient(135deg,#1E2A45,#0F3460)',
+            alignItems:'center', justifyContent:'center',
+            fontSize:'18px', fontWeight:900, color:'white', flexShrink:0 }}>
+            A
+          </div>
+          <div style={{ textAlign:'left' }}>
+            <p style={{ fontSize:'20px', fontWeight:900, color:'white',
+              letterSpacing:'-.3px', lineHeight:1 }}>AS HUB</p>
+            <p style={{ fontSize:'11px', color:'rgba(255,255,255,.4)', marginTop:'3px' }}>
+              Tailoring &amp; Fashion
             </p>
-            {/* Social icons */}
-            <div style={{ display:'flex', justifyContent:'center', gap:'12px', marginTop:'16px' }}>
-              {[
-                { href:'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr', emoji:'📘' },
-                { href:'https://www.instagram.com/as_tailoring_tools_textiles', emoji:'📷' },
-                { href:'https://youtube.com/@astailoringtoolstextiles?si=pJxUJtUY7ykHlpSK', emoji:'▶️' },
-              ].map(({ href, emoji }) => (
-                <a key={href} href={href} target="_blank" rel="noopener noreferrer"
-                  style={{ width:'44px', height:'44px', borderRadius:'50%', background:'#242424', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'20px', textDecoration:'none', transition:'background .3s' }}
-                  onMouseEnter={e => e.currentTarget.style.background='#FC8019'}
-                  onMouseLeave={e => e.currentTarget.style.background='#242424'}>
-                  {emoji}
-                </a>
-              ))}
-            </div>
           </div>
-
-          {/* Quick Links + Contact — side by side on mobile */}
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'24px' }}>
-            <div>
-              <h3 style={{ fontSize:'15px', fontWeight:800, color:'white', marginBottom:'14px', position:'relative', paddingBottom:'8px' }}>
-                Quick Links
-                <span style={{ position:'absolute', bottom:0, left:0, width:'30px', height:'3px', background:'#FC8019', borderRadius:'99px' }} />
-              </h3>
-              <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
-                {[['/', 'Home'], ['/about', 'About'], ['/cart', 'Cart'], ['/wishlist', 'Wishlist'], ['/orders', 'Orders']].map(([to, label]) => (
-                  <Link key={to} to={to} style={{ color:'#c8c8c8', fontSize:'13px', fontWeight:500, textDecoration:'none', transition:'color .2s' }}
-                    onMouseEnter={e => e.currentTarget.style.color='#FC8019'}
-                    onMouseLeave={e => e.currentTarget.style.color='#c8c8c8'}>
-                    {label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 style={{ fontSize:'15px', fontWeight:800, color:'white', marginBottom:'14px', position:'relative', paddingBottom:'8px' }}>
-                Contact
-                <span style={{ position:'absolute', bottom:0, left:0, width:'30px', height:'3px', background:'#FC8019', borderRadius:'99px' }} />
-              </h3>
-              <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
-                <a href="mailto:as.businezzz@gmail.com" style={{ display:'flex', alignItems:'flex-start', gap:'8px', textDecoration:'none' }}>
-                  <Mail size={14} color="#FC8019" style={{ marginTop:'2px', flexShrink:0 }} />
-                  <span style={{ color:'#c8c8c8', fontSize:'12px', wordBreak:'break-all' }}>as.businezzz@gmail.com</span>
-                </a>
-                <a href="tel:+917013942909" style={{ display:'flex', alignItems:'center', gap:'8px', textDecoration:'none' }}>
-                  <Phone size={14} color="#FC8019" style={{ flexShrink:0 }} />
-                  <span style={{ color:'#c8c8c8', fontSize:'12px' }}>+91 70139 42909</span>
-                </a>
-                <a href="https://wa.me/917013942909" target="_blank" rel="noopener noreferrer"
-                  style={{ display:'flex', alignItems:'center', gap:'8px', textDecoration:'none' }}>
-                  <MessageCircle size={14} color="#25D366" style={{ flexShrink:0 }} />
-                  <span style={{ color:'#25D366', fontSize:'12px', fontWeight:700 }}>WhatsApp Us</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Payment methods */}
-          <div style={{ textAlign:'center' }}>
-            <p style={{ color:'#666', fontSize:'11px', marginBottom:'10px', textTransform:'uppercase', letterSpacing:'.5px' }}>We Accept</p>
-            <div style={{ display:'flex', justifyContent:'center', flexWrap:'wrap', gap:'8px' }}>
-              {['UPI','GPay','PhonePe','Paytm'].map(p => (
-                <span key={p} style={{ padding:'4px 12px', borderRadius:'8px', background:'rgba(255,255,255,.07)', fontSize:'11px', fontWeight:700, color:'#ccc', border:'1px solid rgba(255,255,255,.1)' }}>
-                  {p}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Divider + copyright */}
-          <div style={{ borderTop:'1px solid rgba(255,255,255,.08)', paddingTop:'20px', textAlign:'center' }}>
-            <p style={{ color:'#555', fontSize:'12px' }}>© 2026 AS HUB. All Rights Reserved.</p>
-            <p style={{ color:'#444', fontSize:'11px', marginTop:'4px' }}>Made with ❤️ in India</p>
-          </div>
-
         </div>
-      </div>
 
-      {/* Desktop grid layout */}
-      <style>{`
-        @media(min-width: 768px) {
-          footer > div > div {
-            display: grid !important;
-            grid-template-columns: 2fr 1fr 1fr !important;
-            gap: 48px !important;
-          }
-          footer > div > div > div:first-child {
-            text-align: left !important;
-          }
-          footer > div > div > div:first-child > div {
-            justify-content: flex-start !important;
-          }
-          footer > div > div > div:nth-child(2) {
-            grid-column: span 1 !important;
-          }
-          footer {
-            padding-bottom: 24px !important;
-          }
-        }
-      `}</style>
+        {/* Tagline */}
+        <p style={{ fontSize:'13px', color:'rgba(255,255,255,.5)',
+          lineHeight:1.75, maxWidth:'300px' }}>
+          Premium tailoring tools &amp; women's fashion.<br/>
+          Quality you can trust, delivered to your door.
+        </p>
+
+        {/* Social icons */}
+        <div style={{ display:'flex', gap:'10px' }}>
+
+          {/* Facebook */}
+          <a href="https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr"
+            target="_blank" rel="noopener noreferrer"
+            style={{ width:'36px', height:'36px', borderRadius:'10px',
+              background:'#1877F2', display:'flex', alignItems:'center',
+              justifyContent:'center', transition:'transform .2s' }}
+            onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
+            onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+            </svg>
+          </a>
+
+          {/* Instagram */}
+          <a href="https://www.instagram.com/as_tailoring_tools_textiles"
+            target="_blank" rel="noopener noreferrer"
+            style={{ width:'36px', height:'36px', borderRadius:'10px',
+              background:'linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)',
+              display:'flex', alignItems:'center', justifyContent:'center',
+              transition:'transform .2s' }}
+            onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
+            onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+
+          {/* YouTube — clean simple version */}
+          <a href="https://youtube.com/@astailoringtoolstextiles"
+            target="_blank" rel="noopener noreferrer"
+            style={{ width:'36px', height:'36px', borderRadius:'10px',
+              background:'#FF0000', display:'flex', alignItems:'center',
+              justifyContent:'center', transition:'transform .2s' }}
+            onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
+            onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-2.47 12.35 12.35 0 0 0-7.64 0A4.83 4.83 0 0 1 4.41 6.69 49.68 49.68 0 0 0 4 12a49.68 49.68 0 0 0 .41 5.31 4.83 4.83 0 0 1 3.77 2.47 12.35 12.35 0 0 0 7.64 0 4.83 4.83 0 0 1 3.77-2.47A49.68 49.68 0 0 0 20 12a49.68 49.68 0 0 0-.41-5.31zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/>
+            </svg>
+          </a>
+
+          {/* WhatsApp */}
+          <a href="https://wa.me/917013942909"
+            target="_blank" rel="noopener noreferrer"
+            style={{ width:'36px', height:'36px', borderRadius:'10px',
+              background:'#25D366', display:'flex', alignItems:'center',
+              justifyContent:'center', transition:'transform .2s' }}
+            onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
+            onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a8.6 8.6 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.57-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12.004 2a9.96 9.96 0 0 0-8.463 15.23L2 22l4.916-1.489A9.96 9.96 0 1 0 12.004 2zm0 18.214a8.228 8.228 0 0 1-4.354-1.244l-.31-.186-3.23.98.886-3.146-.203-.32a8.23 8.23 0 1 1 7.211 3.916z"/>
+            </svg>
+          </a>
+        </div>
+
+        {/* Contact — plain white, no hover */}
+        <div style={{ display:'flex', gap:'20px', flexWrap:'wrap', justifyContent:'center' }}>
+          <a href="mailto:as.businezzz@gmail.com"
+            style={{ fontSize:'12px', color:'rgba(255,255,255,.6)', textDecoration:'none' }}>
+            as.businezzz@gmail.com
+          </a>
+          <span style={{ color:'rgba(255,255,255,.2)' }}>·</span>
+          <a href="tel:+917013942909"
+            style={{ fontSize:'12px', color:'rgba(255,255,255,.6)', textDecoration:'none' }}>
+            +91 70139 42909
+          </a>
+        </div>
+
+        <p style={{ fontSize:'11px', color:'rgba(255,255,255,.2)' }}>
+          © 2026 AS HUB · All Rights Reserved · Made with ❤️ in India
+        </p>
+      </div>
     </footer>
   );
 }
