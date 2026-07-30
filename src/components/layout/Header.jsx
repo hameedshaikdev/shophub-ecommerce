@@ -97,29 +97,16 @@ export default function Header() {
             {/* ── Logo ── */}
             <Link to="/" style={{ display:'flex', alignItems:'center', gap:'10px',
               flexShrink:0, flex:1, textDecoration:'none' }}>
-              <img
-                src="/logo.png"
-                alt="AS HUB"
-                style={{ width:'42px', height:'42px', borderRadius:'50%',
-                  objectFit:'cover', objectPosition:'center',
-                  border:'1.5px solid #1A1A2E', flexShrink:0,
-                  transform:'scale(1.3)', transformOrigin:'center' }}
-                onError={e => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
-                }}
-              />
-              {/* Fallback */}
-              <div style={{ display:'none', width:'42px', height:'42px', borderRadius:'50%',
-                background:'linear-gradient(135deg,#1A1A2E,#0F3460)',
-                alignItems:'center', justifyContent:'center',
-                fontSize:'16px', fontWeight:900, color:'white', flexShrink:0 }}>
-                A
+              <div style={{ width:'40px', height:'40px', borderRadius:'50%',
+                border:'1.5px solid #1A1A2E', overflow:'hidden', flexShrink:0,
+                display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <img src="/logo.png" alt="AS HUB"
+                  style={{ width:'140%', height:'140%', objectFit:'cover',
+                    objectPosition:'center' }}
+                  onError={e => { e.target.style.display='none'; }} />
               </div>
               <span style={{ fontSize:'18px', fontWeight:900, color:'#0A0A0A',
-                letterSpacing:'-0.5px' }}>
-                AS HUB
-              </span>
+                letterSpacing:'-0.5px' }}>AS HUB</span>
             </Link>
 
             {/* ── Desktop Nav Links ── */}

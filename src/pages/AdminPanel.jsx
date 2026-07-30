@@ -1,24 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   RefreshCw, MessageCircle, Phone, CheckCircle, XCircle,
   Plus, Edit2, Trash2, Eye, LogOut, Upload, X, Save,
-} from 'lucide-react';import { supabase } from '../config/supabase';
+  ShoppingBag, Package, Truck, Users, TrendingUp, Bell,
+  Search, Filter, BarChart2, Settings, ChevronRight,
+  AlertCircle, Clock, DollarSign, ArrowUpRight,
+  Download, Command, Printer,
+} from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import { supabase } from '../config/supabase';
 import { useApp } from '../context/AppContext';
+import {
+  ToastContainer, ConfirmDialog, CommandPalette,
+  OrderSkeleton, ProductSkeleton, EmptyState,
+  RevenueWidgets, InventoryAlerts, DateFilterBar,
+  exportOrdersCSV, exportProductsCSV,
+  toast, confirm,
+} from '../components/admin/AdminUtils';
 
 const ADMIN_EMAIL = 'as.businezzz@gmail.com';
 const ORDER_TABS = [
-  { key:'all_pending',       label:'All New',   emoji:'🆕', color:'#F59E0B' },
-  { key:'payment_submitted', label:'Verify',    emoji:'🔍', color:'#3B82F6' },
-  { key:'confirmed',         label:'Confirmed', emoji:'✅', color:'#16A34A' },
-  { key:'preparing',         label:'Preparing', emoji:'📦', color:'#8B5CF6' },
-  { key:'shipped',           label:'Shipped',   emoji:'🚚', color:'#8B5CF6' },
-  { key:'delivered',         label:'Delivered', emoji:'🏠', color:'#6B7280' },
-  { key:'payment_rejected',  label:'Rejected',  emoji:'❌', color:'#EF4444' },
+  { key:'all_pending',       label:'All New',   color:'#F59E0B' },
+  { key:'payment_submitted', label:'Verify',    color:'#3B82F6' },
+  { key:'confirmed',         label:'Confirmed', color:'#16A34A' },
+  { key:'preparing',         label:'Preparing', color:'#8B5CF6' },
+  { key:'shipped',           label:'Shipped',   color:'#0369A1' },
+  { key:'delivered',         label:'Delivered', color:'#6B7280' },
+  { key:'payment_rejected',  label:'Rejected',  color:'#EF4444' },
 ];
 const MAIN_TABS = [
-  { key:'orders',   label:'Orders',   emoji:'📋' },
-  { key:'products', label:'Products', emoji:'🛍️' },
+  { key:'orders',   label:'Orders',   icon:ShoppingBag },
+  { key:'products', label:'Products', icon:Package },
 ];
 
 /* ─── Product Form Modal ──────────────────────────────────── */
@@ -105,9 +118,11 @@ function ProductModal({ product, onClose, onSave }) {
       if (isEdit) {
         const { error } = await supabase.from('products').update(payload).eq('id', product.id);
         if (error) throw error;
+        toast('Product updated successfully!', 'success');
       } else {
         const { error } = await supabase.from('products').insert([payload]);
         if (error) throw error;
+        toast('Product added successfully!', 'success');
       }
       onSave();
     } catch (err) { alert('Error saving product: ' + err.message); }
@@ -368,6 +383,170 @@ function ProductModal({ product, onClose, onSave }) {
   );
 }
 
+/* ─── Print Shipping Label ────────────────────────────────── */
+function printShippingLabel(order) {
+  const addr  = order.shipping_address || {};
+  const items = (order.items || []).map(i => `${i.name} × ${i.quantity} = ₹${(i.price*i.quantity).toFixed(0)}`).join('\n');
+  const html  = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Shipping Label - #${order.id.slice(0,8).toUpperCase()}</title>
+      <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: Arial, sans-serif; background: white; }
+        .page { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; }
+
+        /* Header */
+        .header { display:flex; justify-content:space-between; align-items:center;
+          border-bottom: 3px solid #000; padding-bottom: 12px; margin-bottom: 16px; }
+        .brand { font-size: 24px; font-weight: 900; letter-spacing: -1px; }
+        .order-id { font-size: 14px; font-weight: 700; color: #333; }
+        .barcode-area { text-align: right; }
+        .barcode-text { font-family: monospace; font-size: 18px; font-weight: 900;
+          letter-spacing: 4px; border: 2px solid #000; padding: 6px 12px; display: inline-block; }
+
+        /* Boxes */
+        .box { border: 2px solid #000; border-radius: 6px; padding: 14px; margin-bottom: 14px; }
+        .box-title { font-size: 10px; font-weight: 900; text-transform: uppercase;
+          letter-spacing: 1.5px; color: #666; margin-bottom: 8px; }
+        .address-name { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+        .address-phone { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .address-line { font-size: 14px; line-height: 1.6; color: #333; }
+        .address-pincode { font-size: 22px; font-weight: 900; margin-top: 8px;
+          letter-spacing: 2px; }
+
+        /* From section */
+        .from-box { background: #f8f8f8; border: 1.5px solid #ccc; }
+        .from-name { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+        .from-detail { font-size: 13px; color: #333; line-height: 1.8; }
+
+        /* Items */
+        .items-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .items-table th { background: #000; color: white; padding: 6px 10px;
+          text-align: left; font-size: 11px; text-transform: uppercase; }
+        .items-table td { padding: 7px 10px; border-bottom: 1px solid #eee; }
+        .items-table tr:last-child td { border-bottom: none; }
+        .total-row td { font-weight: 900; font-size: 14px; background: #f8f8f8; }
+
+        /* Payment badge */
+        .payment-badge { display: inline-block; background: #000; color: white;
+          font-size: 11px; font-weight: 900; padding: 4px 12px; border-radius: 4px;
+          text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+
+        /* Footer */
+        .footer { border-top: 2px dashed #999; padding-top: 12px; margin-top: 14px;
+          display: flex; justify-content: space-between; align-items: center; }
+        .footer-text { font-size: 11px; color: #666; }
+        .handle-care { font-size: 11px; font-weight: 700; border: 1.5px solid #000;
+          padding: 4px 10px; border-radius: 4px; }
+
+        @media print {
+          body { -webkit-print-color-adjust: exact; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="page">
+
+        <!-- Print button (hidden when printing) -->
+        <div class="no-print" style="text-align:right; margin-bottom:16px;">
+          <button onclick="window.print()" style="padding:10px 24px; background:#000;
+            color:white; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer;">
+            🖨️ Print Label
+          </button>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+          <div>
+            <div class="brand">AS HUB</div>
+            <div style="font-size:11px; color:#666; margin-top:2px;">Ph: 7013942909 | as.businezzz@gmail.com</div>
+          </div>
+          <div class="barcode-area">
+            <div class="barcode-text">#${order.id.slice(0,8).toUpperCase()}</div>
+            <div style="font-size:11px; color:#666; margin-top:4px;">
+              ${new Date(order.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}
+            </div>
+          </div>
+        </div>
+
+        <!-- TO: Deliver To -->
+        <div class="box">
+          <div class="box-title">📦 Deliver To</div>
+          <div class="address-name">${addr.fullName || 'N/A'}</div>
+          <div class="address-phone">📞 +91 ${addr.phone || 'N/A'}</div>
+          <div class="address-line">
+            ${addr.houseNo || ''}, ${addr.streetArea || ''}<br/>
+            Near ${addr.landmark || 'N/A'}<br/>
+            ${addr.city || ''}, ${addr.state || ''}
+          </div>
+          <div class="address-pincode">PIN: ${addr.pincode || 'N/A'}</div>
+          ${addr.email ? `<div style="font-size:12px;color:#555;margin-top:6px;">✉ ${addr.email}</div>` : ''}
+        </div>
+
+        <!-- FROM: Sender Address -->
+        <div class="box from-box">
+          <div class="box-title">From</div>
+          <div class="from-name">Shaik Asmath (AS HUB)</div>
+          <div class="from-detail">
+            D.No. 25-2-1709,<br/>
+            Pragathi Nagar, Podalkur Road,<br/>
+            Nellore, Andhra Pradesh - 524004<br/>
+            Ph: 7013942909
+          </div>
+        </div>
+
+        <!-- Items -->
+        <div class="box">
+          <div class="box-title">Order Items</div>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th style="text-align:right">Qty</th>
+                <th style="text-align:right">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${(order.items||[]).map(i => `
+                <tr>
+                  <td>${i.name}</td>
+                  <td style="text-align:right">${i.quantity}</td>
+                  <td style="text-align:right">₹${(i.price*i.quantity).toFixed(0)}</td>
+                </tr>
+              `).join('')}
+              <tr class="total-row">
+                <td colspan="2">Total Amount</td>
+                <td style="text-align:right">₹${order.total_amount?.toFixed(0)}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="payment-badge">✓ Paid via UPI</div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          <div class="footer-text">
+            Order ID: ${order.id.slice(0,8).toUpperCase()} | 
+            Date: ${new Date(order.created_at).toLocaleDateString('en-IN')} |
+            Status: ${order.status?.toUpperCase()}
+          </div>
+          <div class="handle-care">HANDLE WITH CARE</div>
+        </div>
+
+      </div>
+    </body>
+    </html>
+  `;
+
+  const win = window.open('', '_blank', 'width=700,height=900');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+}
+
 /* ─── Order Card ──────────────────────────────────────────── */
 function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming }) {
   const [open,   setOpen]   = useState(false);
@@ -547,6 +726,14 @@ function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming 
               gap:'6px', textDecoration:'none' }}>
             <Phone size={14} /> Call
           </a>
+          <button onClick={() => printShippingLabel(order)}
+            title="Print Shipping Label"
+            style={{ padding:'10px 14px', borderRadius:'12px',
+              background:'#1A1A2E', color:'white', fontWeight:800,
+              fontSize:'13px', border:'none', cursor:'pointer',
+              display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+            <Printer size={14} /> Print
+          </button>
           <button onClick={() => onDelete(order.id)}
             style={{ padding:'10px 14px', borderRadius:'12px',
               background:'#FEF2F2', color:'#EF4444', fontWeight:800,
@@ -572,9 +759,25 @@ export default function AdminPanel() {
   const [counts,     setCounts]     = useState({});
   const [loading,    setLoading]    = useState(true);
   const [confirming, setConfirming] = useState(null);
-  const [modal,      setModal]      = useState(null); // null | 'add' | product obj
+  const [modal,      setModal]      = useState(null);
   const [search,     setSearch]     = useState('');
   const [catFilter,  setCatFilter]  = useState('all');
+  const [cmdOpen,    setCmdOpen]    = useState(false);
+  const [dateFilter, setDateFilter] = useState('all');
+  const [allOrders,  setAllOrders]  = useState([]);
+
+  // Ctrl+K command palette
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setCmdOpen(o => !o);
+      }
+      if (e.key === 'Escape') setCmdOpen(false);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   useEffect(() => {
     if (!user) { navigate('/login'); return; }
@@ -602,7 +805,6 @@ export default function AdminPanel() {
     try {
       let q = supabase.from('orders').select('*').order('created_at',{ascending:false});
       if (orderTab === 'all_pending') {
-        // Show all orders that are pending_payment or payment_submitted
         q = q.in('status', ['pending_payment','payment_submitted']);
       } else if (orderTab === 'payment_submitted') {
         q = q.eq('payment_status','submitted');
@@ -613,10 +815,34 @@ export default function AdminPanel() {
       }
       const { data, error } = await q;
       if (error) throw error;
-      setOrders(data || []);
-    } catch (err) { console.error(err); }
+
+      // Apply date filter
+      let filtered = data || [];
+      if (dateFilter !== 'all') {
+        const now = new Date();
+        filtered = filtered.filter(o => {
+          const d = new Date(o.created_at);
+          if (dateFilter === 'today') return d.toDateString() === now.toDateString();
+          if (dateFilter === 'week') {
+            const weekAgo = new Date(now - 7*24*60*60*1000);
+            return d >= weekAgo;
+          }
+          if (dateFilter === 'month') return d.getMonth() === now.getMonth();
+          return true;
+        });
+      }
+
+      setOrders(filtered);
+    } catch (err) { console.error(err); toast('Failed to load orders', 'error'); }
     finally { setLoading(false); }
   }
+
+  // Also fetch all orders for revenue widgets
+  useEffect(() => {
+    supabase.from('orders').select('*').then(({ data }) => {
+      if (data) setAllOrders(data);
+    });
+  }, []);
 
   async function fetchCounts() {
     try {
@@ -659,8 +885,9 @@ export default function AdminPanel() {
       const addr = order.shipping_address || {};
       const msg  = `Payment Verified — AS HUB\n\nDear ${addr.fullName},\n\nYour payment of ₹${order.total_amount?.toFixed(0)} for Order #${order.id.slice(0,8).toUpperCase()} has been verified.\n\nYour order is confirmed and will be prepared shortly!\n\nThank you for shopping with AS HUB!`;
       window.open(`https://wa.me/91${addr.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      toast('Payment confirmed! WhatsApp sent to customer.', 'success');
       fetchOrders(); fetchCounts();
-    } catch (err) { alert('Error: ' + err.message); }
+    } catch (err) { toast('Error: ' + err.message, 'error'); }
     finally { setConfirming(null); }
   }
 
@@ -674,15 +901,17 @@ export default function AdminPanel() {
       const addr = order.shipping_address || {};
       const msg  = `Payment Failed — AS HUB\n\nDear ${addr.fullName},\n\nWe could not verify your payment for Order #${order.id.slice(0,8).toUpperCase()}.\n\nReason: ${reason || 'Payment not received'}\n\nPlease contact us or retry payment.`;
       window.open(`https://wa.me/91${addr.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      toast('Order rejected. Customer notified.', 'warning');
       fetchOrders(); fetchCounts();
-    } catch (err) { alert('Error: ' + err.message); }
+    } catch (err) { toast('Error: ' + err.message, 'error'); }
   }
 
   async function handleStatus(id, status) {
     try {
       await supabase.from('orders').update({ status }).eq('id', id);
+      toast(`Status updated to ${status}`, 'success');
       fetchOrders(); fetchCounts();
-    } catch (err) { alert('Error: ' + err.message); }
+    } catch (err) { toast('Error: ' + err.message, 'error'); }
   }
 
   async function handleDeleteOrder(id) {
@@ -715,24 +944,105 @@ export default function AdminPanel() {
   ).length;
 
   async function handleDeleteProduct(id) {
-    if (!window.confirm('Delete this product? This cannot be undone.')) return;
+    const ok = await confirm({ title:'Delete Product', message:'This product will be permanently removed. This cannot be undone.', confirm:'Delete', type:'danger' });
+    if (!ok) return;
     try {
       await supabase.from('products').delete().eq('id', id);
       fetchProducts();
-    } catch (err) { alert('Error: ' + err.message); }
+      toast('Product deleted', 'success');
+    } catch (err) { toast('Error: ' + err.message, 'error'); }
+  }
+
+  async function handleDeleteOrder(id) {
+    const ok = await confirm({ title:'Delete Order', message:'This order will be permanently deleted.', confirm:'Delete', type:'danger' });
+    if (!ok) return;
+    try {
+      await supabase.from('orders').delete().eq('id', id);
+      fetchOrders(); fetchCounts();
+      toast('Order deleted', 'success');
+    } catch (err) { toast('Error: ' + err.message, 'error'); }
   }
 
   async function handleToggleActive(product) {
     try {
       await supabase.from('products').update({ active: !product.active }).eq('id', product.id);
       fetchProducts();
-    } catch (err) { alert('Error: ' + err.message); }
+      toast(product.active ? 'Product hidden' : 'Product visible', 'success');
+    } catch (err) { toast('Error: ' + err.message, 'error'); }
   }
 
-  function handleLogout() {
+  async function handleLogout() {
+    const ok = await confirm({ title:'Sign Out', message:'Are you sure you want to sign out?', confirm:'Sign Out', type:'warning' });
+    if (!ok) return;
     supabase.auth.signOut();
     setUser(null);
     navigate('/');
+  }
+
+  // Notifications (derived from data)
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifRead, setNotifRead] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('admin_notif_read') || '[]'); } catch { return []; }
+  });
+
+  const notifications = [
+    ...orders.filter(o => o.payment_status === 'submitted').slice(0,3).map(o => ({
+      id: `pay_${o.id}`, type:'payment', color:'#3B82F6', bg:'#EFF6FF',
+      title:'Payment Submitted', body:`#${o.id.slice(0,8).toUpperCase()} — ₹${o.total_amount?.toFixed(0)} awaiting verification`,
+    })),
+    ...products.filter(p => p.stock !== null && p.stock <= 5 && p.stock > 0).slice(0,2).map(p => ({
+      id: `stock_${p.id}`, type:'stock', color:'#F59E0B', bg:'#FFFBEB',
+      title:'Low Stock Alert', body:`${p.name} — only ${p.stock} left`,
+    })),
+    ...products.filter(p => p.stock === 0).slice(0,2).map(p => ({
+      id: `oos_${p.id}`, type:'outofstock', color:'#EF4444', bg:'#FEF2F2',
+      title:'Out of Stock', body:`${p.name} is out of stock`,
+    })),
+  ];
+  const unreadCount = notifications.filter(n => !notifRead.includes(n.id)).length;
+
+  function markAllRead() {
+    const ids = notifications.map(n => n.id);
+    localStorage.setItem('admin_notif_read', JSON.stringify(ids));
+    setNotifRead(ids);
+  }
+
+  // Bulk selection
+  const [selected, setSelected] = useState([]);
+  const toggleSelect = (id) => setSelected(p => p.includes(id) ? p.filter(x=>x!==id) : [...p,id]);
+  const selectAll = () => setSelected(orders.map(o=>o.id));
+  const clearSelection = () => setSelected([]);
+
+  async function bulkConfirm() {
+    const ok = await confirm({ title:`Confirm ${selected.length} orders?`, message:'This will mark all selected payments as verified.', confirm:'Confirm All' });
+    if (!ok) return;
+    for (const id of selected) {
+      const order = orders.find(o=>o.id===id);
+      if (order) await handleConfirmSilent(order);
+    }
+    clearSelection(); fetchOrders(); fetchCounts();
+    toast(`${selected.length} orders confirmed`, 'success');
+  }
+
+  async function handleConfirmSilent(order) {
+    try {
+      await supabase.from('orders').update({ payment_status:'verified', status:'confirmed', verified_by:user.email, verified_at:new Date().toISOString() }).eq('id', order.id);
+    } catch(err) { console.error(err); }
+  }
+
+  async function bulkDelete() {
+    const ok = await confirm({ title:`Delete ${selected.length} orders?`, message:'This action cannot be undone.', confirm:'Delete All', type:'danger' });
+    if (!ok) return;
+    for (const id of selected) {
+      await supabase.from('orders').delete().eq('id', id);
+    }
+    clearSelection(); fetchOrders(); fetchCounts();
+    toast(`${selected.length} orders deleted`, 'success');
+  }
+
+  function bulkExport() {
+    const sel = orders.filter(o => selected.includes(o.id));
+    exportOrdersCSV(sel.length > 0 ? sel : orders);
   }
 
   if (!user || user.email !== ADMIN_EMAIL) return null;
@@ -744,92 +1054,241 @@ export default function AdminPanel() {
   });
 
   return (
-    <div style={{ minHeight:'100vh', background:'#F0F4F8', paddingBottom:'80px' }}>
+    <div style={{ minHeight:'100vh', background:'#F8FAFC', paddingBottom:'80px' }}>
 
-      {/* Header */}
-      <div style={{ background:'linear-gradient(135deg,#FC8019,#FF9F1C)',
-        padding:'14px 16px', position:'sticky', top:0, zIndex:50,
-        boxShadow:'0 4px 20px rgba(252,128,25,.3)' }}>
-        <div style={{ maxWidth:'900px', margin:'0 auto',
-          display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div>
-            <p style={{ fontSize:'17px', fontWeight:900, color:'white' }}>AS HUB Admin</p>
-            <p style={{ fontSize:'11px', color:'rgba(255,255,255,.8)' }}>{user.email}</p>
+      {/* ── Premium Header ── */}
+      <div style={{ background:'white', borderBottom:'1px solid #E8E8EE',
+        padding:'0 24px', position:'sticky', top:0, zIndex:50,
+        boxShadow:'0 1px 12px rgba(0,0,0,.06)' }}>
+        <div style={{ maxWidth:'1200px', margin:'0 auto',
+          display:'flex', alignItems:'center', justifyContent:'space-between',
+          height:'64px' }}>
+          {/* Left — logo + title */}
+          <div style={{ display:'flex', alignItems:'center', gap:'16px' }}>
+            <div style={{ width:'36px', height:'36px', borderRadius:'10px',
+              background:'linear-gradient(135deg,#1A1A2E,#0F3460)',
+              display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <BarChart2 size={18} color="white" strokeWidth={2} />
+            </div>
+            <div>
+              <p style={{ fontSize:'15px', fontWeight:800, color:'#0A0A0A', lineHeight:1 }}>
+                AS HUB Admin
+              </p>
+              <p style={{ fontSize:'11px', color:'#8E8E93', marginTop:'2px' }}>
+                {new Date().toLocaleDateString('en-IN',{weekday:'short',month:'short',day:'numeric'})}
+              </p>
+            </div>
           </div>
-          <div style={{ display:'flex', gap:'8px' }}>
+
+          {/* Right — actions */}
+          <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+
+            {/* Ctrl+K Search */}
+            <button onClick={() => setCmdOpen(true)}
+              style={{ display:'flex', alignItems:'center', gap:'8px', padding:'7px 14px',
+                borderRadius:'10px', background:'#F4F4F8', border:'1px solid #E8E8EE',
+                cursor:'pointer', fontSize:'12px', color:'#8E8E93', fontWeight:600 }}>
+              <Search size={14} />
+              <span className="sh-desktop-only">Search...</span>
+              <kbd style={{ padding:'2px 6px', borderRadius:'4px', background:'white',
+                border:'1px solid #E2E8F0', fontSize:'10px', fontWeight:700, color:'#8E8E93' }}>
+                ⌘K
+              </kbd>
+            </button>
+
+            {/* Notifications bell */}
+            <div style={{ position:'relative' }}>
+              <button onClick={() => setNotifOpen(o=>!o)}
+                style={{ width:'36px', height:'36px', borderRadius:'10px', background:'#F4F4F8',
+                  border:'none', cursor:'pointer', display:'flex',
+                  alignItems:'center', justifyContent:'center', position:'relative' }}>
+                <Bell size={16} color="#555" />
+                {unreadCount > 0 && (
+                  <span style={{ position:'absolute', top:'6px', right:'6px',
+                    width:'8px', height:'8px', borderRadius:'50%',
+                    background:'#EF4444', border:'2px solid white' }} />
+                )}
+              </button>
+              {notifOpen && (
+                <div style={{ position:'absolute', right:0, top:'44px', width:'320px',
+                  background:'white', borderRadius:'16px', border:'1px solid #E8E8EE',
+                  boxShadow:'0 12px 40px rgba(0,0,0,.12)', zIndex:200, overflow:'hidden' }}>
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+                    padding:'14px 16px', borderBottom:'1px solid #F0F0F0' }}>
+                    <p style={{ fontSize:'14px', fontWeight:800, color:'#0A0A0A' }}>
+                      Notifications {unreadCount > 0 && <span style={{ background:'#EF4444',
+                        color:'white', fontSize:'10px', fontWeight:800, borderRadius:'99px',
+                        padding:'1px 7px', marginLeft:'6px' }}>{unreadCount}</span>}
+                    </p>
+                    <button onClick={markAllRead}
+                      style={{ background:'none', border:'none', cursor:'pointer',
+                        fontSize:'11px', fontWeight:700, color:'#3B82F6' }}>
+                      Mark all read
+                    </button>
+                  </div>
+                  <div style={{ maxHeight:'280px', overflowY:'auto' }}>
+                    {notifications.length === 0 ? (
+                      <div style={{ padding:'32px', textAlign:'center' }}>
+                        <Bell size={24} color="#E2E8F0" style={{ margin:'0 auto 8px' }} />
+                        <p style={{ fontSize:'13px', color:'#8E8E93' }}>No notifications</p>
+                      </div>
+                    ) : notifications.map(n => (
+                      <div key={n.id} style={{ display:'flex', gap:'12px', padding:'12px 16px',
+                        background:notifRead.includes(n.id)?'white':'#FAFAFA',
+                        borderBottom:'1px solid #F8F8F8' }}>
+                        <div style={{ width:'8px', height:'8px', borderRadius:'50%',
+                          background:n.color, marginTop:'5px', flexShrink:0 }} />
+                        <div>
+                          <p style={{ fontSize:'13px', fontWeight:700, color:'#0A0A0A' }}>{n.title}</p>
+                          <p style={{ fontSize:'12px', color:'#8E8E93', marginTop:'2px' }}>{n.body}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Session status */}
+            <div style={{ display:'flex', alignItems:'center', gap:'5px',
+              padding:'5px 10px', borderRadius:'8px', background:'#F0FDF4',
+              border:'1px solid #BBF7D0' }}>
+              <div style={{ width:'7px', height:'7px', borderRadius:'50%',
+                background:'#16A34A' }} />
+              <span style={{ fontSize:'11px', fontWeight:700, color:'#16A34A' }}>Live</span>
+            </div>
+
             {mainTab === 'orders' && (
               <button onClick={fetchOrders}
-                style={{ padding:'8px', borderRadius:'10px',
-                  background:'rgba(255,255,255,.2)', border:'none',
-                  cursor:'pointer', display:'flex' }}>
-                <RefreshCw size={18} color="white" />
+                style={{ width:'36px', height:'36px', borderRadius:'10px', background:'#F4F4F8',
+                  border:'none', cursor:'pointer', display:'flex',
+                  alignItems:'center', justifyContent:'center' }}
+                title="Refresh (Ctrl+R)">
+                <RefreshCw size={16} color="#555" />
               </button>
             )}
+
+            <div style={{ width:'1px', height:'24px', background:'#E8E8EE' }} />
+            <div style={{ display:'flex', alignItems:'center', gap:'10px',
+              padding:'6px 12px', borderRadius:'12px', background:'#F4F4F8' }}>
+              <div style={{ width:'28px', height:'28px', borderRadius:'50%',
+                background:'linear-gradient(135deg,#1A1A2E,#0F3460)',
+                display:'flex', alignItems:'center', justifyContent:'center',
+                fontSize:'12px', fontWeight:800, color:'white' }}>
+                {user.email?.[0]?.toUpperCase()}
+              </div>
+              <div className="sh-desktop-only">
+                <p style={{ fontSize:'12px', fontWeight:700, color:'#0A0A0A', lineHeight:1 }}>Admin</p>
+                <p style={{ fontSize:'10px', color:'#8E8E93', marginTop:'1px' }}>
+                  {user.email?.split('@')[0]}
+                </p>
+              </div>
+            </div>
             <button onClick={handleLogout}
-              style={{ padding:'8px', borderRadius:'10px',
-                background:'rgba(255,255,255,.2)', border:'none',
-                cursor:'pointer', display:'flex' }}>
-              <LogOut size={18} color="white" />
+              style={{ width:'36px', height:'36px', borderRadius:'10px', background:'#FEF2F2',
+                border:'1px solid #FECACA', cursor:'pointer', display:'flex',
+                alignItems:'center', justifyContent:'center' }} title="Sign Out">
+              <LogOut size={16} color="#EF4444" />
             </button>
           </div>
         </div>
       </div>
 
-      <div style={{ maxWidth:'900px', margin:'0 auto', padding:'16px' }}>
+      {/* Toast + Confirm + Command Palette */}
+      <ToastContainer />
+      <ConfirmDialog />
+      {cmdOpen && (
+        <CommandPalette
+          orders={allOrders}
+          products={products}
+          onClose={() => setCmdOpen(false)}
+        />
+      )}
+
+      <div style={{ maxWidth:'1200px', margin:'0 auto', padding:'24px 16px' }}>
 
         {/* Main tabs */}
-        <div style={{ display:'flex', gap:'8px', marginBottom:'16px' }}>
-          {MAIN_TABS.map(t => (
-            <button key={t.key} onClick={() => setMainTab(t.key)}
-              style={{ flex:1, padding:'12px', borderRadius:'14px', fontWeight:900,
-                fontSize:'14px', border:'none', cursor:'pointer',
-                background: mainTab === t.key ? 'var(--primary)' : 'white',
-                color:      mainTab === t.key ? 'white' : 'var(--text-2)',
-                boxShadow:  mainTab === t.key ? '0 4px 14px rgba(252,128,25,.35)' : 'var(--shadow-xs)' }}>
-              {t.emoji} {t.label}
-            </button>
-          ))}
+        <div style={{ display:'flex', gap:'4px', marginBottom:'24px',
+          background:'#F4F4F8', padding:'4px', borderRadius:'14px',
+          width:'fit-content' }}>
+          {MAIN_TABS.map(t => {
+            const Icon = t.icon;
+            return (
+              <button key={t.key} onClick={() => setMainTab(t.key)}
+                style={{ display:'flex', alignItems:'center', gap:'7px',
+                  padding:'8px 20px', borderRadius:'10px', fontWeight:700,
+                  fontSize:'13px', border:'none', cursor:'pointer',
+                  transition:'all .2s',
+                  background: mainTab === t.key ? 'white' : 'transparent',
+                  color: mainTab === t.key ? '#0A0A0A' : '#8E8E93',
+                  boxShadow: mainTab === t.key ? '0 2px 8px rgba(0,0,0,.08)' : 'none' }}>
+                <Icon size={15} strokeWidth={2} />
+                {t.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* ══ ORDERS SECTION ══ */}
         {mainTab === 'orders' && (
           <>
+            {/* Revenue Widgets */}
+            <RevenueWidgets orders={allOrders} />
+
+            {/* Inventory Alerts */}
+            <InventoryAlerts products={products} />
+
+            {/* Date Filter */}
+            <DateFilterBar active={dateFilter} onChange={v => { setDateFilter(v); }} />
+
             {/* Stats */}
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)',
-              gap:'10px', marginBottom:'16px' }}>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',
+              gap:'12px', marginBottom:'16px' }}>
               {[
-                { l:'New Orders', v:counts.all_pending||0,                              c:'#F59E0B' },
-                { l:'Confirmed',  v:(counts.confirmed||0)+(counts.preparing||0),        c:'#16A34A' },
-                { l:'Shipped',    v:counts.shipped||0,                                  c:'#8B5CF6' },
-              ].map(({ l, v, c }) => (
-                <div key={l} style={{ background:'white', borderRadius:'14px',
-                  padding:'14px', textAlign:'center', boxShadow:'var(--shadow-xs)',
-                  border:`2px solid ${v>0?c+'33':'var(--border)'}` }}>
-                  <p style={{ fontSize:'28px', fontWeight:900, color:v>0?c:'#94A3B8' }}>{v}</p>
-                  <p style={{ fontSize:'11px', fontWeight:700, color:'var(--text-3)',
-                    textTransform:'uppercase' }}>{l}</p>
+                { l:'New Orders',  v:counts.all_pending||0,                       c:'#F59E0B', bg:'#FFFBEB', icon:AlertCircle },
+                { l:'Confirmed',   v:(counts.confirmed||0)+(counts.preparing||0), c:'#16A34A', bg:'#F0FDF4', icon:CheckCircle },
+                { l:'Shipped',     v:counts.shipped||0,                           c:'#2563EB', bg:'#EFF6FF', icon:Truck },
+                { l:'Delivered',   v:counts.delivered||0,                         c:'#7C3AED', bg:'#F5F3FF', icon:Package },
+              ].map(({ l, v, c, bg, icon:Icon }) => (
+                <div key={l} style={{ background:'white', borderRadius:'16px',
+                  padding:'16px 18px', border:`1px solid ${v>0?c+'22':'#F0F0F0'}`,
+                  boxShadow:'0 2px 8px rgba(0,0,0,.04)',
+                  borderTop:`3px solid ${v>0?c:'#F0F0F0'}` }}>
+                  <div style={{ display:'flex', alignItems:'center',
+                    justifyContent:'space-between', marginBottom:'10px' }}>
+                    <div style={{ width:'34px', height:'34px', borderRadius:'10px',
+                      background:bg, display:'flex', alignItems:'center',
+                      justifyContent:'center' }}>
+                      <Icon size={16} strokeWidth={2} color={c} />
+                    </div>
+                    {v > 0 && <ArrowUpRight size={14} color={c} />}
+                  </div>
+                  <p style={{ fontSize:'26px', fontWeight:900, color:v>0?c:'#C0C0C0',
+                    lineHeight:1, marginBottom:'4px' }}>{v}</p>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#8E8E93',
+                    textTransform:'uppercase', letterSpacing:'.5px' }}>{l}</p>
                 </div>
               ))}
             </div>
 
             {/* Order tabs */}
             <div style={{ display:'flex', gap:'6px', overflowX:'auto',
-              paddingBottom:'4px', marginBottom:'16px' }}>
+              paddingBottom:'4px', marginBottom:'20px' }}>
               {ORDER_TABS.map(t => (
                 <button key={t.key} onClick={() => setOrderTab(t.key)}
-                  style={{ display:'flex', alignItems:'center', gap:'4px',
-                    padding:'8px 14px', borderRadius:'12px', whiteSpace:'nowrap',
-                    fontWeight:800, fontSize:'13px', border:'none', cursor:'pointer',
+                  style={{ display:'flex', alignItems:'center', gap:'6px',
+                    padding:'7px 14px', borderRadius:'8px', whiteSpace:'nowrap',
+                    fontWeight:700, fontSize:'12px', border:'none', cursor:'pointer',
                     flexShrink:0, transition:'all .2s',
                     background: orderTab === t.key ? t.color : 'white',
-                    color:      orderTab === t.key ? 'white' : 'var(--text-2)',
-                    boxShadow:  orderTab === t.key
-                      ? `0 4px 12px ${t.color}44` : 'var(--shadow-xs)' }}>
-                  {t.emoji} {t.label}
+                    color: orderTab === t.key ? 'white' : '#555',
+                    boxShadow: orderTab === t.key
+                      ? `0 4px 12px ${t.color}44` : '0 1px 4px rgba(0,0,0,.06)' }}>
+                  {t.label}
                   {counts[t.key] > 0 && (
-                    <span style={{ background: orderTab===t.key?'rgba(255,255,255,.3)':t.color,
-                      color:'white', fontSize:'10px', fontWeight:900,
-                      borderRadius:'99px', padding:'1px 7px' }}>
+                    <span style={{ background: orderTab===t.key?'rgba(255,255,255,.3)':t.color+'22',
+                      color: orderTab===t.key?'white':t.color,
+                      fontSize:'10px', fontWeight:800, borderRadius:'6px', padding:'1px 6px' }}>
                       {counts[t.key] > 99 ? '99+' : counts[t.key]}
                     </span>
                   )}
@@ -837,39 +1296,84 @@ export default function AdminPanel() {
               ))}
             </div>
 
+            {/* Bulk actions bar */}
+            {selected.length > 0 && (
+              <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap',
+                padding:'12px 16px', background:'#1A1A2E', borderRadius:'12px',
+                marginBottom:'12px' }}>
+                <span style={{ fontSize:'13px', fontWeight:800, color:'white' }}>
+                  {selected.length} selected
+                </span>
+                <div style={{ flex:1 }} />
+                <button onClick={bulkConfirm}
+                  style={{ padding:'7px 14px', borderRadius:'8px', background:'#16A34A',
+                    color:'white', fontSize:'12px', fontWeight:700, border:'none', cursor:'pointer' }}>
+                  Confirm All
+                </button>
+                <button onClick={bulkExport}
+                  style={{ padding:'7px 14px', borderRadius:'8px', background:'#2563EB',
+                    color:'white', fontSize:'12px', fontWeight:700, border:'none', cursor:'pointer' }}>
+                  Export CSV
+                </button>
+                <button onClick={bulkDelete}
+                  style={{ padding:'7px 14px', borderRadius:'8px', background:'#EF4444',
+                    color:'white', fontSize:'12px', fontWeight:700, border:'none', cursor:'pointer' }}>
+                  Delete All
+                </button>
+                <button onClick={clearSelection}
+                  style={{ padding:'7px 14px', borderRadius:'8px', background:'rgba(255,255,255,.15)',
+                    color:'white', fontSize:'12px', fontWeight:700, border:'none', cursor:'pointer' }}>
+                  Clear
+                </button>
+              </div>
+            )}
+
+            {/* Select all toggle */}
+            {orders.length > 0 && (
+              <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'8px' }}>
+                <input type="checkbox"
+                  checked={selected.length === orders.length && orders.length > 0}
+                  onChange={e => e.target.checked ? selectAll() : clearSelection()}
+                  style={{ width:'15px', height:'15px', cursor:'pointer' }} />
+                <span style={{ fontSize:'12px', fontWeight:600, color:'#8E8E93' }}>
+                  Select all {orders.length} orders
+                </span>
+                <button onClick={() => { exportOrdersCSV(orders); }}
+                  style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:'6px',
+                    padding:'6px 12px', borderRadius:'8px', background:'white',
+                    border:'1px solid #E2E8F0', fontSize:'12px', fontWeight:700,
+                    color:'#555', cursor:'pointer' }}>
+                  <Download size={13} /> Export CSV
+                </button>
+              </div>
+            )}
+
             {/* Order list */}
             {loading ? (
-              <div style={{ textAlign:'center', padding:'40px' }}>
-                <div style={{ width:'36px', height:'36px', border:'3px solid #E2E8F0',
-                  borderTop:'3px solid var(--primary)', borderRadius:'50%',
-                  animation:'spin .8s linear infinite', margin:'0 auto 12px' }} />
-                <p style={{ color:'var(--text-2)', fontWeight:600 }}>Loading...</p>
+              <div>
+                {[...Array(3)].map((_,i) => <OrderSkeleton key={i} />)}
               </div>
             ) : orders.length === 0 ? (
-              <div style={{ textAlign:'center', padding:'60px 20px', background:'white',
-                borderRadius:'20px', border:'1px solid var(--border)' }}>
-                <p style={{ fontSize:'48px', marginBottom:'10px' }}>
-                  {ORDER_TABS.find(t=>t.key===orderTab)?.emoji}
-                </p>
-                <p style={{ fontSize:'16px', fontWeight:900, color:'var(--text)' }}>
-                  No orders here
-                </p>
-              </div>
+              <EmptyState
+                icon={ShoppingBag}
+                title="No orders here"
+                desc="No orders found for the selected filter. Try changing the date range or status tab."
+              />
             ) : (
               <>
                 {/* This month summary */}
-                <div style={{ background:'linear-gradient(135deg,#FC8019,#FF9F1C)',
+                <div style={{ background:'linear-gradient(135deg,#1A1A2E,#0F3460)',
                   borderRadius:'16px', padding:'14px 18px', marginBottom:'16px',
                   display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                   <div>
-                    <p style={{ color:'rgba(255,255,255,.85)', fontSize:'12px', fontWeight:700 }}>
+                    <p style={{ color:'rgba(255,255,255,.6)', fontSize:'12px', fontWeight:700 }}>
                       {thisMonth}
                     </p>
-                    <p style={{ color:'white', fontSize:'22px', fontWeight:900 }}>
+                    <p style={{ color:'white', fontSize:'20px', fontWeight:900 }}>
                       {thisMonthCount} order{thisMonthCount !== 1 ? 's' : ''} this month
                     </p>
                   </div>
-                  <div style={{ fontSize:'36px' }}>📊</div>
+                  <BarChart2 size={28} color="rgba(255,255,255,.3)" />
                 </div>
 
                 {/* Month-wise grouped orders */}
@@ -898,12 +1402,21 @@ export default function AdminPanel() {
 
                     {/* Orders in this month */}
                     {group.orders.map(o => (
-                      <OrderCard key={o.id} order={o}
-                        onConfirm={handleConfirm}
-                        onReject={handleReject}
-                        onStatus={handleStatus}
-                        onDelete={handleDeleteOrder}
-                        confirming={confirming === o.id} />
+                      <div key={o.id} style={{ display:'flex', gap:'10px', alignItems:'flex-start' }}>
+                        <input type="checkbox"
+                          checked={selected.includes(o.id)}
+                          onChange={() => toggleSelect(o.id)}
+                          style={{ width:'16px', height:'16px', marginTop:'18px',
+                            cursor:'pointer', flexShrink:0, accentColor:'#1A1A2E' }} />
+                        <div style={{ flex:1 }}>
+                          <OrderCard order={o}
+                            onConfirm={handleConfirm}
+                            onReject={handleReject}
+                            onStatus={handleStatus}
+                            onDelete={handleDeleteOrder}
+                            confirming={confirming === o.id} />
+                        </div>
+                      </div>
                     ))}
                   </div>
                 ))}
@@ -940,6 +1453,13 @@ export default function AdminPanel() {
                   boxShadow:'0 4px 14px rgba(252,128,25,.35)', whiteSpace:'nowrap' }}>
                 <Plus size={18} /> Add Product
               </button>
+              <button onClick={() => exportProductsCSV(products)}
+                style={{ display:'flex', alignItems:'center', gap:'6px',
+                  padding:'10px 14px', borderRadius:'12px', background:'white',
+                  border:'1px solid #E2E8F0', color:'#555', fontSize:'13px',
+                  fontWeight:700, cursor:'pointer', whiteSpace:'nowrap' }}>
+                <Download size={15} /> Export
+              </button>
             </div>
 
             {/* Stats strip */}
@@ -962,25 +1482,17 @@ export default function AdminPanel() {
 
             {/* Product grid */}
             {loading ? (
-              <div style={{ textAlign:'center', padding:'40px' }}>
-                <div style={{ width:'36px', height:'36px', border:'3px solid #E2E8F0',
-                  borderTop:'3px solid var(--primary)', borderRadius:'50%',
-                  animation:'spin .8s linear infinite', margin:'0 auto 12px' }} />
-                <p style={{ color:'var(--text-2)', fontWeight:600 }}>Loading products...</p>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))', gap:'12px' }}>
+                {[...Array(6)].map((_,i) => <ProductSkeleton key={i} />)}
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div style={{ textAlign:'center', padding:'60px 20px', background:'white',
-                borderRadius:'20px', border:'1px solid var(--border)' }}>
-                <p style={{ fontSize:'48px', marginBottom:'10px' }}>🛍️</p>
-                <p style={{ fontSize:'16px', fontWeight:900, color:'var(--text)',
-                  marginBottom:'6px' }}>No products found</p>
-                <button onClick={() => setModal('add')}
-                  style={{ padding:'12px 24px', borderRadius:'12px',
-                    background:'var(--primary-grad)', color:'white',
-                    fontWeight:900, border:'none', cursor:'pointer' }}>
-                  Add First Product
-                </button>
-              </div>
+              <EmptyState
+                icon={Package}
+                title="No products found"
+                desc={search ? `No products match "${search}"` : "Add your first product to get started"}
+                action="Add Product"
+                onAction={() => setModal('add')}
+              />
             ) : (
               <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',
                 gap:'12px' }}>

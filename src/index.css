@@ -244,12 +244,12 @@ body {
   position: sticky; top: 72px; z-index: 40;
   background: white;
   backdrop-filter: blur(20px);
-  border-bottom: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  border-bottom: 1px solid #E2E8F0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
 }
 [data-theme="fashion"] .sh-subtabs {
   background: white;
-  border-bottom: none;
+  border-bottom: 1px solid #E2E8F0;
 }
 .sh-subtabs-inner {
   display: flex; gap: 4px;

@@ -24,14 +24,14 @@ export default function Footer() {
           <div style={{ textAlign:'left' }}>
             <p style={{ fontSize:'20px', fontWeight:900, color:'white',
               letterSpacing:'-.3px', lineHeight:1 }}>AS HUB</p>
-            <p style={{ fontSize:'11px', color:'rgba(255,255,255,.4)', marginTop:'3px' }}>
+            <p style={{ fontSize:'11px', color:'rgba(255,255,255,.85)', marginTop:'3px' }}>
               Tailoring &amp; Fashion
             </p>
           </div>
         </div>
 
         {/* Tagline */}
-        <p style={{ fontSize:'13px', color:'rgba(255,255,255,.5)',
+        <p style={{ fontSize:'13px', color:'rgba(255,255,255,.85)',
           lineHeight:1.75, maxWidth:'300px' }}>
           Premium tailoring tools &amp; women's fashion.<br/>
           Quality you can trust, delivered to your door.
@@ -101,17 +101,17 @@ export default function Footer() {
         {/* Contact — plain white, no hover */}
         <div style={{ display:'flex', gap:'20px', flexWrap:'wrap', justifyContent:'center' }}>
           <a href="mailto:as.businezzz@gmail.com"
-            style={{ fontSize:'12px', color:'rgba(255,255,255,.6)', textDecoration:'none' }}>
+            style={{ fontSize:'12px', color:'rgba(255,255,255,.85)', textDecoration:'none' }}>
             as.businezzz@gmail.com
           </a>
-          <span style={{ color:'rgba(255,255,255,.2)' }}>·</span>
+          <span style={{ color:'rgba(255,255,255,.4)' }}>·</span>
           <a href="tel:+917013942909"
-            style={{ fontSize:'12px', color:'rgba(255,255,255,.6)', textDecoration:'none' }}>
+            style={{ fontSize:'12px', color:'rgba(255,255,255,.85)', textDecoration:'none' }}>
             +91 70139 42909
           </a>
         </div>
 
-        <p style={{ fontSize:'11px', color:'rgba(255,255,255,.2)' }}>
+        <p style={{ fontSize:'11px', color:'rgba(255,255,255,.4)' }}>
           © 2026 AS HUB · All Rights Reserved · Made with ❤️ in India
         </p>
       </div>
