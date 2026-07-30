@@ -57,6 +57,10 @@ export default function Header() {
   const navigate  = useNavigate();
   const location  = useLocation();
   const isHome    = location.pathname === '/';
+  const isAdmin   = location.pathname.startsWith('/admin');
+
+  // Don't render header on admin pages - admin has its own header
+  if (isAdmin) return null;
   const { activeCategory, setActiveCategory, getCartCount, user, setUser } = useApp();
   const [q,        setQ]        = useState('');
   const [dropdown, setDropdown] = useState(false);

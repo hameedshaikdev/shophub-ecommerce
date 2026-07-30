@@ -1,4 +1,9 @@
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 export default function Footer() {
+  const location = useLocation();
+  if (location.pathname.startsWith('/admin')) return null;
+
   return (
     <footer style={{ background:'#0F172A', paddingBottom:'80px' }}>
       <div style={{ maxWidth:'560px', margin:'0 auto',

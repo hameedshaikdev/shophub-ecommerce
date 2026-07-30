@@ -1246,3 +1246,280 @@ footer {
 *::-webkit-scrollbar {
   display: none;                /* Chrome / Safari / Opera */
 }
+
+/* ══ PART 3 — PREMIUM POLISH ══════════════════════════════════════════════ */
+
+/* ── Button System ─────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px; border: none; cursor: pointer; font-family: inherit;
+  font-weight: 700; border-radius: 10px; transition: all .2s var(--ease);
+  position: relative; overflow: hidden; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Primary */
+.btn-primary {
+  background: linear-gradient(135deg,#1A1A2E,#0F3460);
+  color: white; padding: 10px 20px; font-size: 13px;
+  box-shadow: 0 2px 12px rgba(26,26,46,.25);
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(26,26,46,.35);
+}
+.btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+/* Secondary */
+.btn-secondary {
+  background: #F4F4F8; color: #0A0A0A;
+  padding: 10px 20px; font-size: 13px;
+  border: 1px solid #E2E8F0;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: #EBEBEF; transform: translateY(-1px);
+}
+
+/* Danger */
+.btn-danger {
+  background: #FEF2F2; color: #EF4444;
+  padding: 10px 20px; font-size: 13px;
+  border: 1px solid #FECACA;
+}
+.btn-danger:hover:not(:disabled) {
+  background: #FEE2E2; transform: translateY(-1px);
+}
+
+/* Sizes */
+.btn-sm { padding: 6px 12px !important; font-size: 11px !important; border-radius: 8px !important; }
+.btn-lg { padding: 13px 28px !important; font-size: 15px !important; border-radius: 12px !important; }
+
+/* Ripple effect */
+.btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,.0);
+  transition: background .2s;
+}
+.btn:active::after { background: rgba(255,255,255,.15); }
+
+/* ── Card System ────────────────────────────────────────────────────────── */
+.card-premium {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #F0F0F0;
+  box-shadow: 0 1px 8px rgba(0,0,0,.05);
+  transition: box-shadow .2s, transform .2s;
+}
+.card-premium:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,.09);
+  transform: translateY(-2px);
+}
+
+/* ── Admin Panel Specific ───────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Admin header compact */
+  header[style*="height:56px"] {
+    padding: 0 12px !important;
+  }
+
+  /* Admin tab switcher — scroll horizontally */
+  .admin-tabs {
+    overflow-x: auto;
+    padding-bottom: 4px;
+    justify-content: flex-start !important;
+    width: 100%;
+  }
+
+  /* Admin main content padding */
+  main[style*="padding:20px 16px"] {
+    padding: 16px 12px !important;
+  }
+
+  /* Order cards compact on mobile */
+  .order-card-actions {
+    flex-wrap: wrap;
+  }
+
+  /* Product grid — 2 columns on mobile */
+  .product-admin-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
+/* ── Smooth page transitions ────────────────────────────────────────────── */
+@keyframes fadeInPage {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: fadeInPage .3s var(--ease) forwards;
+}
+
+/* ── Loading skeleton shimmer ──────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #F0F0F0 25%, #E8E8E8 50%, #F0F0F0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* ── Progress bar ───────────────────────────────────────────────────────── */
+@keyframes progressPulse {
+  0%   { opacity: 1; }
+  50%  { opacity: .7; }
+  100% { opacity: 1; }
+}
+.progress-bar {
+  height: 3px;
+  border-radius: 99px;
+  animation: progressPulse 1.5s infinite;
+}
+
+/* ── Dropdown animation ─────────────────────────────────────────────────── */
+@keyframes dropDown {
+  from { opacity: 0; transform: translateY(-8px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+.dropdown-enter {
+  animation: dropDown .2s var(--ease) forwards;
+}
+
+/* ── Hover highlight for rows ───────────────────────────────────────────── */
+.table-row {
+  transition: background .15s;
+}
+.table-row:hover {
+  background: #F8FAFC !important;
+}
+
+/* ── Focus states (Accessibility) ──────────────────────────────────────── */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #1A1A2E;
+  outline-offset: 2px;
+}
+
+/* ── Touch targets (mobile) ─────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  button, a[role="button"] {
+    min-height: 40px;
+  }
+}
+
+/* ── Admin specific mobile fixes ────────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* Tab scrolling */
+  div[style*="display:'flex'"][style*="gap:'4px'"][style*="background:'#F4F4F8'"] {
+    overflow-x: auto;
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  /* Reduce admin header search width */
+  button[style*="Search..."] {
+    max-width: 160px !important;
+  }
+
+  /* Stack order card action buttons */
+  div[style*="display:'flex'"][style*="gap:'7px'"] {
+    flex-wrap: wrap;
+  }
+
+  /* Full width product grid on very small */
+  div[style*="minmax(200px,1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ── Consistent spacing system ──────────────────────────────────────────── */
+.space-section { margin-bottom: 32px; }
+.space-group   { margin-bottom: 16px; }
+.space-item    { margin-bottom: 8px;  }
+
+/* ── Better form inputs ─────────────────────────────────────────────────── */
+input[type="text"], input[type="email"], input[type="tel"],
+input[type="number"], input[type="password"], textarea, select {
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #C0C0C0;
+}
+
+/* ── Image lazy loading fade ────────────────────────────────────────────── */
+img {
+  transition: opacity .3s;
+}
+img[loading="lazy"] {
+  opacity: 0;
+}
+img[loading="lazy"].loaded {
+  opacity: 1;
+}
+
+/* ── Better link styles ─────────────────────────────────────────────────── */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── Consistent border radius ───────────────────────────────────────────── */
+.rounded-sm  { border-radius: 8px;  }
+.rounded-md  { border-radius: 12px; }
+.rounded-lg  { border-radius: 16px; }
+.rounded-xl  { border-radius: 20px; }
+.rounded-2xl { border-radius: 24px; }
+.rounded-full{ border-radius: 9999px; }
+
+/* ── Better shadows ─────────────────────────────────────────────────────── */
+.shadow-xs { box-shadow: 0 1px 4px  rgba(0,0,0,.06); }
+.shadow-sm { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+.shadow-md { box-shadow: 0 4px 20px rgba(0,0,0,.10); }
+.shadow-lg { box-shadow: 0 8px 32px rgba(0,0,0,.12); }
+
+/* ── Admin product grid — always 2 cols on mobile ────────────────────────── */
+.product-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 640px) {
+  .product-admin-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Compact product cards on mobile */
+  .product-admin-grid > div > div:last-child {
+    padding: 8px 10px !important;
+  }
+  .product-admin-grid > div > div:nth-child(2) {
+    padding: 8px 10px 4px !important;
+  }
+
+  /* Admin main content padding tighter on mobile */
+  main { padding: 14px 10px !important; }
+
+  /* Admin header search — icon only on mobile */
+  header button[style*="Search"] span:last-child { display: none !important; }
+  header button[style*="Search"] { max-width: 42px !important; padding: 7px !important; }
+}
+
+/* ── Customer product grid — always 2 cols on mobile ─────────────────────── */
+@media (max-width: 640px) {
+  .sh-grid-products {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}

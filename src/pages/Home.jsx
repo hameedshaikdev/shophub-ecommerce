@@ -1,18 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
-import { Scissors, Package, Sparkles, ArrowRight, ChevronDown } from 'lucide-react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { Scissors, Package, Sparkles, ArrowRight, ChevronDown, Star, Truck, Users } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
 import ProductCard from '../components/products/ProductCard';
 import CategoryFilter from '../components/products/CategoryFilter';
 
+/* ─── Content config ──────────────────────────────────────── */
 const CONTENT = {
   tailoring: {
-    title:'Craft with Precision', titleAccent:'Professional Tailoring Tools',
+    title:'Craft with',
+    titleAccent:'Precision.',
+    titleLine2:'Professional Tailoring Tools',
     sub:'Engineered for craftsmen who demand the best. Every stitch, perfected.',
     grad:'linear-gradient(160deg,#1A0533 0%,#3D0F6B 50%,#1A0533 100%)',
     accentColor:'#C084FC',
+    illustration:'https://cdn-icons-png.flaticon.com/512/3124/3124828.png',
+    illustrationAlt:'Professional sewing machine',
     subs:[
       {id:'all',icon:'◈',label:'All'},
       {id:'machines',icon:'⚙',label:'Machines'},
@@ -23,10 +28,14 @@ const CONTENT = {
     ],
   },
   fashion:{
-    title:'Wear Your Story', titleAccent:"Women's Fashion Collection",
+    title:'Wear',
+    titleAccent:'Your Story.',
+    titleLine2:"Women's Fashion Collection",
     sub:'Curated styles for the modern woman. Elegance meets everyday comfort.',
     grad:'linear-gradient(160deg,#0A2540 0%,#1A4A7A 50%,#0A2540 100%)',
     accentColor:'#60A5FA',
+    illustration:'https://cdn-icons-png.flaticon.com/512/3050/3050070.png',
+    illustrationAlt:'Women fashion collection',
     subs:[
       {id:'all',icon:'◈',label:'All'},
       {id:'dresses',icon:'♛',label:'Dresses'},
@@ -38,10 +47,41 @@ const CONTENT = {
   },
 };
 
-const fadeUp  = {hidden:{opacity:0,y:28},visible:{opacity:1,y:0,transition:{duration:.55,ease:[.22,1,.36,1]}}};
-const stagger = {visible:{transition:{staggerChildren:.08}}};
-const scaleIn = {hidden:{opacity:0,scale:.96},visible:{opacity:1,scale:1,transition:{duration:.5,ease:[.22,1,.36,1]}}};
+/* ─── Variants ────────────────────────────────────────────── */
+const fadeUp  = {hidden:{opacity:0,y:32},visible:{opacity:1,y:0,transition:{duration:.6,ease:[.22,1,.36,1]}}};
+const fadeIn  = {hidden:{opacity:0},visible:{opacity:1,transition:{duration:.5}}};
+const stagger = {visible:{transition:{staggerChildren:.09}}};
+const scaleIn = {hidden:{opacity:0,scale:.95},visible:{opacity:1,scale:1,transition:{duration:.5,ease:[.22,1,.36,1]}}};
 
+/* ─── Animated counter ────────────────────────────────────── */
+function Counter({ target, suffix='' }) {
+  const ref    = useRef(null);
+  const inView = useInView(ref, { once:true });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    const num = parseInt(target.replace(/[^0-9]/g,''));
+    const duration = 1500;
+    const steps = 40;
+    const inc = num / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current += inc;
+      if (current >= num) { setCount(num); clearInterval(timer); }
+      else setCount(Math.floor(current));
+    }, duration / steps);
+    return () => clearInterval(timer);
+  }, [inView, target]);
+
+  const formatted = target.includes(',')
+    ? count.toLocaleString('en-IN')
+    : count.toString();
+
+  return <span ref={ref}>{formatted}{suffix}</span>;
+}
+
+/* ─── Section wrapper ─────────────────────────────────────── */
 function Section({ children, style={} }) {
   const ref    = useRef(null);
   const inView = useInView(ref, { once:true, margin:'-60px' });
@@ -53,6 +93,7 @@ function Section({ children, style={} }) {
   );
 }
 
+/* ─── Main Component ──────────────────────────────────────── */
 export default function Home() {
   const { activeCategory } = useApp();
   const [searchParams]          = useSearchParams();
@@ -89,93 +130,217 @@ export default function Home() {
   return (
     <div style={{ background:'var(--bg)', minHeight:'100vh' }}>
 
-      {/* ══ HERO ═════════════════════════════════════════════ */}
-      <div style={{ background:c.grad, position:'relative', overflow:'hidden', paddingBottom:'56px' }}>
+      {/* ══ HERO — Split Layout ═══════════════════════════════ */}
+      <div style={{ background:c.grad, position:'relative', overflow:'hidden',
+        paddingBottom:'64px', transition:'background 0.6s ease' }}>
 
-        <motion.div animate={{ scale:[1,1.15,1], opacity:[.4,.7,.4] }}
-          transition={{ duration:9, repeat:Infinity, ease:'easeInOut' }}
-          style={{ position:'absolute', width:'500px', height:'500px', borderRadius:'50%',
-            background:`radial-gradient(circle, ${c.accentColor}30 0%, transparent 68%)`,
-            top:'-150px', right:'-120px', pointerEvents:'none' }} />
+        {/* Background decorative elements */}
+        <motion.div animate={{ scale:[1,1.2,1], opacity:[.3,.55,.3], rotate:[0,5,0] }}
+          transition={{ duration:10, repeat:Infinity, ease:'easeInOut' }}
+          style={{ position:'absolute', width:'600px', height:'600px', borderRadius:'50%',
+            background:`radial-gradient(circle, ${c.accentColor}28 0%, transparent 65%)`,
+            top:'-200px', right:'-150px', pointerEvents:'none' }} />
 
-        <motion.div animate={{ scale:[1,1.2,1], opacity:[.25,.5,.25] }}
-          transition={{ duration:12, repeat:Infinity, ease:'easeInOut', delay:3 }}
-          style={{ position:'absolute', width:'320px', height:'320px', borderRadius:'50%',
-            background:`radial-gradient(circle, ${c.accentColor}25 0%, transparent 68%)`,
-            bottom:'-100px', left:'-80px', pointerEvents:'none' }} />
+        <motion.div animate={{ scale:[1,1.15,1], opacity:[.2,.4,.2] }}
+          transition={{ duration:13, repeat:Infinity, ease:'easeInOut', delay:4 }}
+          style={{ position:'absolute', width:'400px', height:'400px', borderRadius:'50%',
+            background:`radial-gradient(circle, ${c.accentColor}20 0%, transparent 65%)`,
+            bottom:'-120px', left:'-100px', pointerEvents:'none' }} />
 
-        <div className="sh-container" style={{ paddingTop:'52px', position:'relative', zIndex:1 }}>
-          <motion.div initial="hidden" animate="visible" variants={stagger}>
+        {/* Floating dots decoration */}
+        {[
+          {top:'15%',left:'8%',size:5,delay:0},
+          {top:'60%',left:'5%',size:3,delay:1},
+          {top:'30%',right:'12%',size:4,delay:2},
+          {top:'70%',right:'8%',size:6,delay:.5},
+          {top:'45%',left:'15%',size:3,delay:1.5},
+        ].map((dot, i) => (
+          <motion.div key={i}
+            animate={{ y:[-6,6,-6], opacity:[.4,.8,.4] }}
+            transition={{ duration:3+i, repeat:Infinity, delay:dot.delay }}
+            style={{ position:'absolute', top:dot.top, left:dot.left, right:dot.right,
+              width:`${dot.size}px`, height:`${dot.size}px`, borderRadius:'50%',
+              background:`${c.accentColor}80`, pointerEvents:'none' }} />
+        ))}
 
-            <motion.div variants={fadeUp} style={{ marginBottom:'18px' }}>
-              <span style={{ display:'inline-flex', alignItems:'center', gap:'7px',
-                padding:'6px 16px', borderRadius:'99px',
-                background:'rgba(255,255,255,.12)', backdropFilter:'blur(10px)',
-                border:'1px solid rgba(255,255,255,.18)',
-                fontSize:'11px', fontWeight:700, color:'rgba(255,255,255,.9)',
-                letterSpacing:'1px', textTransform:'uppercase' }}>
-                <Sparkles size={12} strokeWidth={2} /> New Collection 2026
-              </span>
-            </motion.div>
+        <div className="sh-container" style={{ paddingTop:'56px', position:'relative', zIndex:1 }}>
+          <div style={{ display:'grid',
+            gridTemplateColumns:'1fr minmax(0,420px)',
+            gap:'40px', alignItems:'center' }}
+            className="hero-grid">
 
-            <motion.h1 variants={fadeUp} style={{ fontSize:'clamp(30px,5.5vw,56px)',
-              fontWeight:900, color:'white', lineHeight:1.1,
-              letterSpacing:'-1.5px', marginBottom:'16px', maxWidth:'620px' }}>
-              {c.title}<br/>
-              <span style={{ color:c.accentColor, display:'block', marginTop:'4px' }}>
-                {c.titleAccent}
-              </span>
-            </motion.h1>
+            {/* Left: Text content */}
+            <motion.div initial="hidden" animate="visible" variants={stagger}>
 
-            <motion.p variants={fadeUp} style={{ fontSize:'clamp(14px,1.8vw,16px)',
-              color:'rgba(255,255,255,.68)', maxWidth:'460px',
-              lineHeight:1.75, marginBottom:'36px' }}>
-              {c.sub}
-            </motion.p>
+              {/* Badge */}
+              <motion.div variants={fadeUp} style={{ marginBottom:'20px' }}>
+                <AnimatePresence mode="wait">
+                  <motion.span key={activeCategory}
+                    initial={{ opacity:0, y:-10 }} animate={{ opacity:1, y:0 }}
+                    exit={{ opacity:0, y:10 }} transition={{ duration:.3 }}
+                    style={{ display:'inline-flex', alignItems:'center', gap:'7px',
+                      padding:'7px 18px', borderRadius:'99px',
+                      background:'rgba(255,255,255,.13)', backdropFilter:'blur(12px)',
+                      border:'1px solid rgba(255,255,255,.2)',
+                      fontSize:'11px', fontWeight:700, color:'rgba(255,255,255,.9)',
+                      letterSpacing:'1.2px', textTransform:'uppercase' }}>
+                    <Sparkles size={12} strokeWidth={2.5} /> New Collection 2026
+                  </motion.span>
+                </AnimatePresence>
+              </motion.div>
 
-            <motion.div variants={fadeUp}
-              style={{ display:'flex', gap:'12px', flexWrap:'wrap', marginBottom:'48px' }}>
-              <motion.button onClick={scrollToProducts}
-                whileHover={{ scale:1.03, boxShadow:'0 10px 32px rgba(0,0,0,.3)' }}
-                whileTap={{ scale:.97 }}
-                style={{ display:'inline-flex', alignItems:'center', gap:'8px',
-                  padding:'14px 28px', borderRadius:'12px', background:'white',
-                  color:'#0A0A0A', fontSize:'14px', fontWeight:800,
-                  border:'none', cursor:'pointer',
-                  boxShadow:'0 4px 20px rgba(0,0,0,.25)' }}>
-                <Package size={16} strokeWidth={2} /> Shop Now
-              </motion.button>
+              {/* Heading */}
+              <AnimatePresence mode="wait">
+                <motion.div key={`title-${activeCategory}`}
+                  initial={{ opacity:0, y:24 }} animate={{ opacity:1, y:0 }}
+                  exit={{ opacity:0, y:-24 }} transition={{ duration:.45, ease:[.22,1,.36,1] }}>
+                  <h1 style={{ fontSize:'clamp(32px,5.5vw,60px)', fontWeight:900,
+                    color:'white', lineHeight:1.05, letterSpacing:'-2px',
+                    marginBottom:'8px' }}>
+                    {c.title}
+                  </h1>
+                  <h1 style={{ fontSize:'clamp(32px,5.5vw,60px)', fontWeight:900,
+                    color:c.accentColor, lineHeight:1.05, letterSpacing:'-2px',
+                    marginBottom:'8px', transition:'color .6s' }}>
+                    {c.titleAccent}
+                  </h1>
+                  <h2 style={{ fontSize:'clamp(15px,2vw,20px)', fontWeight:500,
+                    color:'rgba(255,255,255,.55)', lineHeight:1.2,
+                    letterSpacing:'-0.3px', marginBottom:'20px' }}>
+                    {c.titleLine2}
+                  </h2>
+                </motion.div>
+              </AnimatePresence>
 
-              <motion.button onClick={scrollToFilter}
-                whileHover={{ scale:1.03, background:'rgba(255,255,255,.22)' }}
-                whileTap={{ scale:.97 }}
-                style={{ display:'inline-flex', alignItems:'center', gap:'8px',
-                  padding:'14px 24px', borderRadius:'12px',
-                  background:'rgba(255,255,255,.12)', backdropFilter:'blur(10px)',
-                  border:'1px solid rgba(255,255,255,.22)',
-                  color:'white', fontSize:'14px', fontWeight:700, cursor:'pointer' }}>
-                Explore Collection <ArrowRight size={16} strokeWidth={2} />
-              </motion.button>
-            </motion.div>
+              {/* Subtitle */}
+              <AnimatePresence mode="wait">
+                <motion.p key={`sub-${activeCategory}`}
+                  initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+                  transition={{ duration:.4, delay:.1 }}
+                  style={{ fontSize:'clamp(14px,1.6vw,16px)',
+                    color:'rgba(255,255,255,.62)', maxWidth:'440px',
+                    lineHeight:1.8, marginBottom:'36px' }}>
+                  {c.sub}
+                </motion.p>
+              </AnimatePresence>
 
-            <motion.div variants={fadeUp} style={{ display:'flex', gap:'36px', flexWrap:'wrap' }}>
-              {[{num:'500+',label:'Products'},{num:'2,000+',label:'Happy Customers'},{num:'4.9 ★',label:'Average Rating'}]
-                .map(({ num, label }) => (
-                  <div key={label}>
-                    <p style={{ fontSize:'clamp(18px,2.5vw,24px)', fontWeight:900, color:'white', lineHeight:1 }}>{num}</p>
-                    <p style={{ fontSize:'12px', color:'rgba(255,255,255,.5)', marginTop:'4px' }}>{label}</p>
+              {/* CTA Buttons */}
+              <motion.div variants={fadeUp}
+                style={{ display:'flex', gap:'12px', flexWrap:'wrap', marginBottom:'52px' }}>
+                <motion.button onClick={scrollToProducts}
+                  whileHover={{ scale:1.04, boxShadow:'0 12px 36px rgba(0,0,0,.35)' }}
+                  whileTap={{ scale:.97 }}
+                  style={{ display:'inline-flex', alignItems:'center', gap:'9px',
+                    padding:'15px 32px', borderRadius:'14px', background:'white',
+                    color:'#0A0A0A', fontSize:'14px', fontWeight:800,
+                    border:'none', cursor:'pointer',
+                    boxShadow:'0 4px 24px rgba(0,0,0,.28)',
+                    letterSpacing:'-.1px', transition:'box-shadow .3s' }}>
+                  <Package size={17} strokeWidth={2.5} />
+                  Shop Now
+                </motion.button>
+
+                <motion.button onClick={scrollToFilter}
+                  whileHover={{ scale:1.04, background:'rgba(255,255,255,.2)' }}
+                  whileTap={{ scale:.97 }}
+                  style={{ display:'inline-flex', alignItems:'center', gap:'9px',
+                    padding:'15px 26px', borderRadius:'14px',
+                    background:'rgba(255,255,255,.12)', backdropFilter:'blur(12px)',
+                    border:'1.5px solid rgba(255,255,255,.25)',
+                    color:'white', fontSize:'14px', fontWeight:700,
+                    cursor:'pointer', transition:'background .25s' }}>
+                  Explore Collection
+                  <motion.span animate={{ x:[0,4,0] }} transition={{ duration:1.5, repeat:Infinity }}>
+                    <ArrowRight size={16} strokeWidth={2.5} />
+                  </motion.span>
+                </motion.button>
+              </motion.div>
+
+              {/* Stats row with animated counters */}
+              <motion.div variants={fadeUp}
+                style={{ display:'flex', gap:'28px', flexWrap:'wrap' }}>
+                {[
+                  { icon:Star,    num:'4.9', suffix:' ★', label:'Average Rating' },
+                  { icon:Package, num:'500', suffix:'+',  label:'Products' },
+                  { icon:Users,   num:'2000',suffix:'+',  label:'Happy Customers' },
+                  { icon:Truck,   num:'Pan India', suffix:'', label:'Delivery' },
+                ].map(({ icon:Icon, num, suffix, label }) => (
+                  <div key={label} style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                    <div style={{ width:'36px', height:'36px', borderRadius:'10px',
+                      background:'rgba(255,255,255,.12)', display:'flex',
+                      alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                      <Icon size={16} strokeWidth={1.8} color={c.accentColor} />
+                    </div>
+                    <div>
+                      <p style={{ fontSize:'clamp(16px,2vw,20px)', fontWeight:900,
+                        color:'white', lineHeight:1 }}>
+                        {num === 'Pan India' ? 'Pan India' : (
+                          <><Counter target={`${num}`} />{suffix}</>
+                        )}
+                      </p>
+                      <p style={{ fontSize:'11px', color:'rgba(255,255,255,.45)',
+                        marginTop:'3px', fontWeight:500 }}>{label}</p>
+                    </div>
                   </div>
-              ))}
+                ))}
+              </motion.div>
+
             </motion.div>
 
-          </motion.div>
+            {/* Right: Illustration */}
+            <div className="hero-illustration" style={{ display:'flex',
+              alignItems:'center', justifyContent:'center',
+              position:'relative', minHeight:'300px' }}>
+              <AnimatePresence mode="wait">
+                <motion.div key={`illus-${activeCategory}`}
+                  initial={{ opacity:0, scale:.85, y:20 }}
+                  animate={{ opacity:1, scale:1, y:0 }}
+                  exit={{ opacity:0, scale:.85, y:-20 }}
+                  transition={{ duration:.6, ease:[.22,1,.36,1] }}
+                  style={{ position:'relative', display:'flex',
+                    alignItems:'center', justifyContent:'center' }}>
+
+                  {/* Glow behind illustration */}
+                  <div style={{ position:'absolute', width:'280px', height:'280px',
+                    borderRadius:'50%', background:`${c.accentColor}25`,
+                    filter:'blur(40px)', transform:'translateY(10px)' }} />
+
+                  {/* Floating illustration */}
+                  <motion.img
+                    src={c.illustration}
+                    alt={c.illustrationAlt}
+                    animate={{ y:[-8,8,-8], rotate:[-1,1,-1] }}
+                    transition={{ duration:4, repeat:Infinity, ease:'easeInOut' }}
+                    style={{ width:'clamp(200px,28vw,340px)', height:'auto',
+                      objectFit:'contain', position:'relative', zIndex:1,
+                      filter:`drop-shadow(0 20px 48px ${c.accentColor}50)`,
+                      userSelect:'none', pointerEvents:'none' }}
+                  />
+
+                  {/* Decorative ring */}
+                  <motion.div
+                    animate={{ rotate:360 }}
+                    transition={{ duration:20, repeat:Infinity, ease:'linear' }}
+                    style={{ position:'absolute', width:'320px', height:'320px',
+                      borderRadius:'50%', border:`1.5px dashed ${c.accentColor}30`,
+                      pointerEvents:'none' }} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+          </div>
         </div>
 
-        <motion.div animate={{ y:[0,6,0] }} transition={{ duration:2, repeat:Infinity }}
+        {/* Scroll hint */}
+        <motion.div
+          animate={{ y:[0,7,0] }} transition={{ duration:2, repeat:Infinity }}
           onClick={scrollToFilter}
-          style={{ position:'absolute', bottom:'20px', left:'50%', transform:'translateX(-50%)',
-            cursor:'pointer', color:'rgba(255,255,255,.4)', zIndex:1 }}>
-          <ChevronDown size={24} strokeWidth={1.5} />
+          style={{ position:'absolute', bottom:'22px', left:'50%', transform:'translateX(-50%)',
+            cursor:'pointer', color:'rgba(255,255,255,.35)', zIndex:1,
+            display:'flex', flexDirection:'column', alignItems:'center', gap:'4px' }}>
+          <span style={{ fontSize:'10px', fontWeight:600, letterSpacing:'1px',
+            textTransform:'uppercase', color:'rgba(255,255,255,.35)' }}>Scroll</span>
+          <ChevronDown size={20} strokeWidth={1.5} />
         </motion.div>
       </div>
 
@@ -193,7 +358,7 @@ export default function Home() {
             <div>
               <p style={{ fontSize:'11px', fontWeight:700, textTransform:'uppercase',
                 letterSpacing:'1.5px', color:'#8E8E93', marginBottom:'6px' }}>
-                {activeCategory === 'tailoring' ? 'Tailoring' : "Women's Fashion"}
+                {activeCategory === 'tailoring' ? 'Tailoring Collection' : "Women's Fashion"}
               </p>
               <h2 style={{ fontSize:'clamp(20px,3vw,28px)', fontWeight:900,
                 color:'var(--text)', letterSpacing:'-0.5px', lineHeight:1.1 }}>
@@ -251,6 +416,24 @@ export default function Home() {
           )}
         </Section>
       </div>
+
+      {/* Hero responsive CSS */}
+      <style>{`
+        @media (max-width: 768px) {
+          .hero-grid {
+            grid-template-columns: 1fr !important;
+            gap: 0 !important;
+          }
+          .hero-illustration {
+            display: none !important;
+          }
+        }
+        @media (min-width: 769px) {
+          .hero-illustration {
+            display: flex !important;
+          }
+        }
+      `}</style>
 
     </div>
   );

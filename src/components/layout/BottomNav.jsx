@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, ShoppingCart, Heart, User, Grid } from 'lucide-react';
+import { Home, ShoppingCart, Heart, User } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export default function BottomNav() {
@@ -14,8 +14,9 @@ export default function BottomNav() {
     { to:user?'/profile':'/login',       icon:User,         label:user?'Profile':'Login'      },
   ];
 
-  // Hide on checkout, login, signup pages for cleaner UX
-  const hide = ['/checkout', '/login', '/signup'].includes(location.pathname);
+  // Hide on admin, checkout, login, signup
+  const hide = location.pathname.startsWith('/admin') ||
+    ['/checkout', '/login', '/signup'].includes(location.pathname);
   if (hide) return null;
 
   return (
