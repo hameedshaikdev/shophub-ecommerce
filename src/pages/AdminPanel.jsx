@@ -920,6 +920,72 @@ export default function AdminPanel() {
                     style={{display:'flex',alignItems:'center',gap:'5px',padding:'6px 12px',borderRadius:'8px',background:'white',border:'1px solid #E2E8F0',color:'#555',fontSize:'12px',fontWeight:700,cursor:'pointer'}}>
                     <Download size={13}/> Export
                   </button>
+                  <button onClick={()=>{
+                    // Print all labels for the current date filter selection
+                    const labelOrders = dateFilter==='today'
+                      ? orders.filter(o=>new Date(o.created_at).toDateString()===new Date().toDateString())
+                      : dateFilter==='week'
+                      ? orders.filter(o=>new Date(o.created_at)>=new Date(Date.now()-7*86400000))
+                      : dateFilter==='month'
+                      ? orders.filter(o=>{const d=new Date(o.created_at);const n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();})
+                      : orders;
+                    if (labelOrders.length===0){toast('No orders to print','warning');return;}
+                    // Temporarily select all filtered orders and print
+                    setSelected(labelOrders.map(o=>o.id));
+                    setTimeout(()=>{
+                      const toPrint = labelOrders;
+                      const pages = toPrint.map((order,idx)=>{
+                        const a=order.shipping_address||{};
+                        const items=(order.items||[]).map(i=>`<tr><td>${i.name}</td><td align="right">${i.quantity}</td><td align="right">₹${(i.price*i.quantity).toFixed(0)}</td></tr>`).join('');
+                        return `${idx>0?'<div class="pb"></div>':''}
+                        <div class="wrap">
+                          <div class="hdr"><div><div class="brand">AS HUB</div><div class="contact">Ph: 7013942909</div></div>
+                          <div class="oid">#${order.id.slice(0,8).toUpperCase()}<br/><span style="font-size:9px;font-weight:400">${new Date(order.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</span></div></div>
+                          <div class="box"><div class="lbl">Deliver To</div><div class="nm">${a.fullName||''}</div><div class="ph">+91 ${a.phone||''}</div>
+                          <div class="ad">${a.houseNo||''}, ${a.streetArea||''}<br/>Near ${a.landmark||''}<br/>${a.city||''}, ${a.state||''}</div><div class="pin">PIN: ${a.pincode||''}</div></div>
+                          <div class="box from"><div class="lbl">From</div><div class="fn">Shaik Asmath (AS HUB)</div>
+                          <div class="fd">D.No. 25-2-1709, Pragathi Nagar, Podalkur Road,<br/>Nellore, AP - 524004 | Ph: 7013942909</div></div>
+                          <div class="box"><div class="lbl">Items</div>
+                          <table><thead><tr><th>Product</th><th>Qty</th><th>Amt</th></tr></thead>
+                          <tbody>${items}<tr class="tot"><td colspan="2">Total</td><td>₹${order.total_amount?.toFixed(0)}</td></tr></tbody></table>
+                          <span class="badge">✓ UPI Paid</span></div>
+                          <div class="ft"><span>#${order.id.slice(0,8).toUpperCase()} | ${(order.status||'').toUpperCase()}</span><span class="care">HANDLE WITH CARE</span></div>
+                        </div>`;
+                      }).join('');
+                      const label = dateFilter==='today'?`Today (${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'})})`:dateFilter==='week'?'This Week':dateFilter==='month'?'This Month':'All Orders';
+                      const html=`<!DOCTYPE html><html><head><title>${toPrint.length} Labels — ${label}</title>
+                      <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif}
+                      .np{text-align:center;padding:14px;background:#f4f4f8;margin-bottom:12px}
+                      .wrap{max-width:580px;margin:0 auto;padding:18px}.pb{page-break-after:always;height:24px}
+                      .hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:12px}
+                      .brand{font-size:20px;font-weight:900}.contact{font-size:10px;color:#666;margin-top:2px}
+                      .oid{font-family:monospace;font-size:13px;font-weight:900;border:2px solid #000;padding:4px 8px;text-align:right}
+                      .box{border:2px solid #000;border-radius:5px;padding:11px;margin-bottom:9px}
+                      .from{background:#f8f8f8;border:1.5px solid #ccc}.lbl{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:5px}
+                      .nm{font-size:18px;font-weight:900;margin-bottom:2px}.ph{font-size:13px;font-weight:700;margin-bottom:5px}
+                      .ad{font-size:12px;line-height:1.6;color:#333}.pin{font-size:18px;font-weight:900;margin-top:6px;letter-spacing:2px}
+                      .fn{font-size:14px;font-weight:800;margin-bottom:3px}.fd{font-size:11px;color:#333;line-height:1.7}
+                      table{width:100%;border-collapse:collapse;font-size:11px}th{background:#000;color:#fff;padding:5px 8px;font-size:9px;text-transform:uppercase;text-align:left}
+                      td{padding:5px 8px;border-bottom:1px solid #eee}.tot td{font-weight:900;background:#f8f8f8}
+                      .badge{display:inline-block;background:#000;color:#fff;font-size:9px;font-weight:900;padding:3px 9px;border-radius:3px;margin-top:6px}
+                      .ft{border-top:2px dashed #999;padding-top:9px;margin-top:9px;display:flex;justify-content:space-between;font-size:9px}
+                      .care{border:1px solid #000;padding:2px 7px;border-radius:3px;font-weight:700}
+                      @media print{.np{display:none!important}}</style></head>
+                      <body><div class="np">📦 <strong>${toPrint.length} Labels — ${label}</strong>
+                      <button onclick="window.print()" style="margin-left:12px;padding:9px 22px;background:#1A1A2E;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Print All</button></div>
+                      ${pages}</body></html>`;
+                      const w=window.open('','_blank','width=760,height=900');
+                      w.document.write(html);w.document.close();w.focus();
+                      toast(`${toPrint.length} labels ready (${label})`,'success');
+                    },50);
+                  }}
+                    style={{display:'flex',alignItems:'center',gap:'5px',padding:'6px 12px',borderRadius:'8px',
+                      background:dateFilter!=='all'?'#1A1A2E':'white',
+                      border:`1px solid ${dateFilter!=='all'?'#1A1A2E':'#E2E8F0'}`,
+                      color:dateFilter!=='all'?'white':'#555',fontSize:'12px',fontWeight:700,cursor:'pointer'}}>
+                    <Printer size={13}/>
+                    Print {dateFilter==='today'?"Today's":dateFilter==='week'?"Week's":dateFilter==='month'?"Month's":'All'} Labels
+                  </button>
                   <button onClick={fetchOrders}
                     style={{width:'32px',height:'32px',borderRadius:'8px',background:'white',border:'1px solid #E2E8F0',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>
                     <RefreshCw size={14} color="#555"/>
