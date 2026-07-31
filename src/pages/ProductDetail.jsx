@@ -164,12 +164,8 @@ export default function ProductDetail() {
                 onError={e => { e.target.src = 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80'; }}
               />
 
-              {/* Badge */}
-              {badge && (
-                <div style={{ position:'absolute', top:'12px', left:'12px', background:'linear-gradient(135deg, #1A1A2E, #0F3460)', color:'white', fontSize:'11px', fontWeight:900, padding:'4px 12px', borderRadius:'9999px', boxShadow:'0 4px 14px rgba(0,0,0,.3)', border:'1px solid rgba(255,255,255,.4)', zIndex:2 }}>
-                  {badge}
-                </div>
-              )}
+
+
 
               {/* Prev Arrow (desktop) */}
               {allImages.length > 1 && selImg > 0 && (

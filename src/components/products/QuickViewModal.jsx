@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, ShoppingCart, Star, ShieldCheck, Truck, Sparkles, Plus, Minus } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { getProductImage } from '../../utils/productImages';
+import { getProductImage, parseProductTags } from '../../utils/productImages';
 
 export default function QuickViewModal({ product, onClose }) {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
@@ -13,6 +13,7 @@ export default function QuickViewModal({ product, onClose }) {
   if (!product) return null;
 
   const inWL = isInWishlist(product.id);
+  const { cleanDesc, discount_tag } = parseProductTags(product);
   const discount = product.original_price && product.original_price > product.price
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : null;
@@ -210,11 +211,16 @@ export default function QuickViewModal({ product, onClose }) {
                     ₹{product.original_price.toFixed(0)}
                   </span>
                 )}
+                {(discount_tag || discount) && (
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#388E3C' }}>
+                    {discount_tag || `-${discount}% off`}
+                  </span>
+                )}
               </div>
 
-              {/* Description preview */}
+              {/* Description preview — clean, no [TAG:...] metadata */}
               <p style={{ fontSize: '13px', color: '#475569', lineHeight: 1.6, marginBottom: '24px' }}>
-                {product.description || 'Engineered for exceptional performance and longevity. Designed with high-grade premium materials for superior craftsmanship.'}
+                {cleanDesc || 'Engineered for exceptional performance and longevity. Designed with high-grade premium materials for superior craftsmanship.'}
               </p>
 
               {/* Quantity Selector */}
