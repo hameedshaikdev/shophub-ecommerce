@@ -100,20 +100,9 @@ export default function ProductCard({ product, onQuickView }) {
               fontSize:'10px', fontWeight:800, letterSpacing:'.4px',
               padding:'4px 10px', borderRadius:'9999px',
               boxShadow:'0 4px 14px rgba(0,0,0,.3)',
-              border:'1px solid rgba(255,255,255,.4)', zIndex:2 }}>
+              border:'1px solid rgba(255,255,255,.4)', zIndex:2,
+              maxWidth:'65%', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
               {badge}
-            </div>
-          )}
-
-          {/* Top Right Percentage Tag (-17% OFF) */}
-          {(discount_tag || discount) && (
-            <div style={{ position:'absolute', top:'10px', right: badge ? '10px' : '44px',
-              background:'linear-gradient(135deg, #E94560, #FF6B8B)', color:'white',
-              fontSize:'10px', fontWeight:800, letterSpacing:'.4px',
-              padding:'4px 10px', borderRadius:'9999px',
-              boxShadow:'0 4px 14px rgba(233,69,96,.4)',
-              border:'1px solid rgba(255,255,255,.4)', zIndex:2 }}>
-              {discount_tag || `-${discount}% OFF`}
             </div>
           )}
 
@@ -217,7 +206,7 @@ export default function ProductCard({ product, onQuickView }) {
 
           {/* Price row */}
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:'auto', minHeight:'24px' }}>
-            <div style={{ display:'flex', alignItems:'baseline', gap:'5px', flexWrap:'wrap' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'5px', flexWrap:'wrap' }}>
               <span style={{ fontSize:'16px', fontWeight:900, color:'#0A0A0A',
                 letterSpacing:'-0.4px' }}>
                 ₹{priceNum.toFixed(0)}
@@ -225,6 +214,11 @@ export default function ProductCard({ product, onQuickView }) {
               {origPriceNum > priceNum && (
                 <span style={{ fontSize:'11px', color:'#ADADAD', textDecoration:'line-through', fontWeight:500 }}>
                   ₹{origPriceNum.toFixed(0)}
+                </span>
+              )}
+              {(discount_tag || discount) && (
+                <span style={{ fontSize:'10px', fontWeight:800, color:'#E94560', background:'rgba(233,69,96,.1)', padding:'2px 7px', borderRadius:'6px', border:'1px solid rgba(233,69,96,.2)' }}>
+                  {discount_tag || `-${discount}%`}
                 </span>
               )}
             </div>

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Heart, Minus, Plus, ShoppingCart, ArrowLeft,
   Truck, RefreshCw, Star, Package,
-  ChevronRight, MessageCircle, Sparkles, ShieldCheck
+  ChevronRight, MessageCircle, Sparkles, ShieldCheck,
+  Maximize2, X
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
@@ -15,12 +16,14 @@ export default function ProductDetail() {
   const navigate     = useNavigate();
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
 
-  const [product,  setProduct]  = useState(null);
-  const [related,  setRelated]  = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [quantity, setQuantity] = useState(1);
-  const [added,    setAdded]    = useState(false);
-  const [selImg,   setSelImg]   = useState(0);
+  const [product,      setProduct]      = useState(null);
+  const [related,      setRelated]      = useState([]);
+  const [loading,      setLoading]      = useState(true);
+  const [quantity,     setQuantity]     = useState(1);
+  const [added,        setAdded]        = useState(false);
+  const [selImg,       setSelImg]       = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [zoomScale,    setZoomScale]    = useState(1);
 
   const inWishlist = product ? isInWishlist(product.id) : false;
   const { cleanDesc, badge, discount_tag } = parseProductTags(product);
@@ -131,24 +134,32 @@ export default function ProductDetail() {
           {/* ── IMAGE SECTION ── */}
           <div style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
             <motion.div
-              style={{ borderRadius:'22px', overflow:'hidden', background:'rgba(241, 245, 249, 0.8)', aspectRatio:'1', position:'relative', boxShadow:'0 8px 24px rgba(0,0,0,0.06)' }}
+              onClick={() => { setLightboxOpen(true); setZoomScale(1); }}
+              style={{ borderRadius:'22px', overflow:'hidden', background:'rgba(241, 245, 249, 0.8)', aspectRatio:'1', position:'relative', boxShadow:'0 8px 24px rgba(0,0,0,0.06)', cursor:'pointer' }}
               whileHover={{ scale:1.01 }}>
               <img src={currentImg} alt={product.name}
                 style={{ width:'100%', height:'100%', objectFit:'cover', display:'block', borderRadius:'22px' }}
                 onError={e => { e.target.src = 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80'; }}
               />
 
-              {/* Discount Badge */}
-              {discount && (
-                <div style={{ position:'absolute', top:'12px', left:'12px', background:'linear-gradient(135deg, #E94560, #FF6B8B)', color:'white', fontSize:'11px', fontWeight:900, padding:'4px 12px', borderRadius:'9999px', boxShadow:'0 4px 14px rgba(233,69,96,.4)', border:'1px solid rgba(255,255,255,.4)' }}>
-                  -{discount}% OFF
+              {/* Main Badge Tag */}
+              {badge && (
+                <div style={{ position:'absolute', top:'12px', left:'12px', background:'linear-gradient(135deg, #1A1A2E, #0F3460)', color:'white', fontSize:'11px', fontWeight:900, padding:'4px 12px', borderRadius:'9999px', boxShadow:'0 4px 14px rgba(0,0,0,.3)', border:'1px solid rgba(255,255,255,.4)', zIndex:2 }}>
+                  {badge}
                 </div>
               )}
 
+              {/* Tap to Fullscreen Photo Hint */}
+              <button
+                onClick={(e) => { e.stopPropagation(); setLightboxOpen(true); setZoomScale(1); }}
+                style={{ position:'absolute', bottom:'12px', left:'12px', background:'rgba(0,0,0,0.65)', backdropFilter:'blur(6px)', color:'white', border:'none', borderRadius:'9999px', padding:'5px 11px', fontSize:'10px', fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:'4px' }}>
+                <Maximize2 size={12} /> Full Photo
+              </button>
+
               {/* Wishlist button */}
-              <motion.button onClick={handleWish}
+              <motion.button onClick={(e) => { e.stopPropagation(); handleWish(e); }}
                 whileHover={{ scale:1.14, y:-1 }} whileTap={{ scale:.92 }}
-                style={{ position:'absolute', top:'12px', right:'12px', width:'40px', height:'40px', borderRadius:'9999px', background:'rgba(255,255,255,.9)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', border:'1px solid rgba(255,255,255,.9)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 16px rgba(0,0,0,.1)' }}>
+                style={{ position:'absolute', top:'12px', right:'12px', width:'40px', height:'40px', borderRadius:'9999px', background:'rgba(255,255,255,.9)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', border:'1px solid rgba(255,255,255,.9)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 16px rgba(0,0,0,.1)', zIndex:2 }}>
                 <Heart size={18} fill={inWishlist ? '#E94560' : 'none'} color={inWishlist ? '#E94560' : '#475569'} />
               </motion.button>
             </motion.div>
@@ -199,13 +210,18 @@ export default function ProductDetail() {
 
             {/* Price block */}
             <div style={{ background:'rgba(241, 245, 249, 0.7)', borderRadius:'20px', padding:'16px 20px', border:'1px solid rgba(255,255,255,0.9)' }}>
-              <div style={{ display:'flex', alignItems:'baseline', gap:'10px', flexWrap:'wrap' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
                 <span style={{ fontSize:'32px', fontWeight:900, color:'#0F172A', letterSpacing:'-1px' }}>
                   ₹{priceNum.toFixed(0)}
                 </span>
                 {origPriceNum > priceNum && (
                   <span style={{ fontSize:'16px', color:'#94A3B8', textDecoration:'line-through', fontWeight:500 }}>
                     ₹{origPriceNum.toFixed(0)}
+                  </span>
+                )}
+                {(discount_tag || discount) && (
+                  <span style={{ fontSize:'12px', fontWeight:800, color:'#E94560', background:'rgba(233,69,96,0.12)', padding:'4px 12px', borderRadius:'9999px', border:'1px solid rgba(233,69,96,0.25)' }}>
+                    {discount_tag || `-${discount}% OFF`}
                   </span>
                 )}
                 {discount && (
@@ -230,13 +246,13 @@ export default function ProductDetail() {
             </div>
 
             {/* Description */}
-            {product.description && (
+            {cleanDesc && (
               <div>
                 <p style={{ fontSize:'11px', fontWeight:800, color:'#94A3B8', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'6px' }}>
                   Description & Specifications
                 </p>
                 <p style={{ fontSize:'13px', color:'#334155', lineHeight:1.6, fontWeight:500 }}>
-                  {product.description}
+                  {cleanDesc}
                 </p>
               </div>
             )}
@@ -358,6 +374,60 @@ export default function ProductDetail() {
         )}
 
       </div>
+
+      {/* ── FULL SCREEN PHOTO LIGHTBOX VIEWER ── */}
+      <AnimatePresence>
+        {lightboxOpen && (
+          <motion.div
+            initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+            style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.94)', backdropFilter:'blur(12px)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'16px' }}
+            onClick={() => setLightboxOpen(false)}>
+
+            {/* Top Bar Controls */}
+            <div style={{ position:'absolute', top:'16px', left:'20px', right:'20px', display:'flex', justifyContent:'space-between', alignItems:'center', zIndex:10000 }} onClick={e=>e.stopPropagation()}>
+              <span style={{ color:'white', fontSize:'14px', fontWeight:800, background:'rgba(255,255,255,0.15)', padding:'4px 12px', borderRadius:'9999px' }}>
+                📷 {selImg + 1} / {allImages.length} Photo
+              </span>
+              <div style={{ display:'flex', gap:'10px', alignItems:'center' }}>
+                <button onClick={() => setZoomScale(s => Math.min(s + 0.5, 3))} title="Zoom In"
+                  style={{ background:'rgba(255,255,255,0.18)', color:'white', border:'none', borderRadius:'50%', width:'38px', height:'38px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'18px', fontWeight:800 }}>
+                  +
+                </button>
+                <button onClick={() => setZoomScale(s => Math.max(s - 0.5, 1))} title="Zoom Out"
+                  style={{ background:'rgba(255,255,255,0.18)', color:'white', border:'none', borderRadius:'50%', width:'38px', height:'38px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'18px', fontWeight:800 }}>
+                  -
+                </button>
+                <button onClick={() => setLightboxOpen(false)} title="Close"
+                  style={{ background:'#EF4444', color:'white', border:'none', borderRadius:'50%', width:'38px', height:'38px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Main Lightbox Image with Zoom & Touch Pan */}
+            <motion.div style={{ position:'relative', maxWidth:'92vw', maxHeight:'75vh', overflow:'hidden', cursor:'zoom-in', display:'flex', alignItems:'center', justifyContent:'center' }}
+              onClick={e => e.stopPropagation()}>
+              <motion.img src={currentImg} alt="Full screen view"
+                animate={{ scale: zoomScale }}
+                transition={{ type:'spring', damping:25, stiffness:200 }}
+                style={{ maxWidth:'100%', maxHeight:'75vh', objectFit:'contain', borderRadius:'14px', boxShadow:'0 20px 50px rgba(0,0,0,0.5)' }} />
+            </motion.div>
+
+            {/* Bottom thumbnail strip inside Lightbox */}
+            {allImages.length > 1 && (
+              <div style={{ position:'absolute', bottom:'20px', display:'flex', gap:'8px', overflowX:'auto', maxWidth:'90vw', padding:'6px', background:'rgba(0,0,0,0.5)', borderRadius:'16px', backdropFilter:'blur(8px)' }}
+                onClick={e => e.stopPropagation()} className="sh-scroll-hide">
+                {allImages.map((img, i) => (
+                  <button key={i} onClick={() => { setSelImg(i); setZoomScale(1); }}
+                    style={{ width:'52px', height:'52px', borderRadius:'10px', overflow:'hidden', border: selImg === i ? '2.5px solid #38BDF8' : '1px solid rgba(255,255,255,0.3)', cursor:'pointer', flexShrink:0, padding:0, background:'#1E293B', transition:'all .2s' }}>
+                    <img src={img} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

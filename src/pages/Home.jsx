@@ -139,11 +139,23 @@ function DealTimer() {
 }
 
 /* ─── Product Mini Card (for carousels) ───────────────────── */
-function MiniCard({ product, badge }) {
+function MiniCard({ product }) {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
   if (!product || !product.id) return null;
 
   const inWL = isInWishlist(product.id);
+  const { badge: customBadge, discount_tag: customDisc } = parseProductTags(product);
+
+  const badgeConfig = {
+    sale:       { bg: 'linear-gradient(135deg, #FF3B30, #FF6B8B)', color: '#fff', label: 'SALE',       icon: '🔥' },
+    bestseller: { bg: 'linear-gradient(135deg, #FF9500, #FFCC00)', color: '#fff', label: 'BESTSELLER', icon: '★'  },
+    new:        { bg: 'linear-gradient(135deg, #30D158, #34C759)', color: '#fff', label: 'NEW',        icon: '✦'  },
+    hot:        { bg: 'linear-gradient(135deg, #AF52DE, #5856D6)', color: '#fff', label: 'HOT',        icon: '⚡'  }
+  };
+
+  const badgeKey = (customBadge || product.tag || '').toLowerCase();
+  const badge = badgeConfig[badgeKey] || (customBadge ? { bg:'linear-gradient(135deg, #1A1A2E, #0F3460)', color:'#fff', label: customBadge, icon:'🔥' } : null);
+
   const pPrice = Number(product.price || 0);
   const pOrig = Number(product.original_price || 0);
   const disc = pOrig > pPrice && pOrig > 0
@@ -183,15 +195,9 @@ function MiniCard({ product, badge }) {
             <div style={{position:'absolute',top:'8px',left:'8px',background:badge.bg,
               color:badge.color,fontSize:'9px',fontWeight:800,padding:'3px 9px',
               borderRadius:'9999px',display:'flex',alignItems:'center',gap:'3px',
-              boxShadow:'0 2px 8px rgba(0,0,0,.08)',border:'1px solid rgba(255,255,255,.6)'}}>
+              boxShadow:'0 2px 8px rgba(0,0,0,.08)',border:'1px solid rgba(255,255,255,.6)',
+              maxWidth:'75%', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>
               {badge.icon} {badge.label}
-            </div>
-          )}
-          {disc && (
-            <div style={{position:'absolute',top:'8px',right:'8px',background:'linear-gradient(135deg, #E94560, #FF6B8B)',
-              color:'white',fontSize:'9px',fontWeight:800,padding:'3px 8px',borderRadius:'9999px',
-              boxShadow:'0 4px 12px rgba(233,69,96,.35)'}}>
-              -{disc}%
             </div>
           )}
           <button onClick={e=>{e.preventDefault();inWL?removeFromWishlist(product.id):addToWishlist(product);}}
@@ -208,7 +214,7 @@ function MiniCard({ product, badge }) {
               overflow:'hidden',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',lineHeight:1.3,minHeight:'36px'}}>
               {product.name}
             </p>
-            <div style={{display:'flex',alignItems:'baseline',gap:'5px',marginBottom:'8px',minHeight:'20px'}}>
+            <div style={{display:'flex',alignItems:'center',gap:'5px',marginBottom:'8px',minHeight:'20px',flexWrap:'wrap'}}>
               <span style={{fontSize:'15px',fontWeight:900,color:'#0F172A'}}>₹{pPrice.toFixed(0)}</span>
               {pOrig > pPrice &&
                 <span style={{fontSize:'11px',color:'#94A3B8',textDecoration:'line-through'}}>
