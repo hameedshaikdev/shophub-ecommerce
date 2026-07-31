@@ -150,28 +150,25 @@ export default function ProductDetail() {
             <div
               onTouchStart={handleTouchStart}
               onTouchEnd={(e) => handleTouchEnd(e, allImages.length)}
-              style={{ borderRadius:'22px', overflow:'hidden', background:'rgba(241,245,249,0.8)', aspectRatio:'1', position:'relative', boxShadow:'0 8px 24px rgba(0,0,0,0.06)', cursor:'pointer', userSelect:'none' }}
+              style={{ borderRadius:'20px', overflow:'hidden', background:'#F8FAFC', aspectRatio:'1', position:'relative', boxShadow:'0 8px 24px rgba(0,0,0,0.04)', border:'1px solid #E2E8F0', cursor:'pointer', userSelect:'none' }}
               onClick={() => { setLightboxOpen(true); setZoomScale(1); }}>
 
               <motion.img
                 key={selImg}
                 src={currentImg}
                 alt={product.name}
-                initial={{ opacity: 0, x: 30 }}
+                initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.28, ease: 'easeOut' }}
-                style={{ width:'100%', height:'100%', objectFit:'cover', display:'block', borderRadius:'22px' }}
+                style={{ width:'100%', height:'100%', objectFit:'cover', display:'block', borderRadius:'20px' }}
                 onError={e => { e.target.src = 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80'; }}
               />
-
-
-
 
               {/* Prev Arrow (desktop) */}
               {allImages.length > 1 && selImg > 0 && (
                 <button
                   onClick={(e) => { e.stopPropagation(); handlePrev(); }}
-                  style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)', width:'32px', height:'32px', borderRadius:'50%', background:'rgba(0,0,0,0.5)', border:'none', color:'white', fontSize:'18px', lineHeight:'1', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', zIndex:3, backdropFilter:'blur(4px)' }}>
+                  style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)', width:'34px', height:'34px', borderRadius:'50%', background:'rgba(255,255,255,0.9)', border:'1px solid rgba(255,255,255,0.9)', color:'#0F172A', fontSize:'20px', lineHeight:'1', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', zIndex:3, boxShadow:'0 4px 12px rgba(0,0,0,0.12)' }}>
                   ‹
                 </button>
               )}
@@ -180,7 +177,7 @@ export default function ProductDetail() {
               {allImages.length > 1 && selImg < allImages.length - 1 && (
                 <button
                   onClick={(e) => { e.stopPropagation(); handleNext(allImages.length); }}
-                  style={{ position:'absolute', right:'10px', top:'50%', transform:'translateY(-50%)', width:'32px', height:'32px', borderRadius:'50%', background:'rgba(0,0,0,0.5)', border:'none', color:'white', fontSize:'18px', lineHeight:'1', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', zIndex:3, backdropFilter:'blur(4px)' }}>
+                  style={{ position:'absolute', right:'10px', top:'50%', transform:'translateY(-50%)', width:'34px', height:'34px', borderRadius:'50%', background:'rgba(255,255,255,0.9)', border:'1px solid rgba(255,255,255,0.9)', color:'#0F172A', fontSize:'20px', lineHeight:'1', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', zIndex:3, boxShadow:'0 4px 12px rgba(0,0,0,0.12)' }}>
                   ›
                 </button>
               )}
@@ -190,7 +187,7 @@ export default function ProductDetail() {
                 <div style={{ position:'absolute', bottom:'44px', left:'50%', transform:'translateX(-50%)', display:'flex', gap:'5px', zIndex:3 }}>
                   {allImages.map((_, i) => (
                     <button key={i} onClick={(e) => { e.stopPropagation(); setSelImg(i); }}
-                      style={{ width: selImg===i ? '18px' : '7px', height:'7px', borderRadius:'9999px', background: selImg===i ? 'white' : 'rgba(255,255,255,0.5)', border:'none', padding:0, cursor:'pointer', transition:'all .25s ease' }} />
+                      style={{ width: selImg===i ? '18px' : '7px', height:'7px', borderRadius:'9999px', background: selImg===i ? '#0F172A' : 'rgba(15,23,42,0.25)', border:'none', padding:0, cursor:'pointer', transition:'all .25s ease' }} />
                   ))}
                 </div>
               )}
@@ -198,24 +195,24 @@ export default function ProductDetail() {
               {/* Full Photo Button */}
               <button
                 onClick={(e) => { e.stopPropagation(); setLightboxOpen(true); setZoomScale(1); }}
-                style={{ position:'absolute', bottom:'12px', left:'12px', background:'rgba(0,0,0,0.65)', backdropFilter:'blur(6px)', color:'white', border:'none', borderRadius:'9999px', padding:'5px 11px', fontSize:'10px', fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:'4px', zIndex:3 }}>
+                style={{ position:'absolute', bottom:'12px', left:'12px', background:'rgba(15,23,42,0.75)', backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)', color:'white', border:'1px solid rgba(255,255,255,0.2)', borderRadius:'9999px', padding:'5px 12px', fontSize:'10px', fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:'5px', zIndex:3 }}>
                 <Maximize2 size={12} /> Full Photo
               </button>
 
               {/* Wishlist */}
               <motion.button onClick={(e) => { e.stopPropagation(); handleWish(e); }}
-                whileHover={{ scale:1.14, y:-1 }} whileTap={{ scale:.92 }}
-                style={{ position:'absolute', top:'12px', right:'12px', width:'40px', height:'40px', borderRadius:'9999px', background:'rgba(255,255,255,.9)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', border:'1px solid rgba(255,255,255,.9)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 16px rgba(0,0,0,.1)', zIndex:3 }}>
+                whileHover={{ scale:1.1, y:-1 }} whileTap={{ scale:.92 }}
+                style={{ position:'absolute', top:'12px', right:'12px', width:'40px', height:'40px', borderRadius:'9999px', background:'rgba(255,255,255,.95)', border:'1px solid rgba(226,232,240,0.8)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 14px rgba(0,0,0,.08)', zIndex:3 }}>
                 <Heart size={18} fill={inWishlist ? '#E94560' : 'none'} color={inWishlist ? '#E94560' : '#475569'} />
               </motion.button>
             </div>
 
             {/* Thumbnail strip */}
             {allImages.length > 1 && (
-              <div className="sh-scroll-hide" style={{ display:'flex', gap:'8px', overflowX:'auto', paddingBottom:'4px' }}>
+              <div className="sh-scroll-hide" style={{ display:'flex', gap:'10px', overflowX:'auto', paddingBottom:'4px' }}>
                 {allImages.map((img, i) => (
                   <button key={i} onClick={() => setSelImg(i)}
-                    style={{ width:'64px', height:'64px', borderRadius:'14px', overflow:'hidden', border:`2px solid ${selImg===i?'#E94560':'rgba(226,232,240,0.8)'}`, padding:0, cursor:'pointer', flexShrink:0, background:'#F8FAFC', transition:'all .25s ease', boxShadow: selImg===i ? '0 4px 14px rgba(233,69,96,0.3)' : 'none' }}>
+                    style={{ width:'64px', height:'64px', borderRadius:'14px', overflow:'hidden', border:`2px solid ${selImg===i?'#E94560':'#E2E8F0'}`, padding:0, cursor:'pointer', flexShrink:0, background:'#F8FAFC', transition:'all .25s ease', boxShadow: selImg===i ? '0 4px 14px rgba(233,69,96,0.25)' : 'none' }}>
                     <img src={img} alt={`view-${i}`} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
                   </button>
                 ))}
@@ -224,11 +221,11 @@ export default function ProductDetail() {
           </div>
 
           {/* ── DETAILS SECTION (Flows directly inside the same card) ── */}
-          <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
+          <div style={{ display:'flex', flexDirection:'column', gap:'18px' }}>
 
             {/* Category Tag */}
             <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-              <span style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'1px', color:'#E94560', background:'rgba(233,69,96,0.1)', padding:'3px 10px', borderRadius:'9999px', border:'1px solid rgba(233,69,96,0.2)' }}>
+              <span style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'1px', color:'#E94560', background:'rgba(233,69,96,0.08)', padding:'4px 12px', borderRadius:'9999px', border:'1px solid rgba(233,69,96,0.18)' }}>
                 <Sparkles size={11} style={{ verticalAlign:'middle', marginRight:'4px' }} />
                 {product.category}
               </span>
@@ -240,7 +237,7 @@ export default function ProductDetail() {
             </div>
 
             {/* Name */}
-            <h1 style={{ fontSize:'clamp(20px, 3.5vw, 30px)', fontWeight:900, color:'#0F172A', letterSpacing:'-0.5px', lineHeight:1.25 }}>
+            <h1 style={{ fontSize:'clamp(20px, 3.5vw, 30px)', fontWeight:900, color:'#0F172A', letterSpacing:'-0.5px', lineHeight:1.25, margin:0 }}>
               {product.name}
             </h1>
 
@@ -255,36 +252,36 @@ export default function ProductDetail() {
             </div>
 
             {/* Price block */}
-            <div style={{ background:'rgba(241, 245, 249, 0.7)', borderRadius:'20px', padding:'16px 20px', border:'1px solid rgba(255,255,255,0.9)' }}>
+            <div style={{ background:'#F8FAFC', borderRadius:'18px', padding:'18px 22px', border:'1px solid #E2E8F0', display:'flex', flexDirection:'column', gap:'8px' }}>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
-                <span style={{ fontSize:'32px', fontWeight:900, color:'#0F172A', letterSpacing:'-1px' }}>
+                <span style={{ fontSize:'30px', fontWeight:900, color:'#0F172A', letterSpacing:'-0.8px' }}>
                   ₹{priceNum.toFixed(0)}
                 </span>
                 {origPriceNum > priceNum && (
-                  <span style={{ fontSize:'16px', color:'#94A3B8', textDecoration:'line-through', fontWeight:500 }}>
+                  <span style={{ fontSize:'15px', color:'#94A3B8', textDecoration:'line-through', fontWeight:500 }}>
                     ₹{origPriceNum.toFixed(0)}
                   </span>
                 )}
                 {(discount_tag || discount) && (
-                  <span style={{ fontSize:'12px', fontWeight:800, color:'#E94560', background:'rgba(233,69,96,0.12)', padding:'4px 12px', borderRadius:'9999px', border:'1px solid rgba(233,69,96,0.25)' }}>
+                  <span style={{ fontSize:'12px', fontWeight:800, color:'#E94560', background:'rgba(233,69,96,0.1)', padding:'4px 12px', borderRadius:'9999px', border:'1px solid rgba(233,69,96,0.2)' }}>
                     {discount_tag || `-${discount}% OFF`}
                   </span>
                 )}
                 {discount && (
-                  <span style={{ fontSize:'12px', fontWeight:800, color:'#30D158', background:'rgba(48,209,88,0.12)', padding:'3px 10px', borderRadius:'9999px' }}>
+                  <span style={{ fontSize:'12px', fontWeight:800, color:'#166534', background:'rgba(34,197,94,0.12)', padding:'4px 12px', borderRadius:'9999px', border:'1px solid rgba(34,197,94,0.2)' }}>
                     Save ₹{(origPriceNum - priceNum).toFixed(0)}
                   </span>
                 )}
               </div>
               {product.unit && (
-                <p style={{ fontSize:'12px', color:'#64748B', fontWeight:500, marginTop:'4px' }}>Unit: {product.unit}</p>
+                <p style={{ fontSize:'12px', color:'#64748B', fontWeight:500, margin:0 }}>Unit: {product.unit}</p>
               )}
 
               {/* Stock status */}
               {product.stock !== null && (
-                <div style={{ marginTop:'10px', display:'inline-flex', alignItems:'center', gap:'6px', padding:'5px 12px', borderRadius:'9999px', background: product.stock === 0 ? 'rgba(255,59,48,0.1)' : product.stock < 10 ? 'rgba(255,184,0,0.12)' : 'rgba(48,209,88,0.12)', border:'1px solid rgba(255,255,255,0.8)' }}>
-                  <div style={{ width:'7px', height:'7px', borderRadius:'50%', background: product.stock === 0 ? '#FF3B30' : product.stock < 10 ? '#FFB800' : '#30D158' }} />
-                  <span style={{ fontSize:'11px', fontWeight:800, color: product.stock === 0 ? '#FF3B30' : product.stock < 10 ? '#D97706' : '#166534' }}>
+                <div style={{ marginTop:'4px', display:'inline-flex', alignItems:'center', gap:'6px', padding:'5px 12px', borderRadius:'9999px', background: product.stock === 0 ? 'rgba(255,59,48,0.08)' : product.stock < 10 ? 'rgba(255,184,0,0.1)' : 'rgba(34,197,94,0.1)', border:'1px solid rgba(226,232,240,0.8)', width:'fit-content' }}>
+                  <div style={{ width:'7px', height:'7px', borderRadius:'50%', background: product.stock === 0 ? '#FF3B30' : product.stock < 10 ? '#FFB800' : '#22C55E' }} />
+                  <span style={{ fontSize:'11px', fontWeight:800, color: product.stock === 0 ? '#FF3B30' : product.stock < 10 ? '#D97706' : '#15803D' }}>
                     {product.stock === 0 ? 'Out of Stock' : product.stock < 10 ? `Only ${product.stock} left in stock!` : `In Stock (${product.stock} units)`}
                   </span>
                 </div>
@@ -297,7 +294,7 @@ export default function ProductDetail() {
                 <p style={{ fontSize:'11px', fontWeight:800, color:'#94A3B8', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'6px' }}>
                   Description & Specifications
                 </p>
-                <p style={{ fontSize:'13px', color:'#334155', lineHeight:1.6, fontWeight:500 }}>
+                <p style={{ fontSize:'13px', color:'#334155', lineHeight:1.6, fontWeight:500, margin:0 }}>
                   {cleanDesc}
                 </p>
               </div>
@@ -309,15 +306,15 @@ export default function ProductDetail() {
                 <p style={{ fontSize:'11px', fontWeight:800, color:'#94A3B8', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'8px' }}>
                   Select Quantity
                 </p>
-                <div style={{ display:'inline-flex', alignItems:'center', gap:'12px', background:'rgba(241,245,249,0.8)', padding:'5px 14px', borderRadius:'9999px', border:'1px solid rgba(226,232,240,0.8)' }}>
+                <div style={{ display:'inline-flex', alignItems:'center', gap:'12px', background:'#F1F5F9', padding:'5px 14px', borderRadius:'9999px', border:'1px solid #E2E8F0' }}>
                   <button onClick={() => setQuantity(q => Math.max(1, q-1))}
-                    style={{ background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center' }}>
-                    <Minus size={15} color="#0F172A" />
+                    style={{ background:'white', border:'1px solid #CBD5E1', borderRadius:'50%', width:'28px', height:'28px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 4px rgba(0,0,0,0.04)' }}>
+                    <Minus size={13} color="#0F172A" />
                   </button>
-                  <span style={{ width:'30px', textAlign:'center', fontSize:'15px', fontWeight:900, color:'#0F172A' }}>{quantity}</span>
+                  <span style={{ width:'28px', textAlign:'center', fontSize:'15px', fontWeight:900, color:'#0F172A' }}>{quantity}</span>
                   <button onClick={() => setQuantity(q => product.stock ? Math.min(product.stock, q+1) : q+1)}
-                    style={{ background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center' }}>
-                    <Plus size={15} color="#0F172A" />
+                    style={{ background:'white', border:'1px solid #CBD5E1', borderRadius:'50%', width:'28px', height:'28px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 4px rgba(0,0,0,0.04)' }}>
+                    <Plus size={13} color="#0F172A" />
                   </button>
                 </div>
               </div>
@@ -328,34 +325,34 @@ export default function ProductDetail() {
               {product.stock !== 0 ? (
                 <>
                   <motion.button onClick={handleAddToCart}
-                    whileHover={{ scale:1.02, y:-2 }} whileTap={{ scale:.98 }}
-                    style={{ width:'100%', height:'48px', borderRadius:'9999px', background: added ? 'linear-gradient(135deg, #30D158, #25B046)' : 'linear-gradient(135deg,#1A1A2E,#0F3460)', color:'white', fontSize:'14px', fontWeight:800, border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', transition:'background .3s', boxShadow:'0 6px 22px rgba(26,26,46,.25)' }}>
+                    whileHover={{ scale:1.015, y:-1 }} whileTap={{ scale:.985 }}
+                    style={{ width:'100%', height:'48px', borderRadius:'14px', background: added ? 'linear-gradient(135deg, #22C55E, #16A34A)' : 'linear-gradient(135deg,#1A1A2E,#0F3460)', color:'white', fontSize:'14px', fontWeight:800, border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', transition:'background .3s', boxShadow:'0 6px 20px rgba(26,26,46,.2)' }}>
                     <ShoppingCart size={17} />
                     {added ? '✓ Added to Cart!' : 'Add to Cart'}
                   </motion.button>
                   <motion.button onClick={handleBuyNow}
-                    whileHover={{ scale:1.02, y:-2 }} whileTap={{ scale:.98 }}
-                    style={{ width:'100%', height:'48px', borderRadius:'9999px', background:'linear-gradient(135deg, #E94560, #FF6B8B)', color:'white', fontSize:'14px', fontWeight:800, border:'none', cursor:'pointer', boxShadow:'0 6px 22px rgba(233,69,96,.3)' }}>
+                    whileHover={{ scale:1.015, y:-1 }} whileTap={{ scale:.985 }}
+                    style={{ width:'100%', height:'48px', borderRadius:'14px', background:'linear-gradient(135deg, #E94560, #FF6B8B)', color:'white', fontSize:'14px', fontWeight:800, border:'none', cursor:'pointer', boxShadow:'0 6px 20px rgba(233,69,96,.25)' }}>
                     Buy Now Immediately
                   </motion.button>
                 </>
               ) : (
-                <div style={{ padding:'14px', borderRadius:'9999px', background:'#F1F5F9', textAlign:'center', fontSize:'14px', fontWeight:800, color:'#94A3B8' }}>
+                <div style={{ padding:'14px', borderRadius:'14px', background:'#F1F5F9', textAlign:'center', fontSize:'14px', fontWeight:800, color:'#94A3B8' }}>
                   Currently Out of Stock
                 </div>
               )}
             </div>
 
             {/* Trust Badges Strip */}
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(130px,1fr))', gap:'10px', paddingTop:'16px', borderTop:'1px solid rgba(226,232,240,0.8)' }}>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(110px,1fr))', gap:'8px', paddingTop:'16px', borderTop:'1px solid #E2E8F0' }}>
               {[
                 { icon:Truck, text:'Free Shipping', color:'#3B82F6' },
-                { icon:ShieldCheck, text:'Secure Checkout', color:'#30D158' },
+                { icon:ShieldCheck, text:'Secure Checkout', color:'#22C55E' },
                 { icon:RefreshCw, text:'Easy Replacement', color:'#E94560' },
               ].map(({ icon:Icon, text, color }) => (
-                <div key={text} style={{ display:'flex', alignItems:'center', gap:'6px' }}>
-                  <Icon size={15} color={color} />
-                  <span style={{ fontSize:'11px', fontWeight:700, color:'#475569' }}>{text}</span>
+                <div key={text} style={{ display:'flex', alignItems:'center', gap:'8px', background:'#F8FAFC', padding:'10px 12px', borderRadius:'12px', border:'1px solid #E2E8F0' }}>
+                  <Icon size={16} color={color} />
+                  <span style={{ fontSize:'11px', fontWeight:700, color:'#334155' }}>{text}</span>
                 </div>
               ))}
             </div>
@@ -364,8 +361,8 @@ export default function ProductDetail() {
             <div>
               <a href={`https://wa.me/917013942909?text=${encodeURIComponent(`Hi! I'm interested in: ${product.name} (₹${product.price}) — ${window.location.href}`)}`}
                 target="_blank" rel="noopener noreferrer"
-                style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', padding:'10px', borderRadius:'9999px', background:'rgba(48,209,88,0.1)', border:'1px solid rgba(48,209,88,0.3)', textDecoration:'none', fontSize:'12px', fontWeight:800, color:'#16A34A', boxShadow:'0 4px 12px rgba(48,209,88,0.1)' }}>
-                <MessageCircle size={15} /> Direct WhatsApp Inquiry
+                style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', padding:'12px', borderRadius:'14px', background:'rgba(34,197,94,0.08)', border:'1px solid rgba(34,197,94,0.25)', textDecoration:'none', fontSize:'13px', fontWeight:800, color:'#15803D', boxShadow:'0 2px 8px rgba(34,197,94,0.06)' }}>
+                <MessageCircle size={16} /> Direct WhatsApp Inquiry
               </a>
             </div>
 
