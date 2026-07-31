@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, ShoppingCart, User, LogOut, Shield, Menu, X, ChevronRight } from 'lucide-react';
+import { Search, ShoppingCart, User, LogOut, Shield, Menu, X, ChevronRight, Heart } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { supabase } from '../../config/supabase';
 
@@ -59,8 +59,6 @@ export default function Header() {
   const isHome    = location.pathname === '/';
   const isAdmin   = location.pathname.startsWith('/admin');
 
-  // Don't render header on admin pages - admin has its own header
-  if (isAdmin) return null;
   const { activeCategory, setActiveCategory, getCartCount, user, setUser } = useApp();
   const [q,        setQ]        = useState('');
   const [dropdown, setDropdown] = useState(false);
@@ -82,6 +80,9 @@ export default function Header() {
   // Close drawer on route change
   useEffect(() => { setDrawer(false); }, [location.pathname]);
 
+  // Don't render header on admin pages - admin has its own header (MUST be after all hooks!)
+  if (isAdmin) return null;
+
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null); navigate('/'); setDropdown(false); setDrawer(false);
@@ -101,15 +102,15 @@ export default function Header() {
             {/* ── Logo ── */}
             <Link to="/" style={{ display:'flex', alignItems:'center', gap:'10px',
               flexShrink:0, flex:1, textDecoration:'none' }}>
-              <div style={{ width:'40px', height:'40px', borderRadius:'50%',
-                border:'1.5px solid #1A1A2E', overflow:'hidden', flexShrink:0,
-                display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <div style={{ width:'42px', height:'42px', borderRadius:'14px',
+                border:'1.5px solid rgba(255,255,255,0.8)', overflow:'hidden', flexShrink:0,
+                display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 12px rgba(0,0,0,0.06)', background:'white' }}>
                 <img src="/logo.png" alt="AS HUB"
-                  style={{ width:'140%', height:'140%', objectFit:'cover',
+                  style={{ width:'120%', height:'120%', objectFit:'cover',
                     objectPosition:'center' }}
                   onError={e => { e.target.style.display='none'; }} />
               </div>
-              <span style={{ fontSize:'18px', fontWeight:900, color:'#0A0A0A',
+              <span style={{ fontSize:'18px', fontWeight:900, color:'#0F172A',
                 letterSpacing:'-0.5px' }}>AS HUB</span>
             </Link>
 
@@ -122,8 +123,7 @@ export default function Header() {
               ))}
             </div>
 
-            {/* ── Search: inline on mobile (flex:1), desktop version separate ── */}
-            {/* Desktop search */}
+            {/* ── Search ── */}
             <form onSubmit={search} className="sh-desktop-only" style={{ flex:1, maxWidth:'360px', margin:'0 12px' }}>
               <div className="sh-search-wrap">
                 <Search size={17} color="var(--text-3)" />
@@ -145,57 +145,61 @@ export default function Header() {
             {/* ── Actions ── */}
             <div style={{ display:'flex', alignItems:'center', gap:'8px', flexShrink:0 }}>
 
-              {user ? (
-                <>
-                  {/* Cart — desktop only (mobile has bottom nav) */}
-                  <Link to="/cart" className="sh-icon-btn sh-desktop-only" title="Cart" style={{ position:'relative' }}>
-                    <ShoppingCart size={18} color="var(--text-2)" />
-                    {getCartCount() > 0 && (
-                      <span className="sh-badge">{getCartCount() > 9 ? '9+' : getCartCount()}</span>
-                    )}
-                  </Link>
+              {/* Wishlist button — desktop (always visible for all users) */}
+              <Link to="/wishlist" className="sh-icon-btn sh-desktop-only" title="Wishlist" style={{ borderRadius:'14px' }}>
+                <Heart size={18} color="var(--text-2)" />
+              </Link>
 
-                  {/* Profile dropdown — desktop */}
-                  <div className="sh-desktop-only" style={{ position:'relative' }} ref={dropRef}>
-                    <button className="sh-icon-btn" onClick={() => setDropdown(!dropdown)}>
-                      <User size={18} color="var(--text-2)" />
-                    </button>
-                    {dropdown && (
-                      <div className="sh-surface" style={{
-                        position:'absolute', right:0, top:'calc(100% + 10px)',
-                        width:'210px', overflow:'hidden', zIndex:300,
-                        animation:'sh-scaleIn .2s var(--spring)'
-                      }}>
-                        <div style={{ padding:'14px 16px', borderBottom:'1px solid var(--border)', background:'#fafafa' }}>
-                          <p style={{ fontSize:'13px', fontWeight:800, color:'var(--text)' }}>
-                            {user.user_metadata?.full_name || 'My Account'}
-                          </p>
-                          <p style={{ fontSize:'11px', color:'var(--text-3)', marginTop:'2px' }}>{user.email}</p>
-                        </div>
-                        {[['My Profile','/profile'],['My Orders','/orders'],['Wishlist','/wishlist']].map(([l, p]) => (
-                          <Link key={p} to={p} onClick={() => setDropdown(false)}
-                            style={{ display:'block', padding:'11px 16px', fontSize:'14px', fontWeight:600, color:'var(--text)', borderBottom:'1px solid var(--border)' }}
-                            onMouseEnter={e => e.currentTarget.style.background='#fafafa'}
-                            onMouseLeave={e => e.currentTarget.style.background='white'}>
-                            {l}
-                          </Link>
-                        ))}
-                        {user.email === 'as.businezzz@gmail.com' && (
-                          <Link to="/admin" onClick={() => setDropdown(false)}
-                            style={{ display:'flex', alignItems:'center', gap:'8px', padding:'11px 16px', fontSize:'14px', fontWeight:700, color:'var(--primary)', borderBottom:'1px solid var(--border)' }}
-                            onMouseEnter={e => e.currentTarget.style.background='#fafafa'}
-                            onMouseLeave={e => e.currentTarget.style.background='white'}>
-                            <Shield size={14} /> Admin Panel
-                          </Link>
-                        )}
-                        <button onClick={logout}
-                          style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px', padding:'11px 16px', fontSize:'14px', fontWeight:700, color:'#ef4444', background:'none' }}>
-                          <LogOut size={14} /> Sign Out
-                        </button>
+              {/* Cart button — desktop (always visible for all users) */}
+              <Link to="/cart" className="sh-icon-btn sh-desktop-only" title="Cart" style={{ position:'relative', borderRadius:'14px' }}>
+                <ShoppingCart size={18} color="var(--text-2)" />
+                {getCartCount() > 0 && (
+                  <span className="sh-badge">{getCartCount() > 9 ? '9+' : getCartCount()}</span>
+                )}
+              </Link>
+
+              {/* Profile / Account — desktop (square shape) */}
+              {user ? (
+                <div className="sh-desktop-only" style={{ position:'relative' }} ref={dropRef}>
+                  <button className="sh-icon-btn" onClick={() => setDropdown(!dropdown)} style={{ borderRadius:'14px' }} title="Account Profile">
+                    <User size={18} color="var(--text-2)" />
+                  </button>
+                  {dropdown && (
+                    <div className="sh-surface" style={{
+                      position:'absolute', right:0, top:'calc(100% + 10px)',
+                      width:'220px', overflow:'hidden', zIndex:300,
+                      borderRadius:'20px',
+                      animation:'sh-scaleIn .2s var(--spring)'
+                    }}>
+                      <div style={{ padding:'14px 16px', borderBottom:'1px solid var(--border)', background:'#fafafa' }}>
+                        <p style={{ fontSize:'13px', fontWeight:800, color:'var(--text)' }}>
+                          {user.user_metadata?.full_name || 'My Account'}
+                        </p>
+                        <p style={{ fontSize:'11px', color:'var(--text-3)', marginTop:'2px' }}>{user.email}</p>
                       </div>
-                    )}
-                  </div>
-                </>
+                      {[['My Profile','/profile'],['My Orders','/orders'],['Wishlist','/wishlist']].map(([l, p]) => (
+                        <Link key={p} to={p} onClick={() => setDropdown(false)}
+                          style={{ display:'block', padding:'11px 16px', fontSize:'14px', fontWeight:600, color:'var(--text)', borderBottom:'1px solid var(--border)' }}
+                          onMouseEnter={e => e.currentTarget.style.background='#fafafa'}
+                          onMouseLeave={e => e.currentTarget.style.background='white'}>
+                          {l}
+                        </Link>
+                      ))}
+                      {user.email === 'as.businezzz@gmail.com' && (
+                        <Link to="/admin" onClick={() => setDropdown(false)}
+                          style={{ display:'flex', alignItems:'center', gap:'8px', padding:'11px 16px', fontSize:'14px', fontWeight:700, color:'var(--primary)', borderBottom:'1px solid var(--border)' }}
+                          onMouseEnter={e => e.currentTarget.style.background='#fafafa'}
+                          onMouseLeave={e => e.currentTarget.style.background='white'}>
+                          <Shield size={14} /> Admin Panel
+                        </Link>
+                      )}
+                      <button onClick={logout}
+                        style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px', padding:'11px 16px', fontSize:'14px', fontWeight:700, color:'#ef4444', background:'none' }}>
+                        <LogOut size={14} /> Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <Link to="/login" className="sh-btn sh-btn-sm sh-desktop-only">Login</Link>
               )}

@@ -5,12 +5,14 @@ import {
   Scissors, Package, Sparkles, ArrowRight, ChevronDown,
   Star, Truck, Users, Shield, Heart, ShoppingCart,
   Zap, TrendingUp, ChevronLeft, ChevronRight, Clock,
-  Eye, BadgeCheck,
+  Eye, BadgeCheck, SlidersHorizontal, ArrowUpDown
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
 import ProductCard from '../components/products/ProductCard';
 import CategoryFilter from '../components/products/CategoryFilter';
+import QuickViewModal from '../components/products/QuickViewModal';
+import { getProductImage } from '../utils/productImages';
 
 /* ─── Content ─────────────────────────────────────────────── */
 const CONTENT = {
@@ -139,62 +141,82 @@ function DealTimer() {
 /* ─── Product Mini Card (for carousels) ───────────────────── */
 function MiniCard({ product, badge }) {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
+  if (!product || !product.id) return null;
+
   const inWL = isInWishlist(product.id);
-  const disc = product.original_price > product.price
-    ? Math.round((1-product.price/product.original_price)*100) : null;
+  const pPrice = Number(product.price || 0);
+  const pOrig = Number(product.original_price || 0);
+  const disc = pOrig > pPrice && pOrig > 0
+    ? Math.round((1 - pPrice / pOrig) * 100) : null;
+  const imgUrl = getProductImage(product);
+
   return (
     <Link to={`/product/${product.id}`}
-      style={{textDecoration:'none',display:'block',minWidth:'200px',maxWidth:'200px',flexShrink:0}}>
-      <motion.div whileHover={{y:-4,boxShadow:'0 12px 32px rgba(0,0,0,.10)'}}
-        style={{background:'white',borderRadius:'16px',overflow:'hidden',
-          border:'1px solid #F0F0F0',boxShadow:'0 2px 8px rgba(0,0,0,.06)'}}>
-        <div style={{position:'relative',height:'160px',background:'#F8F9FA',overflow:'hidden'}}>
-          {product.image_url
-            ? <img src={product.image_url} alt={product.name}
-                style={{width:'100%',height:'100%',objectFit:'cover'}}
-                onError={e=>{e.target.style.display='none';}}/>
-            : <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',
-                justifyContent:'center',background:'linear-gradient(135deg,#F4F6F8,#EBEDF0)'}}>
-                <Package size={28} strokeWidth={1} color="#C8CDD5"/>
-              </div>}
+      style={{textDecoration:'none',display:'block',minWidth:'210px',maxWidth:'210px',flexShrink:0}}>
+      <motion.div
+        whileHover={{
+          y: -10,
+          scale: 1.02,
+          boxShadow: '0 20px 48px -8px rgba(0, 0, 0, 0.16), 0 0 20px rgba(233, 69, 96, 0.15)',
+          borderColor: 'rgba(255, 255, 255, 0.95)'
+        }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          background: 'rgba(255, 255, 255, 0.82)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          border: '1px solid rgba(255, 255, 255, 0.9)',
+          boxShadow: '0 6px 24px rgba(0, 0, 0, 0.05)',
+          position: 'relative'
+        }}>
+        <div style={{position:'relative',height:'150px',background:'rgba(245, 247, 250, 0.8)',overflow:'hidden',margin:'6px 6px 0 6px',borderRadius:'18px'}}>
+          <img src={imgUrl} alt={product.name || 'Product'}
+            style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:'18px'}}
+            onError={e=>{e.target.src='https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80';}}/>
           {badge && (
             <div style={{position:'absolute',top:'8px',left:'8px',background:badge.bg,
-              color:badge.color,fontSize:'9px',fontWeight:800,padding:'3px 8px',
-              borderRadius:'6px',display:'flex',alignItems:'center',gap:'3px'}}>
+              color:badge.color,fontSize:'9px',fontWeight:800,padding:'3px 9px',
+              borderRadius:'9999px',display:'flex',alignItems:'center',gap:'3px',
+              boxShadow:'0 2px 8px rgba(0,0,0,.08)',border:'1px solid rgba(255,255,255,.6)'}}>
               {badge.icon} {badge.label}
             </div>
           )}
           {disc && (
-            <div style={{position:'absolute',top:'8px',right:'8px',background:'#EF4444',
-              color:'white',fontSize:'9px',fontWeight:800,padding:'3px 7px',borderRadius:'5px'}}>
+            <div style={{position:'absolute',top:'8px',right:'8px',background:'linear-gradient(135deg, #E94560, #FF6B8B)',
+              color:'white',fontSize:'9px',fontWeight:800,padding:'3px 8px',borderRadius:'9999px',
+              boxShadow:'0 4px 12px rgba(233,69,96,.35)'}}>
               -{disc}%
             </div>
           )}
           <button onClick={e=>{e.preventDefault();inWL?removeFromWishlist(product.id):addToWishlist(product);}}
-            style={{position:'absolute',bottom:'8px',right:'8px',width:'30px',height:'30px',
-              borderRadius:'50%',background:'rgba(255,255,255,.9)',border:'none',cursor:'pointer',
-              display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <Heart size={13} fill={inWL?'#EF4444':'none'} color={inWL?'#EF4444':'#555'}/>
+            style={{position:'absolute',bottom:'8px',right:'8px',width:'32px',height:'32px',
+              borderRadius:'9999px',background:'rgba(255,255,255,.9)',backdropFilter:'blur(8px)',
+              border:'1px solid rgba(255,255,255,.9)',cursor:'pointer',
+              display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 2px 10px rgba(0,0,0,.08)'}}>
+            <Heart size={13} fill={inWL?'#E94560':'none'} color={inWL?'#E94560':'#555'}/>
           </button>
         </div>
-        <div style={{padding:'10px 12px 12px'}}>
-          <p style={{fontSize:'12px',fontWeight:700,color:'#0A0A0A',marginBottom:'3px',
-            overflow:'hidden',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical'}}>
+        <div style={{padding:'12px 14px 14px'}}>
+          <p style={{fontSize:'13px',fontWeight:700,color:'#0F172A',marginBottom:'4px',
+            overflow:'hidden',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',lineHeight:1.3}}>
             {product.name}
           </p>
-          <div style={{display:'flex',alignItems:'baseline',gap:'5px',marginBottom:'6px'}}>
-            <span style={{fontSize:'14px',fontWeight:900,color:'#0A0A0A'}}>₹{product.price}</span>
-            {product.original_price>product.price &&
-              <span style={{fontSize:'11px',color:'#C0C0C0',textDecoration:'line-through'}}>
-                ₹{product.original_price}
+          <div style={{display:'flex',alignItems:'baseline',gap:'5px',marginBottom:'8px'}}>
+            <span style={{fontSize:'15px',fontWeight:900,color:'#0F172A'}}>₹{pPrice.toFixed(0)}</span>
+            {pOrig > pPrice &&
+              <span style={{fontSize:'11px',color:'#94A3B8',textDecoration:'line-through'}}>
+                ₹{pOrig.toFixed(0)}
               </span>}
           </div>
           <button onClick={e=>{e.preventDefault();addToCart(product,1);}}
-            style={{width:'100%',padding:'7px',borderRadius:'8px',
+            style={{width:'100%',padding:'8px',borderRadius:'9999px',
               background:'linear-gradient(135deg,#1A1A2E,#0F3460)',color:'white',
-              fontWeight:700,fontSize:'11px',border:'none',cursor:'pointer',
-              display:'flex',alignItems:'center',justifyContent:'center',gap:'4px'}}>
-            <ShoppingCart size={11}/> Add to Cart
+              fontWeight:800,fontSize:'11px',border:'none',cursor:'pointer',
+              display:'flex',alignItems:'center',justifyContent:'center',gap:'5px',
+              boxShadow:'0 4px 14px rgba(26,26,46,.25)'}}>
+            <ShoppingCart size={12}/> Add to Cart
           </button>
         </div>
       </motion.div>
@@ -212,21 +234,23 @@ function Carousel({ children }) {
     <div style={{position:'relative'}}>
       <button onClick={()=>scroll(-1)}
         style={{position:'absolute',left:'-16px',top:'50%',transform:'translateY(-50%)',
-          width:'36px',height:'36px',borderRadius:'50%',background:'white',
-          border:'1px solid #E2E8F0',boxShadow:'0 2px 12px rgba(0,0,0,.1)',
+          width:'40px',height:'40px',borderRadius:'9999px',background:'rgba(255,255,255,.9)',
+          backdropFilter:'blur(12px)',border:'1px solid rgba(255,255,255,.9)',
+          boxShadow:'0 4px 16px rgba(0,0,0,.1)',
           cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2}}>
-        <ChevronLeft size={18} color="#555"/>
+        <ChevronLeft size={18} color="#475569"/>
       </button>
-      <div ref={ref} style={{display:'flex',gap:'14px',overflowX:'auto',paddingBottom:'8px',
-        scrollbarWidth:'none',msOverflowStyle:'none',padding:'4px 8px 12px'}}>
+      <div ref={ref} style={{display:'flex',gap:'16px',overflowX:'auto',paddingBottom:'8px',
+        scrollbarWidth:'none',msOverflowStyle:'none',padding:'6px 8px 16px'}}>
         {children}
       </div>
       <button onClick={()=>scroll(1)}
         style={{position:'absolute',right:'-16px',top:'50%',transform:'translateY(-50%)',
-          width:'36px',height:'36px',borderRadius:'50%',background:'white',
-          border:'1px solid #E2E8F0',boxShadow:'0 2px 12px rgba(0,0,0,.1)',
+          width:'40px',height:'40px',borderRadius:'9999px',background:'rgba(255,255,255,.9)',
+          backdropFilter:'blur(12px)',border:'1px solid rgba(255,255,255,.9)',
+          boxShadow:'0 4px 16px rgba(0,0,0,.1)',
           cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2}}>
-        <ChevronRight size={18} color="#555"/>
+        <ChevronRight size={18} color="#475569"/>
       </button>
     </div>
   );
@@ -237,14 +261,20 @@ function CollectionCard({ cls='', label, title, count, img, onClick, dark=false 
   return (
     <Reveal style={{ display:'contents' }}>
       <motion.div className={`col-card ${cls}`}
-        whileHover={{ y:-3, boxShadow:'0 20px 60px rgba(0,0,0,.18)' }}
+        whileHover={{
+          y: -12,
+          scale: 1.01,
+          boxShadow: '0 28px 60px -10px rgba(0,0,0,.25), 0 0 24px rgba(233, 69, 96, 0.2)',
+          borderColor: 'rgba(255, 255, 255, 0.4)'
+        }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         onClick={onClick}
-        style={{ position:'relative', overflow:'hidden', borderRadius:'20px',
+        style={{ position:'relative', overflow:'hidden', borderRadius:'28px',
           cursor:'pointer', background:'#1A1A2E',
-          boxShadow:'0 4px 16px rgba(0,0,0,.10)', border:'1px solid rgba(0,0,0,.05)' }}>
+          boxShadow:'0 8px 32px rgba(0,0,0,.12)', border:'1px solid rgba(255,255,255,.15)' }}>
 
-        <motion.div whileHover={{ scale:1.07 }}
-          transition={{ duration:.6, ease:[.22,1,.36,1] }}
+        <motion.div whileHover={{ scale:1.06 }}
+          transition={{ duration:.5, ease:[0.16, 1, 0.3, 1] }}
           style={{ position:'absolute', inset:0 }}>
           <img src={img} alt={title} loading="lazy"
             style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
@@ -253,30 +283,30 @@ function CollectionCard({ cls='', label, title, count, img, onClick, dark=false 
 
         <div style={{ position:'absolute', inset:0,
           background: dark
-            ? 'linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.8) 100%)'
-            : 'linear-gradient(180deg,rgba(0,0,0,.0) 25%,rgba(0,0,0,.75) 100%)' }}/>
+            ? 'linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.85) 100%)'
+            : 'linear-gradient(180deg,rgba(0,0,0,.0) 25%,rgba(0,0,0,.8) 100%)' }}/>
 
-        <div style={{ position:'absolute', inset:0, padding:'16px 18px',
+        <div style={{ position:'absolute', inset:0, padding:'20px 22px',
           display:'flex', flexDirection:'column', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
             {label && (
-              <span style={{ fontSize:'9px', fontWeight:800, letterSpacing:'1.2px',
-                textTransform:'uppercase', color:'rgba(255,255,255,.8)',
-                background:'rgba(255,255,255,.15)', backdropFilter:'blur(8px)',
-                padding:'3px 10px', borderRadius:'99px',
-                border:'1px solid rgba(255,255,255,.2)' }}>{label}</span>
+              <span style={{ fontSize:'10px', fontWeight:800, letterSpacing:'1.2px',
+                textTransform:'uppercase', color:'rgba(255,255,255,.9)',
+                background:'rgba(255,255,255,.2)', backdropFilter:'blur(12px)',
+                padding:'4px 12px', borderRadius:'9999px',
+                border:'1px solid rgba(255,255,255,.3)', boxShadow:'0 4px 12px rgba(0,0,0,.1)' }}>{label}</span>
             )}
-            {count && <span style={{ fontSize:'10px', fontWeight:600, color:'rgba(255,255,255,.55)' }}>{count}</span>}
+            {count && <span style={{ fontSize:'11px', fontWeight:600, color:'rgba(255,255,255,.7)' }}>{count}</span>}
           </div>
           <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', gap:'8px' }}>
-            <h3 style={{ fontSize:'clamp(14px,1.6vw,19px)', fontWeight:900, color:'white',
-              letterSpacing:'-.3px', lineHeight:1.1 }}>{title}</h3>
-            <motion.div whileHover={{ x:3 }}
-              style={{ width:'30px', height:'30px', borderRadius:'50%', flexShrink:0,
-                background:'rgba(255,255,255,.18)', backdropFilter:'blur(8px)',
+            <h3 style={{ fontSize:'clamp(15px,1.8vw,20px)', fontWeight:900, color:'white',
+              letterSpacing:'-.4px', lineHeight:1.1 }}>{title}</h3>
+            <motion.div whileHover={{ x:4, scale:1.1 }}
+              style={{ width:'34px', height:'34px', borderRadius:'9999px', flexShrink:0,
+                background:'rgba(255,255,255,.22)', backdropFilter:'blur(12px)',
                 display:'flex', alignItems:'center', justifyContent:'center',
-                border:'1px solid rgba(255,255,255,.25)' }}>
-              <ArrowRight size={13} color="white"/>
+                border:'1px solid rgba(255,255,255,.35)', boxShadow:'0 4px 14px rgba(0,0,0,.15)' }}>
+              <ArrowRight size={14} color="white"/>
             </motion.div>
           </div>
         </div>
@@ -290,6 +320,8 @@ export default function Home() {
   const { activeCategory, addToCart } = useApp();
   const [searchParams]          = useSearchParams();
   const searchQuery              = searchParams.get('q') || '';
+  const [sortBy,           setSortBy]           = useState('featured');
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [sub,      setSub]      = useState('all');
@@ -322,16 +354,16 @@ export default function Home() {
   // Fetch featured sections
   useEffect(() => {
     (async () => {
-      const base = supabase.from('products').select('*')
-        .eq('category', activeCategory).eq('active', true);
-      const [n, b, f] = await Promise.all([
-        base.order('created_at',{ascending:false}).limit(8),
-        base.order('price',{ascending:false}).limit(8),
-        base.gt('original_price', 'price').order('created_at',{ascending:false}).limit(6),
-      ]);
-      setNewArrivals(n.data || []);
-      setBestSellers(b.data || []);
-      setFlashDeals((f.data||[]).filter(p=>p.original_price>p.price));
+      try {
+        const [n, b, f] = await Promise.all([
+          supabase.from('products').select('*').eq('category', activeCategory).eq('active', true).order('created_at',{ascending:false}).limit(8),
+          supabase.from('products').select('*').eq('category', activeCategory).eq('active', true).order('price',{ascending:false}).limit(8),
+          supabase.from('products').select('*').eq('category', activeCategory).eq('active', true).not('original_price', 'is', null).order('created_at',{ascending:false}).limit(12),
+        ]);
+        setNewArrivals(n.data || []);
+        setBestSellers(b.data || []);
+        setFlashDeals((f.data || []).filter(p => Number(p.original_price) > Number(p.price)));
+      } catch(err) { console.error('Featured fetch error:', err); }
     })();
   }, [activeCategory]);
 
@@ -637,7 +669,7 @@ export default function Home() {
       <div ref={productsRef} className="sh-container" style={{padding:'56px 0 0'}}>
         <Reveal>
           <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',
-            marginBottom:'28px',flexWrap:'wrap',gap:'12px'}}>
+            marginBottom:'20px',flexWrap:'wrap',gap:'12px'}}>
             <div>
               <p style={{fontSize:'11px',fontWeight:700,textTransform:'uppercase',
                 letterSpacing:'1.5px',color:'#8E8E93',marginBottom:'6px'}}>
@@ -657,6 +689,39 @@ export default function Home() {
               </p>
             )}
           </div>
+
+          {/* Interactive Glass Sort Controls */}
+          {!loading && products.length > 0 && (
+            <div style={{
+              display:'flex', alignItems:'center', justifyContent:'space-between',
+              background:'rgba(255,255,255,0.76)', backdropFilter:'blur(20px)',
+              WebkitBackdropFilter:'blur(20px)',
+              border:'1px solid rgba(255,255,255,0.9)', borderRadius:'9999px',
+              padding:'6px 14px', marginBottom:'24px', flexWrap:'wrap', gap:'8px',
+              boxShadow:'0 4px 16px rgba(15,23,42,0.04)'
+            }}>
+              <div className="sh-scroll-hide" style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', fontWeight:700, color:'#475569', overflowX:'auto' }}>
+                <ArrowUpDown size={14} color="#E94560" style={{ flexShrink: 0 }} />
+                <span style={{ flexShrink: 0 }}>Sort:</span>
+                {[
+                  ['featured', 'Featured'],
+                  ['price-low', 'Price: Low to High'],
+                  ['price-high', 'Price: High to Low'],
+                  ['rating', 'Top Rated']
+                ].map(([val, label]) => (
+                  <button key={val} onClick={() => setSortBy(val)}
+                    style={{
+                      padding:'5px 13px', borderRadius:'9999px', fontSize:'12px', fontWeight:800,
+                      background: sortBy === val ? 'linear-gradient(135deg, #1A1A2E, #0F3460)' : 'transparent',
+                      color: sortBy === val ? 'white' : '#64748B',
+                      border: 'none', cursor:'pointer', transition:'all .25s ease', flexShrink: 0
+                    }}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </Reveal>
 
         {loading && (
@@ -677,9 +742,14 @@ export default function Home() {
         {!loading && products.length > 0 && (
           <StaggerReveal>
             <div className="sh-grid-products">
-              {products.map(p => (
-                <motion.div key={p.id} variants={sc}>
-                  <ProductCard product={p}/>
+              {[...products].sort((a, b) => {
+                if (sortBy === 'price-low') return a.price - b.price;
+                if (sortBy === 'price-high') return b.price - a.price;
+                if (sortBy === 'rating') return (b.rating || 4.8) - (a.rating || 4.8);
+                return 0;
+              }).map(p => (
+                <motion.div key={p.id} variants={sc} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                  <ProductCard product={p} onQuickView={setQuickViewProduct} />
                 </motion.div>
               ))}
             </div>
@@ -794,6 +864,9 @@ export default function Home() {
           .cg-wide     { grid-column: 1 / -1; grid-row: span 1; }
         }
       `}</style>
+
+      {/* Quick View Glass Modal */}
+      <QuickViewModal product={quickViewProduct} onClose={() => setQuickViewProduct(null)} />
     </div>
   );
 }

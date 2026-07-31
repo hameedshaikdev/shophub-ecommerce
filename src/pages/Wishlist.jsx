@@ -1,73 +1,49 @@
 import { useNavigate } from 'react-router-dom';
-import { Heart } from 'lucide-react';
+import { Heart, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/products/ProductCard';
 
 export default function Wishlist() {
   const navigate = useNavigate();
-  const { wishlist, user } = useApp();
+  const { wishlist } = useApp();
 
-  if (!user) {
-    return (
-      <div style={{ minHeight:'60vh', display:'flex', flexDirection:'column',
-        alignItems:'center', justifyContent:'center', padding:'40px 24px', textAlign:'center' }}>
-        <div style={{ width:'80px', height:'80px', borderRadius:'50%', background:'#FEF2F2',
-          display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
-          <Heart size={36} color="#FECACA" />
-        </div>
-        <h2 style={{ fontSize:'20px', fontWeight:900, color:'var(--text)', marginBottom:'8px' }}>
-          Login to view your wishlist
-        </h2>
-        <p style={{ color:'var(--text-3)', fontSize:'14px', marginBottom:'24px' }}>
-          Save your favourite products for later
-        </p>
-        <button onClick={() => navigate('/login')}
-          style={{ padding:'12px 28px', borderRadius:'14px', background:'var(--primary-grad)',
-            color:'white', fontWeight:800, fontSize:'14px', border:'none', cursor:'pointer',
-            boxShadow:'0 6px 20px rgba(252,128,25,.3)' }}>
-          Login
-        </button>
-      </div>
-    );
-  }
+  const validWishlist = (wishlist || []).filter(p => p && p.id);
 
-  if (wishlist.length === 0) {
+  if (validWishlist.length === 0) {
     return (
-      <div style={{ minHeight:'60vh', display:'flex', flexDirection:'column',
-        alignItems:'center', justifyContent:'center', padding:'40px 24px', textAlign:'center' }}>
-        <div style={{ width:'80px', height:'80px', borderRadius:'50%', background:'#FEF2F2',
-          display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
-          <Heart size={36} color="#FECACA" />
+      <div style={{ minHeight:'75vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'40px 24px', textAlign:'center', background:'radial-gradient(circle at 50% 0%, #F1F5F9 0%, #F8FAFC 60%, #EEF2F6 100%)' }}>
+        <div style={{ width:'88px', height:'88px', borderRadius:'22px', background:'rgba(255,255,255,0.85)', backdropFilter:'blur(20px)', boxShadow:'0 20px 48px -8px rgba(15,23,42,0.12)', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:'24px', border:'1px solid rgba(255,255,255,0.9)' }}>
+          <Heart size={40} color="#E94560" />
         </div>
-        <h2 style={{ fontSize:'20px', fontWeight:900, color:'var(--text)', marginBottom:'8px' }}>
-          Your wishlist is empty
+        <h2 style={{ fontSize:'26px', fontWeight:900, color:'#0F172A', marginBottom:'8px', letterSpacing:'-0.5px' }}>
+          Your Wishlist is Empty
         </h2>
-        <p style={{ color:'var(--text-3)', fontSize:'14px', marginBottom:'24px' }}>
-          Tap the ♡ on any product to save it here
+        <p style={{ color:'#64748B', fontSize:'15px', fontWeight:500, marginBottom:'28px' }}>
+          Tap the ♡ on any item card to save it to your wishlist
         </p>
-        <button onClick={() => navigate('/')}
-          style={{ padding:'12px 28px', borderRadius:'14px', background:'var(--primary-grad)',
-            color:'white', fontWeight:800, fontSize:'14px', border:'none', cursor:'pointer',
-            boxShadow:'0 6px 20px rgba(252,128,25,.3)' }}>
-          Start Shopping
+        <button className="sh-btn" onClick={() => navigate('/')}>
+          Explore Collection <ArrowRight size={16} />
         </button>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight:'100vh', background:'var(--bg)', paddingBottom:'80px' }}>
-      <div className="container-center" style={{ padding:'24px 16px' }}>
-        <div style={{ marginBottom:'20px' }}>
-          <h1 style={{ fontSize:'24px', fontWeight:900, color:'var(--text)' }}>
-            My Wishlist
+    <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 0%, #F1F5F9 0%, #F8FAFC 60%, #EEF2F6 100%)', paddingBottom:'80px' }}>
+      <div className="sh-container" style={{ padding:'40px 0 0' }}>
+        <div style={{ marginBottom:'32px' }}>
+          <span style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'1.5px', color:'#E94560', background:'rgba(233,69,96,0.1)', padding:'4px 12px', borderRadius:'9999px' }}>
+            Saved Favorites
+          </span>
+          <h1 style={{ fontSize:'32px', fontWeight:900, color:'#0F172A', letterSpacing:'-0.8px', marginTop:'8px' }}>
+            My Wishlist Collection
           </h1>
-          <p style={{ color:'var(--text-3)', fontSize:'13px', marginTop:'4px' }}>
-            {wishlist.length} saved item{wishlist.length !== 1 ? 's' : ''}
+          <p style={{ color:'#64748B', fontSize:'14px', fontWeight:600, marginTop:'4px' }}>
+            {validWishlist.length} saved item{validWishlist.length !== 1 ? 's' : ''}
           </p>
         </div>
         <div className="sh-grid-products">
-          {wishlist.map(product => (
+          {validWishlist.map(product => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

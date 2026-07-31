@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Tag, ShoppingCart } from 'lucide-react';
+import { Trash2, Plus, Minus, ArrowRight, Tag, ShoppingCart, ShieldCheck } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { getProductImage } from '../utils/productImages';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -11,127 +12,147 @@ export default function Cart() {
     else navigate('/checkout');
   };
 
-  const savings = cart.reduce((acc, item) => {
-    if (item.original_price && item.original_price > item.price)
-      return acc + (item.original_price - item.price) * item.quantity;
+  const safeCart = (cart || []).filter(Boolean);
+
+  const savings = safeCart.reduce((acc, item) => {
+    const p = Number(item?.price || 0);
+    const op = Number(item?.original_price || 0);
+    const q = Number(item?.quantity || 1);
+    if (op > p) return acc + (op - p) * q;
     return acc;
   }, 0);
 
-  if (cart.length === 0) {
+  const cartTotal = Number(getCartTotal() || 0);
+
+  if (safeCart.length === 0) {
     return (
-      <div style={{ minHeight:'70vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'48px 20px', background:'var(--bg)' }}>
-        <div style={{ width:'96px', height:'96px', borderRadius:'28px', background:'white', boxShadow:'var(--shadow)', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:'24px' }}>
-          <ShoppingCart size={40} color="var(--text-3)" />
+      <div style={{ minHeight:'75vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'48px 20px', background:'radial-gradient(circle at 50% 0%, #F1F5F9 0%, #F8FAFC 60%, #EEF2F6 100%)' }}>
+        <div style={{ width:'100px', height:'100px', borderRadius:'32px', background:'rgba(255,255,255,0.85)', backdropFilter:'blur(20px)', boxShadow:'0 20px 48px -8px rgba(15,23,42,0.12)', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:'24px', border:'1px solid rgba(255,255,255,0.9)' }}>
+          <ShoppingCart size={44} color="#E94560" />
         </div>
-        <h2 style={{ fontSize:'24px', fontWeight:800, color:'var(--text)', marginBottom:'8px' }}>Your cart is empty</h2>
-        <p style={{ color:'var(--text-2)', marginBottom:'32px', fontSize:'15px' }}>Looks like you haven't added anything yet.</p>
+        <h2 style={{ fontSize:'26px', fontWeight:900, color:'#0F172A', marginBottom:'8px', letterSpacing:'-0.5px' }}>Your cart is empty</h2>
+        <p style={{ color:'#64748B', marginBottom:'32px', fontSize:'15px', fontWeight:500 }}>Looks like you haven't added any items yet.</p>
         <button className="sh-btn" onClick={() => navigate('/')}>
-          Start Shopping <ArrowRight size={16} />
+          Explore Collection <ArrowRight size={16} />
         </button>
       </div>
     );
   }
 
   return (
-    <div style={{ background:'var(--bg)', minHeight:'100vh', padding:'40px 0 64px' }}>
+    <div style={{ background:'radial-gradient(circle at 50% 0%, #F1F5F9 0%, #F8FAFC 60%, #EEF2F6 100%)', minHeight:'100vh', padding:'40px 0 64px' }}>
       <div className="sh-container">
 
         {/* Header */}
         <div style={{ marginBottom:'32px' }}>
-          <h1 style={{ fontSize:'28px', fontWeight:900, color:'var(--text)', letterSpacing:'-.5px' }}>
-            My Cart
+          <span style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'1.5px', color:'#E94560', background:'rgba(233,69,96,0.1)', padding:'4px 12px', borderRadius:'9999px' }}>
+            Shopping Bag
+          </span>
+          <h1 style={{ fontSize:'32px', fontWeight:900, color:'#0F172A', letterSpacing:'-.8px', marginTop:'8px' }}>
+            Review Your Order
           </h1>
-          <p style={{ color:'var(--text-2)', marginTop:'4px', fontSize:'14px' }}>{cart.length} item{cart.length !== 1 ? 's' : ''}</p>
+          <p style={{ color:'#64748B', marginTop:'4px', fontSize:'14px', fontWeight:600 }}>{safeCart.length} item{safeCart.length !== 1 ? 's' : ''} in your cart</p>
         </div>
 
         <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:'24px' }}>
-          <div style={{ display:'grid', gap:'24px', gridTemplateColumns: 'minmax(0,1fr)' }} id="cart-layout">
+          <div style={{ display:'grid', gap:'28px', gridTemplateColumns: 'minmax(0,1fr)' }} id="cart-layout">
 
-            {/* Cart Items */}
-            <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
-              {cart.map(item => (
-                <div key={item.id} style={{ background:'white', borderRadius:'20px', padding:'16px', display:'flex', gap:'16px', boxShadow:'var(--shadow-sm)', border:'1px solid var(--border)', alignItems:'center' }}>
-                  {/* Image */}
-                  <div style={{ width:'80px', height:'80px', borderRadius:'14px', overflow:'hidden', background:'#f8f9fa', flexShrink:0 }}>
-                    <img src={item.image_url || 'https://placehold.co/80x80?text=?'} alt={item.name}
-                      style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                  </div>
+            {/* Cart Items List */}
+            <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
+              {safeCart.map(item => {
+                const itemPrice = Number(item?.price || 0);
+                const itemOrigPrice = Number(item?.original_price || 0);
+                const itemQty = Number(item?.quantity || 1);
 
-                  {/* Info */}
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <p style={{ fontWeight:700, fontSize:'14px', color:'var(--text)', marginBottom:'4px', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{item.name}</p>
-                    {item.unit && <p style={{ fontSize:'12px', color:'var(--text-3)', marginBottom:'8px' }}>{item.unit}</p>}
-                    <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-                      <span style={{ fontWeight:800, fontSize:'16px', color:'var(--text)' }}>₹{item.price.toFixed(0)}</span>
-                      {item.original_price > item.price && (
-                        <span style={{ fontSize:'12px', color:'var(--text-3)', textDecoration:'line-through' }}>₹{item.original_price.toFixed(0)}</span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Controls */}
-                  <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'12px', flexShrink:0 }}>
-                    <button onClick={() => removeFromCart(item.id)}
-                      style={{ padding:'6px', borderRadius:'8px', background:'rgba(239,68,68,.08)', color:'var(--danger)', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                      <Trash2 size={15} />
-                    </button>
-
-                    <div style={{ display:'flex', alignItems:'center', border:'1.5px solid #e5e7eb', borderRadius:'12px', overflow:'hidden' }}>
-                      <button onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
-                        style={{ padding:'6px 10px', background:'none', border:'none', cursor:'pointer', color:'var(--text-2)', display:'flex', alignItems:'center' }}>
-                        <Minus size={13} />
-                      </button>
-                      <span style={{ padding:'0 8px', fontWeight:800, fontSize:'14px', color:'var(--text)', minWidth:'28px', textAlign:'center' }}>{item.quantity}</span>
-                      <button onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
-                        style={{ padding:'6px 10px', background:'none', border:'none', cursor:'pointer', color:'var(--text-2)', display:'flex', alignItems:'center' }}>
-                        <Plus size={13} />
-                      </button>
+                return (
+                  <div key={item.id || Math.random()} style={{ background:'rgba(255, 255, 255, 0.82)', backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)', borderRadius:'28px', padding:'20px', display:'flex', gap:'18px', boxShadow:'0 10px 32px rgba(15,23,42,0.06)', border:'1px solid rgba(255, 255, 255, 0.9)', alignItems:'center', position:'relative' }}>
+                    {/* Image */}
+                    <div style={{ width:'88px', height:'88px', borderRadius:'20px', overflow:'hidden', background:'rgba(241,245,249,0.8)', flexShrink:0, boxShadow:'0 4px 14px rgba(0,0,0,0.06)' }}>
+                      <img src={getProductImage(item)} alt={item.name || 'Item'}
+                        style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'20px' }} />
                     </div>
 
-                    <span style={{ fontSize:'13px', fontWeight:700, color:'var(--text-2)' }}>
-                      ₹{(item.price * item.quantity).toFixed(0)}
-                    </span>
+                    {/* Info */}
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <p style={{ fontWeight:800, fontSize:'15px', color:'#0F172A', marginBottom:'4px', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', letterSpacing:'-0.2px' }}>{item.name}</p>
+                      {item.unit && <p style={{ fontSize:'12px', color:'#64748B', marginBottom:'8px', fontWeight:500 }}>{item.unit}</p>}
+                      <div style={{ display:'flex', alignItems:'baseline', gap:'8px' }}>
+                        <span style={{ fontWeight:900, fontSize:'18px', color:'#0F172A' }}>₹{itemPrice.toFixed(0)}</span>
+                        {itemOrigPrice > itemPrice && (
+                          <span style={{ fontSize:'13px', color:'#94A3B8', textDecoration:'line-through', fontWeight:500 }}>₹{itemOrigPrice.toFixed(0)}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Controls */}
+                    <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'12px', flexShrink:0 }}>
+                      <button onClick={() => removeFromCart(item.id)}
+                        title="Remove item"
+                        style={{ padding:'8px', borderRadius:'9999px', background:'rgba(239,68,68,0.1)', color:'#EF4444', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .2s' }}>
+                        <Trash2 size={16} />
+                      </button>
+
+                      <div style={{ display:'flex', alignItems:'center', background:'rgba(241,245,249,0.8)', borderRadius:'9999px', border:'1px solid rgba(226,232,240,0.8)', padding:'4px 8px' }}>
+                        <button onClick={() => updateCartQuantity(item.id, itemQty - 1)}
+                          style={{ padding:'4px 8px', background:'none', border:'none', cursor:'pointer', color:'#0F172A', display:'flex', alignItems:'center' }}>
+                          <Minus size={14} />
+                        </button>
+                        <span style={{ padding:'0 6px', fontWeight:900, fontSize:'14px', color:'#0F172A', minWidth:'24px', textAlign:'center' }}>{itemQty}</span>
+                        <button onClick={() => updateCartQuantity(item.id, itemQty + 1)}
+                          style={{ padding:'4px 8px', background:'none', border:'none', cursor:'pointer', color:'#0F172A', display:'flex', alignItems:'center' }}>
+                          <Plus size={14} />
+                        </button>
+                      </div>
+
+                      <span style={{ fontSize:'14px', fontWeight:900, color:'#0F172A' }}>
+                        ₹{(itemPrice * itemQty).toFixed(0)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* Order Summary */}
-            <div style={{ background:'white', borderRadius:'24px', padding:'28px', boxShadow:'var(--shadow)', border:'1px solid var(--border)', height:'fit-content' }}>
-              <h2 style={{ fontWeight:800, fontSize:'18px', color:'var(--text)', marginBottom:'20px' }}>Order Summary</h2>
+            {/* Order Summary Glass Card */}
+            <div style={{ background:'rgba(255, 255, 255, 0.85)', backdropFilter:'blur(28px)', WebkitBackdropFilter:'blur(28px)', borderRadius:'32px', padding:'32px', boxShadow:'0 20px 48px -8px rgba(15,23,42,0.12), 0 0 24px rgba(233,69,96,0.15)', border:'1px solid rgba(255, 255, 255, 0.95)', height:'fit-content' }}>
+              <h2 style={{ fontWeight:900, fontSize:'20px', color:'#0F172A', marginBottom:'20px', letterSpacing:'-0.4px' }}>Order Summary</h2>
 
               {savings > 0 && (
-                <div style={{ display:'flex', alignItems:'center', gap:'8px', background:'rgba(31,166,114,.08)', border:'1px solid rgba(31,166,114,.2)', borderRadius:'12px', padding:'10px 14px', marginBottom:'16px' }}>
-                  <Tag size={15} color="var(--success)" />
-                  <span style={{ fontSize:'13px', fontWeight:700, color:'var(--success)' }}>You save ₹{savings.toFixed(0)} on this order!</span>
+                <div style={{ display:'flex', alignItems:'center', gap:'8px', background:'rgba(48,209,88,0.12)', border:'1px solid rgba(48,209,88,0.3)', borderRadius:'9999px', padding:'10px 16px', marginBottom:'20px' }}>
+                  <Tag size={16} color="#16A34A" />
+                  <span style={{ fontSize:'13px', fontWeight:800, color:'#166534' }}>You save ₹{savings.toFixed(0)} on this order!</span>
                 </div>
               )}
 
-              <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'20px' }}>
+              <div style={{ display:'flex', flexDirection:'column', gap:'14px', marginBottom:'24px' }}>
                 {[
-                  ['Subtotal', `₹${getCartTotal().toFixed(0)}`],
-                  ['Delivery', 'FREE', 'var(--success)'],
-                  ...(savings > 0 ? [['Discount', `-₹${savings.toFixed(0)}`, 'var(--success)']] : []),
+                  ['Subtotal', `₹${cartTotal.toFixed(0)}`],
+                  ['Express Delivery', 'FREE', '#30D158'],
+                  ...(savings > 0 ? [['Discount Savings', `-₹${savings.toFixed(0)}`, '#30D158']] : []),
                 ].map(([label, value, color]) => (
                   <div key={label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <span style={{ fontSize:'14px', color:'var(--text-2)', fontWeight:500 }}>{label}</span>
-                    <span style={{ fontSize:'14px', fontWeight:700, color: color || 'var(--text)' }}>{value}</span>
+                    <span style={{ fontSize:'14px', color:'#64748B', fontWeight:600 }}>{label}</span>
+                    <span style={{ fontSize:'14px', fontWeight:800, color: color || '#0F172A' }}>{value}</span>
                   </div>
                 ))}
-                <div style={{ borderTop:'1.5px solid var(--border)', paddingTop:'12px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                  <span style={{ fontWeight:800, fontSize:'16px', color:'var(--text)' }}>Total</span>
-                  <span style={{ fontWeight:900, fontSize:'22px', color:'var(--text)' }}>₹{getCartTotal().toFixed(0)}</span>
+                <div style={{ borderTop:'1px solid rgba(226,232,240,0.8)', paddingTop:'14px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                  <span style={{ fontWeight:800, fontSize:'16px', color:'#0F172A' }}>Total Payable</span>
+                  <span style={{ fontWeight:900, fontSize:'24px', color:'#0F172A', letterSpacing:'-0.5px' }}>₹{cartTotal.toFixed(0)}</span>
                 </div>
               </div>
 
-              <button className="sh-btn" style={{ width:'100%', justifyContent:'center' }} onClick={handleCheckout}>
-                Proceed to Checkout <ArrowRight size={16} />
+              <button className="sh-btn" style={{ width:'100%', justifyContent:'center', height:'52px' }} onClick={handleCheckout}>
+                Proceed to Checkout <ArrowRight size={18} />
               </button>
 
               <button onClick={() => navigate('/')}
-                style={{ width:'100%', marginTop:'10px', padding:'12px', borderRadius:'14px', border:'1.5px solid var(--border)', background:'transparent', fontWeight:600, fontSize:'14px', color:'var(--text-2)', cursor:'pointer' }}>
+                style={{ width:'100%', marginTop:'12px', padding:'13px', borderRadius:'9999px', border:'1px solid rgba(226,232,240,0.8)', background:'rgba(255,255,255,0.8)', fontWeight:800, fontSize:'14px', color:'#475569', cursor:'pointer' }}>
                 Continue Shopping
               </button>
+
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'6px', marginTop:'20px', fontSize:'12px', color:'#64748B', fontWeight:600 }}>
+                <ShieldCheck size={16} color="#30D158" /> Guaranteed 100% Encrypted Payment
+              </div>
             </div>
           </div>
         </div>

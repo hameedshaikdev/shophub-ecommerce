@@ -25,6 +25,7 @@ export default function BottomNav() {
       height:'64px',
       background:'rgba(255,255,255,.97)',
       backdropFilter:'blur(24px)',
+      WebkitBackdropFilter:'blur(24px)',
       borderTop:'1px solid rgba(0,0,0,.07)',
       boxShadow:'0 -4px 24px rgba(0,0,0,.08)',
       display:'flex',
@@ -39,7 +40,7 @@ export default function BottomNav() {
         return (
           <Link key={to} to={to} style={{
             display:'flex', flexDirection:'column', alignItems:'center',
-            gap:'3px', padding:'6px 20px', borderRadius:'16px',
+            gap:'3px', padding:'6px 16px', borderRadius:'16px',
             textDecoration:'none', position:'relative',
             transition:'all .2s',
             color: active ? 'var(--primary)' : '#94A3B8',
@@ -47,15 +48,6 @@ export default function BottomNav() {
             fontSize:'10px',
             flex:1, maxWidth:'80px',
           }}>
-            {/* Active indicator dot above icon */}
-            {active && (
-              <span style={{
-                position:'absolute', top:'-1px',
-                width:'4px', height:'4px', borderRadius:'50%',
-                background:'var(--primary)',
-              }} />
-            )}
-
             <div style={{ position:'relative' }}>
               <Icon
                 size={22}
@@ -66,11 +58,12 @@ export default function BottomNav() {
               {badge > 0 && (
                 <span style={{
                   position:'absolute', top:'-6px', right:'-8px',
-                  background:'#FC8019', color:'white',
+                  background:'#E94560', color:'white',
                   fontSize:'9px', fontWeight:800,
                   minWidth:'17px', height:'17px', borderRadius:'99px',
                   display:'flex', alignItems:'center', justifyContent:'center',
                   padding:'0 3px', border:'2px solid white',
+                  boxShadow:'0 2px 6px rgba(233,69,96,0.3)'
                 }}>
                   {badge > 9 ? '9+' : badge}
                 </span>
@@ -78,6 +71,15 @@ export default function BottomNav() {
             </div>
 
             <span style={{ letterSpacing:'.2px' }}>{label}</span>
+
+            {/* Active indicator dot at the BOTTOM of wishlist, cart, home, profile */}
+            {active && (
+              <span style={{
+                position:'absolute', bottom:'2px',
+                width:'4px', height:'4px', borderRadius:'50%',
+                background:'var(--primary)',
+              }} />
+            )}
           </Link>
         );
       })}

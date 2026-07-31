@@ -4,7 +4,7 @@ import { AlertTriangle, RefreshCw } from 'lucide-react';
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError(error) {
@@ -13,24 +13,42 @@ class ErrorBoundary extends Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
+    this.setState({ errorInfo });
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center px-4 bg-gray-50">
-          <div className="text-center max-w-md">
-            <AlertTriangle size={64} className="mx-auto text-red-500 mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
-            <p className="text-gray-600 mb-6">
-              We encountered an unexpected error. Please try refreshing the page.
+        <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px', background:'#F8FAFC' }}>
+          <div style={{ background:'white', borderRadius:'24px', padding:'32px', maxWidth:'640px', width:'100%', boxShadow:'0 20px 48px rgba(15,23,42,0.12)', border:'1px solid #E2E8F0', textAlign:'center' }}>
+            <AlertTriangle size={56} color="#EF4444" style={{ margin:'0 auto 16px' }} />
+            <h1 style={{ fontSize:'24px', fontWeight:900, color:'#0F172A', marginBottom:'8px' }}>Something went wrong</h1>
+            <p style={{ color:'#64748B', fontSize:'14px', marginBottom:'20px' }}>
+              An unexpected application error occurred.
             </p>
+
+            {this.state.error && (
+              <div style={{ textAlign:'left', background:'#FEF2F2', border:'1px solid #FECACA', borderRadius:'12px', padding:'14px', marginBottom:'20px', overflowX:'auto' }}>
+                <p style={{ fontSize:'13px', fontWeight:800, color:'#991B1B', marginBottom:'4px' }}>
+                  Error: {this.state.error.toString()}
+                </p>
+                {this.state.errorInfo?.componentStack && (
+                  <pre style={{ fontSize:'11px', color:'#7F1D1D', whiteSpace:'pre-wrap', margin:0, fontFamily:'monospace' }}>
+                    {this.state.errorInfo.componentStack}
+                  </pre>
+                )}
+              </div>
+            )}
+
             <button
-              onClick={() => window.location.reload()}
-              className="btn-primary flex items-center gap-2 mx-auto"
+              onClick={() => {
+                this.setState({ hasError: false, error: null });
+                window.location.reload();
+              }}
+              style={{ display:'inline-flex', alignItems:'center', gap:'8px', padding:'12px 28px', borderRadius:'9999px', background:'linear-gradient(135deg,#1A1A2E,#0F3460)', color:'white', fontWeight:800, border:'none', cursor:'pointer', boxShadow:'0 6px 20px rgba(26,26,46,0.3)' }}
             >
-              <RefreshCw size={20} />
-              Refresh Page
+              <RefreshCw size={18} />
+              Reload Page
             </button>
           </div>
         </div>

@@ -18,6 +18,18 @@ export function AppProvider({ children }) {
   const [user,           setUser]           = useState(null);
   const [loading,        setLoading]        = useState(true);
 
+  // Toast notification state
+  const [toast, setToast] = useState({ visible: false, title: '', product: null, type: 'cart' });
+
+  const showToast = (title, product, type = 'cart') => {
+    setToast({ visible: true, title, product, type });
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, visible: false }));
+    }, 3200);
+  };
+
+  const closeToast = () => setToast(prev => ({ ...prev, visible: false }));
+
   // Load cart + wishlist from localStorage
   useEffect(() => {
     try {
@@ -33,15 +45,8 @@ export function AppProvider({ children }) {
 
   // Auth — handles page refresh, Google OAuth redirect, normal login
   useEffect(() => {
-    // onAuthStateChange fires first with the exchanged session when PKCE
-    // is used — including the INITIAL_SESSION event on every page load.
-    // We rely solely on this listener to set user + clear loading.
-    // getSession() is only used as a quick synchronous check to avoid
-    // a blank flash on normal refreshes (non-OAuth pages).
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        // INITIAL_SESSION fires on every mount (normal refresh or post-OAuth)
         if (event === 'INITIAL_SESSION') {
           setUser(session?.user ?? null);
           setLoading(false);
@@ -59,7 +64,6 @@ export function AppProvider({ children }) {
       }
     );
 
-    // Safety net: if INITIAL_SESSION hasn't fired after 3 s, stop blocking
     const fallback = setTimeout(() => setLoading(false), 3000);
 
     return () => {
@@ -75,6 +79,7 @@ export function AppProvider({ children }) {
       if (found) return prev.map(i => i.id === product.id ? { ...i, quantity: i.quantity + quantity } : i);
       return [...prev, { ...product, quantity }];
     });
+    showToast('Added to Cart', product, 'cart');
   };
   const removeFromCart     = (id) => setCart(prev => prev.filter(i => i.id !== id));
   const clearCart          = ()   => setCart([]);
@@ -86,15 +91,21 @@ export function AppProvider({ children }) {
   const getCartCount = () => cart.reduce((t, i) => t + i.quantity, 0);
 
   // Wishlist
-  const addToWishlist      = (p)  => setWishlist(prev => prev.find(i => i.id === p.id) ? prev : [...prev, p]);
-  const removeFromWishlist = (id) => setWishlist(prev => prev.filter(i => i.id !== id));
-  const isInWishlist       = (id) => wishlist.some(i => i.id === id);
+  const addToWishlist = (p) => {
+    setWishlist(prev => prev.find(i => i.id === p.id) ? prev : [...prev, p]);
+    showToast('Saved to Wishlist', p, 'wishlist');
+  };
+  const removeFromWishlist = (id) => {
+    setWishlist(prev => prev.filter(i => i.id !== id));
+  };
+  const isInWishlist = (id) => wishlist.some(i => i.id === id);
 
   const value = {
     activeCategory, setActiveCategory,
     cart, addToCart, removeFromCart, updateCartQuantity, clearCart, getCartTotal, getCartCount,
     wishlist, addToWishlist, removeFromWishlist, isInWishlist,
     user, setUser, loading,
+    toast, showToast, closeToast
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
