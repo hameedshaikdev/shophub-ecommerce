@@ -2,7 +2,7 @@
    SHOPHUB — ANTI-GRAVITY PREMIUM DESIGN SYSTEM
    ============================================ */
 
-/* ── Google Font (must be first) ── */
+/* ── Google Font ── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 /* ── Reset ── */
@@ -100,6 +100,7 @@ body {
 .sh-subtabs-inner,
 .sh-subtabs,
 .sh-switcher-wrap,
+.related-products-row,
 *[class*="scroll"],
 div[style*="overflow"] {
   scrollbar-width: none !important;
@@ -109,6 +110,7 @@ div[style*="overflow"] {
 .sh-subtabs-inner::-webkit-scrollbar,
 .sh-subtabs::-webkit-scrollbar,
 .sh-switcher-wrap::-webkit-scrollbar,
+.related-products-row::-webkit-scrollbar,
 *[class*="scroll"]::-webkit-scrollbar,
 div[style*="overflow"]::-webkit-scrollbar {
   display: none !important;
@@ -317,26 +319,95 @@ div[style*="overflow"]::-webkit-scrollbar {
 }
 .sh-subtab-icon { font-size: 15px; }
 
-/* ── Anti-Gravity About & Admin Glass Overrides ── */
-.about-hero {
-  border-radius: var(--r-2xl) !important;
-  background: linear-gradient(135deg, #1A1A2E 0%, #0F3460 100%) !important;
-  box-shadow: 0 20px 48px -8px rgba(15,23,42,0.2) !important;
-  border: 1px solid rgba(255,255,255,0.2) !important;
+/* ── Product Detail Single Unified Card ── */
+.product-main-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 16px 48px -8px rgba(15, 23, 42, 0.08);
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  align-items: start;
 }
 
-.about-card {
-  background: rgba(255, 255, 255, 0.82) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-  border-radius: var(--r-2xl) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-  box-shadow: 0 10px 32px rgba(15,23,42,0.06) !important;
-  transition: all .35s var(--ease-ag) !important;
+/* ── Related Products Horizontal Scroll Strip ── */
+.related-products-row {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 8px 4px 16px;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
-.about-card:hover {
-  transform: translateY(-8px) !important;
-  box-shadow: 0 24px 50px -10px rgba(15,23,42,0.12), 0 0 20px rgba(233,69,96,0.15) !important;
+.related-products-row::-webkit-scrollbar {
+  display: none !important;
+}
+
+.related-product-card {
+  min-width: 170px;
+  max-width: 180px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.related-product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 32px -4px rgba(15, 23, 42, 0.12);
+}
+
+.related-card-img-wrap {
+  aspect-ratio: 1;
+  background: rgba(241, 245, 249, 0.8);
+  overflow: hidden;
+  margin: 6px;
+  border-radius: 16px;
+}
+.related-card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.related-card-body {
+  padding: 10px 12px 14px;
+}
+.related-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+}
+.related-card-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.related-card-price {
+  font-size: 15px;
+  font-weight: 900;
+  color: #0F172A;
+}
+.related-card-old-price {
+  font-size: 11px;
+  color: #94A3B8;
+  text-decoration: line-through;
 }
 
 /* ── Product Card Generic ── */
@@ -371,55 +442,6 @@ div[style*="overflow"]::-webkit-scrollbar {
   transition: transform .5s var(--ease-ag);
 }
 .sh-card:hover .sh-card-img img { transform: scale(1.06); }
-.sh-card-body {
-  padding: 14px 18px 18px;
-  flex: 1; display: flex; flex-direction: column;
-}
-.sh-card-name {
-  font-size: 14px; font-weight: 700; color: var(--text);
-  line-height: 1.35; margin-bottom: 4px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.sh-card-unit { font-size: 11px; color: var(--text-3); margin-bottom: 8px; }
-.sh-card-price { display: flex; align-items: center; gap: 6px; margin-top: auto; }
-.sh-price { font-size: 17px; font-weight: 900; color: var(--text); letter-spacing: -.4px; }
-.sh-price-old { font-size: 12px; color: var(--text-3); text-decoration: line-through; }
-
-/* ── Section ── */
-.sh-section { padding: 52px 0; }
-.sh-section-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 28px;
-}
-.sh-section-title {
-  font-size: 24px; font-weight: 900; color: var(--text); letter-spacing: -.5px;
-}
-
-/* ── Input ── */
-.sh-input {
-  width: 100%; padding: 14px 18px;
-  border: 1px solid rgba(226, 232, 240, 0.8); border-radius: var(--r-pill);
-  font-size: 14px; font-weight: 500; color: var(--text);
-  background: rgba(255, 255, 255, 0.8); transition: all .25s var(--ease-ag);
-}
-.sh-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(233, 69, 96, 0.12);
-  background: white;
-}
-.sh-input::placeholder { color: var(--text-3); }
-
-/* ── Surface Container ── */
-.sh-surface {
-  background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
-  border-radius: var(--r-2xl);
-  box-shadow: var(--shadow-lg); border: 1px solid rgba(255, 255, 255, 0.9);
-}
-
-/* ── Page wrapper ── */
-.sh-page { padding-bottom: 88px; }
-@media(min-width:768px) { .sh-page { padding-bottom: 0; } }
 
 /* ── Mobile Layout Fixes ── */
 @media(max-width:767px) {
@@ -457,5 +479,11 @@ div[style*="overflow"]::-webkit-scrollbar {
   }
   .hero-illustration {
     min-height: 200px !important;
+  }
+  .product-main-card {
+    grid-template-columns: 1fr !important;
+    padding: 16px !important;
+    gap: 20px !important;
+    border-radius: 24px !important;
   }
 }
