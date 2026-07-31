@@ -12,7 +12,7 @@ import { supabase } from '../config/supabase';
 import ProductCard from '../components/products/ProductCard';
 import CategoryFilter from '../components/products/CategoryFilter';
 import QuickViewModal from '../components/products/QuickViewModal';
-import { getProductImage } from '../utils/productImages';
+import { getProductImage, parseProductTags } from '../utils/productImages';
 
 /* ─── Content ─────────────────────────────────────────────── */
 const CONTENT = {

@@ -24,6 +24,7 @@ export default function ProductDetail() {
   const [selImg,       setSelImg]       = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [zoomScale,    setZoomScale]    = useState(1);
+  const [touchStartX,  setTouchStartX]  = useState(null);
 
   const inWishlist = product ? isInWishlist(product.id) : false;
   const { cleanDesc, badge, discount_tag } = parseProductTags(product);
@@ -52,6 +53,18 @@ export default function ProductDetail() {
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
+
+  const handleTouchStart = (e) => setTouchStartX(e.touches[0].clientX);
+  const handleTouchEnd = (e, total) => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) < 40) return;
+    if (dx < 0) setSelImg(i => Math.min(i + 1, total - 1)); // swipe left → next
+    else        setSelImg(i => Math.max(i - 1, 0));           // swipe right → prev
+    setTouchStartX(null);
+  };
+  const handlePrev = () => setSelImg(i => Math.max(i - 1, 0));
+  const handleNext = (total) => setSelImg(i => Math.min(i + 1, total - 1));
 
   const handleBuyNow = () => {
     if (!product) return;
@@ -133,36 +146,73 @@ export default function ProductDetail() {
 
           {/* ── IMAGE SECTION ── */}
           <div style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
-            <motion.div
-              onClick={() => { setLightboxOpen(true); setZoomScale(1); }}
-              style={{ borderRadius:'22px', overflow:'hidden', background:'rgba(241, 245, 249, 0.8)', aspectRatio:'1', position:'relative', boxShadow:'0 8px 24px rgba(0,0,0,0.06)', cursor:'pointer' }}
-              whileHover={{ scale:1.01 }}>
-              <img src={currentImg} alt={product.name}
+            {/* Main Image — swipeable */}
+            <div
+              onTouchStart={handleTouchStart}
+              onTouchEnd={(e) => handleTouchEnd(e, allImages.length)}
+              style={{ borderRadius:'22px', overflow:'hidden', background:'rgba(241,245,249,0.8)', aspectRatio:'1', position:'relative', boxShadow:'0 8px 24px rgba(0,0,0,0.06)', cursor:'pointer', userSelect:'none' }}
+              onClick={() => { setLightboxOpen(true); setZoomScale(1); }}>
+
+              <motion.img
+                key={selImg}
+                src={currentImg}
+                alt={product.name}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.28, ease: 'easeOut' }}
                 style={{ width:'100%', height:'100%', objectFit:'cover', display:'block', borderRadius:'22px' }}
                 onError={e => { e.target.src = 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80'; }}
               />
 
-              {/* Main Badge Tag */}
+              {/* Badge */}
               {badge && (
                 <div style={{ position:'absolute', top:'12px', left:'12px', background:'linear-gradient(135deg, #1A1A2E, #0F3460)', color:'white', fontSize:'11px', fontWeight:900, padding:'4px 12px', borderRadius:'9999px', boxShadow:'0 4px 14px rgba(0,0,0,.3)', border:'1px solid rgba(255,255,255,.4)', zIndex:2 }}>
                   {badge}
                 </div>
               )}
 
-              {/* Tap to Fullscreen Photo Hint */}
+              {/* Prev Arrow (desktop) */}
+              {allImages.length > 1 && selImg > 0 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+                  style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)', width:'32px', height:'32px', borderRadius:'50%', background:'rgba(0,0,0,0.5)', border:'none', color:'white', fontSize:'18px', lineHeight:'1', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', zIndex:3, backdropFilter:'blur(4px)' }}>
+                  ‹
+                </button>
+              )}
+
+              {/* Next Arrow (desktop) */}
+              {allImages.length > 1 && selImg < allImages.length - 1 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleNext(allImages.length); }}
+                  style={{ position:'absolute', right:'10px', top:'50%', transform:'translateY(-50%)', width:'32px', height:'32px', borderRadius:'50%', background:'rgba(0,0,0,0.5)', border:'none', color:'white', fontSize:'18px', lineHeight:'1', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', zIndex:3, backdropFilter:'blur(4px)' }}>
+                  ›
+                </button>
+              )}
+
+              {/* Dot indicators */}
+              {allImages.length > 1 && (
+                <div style={{ position:'absolute', bottom:'44px', left:'50%', transform:'translateX(-50%)', display:'flex', gap:'5px', zIndex:3 }}>
+                  {allImages.map((_, i) => (
+                    <button key={i} onClick={(e) => { e.stopPropagation(); setSelImg(i); }}
+                      style={{ width: selImg===i ? '18px' : '7px', height:'7px', borderRadius:'9999px', background: selImg===i ? 'white' : 'rgba(255,255,255,0.5)', border:'none', padding:0, cursor:'pointer', transition:'all .25s ease' }} />
+                  ))}
+                </div>
+              )}
+
+              {/* Full Photo Button */}
               <button
                 onClick={(e) => { e.stopPropagation(); setLightboxOpen(true); setZoomScale(1); }}
-                style={{ position:'absolute', bottom:'12px', left:'12px', background:'rgba(0,0,0,0.65)', backdropFilter:'blur(6px)', color:'white', border:'none', borderRadius:'9999px', padding:'5px 11px', fontSize:'10px', fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:'4px' }}>
+                style={{ position:'absolute', bottom:'12px', left:'12px', background:'rgba(0,0,0,0.65)', backdropFilter:'blur(6px)', color:'white', border:'none', borderRadius:'9999px', padding:'5px 11px', fontSize:'10px', fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', gap:'4px', zIndex:3 }}>
                 <Maximize2 size={12} /> Full Photo
               </button>
 
-              {/* Wishlist button */}
+              {/* Wishlist */}
               <motion.button onClick={(e) => { e.stopPropagation(); handleWish(e); }}
                 whileHover={{ scale:1.14, y:-1 }} whileTap={{ scale:.92 }}
-                style={{ position:'absolute', top:'12px', right:'12px', width:'40px', height:'40px', borderRadius:'9999px', background:'rgba(255,255,255,.9)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', border:'1px solid rgba(255,255,255,.9)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 16px rgba(0,0,0,.1)', zIndex:2 }}>
+                style={{ position:'absolute', top:'12px', right:'12px', width:'40px', height:'40px', borderRadius:'9999px', background:'rgba(255,255,255,.9)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', border:'1px solid rgba(255,255,255,.9)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 16px rgba(0,0,0,.1)', zIndex:3 }}>
                 <Heart size={18} fill={inWishlist ? '#E94560' : 'none'} color={inWishlist ? '#E94560' : '#475569'} />
               </motion.button>
-            </motion.div>
+            </div>
 
             {/* Thumbnail strip */}
             {allImages.length > 1 && (
