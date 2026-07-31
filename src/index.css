@@ -477,6 +477,20 @@ div[style*="overflow"]::-webkit-scrollbar {
     grid-template-columns: 1fr !important;
     gap: 24px !important;
   }
+  .hero-content-box {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+  }
+  .hero-content-box p {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .hero-content-box div {
+    justify-content: center !important;
+  }
   .hero-illustration {
     min-height: 200px !important;
   }
@@ -485,5 +499,9 @@ div[style*="overflow"]::-webkit-scrollbar {
     padding: 16px !important;
     gap: 20px !important;
     border-radius: 24px !important;
+  }
+  .product-admin-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
   }
 }

@@ -152,7 +152,7 @@ function MiniCard({ product, badge }) {
 
   return (
     <Link to={`/product/${product.id}`}
-      style={{textDecoration:'none',display:'block',minWidth:'210px',maxWidth:'210px',flexShrink:0}}>
+      style={{textDecoration:'none',display:'flex',flexDirection:'column',minWidth:'210px',maxWidth:'210px',flexShrink:0,height:'100%'}}>
       <motion.div
         whileHover={{
           y: -10,
@@ -169,9 +169,13 @@ function MiniCard({ product, badge }) {
           overflow: 'hidden',
           border: '1px solid rgba(255, 255, 255, 0.9)',
           boxShadow: '0 6px 24px rgba(0, 0, 0, 0.05)',
-          position: 'relative'
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          justifyContent: 'space-between'
         }}>
-        <div style={{position:'relative',height:'150px',background:'rgba(245, 247, 250, 0.8)',overflow:'hidden',margin:'6px 6px 0 6px',borderRadius:'18px'}}>
+        <div style={{position:'relative',height:'150px',background:'rgba(245, 247, 250, 0.8)',overflow:'hidden',margin:'6px 6px 0 6px',borderRadius:'18px',flexShrink:0}}>
           <img src={imgUrl} alt={product.name || 'Product'}
             style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:'18px'}}
             onError={e=>{e.target.src='https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80';}}/>
@@ -198,24 +202,26 @@ function MiniCard({ product, badge }) {
             <Heart size={13} fill={inWL?'#E94560':'none'} color={inWL?'#E94560':'#555'}/>
           </button>
         </div>
-        <div style={{padding:'12px 14px 14px'}}>
-          <p style={{fontSize:'13px',fontWeight:700,color:'#0F172A',marginBottom:'4px',
-            overflow:'hidden',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',lineHeight:1.3}}>
-            {product.name}
-          </p>
-          <div style={{display:'flex',alignItems:'baseline',gap:'5px',marginBottom:'8px'}}>
-            <span style={{fontSize:'15px',fontWeight:900,color:'#0F172A'}}>₹{pPrice.toFixed(0)}</span>
-            {pOrig > pPrice &&
-              <span style={{fontSize:'11px',color:'#94A3B8',textDecoration:'line-through'}}>
-                ₹{pOrig.toFixed(0)}
-              </span>}
+        <div style={{padding:'12px 14px 14px',flex:1,display:'flex',flexDirection:'column',justify:'space-between'}}>
+          <div>
+            <p style={{fontSize:'13px',fontWeight:700,color:'#0F172A',marginBottom:'4px',
+              overflow:'hidden',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',lineHeight:1.3,minHeight:'36px'}}>
+              {product.name}
+            </p>
+            <div style={{display:'flex',alignItems:'baseline',gap:'5px',marginBottom:'8px',minHeight:'20px'}}>
+              <span style={{fontSize:'15px',fontWeight:900,color:'#0F172A'}}>₹{pPrice.toFixed(0)}</span>
+              {pOrig > pPrice &&
+                <span style={{fontSize:'11px',color:'#94A3B8',textDecoration:'line-through'}}>
+                  ₹{pOrig.toFixed(0)}
+                </span>}
+            </div>
           </div>
           <button onClick={e=>{e.preventDefault();addToCart(product,1);}}
             style={{width:'100%',padding:'8px',borderRadius:'9999px',
               background:'linear-gradient(135deg,#1A1A2E,#0F3460)',color:'white',
               fontWeight:800,fontSize:'11px',border:'none',cursor:'pointer',
               display:'flex',alignItems:'center',justifyContent:'center',gap:'5px',
-              boxShadow:'0 4px 14px rgba(26,26,46,.25)'}}>
+              boxShadow:'0 4px 14px rgba(26,26,46,.25)',marginTop:'auto'}}>
             <ShoppingCart size={12}/> Add to Cart
           </button>
         </div>
@@ -240,8 +246,8 @@ function Carousel({ children }) {
           cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2}}>
         <ChevronLeft size={18} color="#475569"/>
       </button>
-      <div ref={ref} style={{display:'flex',gap:'16px',overflowX:'auto',paddingBottom:'8px',
-        scrollbarWidth:'none',msOverflowStyle:'none',padding:'6px 8px 16px'}}>
+      <div ref={ref} style={{display:'flex',gap:'16px',overflowX:'auto',alignItems:'stretch',padding:'6px 8px 16px',
+        scrollbarWidth:'none',msOverflowStyle:'none'}}>
         {children}
       </div>
       <button onClick={()=>scroll(1)}
@@ -413,7 +419,7 @@ export default function Home() {
             className="hero-grid">
 
             {/* LEFT */}
-            <motion.div initial="hidden" animate="visible" variants={sg}>
+            <motion.div className="hero-content-box" initial="hidden" animate="visible" variants={sg}>
               {/* Badge */}
               <motion.div variants={fu} style={{marginBottom:'20px'}}>
                 <AnimatePresence mode="wait">

@@ -1103,7 +1103,7 @@ export default function AdminPanel() {
               ) : filteredProducts.length===0 ? (
                 <EmptyState icon={Package} title="No products" desc={search?`No products match "${search}"`:"Add your first product"} action="Add Product" onAction={()=>setModal('add')}/>
               ) : (
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:'14px'}}
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(145px,1fr))',gap:'12px'}}
                   className="product-admin-grid">
                   {filteredProducts.map(p => {
                     const discount = p.original_price > p.price ? Math.round((1-p.price/p.original_price)*100) : null;
