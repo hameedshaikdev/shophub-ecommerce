@@ -6,7 +6,7 @@ import {
   CheckCircle, XCircle, MessageCircle, Phone, Truck,
   Plus, Edit2, Trash2, Eye, X, Save, Upload,
   AlertTriangle, AlertCircle, Download, Printer,
-  Menu, Settings, TrendingUp, ShieldCheck,
+  Menu, Settings, TrendingUp, ShieldCheck, Home
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { supabase } from '../config/supabase';
@@ -78,17 +78,27 @@ function printShippingLabel(order) {
 /* ── Product Modal ────────────────────────────────────────── */
 function ProductModal({ product, onClose, onSave }) {
   const isEdit = !!product?.id;
+  const tagParts = (product?.tag || '').split('|');
+  const initialBadge = product?.badge || tagParts[0] || '';
+  const initialDiscTag = product?.discount_tag || (tagParts.length > 1 ? tagParts[1] : '');
+
   const [form, setForm] = useState({
     name: product?.name||'', description: product?.description||'',
     price: product?.price||'', original_price: product?.original_price||'',
+    badge: initialBadge,
+    discount_tag: initialDiscTag,
     category: product?.category||'tailoring', sub_category: product?.sub_category||'',
     unit: product?.unit||'', stock: product?.stock||'',
     image_url: product?.image_url||'', images: product?.images||[],
     video_links: product?.video_links||[], active: product?.active??true,
   });
+  const [customSubCat, setCustomSubCat] = useState(() => {
+    return !!(product?.sub_category && !['machines','scissors','threads','needles','measuring','dresses','tops','bottoms','ethnic','accessories'].includes(product.sub_category));
+  });
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [newVT, setNewVT] = useState(''); const [newVU, setNewVU] = useState('');
+  const [newImgUrl, setNewImgUrl] = useState('');
 
   async function upload(file) {
     const ext = file.name.split('.').pop();
@@ -105,11 +115,33 @@ function ProductModal({ product, onClose, onSave }) {
     const files = Array.from(e.target.files); if (!files.length) return; setUploading(true);
     try { const urls=await Promise.all(files.map(upload)); setForm(p=>({...p,images:[...(p.images||[]),...urls]})); } catch(e){alert('Upload failed')} finally{setUploading(false);}
   }
+  function handleAddImageUrl() {
+    if (!newImgUrl.trim()) return;
+    setForm(p => ({...p, images: [...(p.images || []), newImgUrl.trim()]}));
+    setNewImgUrl('');
+  }
+  function handleRemoveImg(index) {
+    setForm(p => ({...p, images: p.images.filter((_, i) => i !== index)}));
+  }
+  function handleMakeCover(url) {
+    setForm(p => ({...p, image_url: url}));
+  }
+
   async function handleSubmit(e) {
     e.preventDefault(); if (!form.name||!form.price){alert('Name and price required');return;}
     setSaving(true);
     try {
-      const payload={...form,price:parseFloat(form.price)||0,original_price:form.original_price?parseFloat(form.original_price):null,stock:form.stock?parseInt(form.stock):null};
+      const combinedTag = form.badge ? (form.discount_tag ? `${form.badge}|${form.discount_tag}` : form.badge) : (form.discount_tag || null);
+      const payload = {
+        ...form,
+        tag: combinedTag,
+        price: parseFloat(form.price) || 0,
+        original_price: form.original_price ? parseFloat(form.original_price) : null,
+        stock: form.stock ? parseInt(form.stock) : null,
+      };
+      delete payload.badge;
+      delete payload.discount_tag;
+
       if (isEdit) { const {error}=await supabase.from('products').update(payload).eq('id',product.id); if(error)throw error; toast('Product updated!','success'); }
       else { const {error}=await supabase.from('products').insert([payload]); if(error)throw error; toast('Product added!','success'); }
       onSave();
@@ -128,28 +160,175 @@ function ProductModal({ product, onClose, onSave }) {
           <button onClick={onClose} style={{background:'#F4F4F8',border:'none',cursor:'pointer',borderRadius:'8px',padding:'6px',display:'flex'}}><X size={18}/></button>
         </div>
         <form onSubmit={handleSubmit} style={{display:'flex',flexDirection:'column',gap:'12px'}}>
-          {/* Image upload */}
-          <div style={{display:'flex',gap:'10px',alignItems:'center'}}>
-            {form.image_url && <img src={form.image_url} alt="img" style={{width:'56px',height:'56px',borderRadius:'10px',objectFit:'cover',border:'1px solid #E2E8F0',flexShrink:0}}/>}
-            <label style={{flex:1,padding:'10px',borderRadius:'10px',border:'2px dashed #E2E8F0',textAlign:'center',cursor:'pointer',fontSize:'12px',fontWeight:600,color:'#8E8E93'}}>
-              {uploading?'Uploading...':'📸 Main Image'}<input type="file" accept="image/*" style={{display:'none'}} onChange={handleMainImg} disabled={uploading}/>
-            </label>
+          {/* Main & Multiple Gallery Images Section */}
+          <div style={{ background:'#F8FAFC', padding:'12px', borderRadius:'14px', border:'1px solid #E2E8F0' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'8px' }}>
+              <label style={{ fontSize:'11px', fontWeight:800, color:'#1A1A2E', textTransform:'uppercase', letterSpacing:'.5px' }}>
+                🖼️ Multiple Product Images (Cover + Gallery)
+              </label>
+              <span style={{ fontSize:'11px', fontWeight:700, color:'#64748B' }}>
+                {(form.image_url ? 1 : 0) + (form.images?.length || 0)} Total Images
+              </span>
+            </div>
+
+            {/* Upload Buttons Row */}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px', marginBottom:'10px' }}>
+              <label style={{ padding:'10px', borderRadius:'10px', border:'2px dashed #CBD5E1', background:'white', textAlign:'center', cursor:'pointer', fontSize:'12px', fontWeight:700, color:'#334155', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+                📸 Upload Main Cover
+                <input type="file" accept="image/*" style={{ display:'none' }} onChange={handleMainImg} disabled={uploading} />
+              </label>
+
+              <label style={{ padding:'10px', borderRadius:'10px', border:'2px dashed #93C5FD', background:'#EFF6FF', textAlign:'center', cursor:'pointer', fontSize:'12px', fontWeight:700, color:'#2563EB', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+                🖼️ + Add Multiple Images
+                <input type="file" accept="image/*" multiple style={{ display:'none' }} onChange={handleMoreImgs} disabled={uploading} />
+              </label>
+            </div>
+
+            {/* Add Image via URL input */}
+            <div style={{ display:'flex', gap:'6px', marginBottom:'10px' }}>
+              <input value={newImgUrl} onChange={e=>setNewImgUrl(e.target.value)} placeholder="Or paste Image URL (https://...)" style={{ ...S, flex:1 }} />
+              <button type="button" onClick={handleAddImageUrl}
+                style={{ padding:'8px 14px', borderRadius:'10px', background:'#1A1A2E', color:'white', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer', whiteSpace:'nowrap' }}>
+                + Add URL
+              </button>
+            </div>
+
+            {/* Image Thumbnails Strip */}
+            <div style={{ display:'flex', gap:'8px', overflowX:'auto', paddingBottom:'4px' }} className="sh-scroll-hide">
+              {form.image_url && (
+                <div style={{ position:'relative', width:'68px', height:'68px', borderRadius:'10px', overflow:'hidden', border:'2px solid #3B82F6', flexShrink:0, boxShadow:'0 2px 6px rgba(59,130,246,.25)' }}>
+                  <img src={form.image_url} alt="Main" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                  <span style={{ position:'absolute', bottom:0, left:0, right:0, background:'rgba(59,130,246,.95)', color:'white', fontSize:'8px', fontWeight:900, textAlign:'center', padding:'2px 0', textTransform:'uppercase' }}>Main Cover</span>
+                </div>
+              )}
+
+              {form.images?.map((url, i) => (
+                <div key={i} style={{ position:'relative', width:'68px', height:'68px', borderRadius:'10px', overflow:'hidden', border:'1px solid #E2E8F0', flexShrink:0, background:'white' }}>
+                  <img src={url} alt={`Gallery ${i}`} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                  <button type="button" title="Set as Main Cover" onClick={() => handleMakeCover(url)}
+                    style={{ position:'absolute', top:'3px', left:'3px', background:'rgba(0,0,0,.65)', color:'white', border:'none', borderRadius:'4px', padding:'2px 4px', fontSize:'8px', cursor:'pointer', fontWeight:700 }}>
+                    ★ Cover
+                  </button>
+                  <button type="button" title="Remove image" onClick={() => handleRemoveImg(i)}
+                    style={{ position:'absolute', top:'3px', right:'3px', background:'#EF4444', color:'white', border:'none', borderRadius:'50%', width:'18px', height:'18px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    <X size={10} />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
           <div><input placeholder="Product Name *" value={form.name} onChange={e=>setForm(p=>({...p,name:e.target.value}))} required style={S}/></div>
           <textarea placeholder="Description" value={form.description} onChange={e=>setForm(p=>({...p,description:e.target.value}))} rows={2} style={{...S,resize:'vertical'}}/>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
-            <input type="number" placeholder="Price ₹ *" value={form.price} onChange={e=>setForm(p=>({...p,price:e.target.value}))} required style={S}/>
-            <input type="number" placeholder="Original ₹" value={form.original_price} onChange={e=>setForm(p=>({...p,original_price:e.target.value}))} style={S}/>
+            <div>
+              <label style={{fontSize:'10px',fontWeight:700,color:'#64748B',textTransform:'uppercase',display:'block',marginBottom:'3px'}}>Selling Price (₹) *</label>
+              <input type="number" placeholder="Selling Price ₹ *" value={form.price} onChange={e=>setForm(p=>({...p,price:e.target.value}))} required style={S}/>
+            </div>
+            <div>
+              <label style={{fontSize:'10px',fontWeight:700,color:'#64748B',textTransform:'uppercase',display:'block',marginBottom:'3px'}}>Original MRP (₹ Strikeoff)</label>
+              <input type="number" placeholder="Original MRP ₹" value={form.original_price} onChange={e=>setForm(p=>({...p,original_price:e.target.value}))} style={S}/>
+            </div>
           </div>
+
+          {/* Dual Product Tags Section (Badge Tag + Written Percentage Tag) */}
+          <div style={{ background:'#F8FAFC', padding:'12px', borderRadius:'14px', border:'1px solid #E2E8F0', display:'flex', flexDirection:'column', gap:'10px' }}>
+            {/* Tag 1: Main Badge */}
+            <div>
+              <label style={{fontSize:'11px',fontWeight:800,color:'#1A1A2E',textTransform:'uppercase',display:'block',marginBottom:'4px',letterSpacing:'.5px'}}>
+                🔥 1. Main Badge Tag (Top Left)
+              </label>
+              <input placeholder="Type or tap pill badge (e.g. 🔥 SALE, ✨ NEW)"
+                value={form.badge}
+                onChange={e=>setForm(p=>({...p,badge:e.target.value}))}
+                style={{...S, marginBottom:'6px'}}/>
+
+              <div style={{display:'flex',gap:'5px',flexWrap:'wrap'}}>
+                {['🔥 SALE','✨ NEW','⭐ BESTSELLER','⚡ FLASH DEAL','🔥 HOT DEAL'].map(t => (
+                  <button key={t} type="button" onClick={() => setForm(p => ({...p, badge: t}))}
+                    style={{ padding:'3px 9px', borderRadius:'9999px', fontSize:'10px', fontWeight:800,
+                      cursor:'pointer', border: form.badge === t ? '1.5px solid #1A1A2E' : '1px solid #CBD5E1',
+                      background: form.badge === t ? '#1A1A2E' : 'white',
+                      color: form.badge === t ? 'white' : '#475569', transition:'all .2s' }}>
+                    {t}
+                  </button>
+                ))}
+                {form.badge && (
+                  <button type="button" onClick={() => setForm(p => ({...p, badge: ''}))}
+                    style={{ padding:'3px 9px', borderRadius:'9999px', fontSize:'10px', fontWeight:800,
+                      cursor:'pointer', border:'1px solid #FECDD3', background:'#FFF1F2', color:'#EF4444' }}>
+                    ✕ Clear Badge
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Tag 2: Written Percentage Tag */}
+            <div>
+              <label style={{fontSize:'11px',fontWeight:800,color:'#E94560',textTransform:'uppercase',display:'block',marginBottom:'4px',letterSpacing:'.5px'}}>
+                🏷️ 2. Written Percentage Tag (Top Right)
+              </label>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px',marginBottom:'6px'}}>
+                <input placeholder="Percentage tag (e.g. -17% OFF)"
+                  value={form.discount_tag}
+                  onChange={e=>setForm(p=>({...p,discount_tag:e.target.value}))}
+                  style={S}/>
+
+                {form.price && form.original_price && Number(form.original_price) > Number(form.price) && (
+                  <button type="button"
+                    onClick={() => setForm(p => ({...p, discount_tag: `-${Math.round((1 - Number(p.price) / Number(p.original_price)) * 100)}% OFF`}))}
+                    style={{ padding:'8px 10px', borderRadius:'10px', background:'#FFF1F2', border:'1px solid #FECDD3', color:'#E94560', fontWeight:800, fontSize:'11px', cursor:'pointer' }}>
+                    Auto: -{Math.round((1 - Number(form.price) / Number(form.original_price)) * 100)}% OFF
+                  </button>
+                )}
+              </div>
+              <div style={{display:'flex',gap:'5px',flexWrap:'wrap'}}>
+                {['-10% OFF','-17% OFF','-25% OFF','-30% OFF','-50% OFF'].map(pTag => (
+                  <button key={pTag} type="button" onClick={() => setForm(p => ({...p, discount_tag: pTag}))}
+                    style={{ padding:'3px 9px', borderRadius:'9999px', fontSize:'10px', fontWeight:800,
+                      cursor:'pointer', border: form.discount_tag === pTag ? '1.5px solid #E94560' : '1px solid #FECDD3',
+                      background: form.discount_tag === pTag ? '#E94560' : '#FFF1F2',
+                      color: form.discount_tag === pTag ? 'white' : '#E94560', transition:'all .2s' }}>
+                    {pTag}
+                  </button>
+                ))}
+                {form.discount_tag && (
+                  <button type="button" onClick={() => setForm(p => ({...p, discount_tag: ''}))}
+                    style={{ padding:'3px 9px', borderRadius:'9999px', fontSize:'10px', fontWeight:800,
+                      cursor:'pointer', border:'1px solid #FECDD3', background:'#FFF1F2', color:'#EF4444' }}>
+                    ✕ Clear Tag
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
             <select value={form.category} onChange={e=>setForm(p=>({...p,category:e.target.value,sub_category:''}))} style={S}>
               <option value="tailoring">🪡 Tailoring</option>
               <option value="fashion">👗 Fashion</option>
             </select>
-            <select value={form.sub_category} onChange={e=>setForm(p=>({...p,sub_category:e.target.value}))} style={S}>
-              <option value="">Sub category</option>
-              {(form.category==='tailoring'?['machines','scissors','threads','needles','measuring','other']:['dresses','tops','bottoms','ethnic','accessories','other']).map(s=><option key={s} value={s}>{s}</option>)}
-            </select>
+            <div>
+              <select value={customSubCat ? 'custom' : form.sub_category}
+                onChange={e => {
+                  if (e.target.value === 'custom') {
+                    setCustomSubCat(true);
+                    setForm(p => ({ ...p, sub_category: '' }));
+                  } else {
+                    setCustomSubCat(false);
+                    setForm(p => ({ ...p, sub_category: e.target.value }));
+                  }
+                }} style={S}>
+                <option value="">Sub category</option>
+                {(form.category==='tailoring'?['machines','scissors','threads','needles','measuring']:['dresses','tops','bottoms','ethnic','accessories']).map(s=><option key={s} value={s}>{s}</option>)}
+                <option value="custom">✏️ + Custom Subcategory...</option>
+              </select>
+              {(customSubCat || (form.sub_category && !['machines','scissors','threads','needles','measuring','dresses','tops','bottoms','ethnic','accessories'].includes(form.sub_category))) && (
+                <input placeholder="Type custom subcategory (e.g. blouses)"
+                  value={form.sub_category}
+                  onChange={e => setForm(p => ({ ...p, sub_category: e.target.value }))}
+                  style={{ ...S, marginTop:'6px' }} />
+              )}
+            </div>
           </div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}}>
             <input placeholder="Unit (e.g. 1 piece)" value={form.unit} onChange={e=>setForm(p=>({...p,unit:e.target.value}))} style={S}/>
@@ -448,6 +627,7 @@ export default function AdminPanel() {
   const [dateFilter, setDateFilter] = useState('all');
   const [cmdOpen,    setCmdOpen]    = useState(false);
   const [notifOpen,  setNotifOpen]  = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [selected,   setSelected]   = useState([]);
   const [sideOpen,   setSideOpen]   = useState(() => {
     try { return localStorage.getItem('admin_sidebar') !== 'false'; } catch { return true; }
@@ -738,7 +918,7 @@ export default function AdminPanel() {
         boxShadow:'0 1px 8px rgba(0,0,0,.05)', flexShrink:0 }}>
 
         {/* Left */}
-        <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
           <div style={{ width:'28px', height:'28px', borderRadius:'8px',
             background:'linear-gradient(135deg,#1A1A2E,#0F3460)',
             display:'flex', alignItems:'center', justifyContent:'center' }}>
@@ -797,21 +977,59 @@ export default function AdminPanel() {
             )}
           </div>
 
-          {/* Avatar */}
-          <div style={{ width:'28px', height:'28px', borderRadius:'50%',
-            background:'linear-gradient(135deg,#1A1A2E,#0F3460)',
-            display:'flex', alignItems:'center', justifyContent:'center',
-            fontSize:'11px', fontWeight:900, color:'white', flexShrink:0 }}>
-            {user.email?.[0]?.toUpperCase()}
-          </div>
+          {/* Circular Account 'A' Avatar & Dropdown Menu */}
+          <div style={{ position:'relative' }}>
+            <button onClick={() => setUserMenuOpen(o => !o)}
+              title="Admin Account"
+              style={{ width:'32px', height:'32px', borderRadius:'50%',
+                background:'linear-gradient(135deg,#1A1A2E,#0F3460)',
+                display:'flex', alignItems:'center', justifyContent:'center',
+                fontSize:'12px', fontWeight:900, color:'white', flexShrink:0,
+                border:'2px solid white', boxShadow:'0 2px 8px rgba(0,0,0,0.12)',
+                cursor:'pointer' }}>
+              {user.email?.[0]?.toUpperCase()}
+            </button>
 
-          {/* Logout */}
-          <button onClick={handleLogout}
-            style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#FEF2F2',
-              border:'1px solid #FECACA', cursor:'pointer', display:'flex',
-              alignItems:'center', justifyContent:'center' }}>
-            <LogOut size={14} color="#EF4444" />
-          </button>
+            {userMenuOpen && (
+              <div style={{ position:'absolute', right:0, top:'42px', width:'210px',
+                background:'white', borderRadius:'14px', border:'1px solid #E8E8EE',
+                boxShadow:'0 10px 32px rgba(0,0,0,.15)', zIndex:250, overflow:'hidden',
+                padding:'6px' }}>
+
+                <div style={{ padding:'10px 12px', borderBottom:'1px solid #F0F0F0', marginBottom:'4px' }}>
+                  <p style={{ fontSize:'10px', fontWeight:800, color:'#8E8E93', textTransform:'uppercase', letterSpacing:'.5px' }}>Signed in as</p>
+                  <p style={{ fontSize:'12px', fontWeight:800, color:'#0A0A0A', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginTop:'2px' }}>{user.email}</p>
+                  <span style={{ fontSize:'10px', fontWeight:800, color:'#16A34A', background:'#F0FDF4', padding:'2px 8px', borderRadius:'99px', display:'inline-block', marginTop:'4px' }}>
+                    ● Administrator
+                  </span>
+                </div>
+
+                {/* Return to Store option inside circular 'A' account menu */}
+                <button onClick={() => { setUserMenuOpen(false); navigate('/'); }}
+                  style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px',
+                    padding:'9px 12px', borderRadius:'10px', background:'transparent',
+                    border:'none', cursor:'pointer', fontSize:'13px', fontWeight:700,
+                    color:'#0F172A', transition:'background .2s', textAlign:'left' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#F4F4F8'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  <Home size={15} color="#3B82F6" />
+                  <span>Return to Store</span>
+                </button>
+
+                {/* Sign Out option */}
+                <button onClick={() => { setUserMenuOpen(false); handleLogout(); }}
+                  style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px',
+                    padding:'9px 12px', borderRadius:'10px', background:'transparent',
+                    border:'none', cursor:'pointer', fontSize:'13px', fontWeight:700,
+                    color:'#EF4444', transition:'background .2s', textAlign:'left', marginTop:'2px' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#FEF2F2'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  <LogOut size={15} color="#EF4444" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 

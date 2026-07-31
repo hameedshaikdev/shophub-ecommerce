@@ -91,15 +91,27 @@ export default function ProductCard({ product, onQuickView }) {
             style={{ width:'100%', height:'100%', objectFit:'cover', display:'block', borderRadius:'22px' }}
           />
 
-          {/* Discount badge */}
-          {discount && (
+          {/* Top Left Badge Tag (SALE, NEW, BESTSELLER) */}
+          {(product.badge || product.tag) && (
             <div style={{ position:'absolute', top:'10px', left:'10px',
+              background:'linear-gradient(135deg, #1A1A2E, #0F3460)', color:'white',
+              fontSize:'10px', fontWeight:800, letterSpacing:'.4px',
+              padding:'4px 10px', borderRadius:'9999px',
+              boxShadow:'0 4px 14px rgba(0,0,0,.3)',
+              border:'1px solid rgba(255,255,255,.4)', zIndex:2 }}>
+              {product.badge || product.tag}
+            </div>
+          )}
+
+          {/* Top Right Percentage Tag (-17% OFF) */}
+          {(product.discount_tag || discount) && (
+            <div style={{ position:'absolute', top:'10px', right: (product.badge || product.tag) ? '10px' : '44px',
               background:'linear-gradient(135deg, #E94560, #FF6B8B)', color:'white',
               fontSize:'10px', fontWeight:800, letterSpacing:'.4px',
               padding:'4px 10px', borderRadius:'9999px',
               boxShadow:'0 4px 14px rgba(233,69,96,.4)',
-              border:'1px solid rgba(255,255,255,.4)' }}>
-              -{discount}%
+              border:'1px solid rgba(255,255,255,.4)', zIndex:2 }}>
+              {product.discount_tag || `-${discount}% OFF`}
             </div>
           )}
 

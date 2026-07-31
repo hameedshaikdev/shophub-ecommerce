@@ -505,3 +505,47 @@ div[style*="overflow"]::-webkit-scrollbar {
     gap: 10px !important;
   }
 }
+
+/* ── About Page Mobile Horizontal Scroll Strips ── */
+.about-horizontal-row {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 6px 4px 16px;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.about-horizontal-row::-webkit-scrollbar {
+  display: none !important;
+}
+
+@media(max-width: 767px) {
+  .about-horizontal-row .about-card-item,
+  .about-horizontal-row > div {
+    min-width: 250px !important;
+    max-width: 270px !important;
+    flex-shrink: 0 !important;
+  }
+  .about-dark-features-row {
+    display: flex !important;
+    gap: 12px !important;
+    overflow-x: auto !important;
+    padding-bottom: 8px !important;
+    scrollbar-width: none !important;
+  }
+  .about-dark-features-row > div {
+    min-width: 210px !important;
+    flex-shrink: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .about-stats-row {
+    display: flex !important;
+    gap: 16px !important;
+    overflow-x: auto !important;
+    padding-bottom: 8px !important;
+    scrollbar-width: none !important;
+  }
+  .about-stats-row > div {
+    flex-shrink: 0 !important;
+  }
+}
