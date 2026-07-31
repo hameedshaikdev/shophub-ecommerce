@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star, Eye } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { getProductImage } from '../../utils/productImages';
+import { getProductImage, parseProductTags } from '../../utils/productImages';
 
 export default function ProductCard({ product, onQuickView }) {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
@@ -13,6 +13,8 @@ export default function ProductCard({ product, onQuickView }) {
   if (!product) return null;
 
   const inWishlist = product.id ? isInWishlist(product.id) : false;
+
+  const { badge, discount_tag } = parseProductTags(product);
 
   const priceNum = Number(product.price || 0);
   const origPriceNum = Number(product.original_price || 0);
@@ -92,26 +94,26 @@ export default function ProductCard({ product, onQuickView }) {
           />
 
           {/* Top Left Badge Tag (SALE, NEW, BESTSELLER) */}
-          {(product.badge || product.tag) && (
+          {badge && (
             <div style={{ position:'absolute', top:'10px', left:'10px',
               background:'linear-gradient(135deg, #1A1A2E, #0F3460)', color:'white',
               fontSize:'10px', fontWeight:800, letterSpacing:'.4px',
               padding:'4px 10px', borderRadius:'9999px',
               boxShadow:'0 4px 14px rgba(0,0,0,.3)',
               border:'1px solid rgba(255,255,255,.4)', zIndex:2 }}>
-              {product.badge || product.tag}
+              {badge}
             </div>
           )}
 
           {/* Top Right Percentage Tag (-17% OFF) */}
-          {(product.discount_tag || discount) && (
-            <div style={{ position:'absolute', top:'10px', right: (product.badge || product.tag) ? '10px' : '44px',
+          {(discount_tag || discount) && (
+            <div style={{ position:'absolute', top:'10px', right: badge ? '10px' : '44px',
               background:'linear-gradient(135deg, #E94560, #FF6B8B)', color:'white',
               fontSize:'10px', fontWeight:800, letterSpacing:'.4px',
               padding:'4px 10px', borderRadius:'9999px',
               boxShadow:'0 4px 14px rgba(233,69,96,.4)',
               border:'1px solid rgba(255,255,255,.4)', zIndex:2 }}>
-              {product.discount_tag || `-${discount}% OFF`}
+              {discount_tag || `-${discount}% OFF`}
             </div>
           )}
 

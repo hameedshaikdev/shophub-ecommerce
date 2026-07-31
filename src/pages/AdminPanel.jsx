@@ -11,6 +11,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import { supabase } from '../config/supabase';
 import { useApp } from '../context/AppContext';
+import { getProductImage, parseProductTags } from '../utils/productImages';
 import {
   ToastContainer, ConfirmDialog, CommandPalette,
   OrderSkeleton, ProductSkeleton, EmptyState,
@@ -78,19 +79,23 @@ function printShippingLabel(order) {
 /* ── Product Modal ────────────────────────────────────────── */
 function ProductModal({ product, onClose, onSave }) {
   const isEdit = !!product?.id;
-  const tagParts = (product?.tag || '').split('|');
-  const initialBadge = product?.badge || tagParts[0] || '';
-  const initialDiscTag = product?.discount_tag || (tagParts.length > 1 ? tagParts[1] : '');
+  const parsed = parseProductTags(product);
 
   const [form, setForm] = useState({
-    name: product?.name||'', description: product?.description||'',
-    price: product?.price||'', original_price: product?.original_price||'',
-    badge: initialBadge,
-    discount_tag: initialDiscTag,
-    category: product?.category||'tailoring', sub_category: product?.sub_category||'',
-    unit: product?.unit||'', stock: product?.stock||'',
-    image_url: product?.image_url||'', images: product?.images||[],
-    video_links: product?.video_links||[], active: product?.active??true,
+    name: product?.name||'',
+    description: parsed.cleanDesc||'',
+    price: product?.price||'',
+    original_price: product?.original_price||'',
+    badge: parsed.badge||'',
+    discount_tag: parsed.discount_tag||'',
+    category: product?.category||'tailoring',
+    sub_category: product?.sub_category||'',
+    unit: product?.unit||'',
+    stock: product?.stock||'',
+    image_url: product?.image_url||'',
+    images: product?.images||[],
+    video_links: product?.video_links||[],
+    active: product?.active??true,
   });
   const [customSubCat, setCustomSubCat] = useState(() => {
     return !!(product?.sub_category && !['machines','scissors','threads','needles','measuring','dresses','tops','bottoms','ethnic','accessories'].includes(product.sub_category));
@@ -131,19 +136,29 @@ function ProductModal({ product, onClose, onSave }) {
     e.preventDefault(); if (!form.name||!form.price){alert('Name and price required');return;}
     setSaving(true);
     try {
-      const combinedTag = form.badge ? (form.discount_tag ? `${form.badge}|${form.discount_tag}` : form.badge) : (form.discount_tag || null);
-      const payload = {
-        ...form,
-        tag: combinedTag,
+      let finalDesc = (form.description || '').replace(/\s*\[TAG:[^\]]*\]/g, '').trim();
+      const tagStr = [form.badge || '', form.discount_tag || ''].join('|');
+      if (tagStr !== '|') {
+        finalDesc = finalDesc ? `${finalDesc} [TAG:${tagStr}]` : `[TAG:${tagStr}]`;
+      }
+
+      const rawPayload = {
+        name: form.name.trim(),
+        description: finalDesc,
         price: parseFloat(form.price) || 0,
         original_price: form.original_price ? parseFloat(form.original_price) : null,
-        stock: form.stock ? parseInt(form.stock) : null,
+        category: form.category,
+        sub_category: form.sub_category,
+        unit: form.unit || null,
+        stock: form.stock !== '' && form.stock !== null ? parseInt(form.stock) : null,
+        image_url: form.image_url || null,
+        images: form.images || [],
+        video_links: form.video_links || [],
+        active: form.active ?? true,
       };
-      delete payload.badge;
-      delete payload.discount_tag;
 
-      if (isEdit) { const {error}=await supabase.from('products').update(payload).eq('id',product.id); if(error)throw error; toast('Product updated!','success'); }
-      else { const {error}=await supabase.from('products').insert([payload]); if(error)throw error; toast('Product added!','success'); }
+      if (isEdit) { const {error}=await supabase.from('products').update(rawPayload).eq('id',product.id); if(error)throw error; toast('Product updated!','success'); }
+      else { const {error}=await supabase.from('products').insert([rawPayload]); if(error)throw error; toast('Product added!','success'); }
       onSave();
     } catch(err){toast('Error: '+err.message,'error');} finally{setSaving(false);}
   }

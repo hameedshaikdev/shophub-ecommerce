@@ -59,3 +59,25 @@ export function getProductImage(product) {
     ? 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80'
     : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80';
 }
+
+export function parseProductTags(product) {
+  if (!product) return { cleanDesc: '', badge: '', discount_tag: '' };
+
+  let desc = product.description || '';
+  let badge = product.badge || product.tag || '';
+  let discount_tag = product.discount_tag || '';
+
+  const tagMatch = desc.match(/\[TAG:([^\]]*)\]/);
+  if (tagMatch) {
+    const parts = tagMatch[1].split('|');
+    if (parts[0]) badge = parts[0];
+    if (parts[1]) discount_tag = parts[1];
+    desc = desc.replace(/\s*\[TAG:[^\]]*\]/g, '').trim();
+  } else if (badge.includes('|')) {
+    const parts = badge.split('|');
+    badge = parts[0] || '';
+    discount_tag = parts[1] || '';
+  }
+
+  return { cleanDesc: desc, badge, discount_tag };
+}

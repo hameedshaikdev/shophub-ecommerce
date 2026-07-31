@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
-import { getProductImage } from '../utils/productImages';
+import { getProductImage, parseProductTags } from '../utils/productImages';
 
 export default function ProductDetail() {
   const { id }       = useParams();
@@ -23,6 +23,7 @@ export default function ProductDetail() {
   const [selImg,   setSelImg]   = useState(0);
 
   const inWishlist = product ? isInWishlist(product.id) : false;
+  const { cleanDesc, badge, discount_tag } = parseProductTags(product);
 
   useEffect(() => {
     (async () => {
