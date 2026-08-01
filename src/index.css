@@ -1910,3 +1910,112 @@ img, video, svg {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ─── 20. HERO SLIDES MANAGER (Admin CMS) — Mobile Responsive ─── */
+.hero-slide-card-grid {
+  display: grid;
+  grid-template-columns: 20px 38px 1fr 92px;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+.hero-slide-sort {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hero-slide-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 7px;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-slide-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hero-slide-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .hero-slide-card-grid {
+    /* Stack vertically on mobile: thumb + info in row, then sort + actions below */
+    grid-template-columns: 38px 1fr;
+    grid-template-rows: auto auto;
+    gap: 10px;
+    padding: 12px;
+  }
+  
+  .hero-slide-sort {
+    /* Move to bottom left */
+    grid-column: 1;
+    grid-row: 2;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+  
+  .hero-slide-thumb {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  
+  .hero-slide-info {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  
+  .hero-slide-actions {
+    /* Move to bottom right */
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-slide-card-grid {
+    /* Ultra narrow: full width stack */
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+  }
+  
+  .hero-slide-sort {
+    grid-column: 1;
+    grid-row: 3;
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .hero-slide-thumb {
+    grid-column: 1;
+    grid-row: 1;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+  }
+  
+  .hero-slide-info {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  
+  .hero-slide-actions {
+    grid-column: 1;
+    grid-row: 3;
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+}

@@ -44,7 +44,7 @@ function printShippingLabel(order) {
   const addr = order.shipping_address || {};
   const html = `<!DOCTYPE html><html><head><title>Label #${order.id.slice(0,8).toUpperCase()}</title>
   <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;padding:20px}
-  .wrap{max-width:580px;margin:0 auto}.header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #000;padding-bottom:12px;margin-bottom:14px}
+  .wrap{max-width:580px;margin:0 auto;page-break-after:always}.header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #000;padding-bottom:12px;margin-bottom:14px}
   .brand{font-size:22px;font-weight:900}.oid{font-family:monospace;font-size:16px;font-weight:900;border:2px solid #000;padding:5px 10px}
   .box{border:2px solid #000;border-radius:6px;padding:14px;margin-bottom:12px}
   .lbl{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:#666;margin-bottom:7px}
@@ -903,7 +903,7 @@ export default function AdminPanel() {
 
     const html = `<!DOCTYPE html><html><head><title>Batch Labels (${toPrint.length})</title>
     <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;padding:16px;background:#fff}
-    .wrap{max-width:580px;margin:0 auto 20px auto;border:2px solid #000;padding:16px;border-radius:8px}
+    .wrap{max-width:580px;margin:0 auto 20px auto;border:2px solid #000;padding:16px;border-radius:8px;page-break-after:always}
     .header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:12px}
     .brand{font-size:22px;font-weight:900}.oid{font-family:monospace;font-size:15px;font-weight:900;border:2px solid #000;padding:4px 8px}
     .box{border:1.5px solid #000;border-radius:6px;padding:10px;margin-bottom:10px}
