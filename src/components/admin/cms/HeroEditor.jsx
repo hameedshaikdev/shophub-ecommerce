@@ -74,7 +74,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Category Tab Selector */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '14px 16px', borderRadius: '16px', border: '1px solid #E2E8F0', flexWrap: 'wrap', gap: '10px' }}>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flex: 1, minWidth: '220px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
           <button
             onClick={() => setActiveTab('tailoring')}
             style={{
@@ -277,19 +277,19 @@ export default function HeroEditor({ heroData = {}, onChange }) {
                 onError={e => { e.target.src = 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=100'; }}
               />
 
-              <div style={{ flex: 1, minWidth: '160px' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
                   <input
                     type="text"
                     value={slide.title}
                     onChange={e => handleUpdateSlide(slide.id, 'title', e.target.value)}
-                    style={{ fontWeight: 800, fontSize: '12px', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '3px 6px', flex: 1, minWidth: '80px' }}
+                    style={{ fontWeight: 800, fontSize: '12px', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '3px 6px', flex: 1, minWidth: 0, boxSizing: 'border-box' }}
                   />
                   <input
                     type="text"
                     value={slide.titleAccent}
                     onChange={e => handleUpdateSlide(slide.id, 'titleAccent', e.target.value)}
-                    style={{ fontWeight: 800, fontSize: '12px', color: '#2563EB', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '3px 6px', flex: 1, minWidth: '60px' }}
+                    style={{ fontWeight: 800, fontSize: '12px', color: '#2563EB', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '3px 6px', flex: 1, minWidth: 0, boxSizing: 'border-box' }}
                   />
                 </div>
                 <div style={{ fontSize: '10px', color: '#64748B', marginTop: '4px' }}>Cat: {slide.category || 'all'}</div>
