@@ -2022,6 +2022,91 @@ img, video, svg {
 
 /* ─── 21. HOMEPAGE CMS MANAGER — Complete Mobile Responsive ─── */
 
+/* Homepage CMS - Top Level Container */
+@media (max-width: 767px) {
+  /* Main grid becomes single column */
+  .cms-main-grid,
+  div[style*="gridTemplateColumns: '220px 1fr'"],
+  div[style*="grid-template-columns: 220px 1fr"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Sidebar navigation - horizontal scroll on mobile */
+  div[style*="flexDirection: 'column'"][style*="height: fit-content"] {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 8px 12px !important;
+  }
+  
+  div[style*="flexDirection: 'column'"][style*="height: fit-content"]::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  /* Hide "SECTIONS LIST" label on mobile */
+  div[style*="SECTIONS LIST"] {
+    display: none !important;
+  }
+  
+  /* Nav buttons horizontal */
+  div[style*="flexDirection: 'column'"][style*="height: fit-content"] > div {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+  }
+  
+  div[style*="flexDirection: 'column'"][style*="height: fit-content"] button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    min-width: auto !important;
+    font-size: 11px !important;
+    padding: 8px 12px !important;
+  }
+}
+
+/* Hero Editor - Tabs wrap on mobile */
+@media (max-width: 640px) {
+  /* Hero section tabs */
+  div[style*="Tailoring Tools Hero"] {
+    font-size: 11px !important;
+    padding: 7px 12px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+  
+  /* Carousel settings button */
+  div[style*="Carousel Settings"] {
+    font-size: 10px !important;
+    padding: 7px 10px !important;
+  }
+}
+
+/* Collections Editor Tab Buttons */
+@media (max-width: 640px) {
+  /* Force tabs to NOT grow, stay side by side */
+  button[style*="Tailoring Collections"],
+  button[style*="Women Fashion Collections"] {
+    flex: 0 1 auto !important;
+    min-width: 140px !important;
+    font-size: 11px !important;
+    padding: 7px 10px !important;
+  }
+  
+  /* Collection cards grid - 1 column on mobile */
+  div[style*="gridTemplateColumns: repeat(auto-fill, minmax(min(260px"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  
+  /* Card inputs full width */
+  div[style*="gridTemplateColumns: repeat(auto-fill, minmax(min(260px"] input {
+    font-size: 16px !important;
+  }
+}
+
 /* CMS Top Bar — wraps action buttons on mobile */
 @media (max-width: 640px) {
   .cms-top-bar {
@@ -2189,5 +2274,111 @@ img, video, svg {
   div[style*="Meta Title"] ~ div,
   div[style*="Meta Description"] ~ div {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* Flash Deals, New Arrivals, Top Picks - Product Selection Grids */
+@media (max-width: 640px) {
+  /* Product selector grids - 2 columns on mobile */
+  div[style*="gridTemplateColumns: repeat(auto-fill, minmax(min(140px"],
+  div[style*="gridTemplateColumns: repeat(auto-fill, minmax(min(200px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  
+  /* All CMS input fields - prevent iOS zoom */
+  div[style*="display: 'flex', flexDirection: 'column', gap: '24px'"] input[type="text"],
+  div[style*="display: 'flex', flexDirection: 'column', gap: '24px'"] input[type="number"],
+  div[style*="display: 'flex', flexDirection: 'column', gap: '24px'"] input[type="datetime-local"],
+  div[style*="display: 'flex', flexDirection: 'column', gap: '24px'"] select,
+  div[style*="display: 'flex', flexDirection: 'column', gap: '24px'"] textarea {
+    font-size: 16px !important;
+  }
+  
+  /* Settings grids - single column on mobile */
+  div[style*="gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px"],
+  div[style*="gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Ultra narrow - single column for product grids too */
+  div[style*="gridTemplateColumns: repeat(auto-fill, minmax(min(140px"],
+  div[style*="gridTemplateColumns: repeat(auto-fill, minmax(min(200px"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Media Library */
+@media (max-width: 640px) {
+  /* Media grid cards */
+  div[style*="Media & Asset Library"] ~ div[style*="grid"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  div[style*="Media & Asset Library"] ~ div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Footer Editor */
+@media (max-width: 640px) {
+  /* Footer input grids single column */
+  div[style*="Store Contact Info"] ~ div {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* SEO Editor */
+@media (max-width: 640px) {
+  /* SEO metadata fields */
+  div[style*="Meta Title"] input,
+  div[style*="Meta Description"] textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Banners Editor */
+@media (max-width: 640px) {
+  /* Banner inputs */
+  div[style*="Banner Title"] input,
+  div[style*="Subtitle"] input,
+  div[style*="Button Text"] input {
+    font-size: 16px !important;
+    width: 100% !important;
+  }
+}
+
+/* CMS Top Action Bar */
+@media (max-width: 640px) {
+  .cms-top-bar,
+  div[style*="Homepage CMS"][style*="flexWrap: 'wrap'"] {
+    gap: 8px !important;
+  }
+  
+  .cms-top-bar > div:last-child,
+  div[style*="Homepage CMS"] ~ div[style*="overflowX: 'auto'"] {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+  
+  .cms-top-bar > div:last-child::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  /* Action buttons */
+  .cms-top-bar button,
+  div[style*="Homepage CMS"] ~ div button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 11px !important;
+    padding: 7px 12px !important;
   }
 }
