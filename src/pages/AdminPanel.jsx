@@ -913,6 +913,13 @@ export default function AdminPanel() {
     toast(`${toPrint.length} label${toPrint.length>1?'s':''} ready to print`, 'success');
   }
 
+  /* derived */
+  const filteredProducts = products.filter(p => {
+    const ms = (p.name || '').toLowerCase().includes(search.toLowerCase());
+    const mc = catFilter === 'all' || p.category === catFilter;
+    return ms && mc;
+  });
+
   const today = new Date().toDateString();
   const todayOrders  = allOrders.filter(o=>new Date(o.created_at).toDateString()===today).length;
   const todayRevenue = allOrders.filter(o=>new Date(o.created_at).toDateString()===today&&o.payment_status==='verified').reduce((s,o)=>s+(o.total_amount||0),0);
@@ -974,9 +981,9 @@ export default function AdminPanel() {
 
         {/* Right Actions */}
         <div style={{ display:'flex', alignItems:'center', gap:'8px', flexShrink:0 }}>
-          {/* Notif */}
+          {/* Notifications button */}
           <div style={{ position:'relative' }}>
-            <button onClick={()=>setNotifOpen(o=>!o)}
+            <button onClick={()=>{ setNotifOpen(o=>!o); setUserMenuOpen(false); }}
               style={{ width:'36px', height:'36px', borderRadius:'10px', background:'#F8FAFC',
                 border:'1px solid #E5E7EB', cursor:'pointer', display:'flex', alignItems:'center',
                 justifyContent:'center', position:'relative', transition:'all 200ms ease' }}>
@@ -986,23 +993,30 @@ export default function AdminPanel() {
                 background:'#EF4444', border:'2px solid white' }} />}
             </button>
             {notifOpen && (
-              <div style={{ position:'absolute', right:0, top:'46px', width:'320px',
-                background:'#FFFFFF', borderRadius:'16px', border:'1px solid #E5E7EB',
-                boxShadow:'0 16px 40px -8px rgba(15, 23, 42, 0.18)', zIndex:200, overflow:'hidden' }}>
+              <div style={{ position:'absolute', right:0, top:'46px', width:'300px',
+                background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E2E8F0',
+                boxShadow:'0 16px 36px -8px rgba(15, 23, 42, 0.15)', zIndex:200, overflow:'hidden' }}>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
-                  padding:'12px 16px', borderBottom:'1px solid #F1F5F9', background:'#F8FAFC' }}>
-                  <p style={{ fontSize:'13px', fontWeight:800, color:'#111827', margin:0 }}>Notifications {unread>0 && <span style={{ background:'#EF4444', color:'white', fontSize:'10px', fontWeight:800, borderRadius:'99px', padding:'1px 7px', marginLeft:'4px' }}>{unread}</span>}</p>
+                  padding:'12px 14px', borderBottom:'1px solid #F1F5F9', background:'#F8FAFC' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+                    <Bell size={14} color="#0F172A" />
+                    <span style={{ fontSize:'13px', fontWeight:800, color:'#0F172A' }}>Notifications</span>
+                    {unread>0 && <span style={{ background:'#EF4444', color:'white', fontSize:'10px', fontWeight:800, borderRadius:'99px', padding:'1px 6px' }}>{unread}</span>}
+                  </div>
                   <button onClick={()=>{ const ids=notifications.map(n=>n.id); localStorage.setItem('admin_notif_read',JSON.stringify(ids)); setNotifRead(ids); setNotifOpen(false); }}
                     style={{ background:'none', border:'none', cursor:'pointer', fontSize:'11px', fontWeight:700, color:'#2563EB' }}>Mark all read</button>
                 </div>
                 <div style={{ maxHeight:'260px', overflowY:'auto' }}>
                   {notifications.length===0 ? (
-                    <p style={{ padding:'20px', textAlign:'center', color:'#94A3B8', fontSize:'12px', margin:0 }}>No notifications</p>
+                    <div style={{ padding:'20px', textAlign:'center', color:'#94A3B8', fontSize:'12px' }}>No new notifications</div>
                   ) : notifications.map(n=>(
-                    <div key={n.id} style={{ padding:'12px 16px', borderBottom:'1px solid #F8FAFC', opacity:n.read?.6:1, background:n.read?'transparent':'#F0F9FF' }}>
-                      <p style={{ fontSize:'12px', fontWeight:800, color:'#111827', margin:0 }}>{n.title}</p>
-                      <p style={{ fontSize:'11px', color:'#64748B', margin:'2px 0 0 0' }}>{n.desc}</p>
-                      <span style={{ fontSize:'10px', color:'#94A3B8', marginTop:'4px', display:'block' }}>{n.time}</span>
+                    <div key={n.id} style={{ padding:'12px 14px', borderBottom:'1px solid #F8FAFC', opacity:n.read?.6:1, background:n.read?'transparent':'#F0F9FF', display:'flex', alignItems:'flex-start', gap:'10px' }}>
+                      <div style={{ width:'7px', height:'7px', borderRadius:'50%', background:n.read?'#CBD5E1':'#2563EB', marginTop:'5px', flexShrink:0 }}/>
+                      <div style={{ flex:1 }}>
+                        <p style={{ fontSize:'12px', fontWeight:800, color:'#0F172A', margin:0 }}>{n.title}</p>
+                        <p style={{ fontSize:'11px', color:'#64748B', margin:'2px 0 0 0' }}>{n.desc}</p>
+                        <span style={{ fontSize:'10px', color:'#94A3B8', marginTop:'4px', display:'block' }}>{n.time}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1010,14 +1024,53 @@ export default function AdminPanel() {
             )}
           </div>
 
-          {/* User profile dropdown */}
+          {/* User profile dropdown (FIXED: avatar click toggles user menu with Return to Store & Sign Out) */}
           <div style={{ position:'relative' }}>
-            <button onClick={()=>setNotifOpen(false)}
+            <button onClick={() => { setUserMenuOpen(o => !o); setNotifOpen(false); }}
+              title="Admin Menu"
               style={{ width:'36px', height:'36px', borderRadius:'10px', background:'#0F172A',
                 color:'white', fontWeight:800, fontSize:'14px', border:'none', cursor:'pointer',
                 display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 8px rgba(15,23,42,0.2)' }}>
               A
             </button>
+
+            {userMenuOpen && (
+              <div style={{ position:'absolute', right:0, top:'46px', width:'220px',
+                background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E2E8F0',
+                boxShadow:'0 16px 36px -8px rgba(15, 23, 42, 0.18)', zIndex:250, overflow:'hidden',
+                padding:'6px' }}>
+
+                <div style={{ padding:'10px 12px', borderBottom:'1px solid #F1F5F9', marginBottom:'4px', background:'#F8FAFC', borderRadius:'10px' }}>
+                  <p style={{ fontSize:'10px', fontWeight:800, color:'#94A3B8', textTransform:'uppercase', letterSpacing:'.5px', margin:0 }}>Signed in as</p>
+                  <p style={{ fontSize:'12px', fontWeight:800, color:'#0F172A', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginTop:'2px', margin:0 }}>{user?.email}</p>
+                  <span style={{ fontSize:'10px', fontWeight:800, color:'#059669', background:'#ECFDF5', padding:'2px 8px', borderRadius:'99px', display:'inline-block', marginTop:'4px' }}>
+                    ● Administrator
+                  </span>
+                </div>
+
+                <button onClick={() => { setUserMenuOpen(false); navigate('/'); }}
+                  style={{ width:'100%', display:'flex', alignItems:'center', gap:'10px',
+                    padding:'9px 12px', borderRadius:'8px', background:'transparent',
+                    border:'none', cursor:'pointer', fontSize:'12px', fontWeight:700,
+                    color:'#0F172A', transition:'background .15s', textAlign:'left' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#F1F5F9'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  <Home size={15} color="#2563EB" />
+                  <span>Return to Store</span>
+                </button>
+
+                <button onClick={async () => { setUserMenuOpen(false); await supabase.auth.signOut(); setUser(null); navigate('/'); }}
+                  style={{ width:'100%', display:'flex', alignItems:'center', gap:'10px',
+                    padding:'9px 12px', borderRadius:'8px', background:'transparent',
+                    border:'none', cursor:'pointer', fontSize:'12px', fontWeight:800,
+                    color:'#DC2626', transition:'background .15s', textAlign:'left', marginTop:'2px' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#FEF2F2'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  <LogOut size={15} color="#DC2626" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
