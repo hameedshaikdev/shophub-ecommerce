@@ -2407,6 +2407,24 @@ img, video, svg {
   }
 }
 
+/* CMS Checkbox Grids - Mobile Single Column */
+.cms-checkbox-grid {
+  display: grid;
+}
+
+@media (max-width: 640px) {
+  .cms-checkbox-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  
+  .cms-checkbox-grid label {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
 /* Force checkbox grids to single column on mobile - more specific */
 @media (max-width: 640px) {
   /* Target all checkbox grid containers in CMS panels */

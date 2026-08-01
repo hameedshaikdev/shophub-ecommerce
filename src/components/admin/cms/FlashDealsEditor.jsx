@@ -109,7 +109,7 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
           <Settings size={16} color="#2563EB" /> Display Controls & Badges
         </h4>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
+        <div className="cms-checkbox-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
           {[
             { key: 'showDiscount', label: 'Show Discount %' },
             { key: 'showStock', label: 'Show Stock Level' },
