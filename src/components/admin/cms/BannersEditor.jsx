@@ -28,7 +28,7 @@ export default function BannersEditor({ bannersData = [], onChange }) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', overflow: 'hidden', minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '16px 20px', borderRadius: '16px', border: '1px solid #E2E8F0' }}>
         <div>
           <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0F172A', margin: 0 }}>Homepage Promotional Banners</h3>
@@ -56,7 +56,7 @@ export default function BannersEditor({ bannersData = [], onChange }) {
               display: 'flex', flexDirection: 'column', gap: '14px', opacity: banner.active ? 1 : 0.6
             }}
           >
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))', gap: '12px' }}>
               <div>
                 <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Banner Title</label>
                 <input

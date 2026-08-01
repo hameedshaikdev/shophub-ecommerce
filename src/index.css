@@ -1335,17 +1335,31 @@ html, body, #root {
   .cms-top-bar p {
     display: none !important;
   }
-  /* Force all CMS input grids to single column on mobile/tablet so nothing is cut off */
-  div[style*="gridTemplateColumns"],
-  div[style*="grid-template-columns"] {
+  /* Scope 1-column layout strictly to CMS editor containers */
+  .cms-main-grid div[style*="gridTemplateColumns"],
+  .cms-main-grid div[style*="grid-template-columns"] {
     grid-template-columns: 1fr !important;
     gap: 10px !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
-  input, textarea, select {
+  .cms-main-grid input[type="text"],
+  .cms-main-grid input[type="number"],
+  .cms-main-grid input[type="datetime-local"],
+  .cms-main-grid textarea,
+  .cms-main-grid select {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
   }
+}
+
+/* Ensure checkboxes and radio buttons remain small inline controls across all pages */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 16px !important;
+  height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  flex-shrink: 0 !important;
 }

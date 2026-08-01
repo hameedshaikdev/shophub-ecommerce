@@ -71,7 +71,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', overflow: 'hidden', minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
       {/* Category Tab Selector */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '14px 16px', borderRadius: '16px', border: '1px solid #E2E8F0', flexWrap: 'wrap', gap: '10px' }}>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
@@ -115,7 +115,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
       {showCarouselSettings && (
         <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px' }}>
           <h4 style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', marginBottom: '12px' }}>⚙️ Hero Carousel Settings</h4>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', gap: '12px' }}>
             <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>
               Autoplay Slides
               <select
@@ -157,7 +157,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
           Hero Section Options ({activeTab.toUpperCase()})
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))', gap: '12px', marginBottom: '16px' }}>
           <div>
             <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Main Title</label>
             <input
@@ -206,7 +206,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))', gap: '12px' }}>
           <div>
             <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Hero Photo URL</label>
             <input

@@ -23,7 +23,7 @@ export default function NewArrivalsEditor({ newArrivalsData = {}, products = [],
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', overflow: 'hidden', minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
       {/* Enable Toggle & Header */}
       <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
@@ -48,7 +48,7 @@ export default function NewArrivalsEditor({ newArrivalsData = {}, products = [],
       <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '24px' }}>
         <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', marginBottom: '16px' }}>Section Content & Header</h4>
         
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))', gap: '12px', marginBottom: '16px' }}>
           <div>
             <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Section Title</label>
             <input
@@ -89,7 +89,7 @@ export default function NewArrivalsEditor({ newArrivalsData = {}, products = [],
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '14px' }}>
           {[
             { key: 'showBadges', label: 'Show New Badges' },
             { key: 'showRatings', label: 'Show Star Ratings' },
@@ -124,7 +124,7 @@ export default function NewArrivalsEditor({ newArrivalsData = {}, products = [],
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', maxHeight: '300px', overflowY: 'auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))', gap: '12px', maxHeight: '300px', overflowY: 'auto' }}>
             {filteredProducts.map(p => {
               const isSelected = selectedIds.includes(p.id);
               return (

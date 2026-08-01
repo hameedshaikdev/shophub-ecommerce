@@ -1276,14 +1276,14 @@ export default function AdminPanel() {
                     <Plus size={14} /> Add
                   </button>
                 </div>
-                <div style={{ display:'flex', gap:'6px', alignItems:'center' }}>
-                  <div style={{ position:'relative', flex:1 }}>
+                <div style={{ display:'flex', gap:'6px', alignItems:'center', overflow:'hidden', width:'100%', boxSizing:'border-box' }}>
+                  <div style={{ position:'relative', flex:1, minWidth:0 }}>
                     <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search..."
                       style={{ width:'100%', padding:'7px 10px 7px 28px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'12px', outline:'none', background:'#F8FAFC', boxSizing:'border-box' }} />
                     <Search size={12} color="#94A3B8" style={{ position:'absolute', left:'8px', top:'50%', transform:'translateY(-50%)' }} />
                   </div>
                   <select value={catFilter} onChange={e=>setCatFilter(e.target.value)}
-                    style={{ padding:'7px 8px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'11px', background:'#FFFFFF', fontWeight:700, color:'#334155', flexShrink:0 }}>
+                    style={{ padding:'7px 8px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'11px', background:'#FFFFFF', fontWeight:700, color:'#334155', flexShrink:0, maxWidth:'90px', boxSizing:'border-box' }}>
                     <option value="all">All</option>
                     <option value="tailoring">Tailoring</option>
                     <option value="fashion">Fashion</option>

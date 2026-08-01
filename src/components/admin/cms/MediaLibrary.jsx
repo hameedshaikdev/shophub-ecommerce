@@ -61,7 +61,7 @@ export default function MediaLibrary({ mediaList = [], onSelect, onUpdateMedia }
 
       {showAddForm && (
         <form onSubmit={handleAddMedia} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '16px', marginBottom: '20px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '12px', marginBottom: '12px' }}>
             <input
               type="text"
               placeholder="Image URL (Unsplash, CDN, etc.)"
@@ -137,7 +137,7 @@ export default function MediaLibrary({ mediaList = [], onSelect, onUpdateMedia }
       </div>
 
       {/* Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(140px, 100%), 1fr))', gap: '16px' }}>
         {filtered.map(media => {
           const isSelected = selectedId === media.id;
           return (

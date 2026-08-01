@@ -32,7 +32,7 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', overflow: 'hidden', minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
       {/* Top Banner & Enable Toggle */}
       <div style={{ background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)', borderRadius: '16px', padding: '24px', color: '#FFFFFF', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
@@ -72,7 +72,7 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))', gap: '12px' }}>
           <div>
             <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Section Title</label>
             <input
@@ -109,7 +109,7 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
           <Settings size={16} color="#2563EB" /> Display Controls & Badges
         </h4>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))', gap: '10px' }}>
           {[
             { key: 'showDiscount', label: 'Show Discount %' },
             { key: 'showStock', label: 'Show Stock Level' },
@@ -152,7 +152,7 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px', maxHeight: '350px', overflowY: 'auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(140px, 100%), 1fr))', gap: '10px', maxHeight: '350px', overflowY: 'auto' }}>
           {filteredProducts.map(prod => {
             const isSelected = selectedIds.includes(prod.id);
             return (

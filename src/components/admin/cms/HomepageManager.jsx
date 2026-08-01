@@ -168,7 +168,7 @@ export default function HomepageManager({ products = [] }) {
         </div>
 
         {/* Editor Body */}
-        <div style={{ width: '100%', minWidth: 0 }}>
+        <div style={{ width: '100%', minWidth: 0, overflow: 'hidden', boxSizing: 'border-box' }}>
           {activeSection === 'hero' && (
             <HeroEditor
               heroData={cmsDraft.hero}
