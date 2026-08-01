@@ -1091,25 +1091,25 @@ export default function AdminPanel() {
       {/* ── BODY: STICKY SEGMENTED TABS + CONTENT ────────────── */}
       <div style={{ flex:1, minHeight:0 }}>
 
-        {/* Tab switcher — full width */}
+        {/* Tab switcher — full width & scrollable on mobile */}
         <div style={{ background:'#FFFFFF', borderBottom:'1px solid #E5E7EB', padding:'8px 16px', position:'sticky', top:'58px', zIndex:90, boxSizing:'border-box', width:'100%' }}>
           <div style={{ maxWidth:'1360px', margin:'0 auto' }}>
-            <div style={{ display:'flex', gap:'4px', background:'#F1F5F9', padding:'3px', borderRadius:'12px', border:'1px solid #E2E8F0' }}>
+            <div style={{ display:'flex', gap:'4px', background:'#F1F5F9', padding:'3px', borderRadius:'12px', border:'1px solid #E2E8F0', overflowX:'auto', scrollbarWidth:'none', WebkitOverflowScrolling:'touch' }}>
               {[
                 { key:'orders',    label:'Orders',    icon:ShoppingBag },
                 { key:'products',  label:'Products',  icon:Package },
-                { key:'cms',       label:'Homepage CMS', icon:Sparkles },
+                { key:'cms',       label:'CMS',       icon:Sparkles },
                 { key:'more',      label:'More',      icon:Settings },
               ].map(({ key, label, icon:Icon }) => (
                 <button key={key} onClick={() => setPage(key)}
-                  style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:'6px',
+                  style={{ flex:'1 0 auto', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px',
                     padding:'8px 12px', borderRadius:'9px', fontWeight:800,
-                    fontSize:'13px', border:'none', cursor:'pointer', transition:'all 200ms ease',
+                    fontSize:'12px', border:'none', cursor:'pointer', transition:'all 200ms ease',
                     background: page===key ? '#FFFFFF' : 'transparent',
                     color: page===key ? '#0F172A' : '#64748B',
                     boxShadow: page===key ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
                     whiteSpace:'nowrap', position:'relative' }}>
-                  <Icon size={15} strokeWidth={2.2} color={page===key ? '#2563EB' : '#64748B'} />
+                  <Icon size={14} strokeWidth={2.2} color={page===key ? '#2563EB' : '#64748B'} />
                   {label}
                   {key==='orders' && counts.all_pending > 0 && (
                     <span style={{ background:'#DC2626', color:'white', fontSize:'9px',

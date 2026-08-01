@@ -1278,7 +1278,7 @@ div[style*="overflow"]::-webkit-scrollbar {
 }
 
 /* CMS Mobile Layout */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .cms-main-grid {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
@@ -1293,6 +1293,7 @@ div[style*="overflow"]::-webkit-scrollbar {
     scroll-behavior: smooth !important;
     padding-bottom: 2px !important;
     scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
   }
   .cms-sidebar-inner::-webkit-scrollbar {
     display: none !important;
@@ -1312,5 +1313,17 @@ div[style*="overflow"]::-webkit-scrollbar {
   }
   .cms-top-bar p {
     display: none !important;
+  }
+  /* Force all CMS input grids to 1 column on mobile so nothing is cut off */
+  .cms-main-grid div[style*="gridTemplateColumns"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .cms-main-grid input,
+  .cms-main-grid textarea,
+  .cms-main-grid select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 }
