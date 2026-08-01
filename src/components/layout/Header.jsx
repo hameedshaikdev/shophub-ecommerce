@@ -310,7 +310,8 @@ export default function Header() {
                       border:'1px solid rgba(255, 255, 255, 0.25)',
                       padding:'6px 14px', borderRadius:'9999px',
                       color:'#FFFFFF', fontSize:'12px', fontWeight:700,
-                      width:'fit-content', textDecoration:'none', marginTop:'4px'
+                      textDecoration:'none', marginTop:'4px',
+                      alignSelf:'flex-start'
                     }}>
                     <User size={13} /> View Profile
                   </Link>

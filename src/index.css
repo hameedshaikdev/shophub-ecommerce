@@ -1371,51 +1371,369 @@ input[type="radio"] {
 }
 
 
-/* ═══════════════════════════════════════════════════════════
-   COMPREHENSIVE MOBILE RESPONSIVENESS — 320px to 768px
-   Only overrides layout/visual. No business logic changed.
-   ═══════════════════════════════════════════════════════════ */
 
-/* ── Universal box-sizing & overflow containment ── */
+/* ═══════════════════════════════════════════════════════════════════
+   COMPLETE MOBILE RESPONSIVE SYSTEM — 320px → 768px
+   Root-cause fixes. No cosmetic changes. Desktop untouched.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── 1. UNIVERSAL RESET — every element obeys the viewport ─── */
 *, *::before, *::after {
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
-html, body, #root {
+html {
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+}
+body, #root {
   overflow-x: hidden !important;
   max-width: 100vw !important;
+  width: 100% !important;
 }
-
-/* ── Prevent any image from overflowing ── */
-img {
+img, video, svg {
   max-width: 100% !important;
-  height: auto;
 }
 
-/* ── Every input / textarea / select: full width, min-width 0 ── */
+/* ─── 2. CONTAINER — always full width on mobile ─── */
 @media (max-width: 767px) {
-  input, textarea, select {
-    max-width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  /* ── Container: tight side padding on phones ── */
   .sh-container,
   .container-center {
+    width: 100% !important;
+    max-width: 100% !important;
     padding-left: 14px !important;
     padding-right: 14px !important;
-    max-width: 100% !important;
     box-sizing: border-box !important;
   }
+}
 
-  /* ── Navbar height fix ── */
+/* ─── 3. HEADER — prevent logo+search+menu overflow ─── */
+@media (max-width: 767px) {
+  .sh-header {
+    width: 100% !important;
+    overflow: hidden !important;
+  }
   .sh-navbar {
     height: 56px !important;
     gap: 8px !important;
-    padding: 0 !important;
+    width: 100% !important;
+    padding: 0 14px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
+  /* Logo: fixed width, never shrinks */
+  .sh-navbar > a:first-child {
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+    max-width: 120px !important;
+  }
+  .sh-navbar > a:first-child span {
+    font-size: 16px !important;
+    white-space: nowrap !important;
+  }
+  /* Mobile search: takes remaining space */
+  .sh-mobile-search-inline {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .sh-mobile-search-inline .sh-search-wrap {
+    width: 100% !important;
+    height: 36px !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+  .sh-mobile-search-inline input {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  /* Icon buttons: minimum touch target */
+  .sh-icon-btn {
+    width: 40px !important;
+    height: 40px !important;
+    flex-shrink: 0 !important;
+    min-width: 40px !important;
+  }
+  /* Switcher: full width, never overflows */
+  .sh-switcher-wrap {
+    width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+  .sh-switcher {
+    max-width: calc(100vw - 28px) !important;
+    width: auto !important;
+  }
+  .sh-switcher-btn {
+    padding: 9px 12px !important;
+    font-size: 12px !important;
+    gap: 5px !important;
+    white-space: nowrap !important;
+  }
+  .sh-switcher-emoji { font-size: 15px !important; }
+}
+@media (max-width: 340px) {
+  .sh-navbar > a:first-child span { display: none !important; }
+  .sh-navbar { padding: 0 10px !important; }
+}
 
-  /* ── sh-btn: full touch target, never overflow ── */
+/* ─── 4. SUBTABS / CATEGORY FILTER ─── */
+.sh-subtabs {
+  width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+.sh-subtabs-inner {
+  display: flex !important;
+  overflow-x: auto !important;
+  gap: 6px !important;
+  padding: 10px 14px !important;
+  scrollbar-width: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  /* critical: no flex-wrap so tabs scroll, not wrap+clip */
+  flex-wrap: nowrap !important;
+}
+.sh-subtabs-inner::-webkit-scrollbar { display: none !important; }
+.sh-subtab {
+  flex-shrink: 0 !important;   /* never shrink — scroll instead */
+  white-space: nowrap !important;
+  min-height: 40px !important;
+  padding: 8px 14px !important;
+  font-size: 12px !important;
+}
+
+/* ─── 5. HERO SECTION ─── */
+@media (max-width: 767px) {
+  .hero-container-wrap {
+    overflow: hidden !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .hero-inner-wrap {
+    padding-top: 24px !important;
+    padding-bottom: 16px !important;
+    overflow: hidden !important;
+  }
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+  .hero-illustration { display: none !important; }
+  .hero-content-box {
+    width: 100% !important;
+    text-align: center !important;
+    align-items: center !important;
+    overflow: hidden !important;
+  }
+  .hero-content-box h1 {
+    font-size: clamp(24px, 8vw, 36px) !important;
+    letter-spacing: -1px !important;
+    word-break: break-word !important;
+  }
+  .hero-content-box p {
+    font-size: 13px !important;
+    word-break: break-word !important;
+  }
+  /* CTA buttons: wrap, never overflow */
+  .hero-content-box > div {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+  .hero-content-box button {
+    max-width: 100% !important;
+    min-height: 44px !important;
+    padding: 10px 18px !important;
+    font-size: 13px !important;
+    white-space: normal !important;
+  }
+  /* Trust badges row: wrap */
+  .hero-content-box > div[style*="alignItems:'center'"] {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+  /* Stats bar: flow, not absolute */
+  .hero-compact { min-height: auto !important; }
+  .hero-stats-bar {
+    position: relative !important;
+    left: auto !important; right: auto !important; bottom: auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .hero-stats-inner {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 10px 20px !important;
+    padding: 10px 14px !important;
+  }
+}
+
+/* ─── 6. COLLECTIONS GRID ─── */
+@media (max-width: 560px) {
+  .collections-grid {
+    grid-template-columns: 1fr 1fr !important;
+    grid-auto-rows: 150px !important;
+    gap: 8px !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+  .cg-featured { grid-column: 1 / -1 !important; grid-row: span 1 !important; }
+  .cg-med      { grid-column: span 1 !important; grid-row: span 1 !important; }
+  .cg-small    { grid-column: span 1 !important; grid-row: span 1 !important; }
+  .cg-wide     { grid-column: 1 / -1 !important; grid-row: span 1 !important; }
+  .col-card    { min-height: 140px !important; }
+}
+@media (max-width: 340px) {
+  .collections-grid {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: 140px !important;
+  }
+  .cg-featured, .cg-med, .cg-small, .cg-wide {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* ─── 7. CAROUSEL — arrows inside, never bleed ─── */
+.carousel-outer {
+  overflow: hidden !important;
+  width: 100% !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+}
+.carousel-outer > div[style*="overflow"] {
+  /* The scroll container inside */
+  padding-left: 44px !important;
+  padding-right: 44px !important;
+}
+@media (max-width: 767px) {
+  .carousel-arrow {
+    width: 30px !important;
+    height: 30px !important;
+  }
+}
+
+/* ─── 8. PRODUCT GRID — always 2-col on phones ─── */
+@media (max-width: 767px) {
+  .sh-grid-products {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+@media (max-width: 340px) {
+  .sh-grid-products {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* ─── 9. PRODUCT CARD — no overflow ─── */
+@media (max-width: 767px) {
+  .sh-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ─── 10. PRODUCT DETAIL PAGE ─── */
+@media (max-width: 767px) {
+  .pd-content-container {
+    padding: 12px 14px !important;
+    box-sizing: border-box !important;
+  }
+  .product-main-card {
+    grid-template-columns: 1fr !important;
+    padding: 14px !important;
+    gap: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-radius: 16px !important;
+  }
+  .pd-gallery-section { position: static !important; }
+  .pd-trust-features-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .pd-add-to-cart-button,
+  .pd-buy-now-button {
+    height: 50px !important;
+    font-size: 14px !important;
+    width: 100% !important;
+  }
+  .pd-current-price-num { font-size: 26px !important; }
+  .pd-sticky-header {
+    padding: 10px 14px !important;
+  }
+  .pd-breadcrumbs {
+    display: none !important;
+  }
+}
+@media (max-width: 480px) {
+  .pd-trust-features-grid {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+}
+
+/* ─── 11. CART PAGE ─── */
+@media (max-width: 640px) {
+  .cart-item-row {
+    border-radius: 16px !important;
+    padding: 12px !important;
+    gap: 10px !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .cart-item-img {
+    width: 68px !important;
+    height: 68px !important;
+    border-radius: 12px !important;
+    flex-shrink: 0 !important;
+    min-width: 68px !important;
+  }
+  .cart-summary-card {
+    padding: 16px !important;
+    border-radius: 20px !important;
+  }
+  /* "Proceed to checkout" button: always full width */
+  .cart-summary-card .sh-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+@media (max-width: 360px) {
+  .cart-item-img {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+  }
+}
+
+/* ─── 12. CHECKOUT PAGE ─── */
+@media (max-width: 640px) {
+  .checkout-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .checkout-form-grid > div {
+    grid-column: 1 / -1 !important;
+  }
+  /* Every input/textarea full width */
+  .checkout-form-grid input,
+  .checkout-form-grid textarea,
+  .checkout-form-grid select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important; /* prevents iOS zoom */
+  }
+}
+
+/* ─── 13. BUTTONS — minimum touch targets ─── */
+@media (max-width: 767px) {
   .sh-btn {
     min-height: 48px !important;
     height: auto !important;
@@ -1424,249 +1742,171 @@ img {
     max-width: 100% !important;
     box-sizing: border-box !important;
     white-space: normal !important;
+    word-break: break-word !important;
   }
   .sh-btn-sm {
     min-height: 44px !important;
-    height: auto !important;
     padding: 10px 16px !important;
   }
-
-  /* ── Icon buttons: minimum 44×44 touch target ── */
-  .sh-icon-btn {
-    width: 44px !important;
-    height: 44px !important;
-    flex-shrink: 0 !important;
+  button {
+    min-height: 44px;
+    box-sizing: border-box;
   }
-
-  /* ── Product grid: always 2 columns on phones ── */
-  .sh-grid-products {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
-  }
-
-  /* ── Cards never overflow container ── */
-  .sh-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  /* ── Hero: no horizontal overflow ── */
-  .hero-container-wrap {
-    overflow-x: hidden !important;
-    width: 100% !important;
-  }
-
-  /* ── Hero CTA buttons stack on 360px ── */
-  .hero-content-box > div[style*="display:\'flex\'"],
-  .hero-content-box > div {
-    flex-wrap: wrap !important;
-  }
-
-  /* ── Subtabs: horizontally scrollable, no clip ── */
-  .sh-subtabs-inner {
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-    gap: 8px !important;
-  }
-  .sh-subtab {
-    padding: 9px 16px !important;
-    font-size: 12px !important;
-    min-height: 44px !important;
-  }
-
-  /* ── Switcher: fit inside header on 320px ── */
-  .sh-switcher {
-    max-width: calc(100vw - 28px) !important;
-  }
-  .sh-switcher-btn {
-    padding: 9px 12px !important;
-    font-size: 12px !important;
-    gap: 5px !important;
-  }
-  .sh-switcher-emoji {
-    font-size: 15px !important;
-  }
-
-  /* ── Product detail page ── */
-  .pd-content-container {
-    padding: 12px 14px !important;
-  }
-  .product-main-card {
-    grid-template-columns: 1fr !important;
-    padding: 14px !important;
-    gap: 16px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  .pd-gallery-section {
-    position: static !important;
-  }
-  .pd-trust-features-grid {
-    grid-template-columns: 1fr !important;
-    gap: 6px !important;
-  }
-  .pd-action-buttons-wrap {
-    gap: 8px !important;
-  }
-  .pd-add-to-cart-button,
-  .pd-buy-now-button {
-    height: 52px !important;
-    font-size: 15px !important;
+  /* inline icon buttons stay smaller */
+  .sh-icon-btn, .pd-qty-circle, .pd-arrow-nav,
+  .carousel-arrow, .sh-drawer-icon-box {
+    min-height: unset !important;
   }
 }
 
-/* ── 480px breakpoint — fill the gap between 640px and 767px ── */
-@media (max-width: 480px) {
-  .sh-container,
-  .container-center {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
+/* ─── 14. FORMS — all inputs 100% width, 16px to stop iOS zoom ─── */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important;
   }
+  /* Keep checkboxes & radios small */
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 18px !important;
+    height: 18px !important;
+    min-height: unset !important;
+    flex-shrink: 0 !important;
+  }
+}
 
-  /* Admin: product toolbar wraps gracefully */
+/* ─── 15. TEXT — no invisible clipping ─── */
+@media (max-width: 767px) {
+  h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
+  }
+  p, span, label, a, li {
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+  }
+}
+
+/* ─── 16. ADMIN PANEL ─── */
+@media (max-width: 640px) {
+  /* FAB above bottom nav */
+  .admin-fab-wrap {
+    bottom: 80px !important;
+    right: 14px !important;
+  }
+  /* Tab row: scrollable */
+  .admin-tab-row {
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .admin-tab-row::-webkit-scrollbar { display: none !important; }
+  /* Products grid: 2 columns */
   .admin-products-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 8px !important;
   }
-
-  /* Checkout pay step: UPI copy row never overflows */
-  .sh-grid-products {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
-  }
-
-  /* Flash deals / carousels — mini card sizing */
-  .carousel-outer {
-    overflow: hidden !important;
-  }
-}
-
-/* ── 320px ultra-narrow ── */
-@media (max-width: 340px) {
-  .sh-navbar {
-    gap: 6px !important;
-  }
-  .sh-icon-btn {
-    width: 38px !important;
-    height: 38px !important;
-  }
-  .sh-switcher-btn {
-    padding: 8px 8px !important;
-    font-size: 11px !important;
-  }
-  .sh-switcher-emoji {
-    display: none !important;
-  }
-  .sh-grid-products {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
-  }
-  .sh-btn {
-    font-size: 13px !important;
-    padding: 11px 16px !important;
-  }
-  /* Cart item controls stack vertically */
-  .cart-item-img {
-    width: 60px !important;
-    height: 60px !important;
-  }
-}
-
-/* ── Admin panel: comprehensive mobile fixes ── */
-@media (max-width: 640px) {
-  /* Tabs: scrollable, no clip */
-  .admin-tabs-bar {
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-  }
-  .admin-tabs-bar::-webkit-scrollbar { display: none !important; }
-
-  /* Products toolbar: wrap instead of overflow */
-  .admin-toolbar-row {
+  /* Toolbar: wrap instead of clip */
+  .admin-toolbar-inner {
     flex-wrap: wrap !important;
     gap: 8px !important;
   }
-
-  /* Status tabs: don't clip */
+  .admin-toolbar-inner input,
+  .admin-toolbar-inner select {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+  /* Status tabs: scroll */
   .admin-status-tabs {
     overflow-x: auto !important;
-    padding-bottom: 4px !important;
     scrollbar-width: none !important;
   }
   .admin-status-tabs::-webkit-scrollbar { display: none !important; }
-
-  /* FAB: above bottom nav */
-  .admin-fab-wrap {
-    bottom: 80px !important;
-    right: 16px !important;
-  }
-
-  /* Order cards: prevent text overflow */
-  .admin-order-header-row {
-    flex-wrap: wrap !important;
-  }
-
-  /* Notification panel: full width */
+  /* Notification panel: full width on mobile */
   .admin-notif-panel {
     width: calc(100vw - 32px) !important;
     right: 0 !important;
-  }
-
-  /* Header search: no overflow */
-  .admin-header-search {
-    min-width: 0 !important;
-    max-width: 100% !important;
+    left: auto !important;
   }
 }
 
-/* ── Checkout: single-column form always on phones ── */
+/* ─── 17. ORDERS PAGE ─── */
 @media (max-width: 640px) {
-  .checkout-form-grid {
-    grid-template-columns: 1fr !important;
+  /* Filter pills: wrap */
+  .orders-filter-row {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
   }
-  .checkout-form-grid > div {
-    grid-column: 1 / -1 !important;
-  }
-  /* UPI copy row: don't overflow */
-  .checkout-upi-row {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 8px !important;
+  /* Order card header: stack amount below ID */
+  .order-card-header {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
   }
 }
 
-/* ── Cart: summary card mobile ── */
-@media (max-width: 640px) {
-  .cart-summary-card {
-    padding: 16px !important;
-    border-radius: 20px !important;
-  }
-  .cart-item-img {
-    width: 68px !important;
-    height: 68px !important;
-    border-radius: 12px !important;
-    flex-shrink: 0 !important;
-  }
+/* ─── 18. BOTTOM NAV — safe area + no content overlap ─── */
+.sh-bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  box-sizing: content-box !important;
 }
-
-/* ── Global: flex/grid children — prevent width blowout ── */
+/* Give pages breathing room above bottom nav */
 @media (max-width: 767px) {
-  [class*="sh-"] {
+  body > #root > div {
+    padding-bottom: max(64px, calc(64px + env(safe-area-inset-bottom, 0px)));
+  }
+}
+
+/* ─── 19. OVERFLOW AUDIT — catch any rogue fixed widths ─── */
+@media (max-width: 767px) {
+  /* flex children must not expand parent */
+  [style*="display: flex"] > *,
+  [style*="display:flex"] > * {
     min-width: 0;
   }
-  /* Prevent long text from overflowing any container */
-  p, span, h1, h2, h3, h4, h5, h6, label, a {
-    overflow-wrap: break-word;
-    word-break: break-word;
+  /* grid children */
+  [style*="display: grid"] > *,
+  [style*="display:grid"] > * {
+    min-width: 0;
   }
 }
 
-/* ── Safe area insets (iPhone notch/home bar) ── */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .sh-bottom-nav,
-  .bottom-nav-wrap {
-    padding-bottom: env(safe-area-inset-bottom) !important;
+/* ─── 20. CMS EDITOR MOBILE ─── */
+@media (max-width: 768px) {
+  .cms-main-grid {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  .cms-sidebar-inner {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none !important;
+  }
+  .cms-sidebar-inner::-webkit-scrollbar { display: none !important; }
+  .cms-sidebar-inner button {
+    flex-shrink: 0 !important;
+    width: auto !important;
+    white-space: nowrap !important;
+  }
+  /* All CMS inputs full width */
+  .cms-main-grid input,
+  .cms-main-grid textarea,
+  .cms-main-grid select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important;
+  }
+  /* CMS grid children: single column */
+  .cms-main-grid > div > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
   }
 }

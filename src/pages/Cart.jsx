@@ -65,7 +65,7 @@ export default function Cart() {
                 const itemQty = Number(item?.quantity || 1);
 
                 return (
-                  <div key={item.id || Math.random()} style={{ background:'rgba(255, 255, 255, 0.82)', backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)', borderRadius:'28px', padding:'16px', display:'flex', gap:'14px', boxShadow:'0 10px 32px rgba(15,23,42,0.06)', border:'1px solid rgba(255, 255, 255, 0.9)', alignItems:'center', position:'relative', boxSizing:'border-box' }}>
+                  <div key={item.id || Math.random()} className="cart-item-row" style={{ background:'rgba(255, 255, 255, 0.82)', backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)', borderRadius:'20px', padding:'14px', display:'flex', gap:'12px', boxShadow:'0 10px 32px rgba(15,23,42,0.06)', border:'1px solid rgba(255, 255, 255, 0.9)', alignItems:'flex-start', position:'relative', boxSizing:'border-box', width:'100%' }}>
                     {/* Image */}
                     <div className="cart-item-img" style={{ width:'80px', height:'80px', borderRadius:'16px', overflow:'hidden', background:'rgba(241,245,249,0.8)', flexShrink:0, boxShadow:'0 4px 14px rgba(0,0,0,0.06)' }}>
                       <img src={getProductImage(item)} alt={item.name || 'Item'}
@@ -73,8 +73,8 @@ export default function Cart() {
                     </div>
 
                     {/* Info */}
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <p style={{ fontWeight:800, fontSize:'15px', color:'#0F172A', marginBottom:'4px', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', letterSpacing:'-0.2px' }}>{item.name}</p>
+                    <div style={{ flex:1, minWidth:0, overflow:'hidden' }}>
+                      <p style={{ fontWeight:800, fontSize:'14px', color:'#0F172A', marginBottom:'4px', overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', letterSpacing:'-0.2px', lineHeight:1.3 }}>{item.name}</p>
                       {item.unit && <p style={{ fontSize:'12px', color:'#64748B', marginBottom:'8px', fontWeight:500 }}>{item.unit}</p>}
                       <div style={{ display:'flex', alignItems:'baseline', gap:'8px' }}>
                         <span style={{ fontWeight:900, fontSize:'18px', color:'#0F172A' }}>₹{itemPrice.toFixed(0)}</span>
@@ -85,7 +85,7 @@ export default function Cart() {
                     </div>
 
                     {/* Controls */}
-                    <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'12px', flexShrink:0 }}>
+                    <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'10px', flexShrink:0, minWidth:0 }}>
                       <button onClick={() => removeFromCart(item.id)}
                         title="Remove item"
                         style={{ padding:'8px', borderRadius:'9999px', background:'rgba(239,68,68,0.1)', color:'#EF4444', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .2s' }}>
@@ -165,14 +165,26 @@ export default function Cart() {
           }
         }
         @media(max-width:640px) {
+          .cart-item-row {
+            border-radius: 16px !important;
+            padding: 12px !important;
+            gap: 10px !important;
+          }
           .cart-item-img {
             width: 68px !important;
             height: 68px !important;
             border-radius: 12px !important;
+            flex-shrink: 0 !important;
           }
           .cart-summary-card {
             padding: 16px !important;
             border-radius: 20px !important;
+          }
+        }
+        @media(max-width:360px) {
+          .cart-item-img {
+            width: 56px !important;
+            height: 56px !important;
           }
         }
       `}</style>
