@@ -73,12 +73,12 @@ export default function HeroEditor({ heroData = {}, onChange }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Category Tab Selector */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '16px 20px', borderRadius: '16px', border: '1px solid #E2E8F0' }}>
-        <div style={{ display: 'flex', gap: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '14px 16px', borderRadius: '16px', border: '1px solid #E2E8F0', flexWrap: 'wrap', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flex: 1, minWidth: '220px' }}>
           <button
             onClick={() => setActiveTab('tailoring')}
             style={{
-              padding: '10px 20px', borderRadius: '12px', fontWeight: 800, fontSize: '13px', border: 'none', cursor: 'pointer',
+              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', flex: '1 1 auto', textAlign: 'center',
               background: activeTab === 'tailoring' ? 'linear-gradient(135deg, #1A0533, #3D0F6B)' : '#F1F5F9',
               color: activeTab === 'tailoring' ? '#FFFFFF' : '#475569',
               boxShadow: activeTab === 'tailoring' ? '0 4px 14px rgba(61,15,107,0.3)' : 'none'
@@ -89,7 +89,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
           <button
             onClick={() => setActiveTab('fashion')}
             style={{
-              padding: '10px 20px', borderRadius: '12px', fontWeight: 800, fontSize: '13px', border: 'none', cursor: 'pointer',
+              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', flex: '1 1 auto', textAlign: 'center',
               background: activeTab === 'fashion' ? 'linear-gradient(135deg, #0A2540, #1A4A7A)' : '#F1F5F9',
               color: activeTab === 'fashion' ? '#FFFFFF' : '#475569',
               boxShadow: activeTab === 'fashion' ? '0 4px 14px rgba(10,37,64,0.3)' : 'none'
@@ -103,45 +103,45 @@ export default function HeroEditor({ heroData = {}, onChange }) {
           onClick={() => setShowCarouselSettings(!showCarouselSettings)}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: '6px',
-            padding: '8px 14px', borderRadius: '10px', background: '#F8FAFC', border: '1px solid #CBD5E1',
-            fontSize: '12px', fontWeight: 700, cursor: 'pointer', color: '#334155'
+            padding: '8px 12px', borderRadius: '9px', background: '#F8FAFC', border: '1px solid #CBD5E1',
+            fontSize: '11px', fontWeight: 700, cursor: 'pointer', color: '#334155', flexShrink: 0
           }}
         >
-          <Settings size={15} /> Carousel Speed & Transition Settings
+          <Settings size={14} /> Carousel Settings
         </button>
       </div>
 
       {/* Carousel Global Settings */}
       {showCarouselSettings && (
-        <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '20px' }}>
-          <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A', marginBottom: '14px' }}>⚙️ Hero Carousel Settings</h4>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>
+        <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px' }}>
+          <h4 style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', marginBottom: '12px' }}>⚙️ Hero Carousel Settings</h4>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>
               Autoplay Slides
               <select
                 value={carouselSettings.autoplay ? 'true' : 'false'}
                 onChange={e => updateCarouselSettings('autoplay', e.target.value === 'true')}
-                style={{ width: '100%', marginTop: '6px', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1' }}
+                style={{ width: '100%', marginTop: '4px', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px' }}
               >
                 <option value="true">Enabled</option>
                 <option value="false">Disabled</option>
               </select>
             </label>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>
               Slide Duration (ms)
               <input
                 type="number"
                 value={carouselSettings.slideDuration}
                 onChange={e => updateCarouselSettings('slideDuration', parseInt(e.target.value) || 5000)}
-                style={{ width: '100%', marginTop: '6px', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1' }}
+                style={{ width: '100%', marginTop: '4px', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px' }}
               />
             </label>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>
               Transition Effect
               <select
                 value={carouselSettings.transitionStyle}
                 onChange={e => updateCarouselSettings('transitionStyle', e.target.value)}
-                style={{ width: '100%', marginTop: '6px', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1' }}
+                style={{ width: '100%', marginTop: '4px', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px' }}
               >
                 <option value="fade">Smooth Fade</option>
                 <option value="slide">Horizontal Slide</option>
@@ -157,7 +157,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
           Hero Section Options ({activeTab.toUpperCase()})
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', marginBottom: '16px' }}>
           <div>
             <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Main Title</label>
             <input
@@ -206,7 +206,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
           <div>
             <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Hero Photo URL</label>
             <input
