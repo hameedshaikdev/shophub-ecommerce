@@ -63,28 +63,28 @@ export default function HomepageManager({ products = [] }) {
         style={{
           background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px',
           padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          gap: '10px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexWrap: 'wrap'
+          gap: '10px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexWrap: 'wrap', width: '100%', boxSizing: 'border-box'
         }}
       >
         {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: '0 0 auto' }}>
           <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'linear-gradient(135deg, #2563EB, #1D4ED8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', flexShrink: 0 }}>
             <Sparkles size={16} />
           </div>
-          <div>
-            <h2 style={{ fontSize: '15px', fontWeight: 900, color: '#0F172A', margin: 0, lineHeight: 1.2 }}>Homepage CMS</h2>
-            <p style={{ fontSize: '10px', color: '#64748B', margin: '1px 0 0 0' }}>Dynamic Storefront Editor</p>
+          <div style={{ minWidth: 0 }}>
+            <h2 style={{ fontSize: '15px', fontWeight: 900, color: '#0F172A', margin: 0, lineHeight: 1.2, whiteSpace: 'nowrap' }}>Homepage CMS</h2>
+            <p style={{ fontSize: '10px', color: '#64748B', margin: '1px 0 0 0', whiteSpace: 'nowrap' }}>Dynamic Storefront Editor</p>
           </div>
         </div>
 
         {/* Action buttons — horizontal scroll row on mobile */}
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', flexShrink: 0, maxWidth: '100%' }}>
+        <div className="cms-action-bar-buttons" style={{ display: 'flex', gap: '6px', alignItems: 'center', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', flex: '1 1 auto', maxWidth: '100%', minWidth: 0 }}>
           {/* Undo / Redo */}
           <button
             onClick={undoCms}
             disabled={!canUndo}
             title="Undo Edit"
-            style={{ padding: '7px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#F8FAFC', cursor: canUndo ? 'pointer' : 'not-allowed', opacity: canUndo ? 1 : 0.4 }}
+            style={{ padding: '7px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#F8FAFC', cursor: canUndo ? 'pointer' : 'not-allowed', opacity: canUndo ? 1 : 0.4, flexShrink: 0 }}
           >
             <Undo size={14} />
           </button>
@@ -92,7 +92,7 @@ export default function HomepageManager({ products = [] }) {
             onClick={redoCms}
             disabled={!canRedo}
             title="Redo Edit"
-            style={{ padding: '7px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#F8FAFC', cursor: canRedo ? 'pointer' : 'not-allowed', opacity: canRedo ? 1 : 0.4 }}
+            style={{ padding: '7px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#F8FAFC', cursor: canRedo ? 'pointer' : 'not-allowed', opacity: canRedo ? 1 : 0.4, flexShrink: 0 }}
           >
             <Redo size={14} />
           </button>
@@ -103,7 +103,7 @@ export default function HomepageManager({ products = [] }) {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '5px',
               padding: '8px 12px', borderRadius: '9px', border: '1px solid #2563EB', background: '#EFF6FF',
-              color: '#2563EB', fontSize: '12px', fontWeight: 800, cursor: 'pointer'
+              color: '#2563EB', fontSize: '12px', fontWeight: 800, cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap'
             }}
           >
             <Eye size={14} /> Preview
@@ -115,7 +115,7 @@ export default function HomepageManager({ products = [] }) {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '5px',
               padding: '8px 12px', borderRadius: '9px', border: '1px solid #E2E8F0', background: '#FFFFFF',
-              color: '#64748B', fontSize: '12px', fontWeight: 700, cursor: 'pointer'
+              color: '#64748B', fontSize: '12px', fontWeight: 700, cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap'
             }}
           >
             <RotateCcw size={14} /> Discard

@@ -2069,7 +2069,7 @@ img, video, svg {
 
 /* Hero Editor - Tabs wrap on mobile */
 @media (max-width: 640px) {
-  /* Hero section tabs */
+  /* Hero section tabs container - horizontal scroll */
   div[style*="Tailoring Tools Hero"] {
     font-size: 11px !important;
     padding: 7px 12px !important;
@@ -2077,8 +2077,13 @@ img, video, svg {
     white-space: nowrap !important;
   }
   
+  /* Hide scrollbar but keep scrolling */
+  div[style*="overflowX: 'auto'"][style*="scrollbarWidth: 'none'"]::-webkit-scrollbar {
+    display: none !important;
+  }
+  
   /* Carousel settings button */
-  div[style*="Carousel Settings"] {
+  button[style*="Carousel Settings"] {
     font-size: 10px !important;
     padding: 7px 10px !important;
   }
@@ -2356,29 +2361,33 @@ img, video, svg {
 
 /* CMS Top Action Bar */
 @media (max-width: 640px) {
-  .cms-top-bar,
-  div[style*="Homepage CMS"][style*="flexWrap: 'wrap'"] {
+  .cms-top-bar {
+    padding: 10px !important;
     gap: 8px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
   }
   
-  .cms-top-bar > div:last-child,
-  div[style*="Homepage CMS"] ~ div[style*="overflowX: 'auto'"] {
+  .cms-top-bar > div:first-child {
+    width: 100% !important;
+    flex: none !important;
+  }
+  
+  .cms-action-bar-buttons {
     width: 100% !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
+    justify-content: flex-start !important;
+    padding-bottom: 2px !important;
   }
   
-  .cms-top-bar > div:last-child::-webkit-scrollbar {
+  .cms-action-bar-buttons::-webkit-scrollbar {
     display: none !important;
   }
   
-  /* Action buttons */
-  .cms-top-bar button,
-  div[style*="Homepage CMS"] ~ div button {
+  .cms-action-bar-buttons button {
     flex-shrink: 0 !important;
     white-space: nowrap !important;
-    font-size: 11px !important;
-    padding: 7px 12px !important;
   }
 }

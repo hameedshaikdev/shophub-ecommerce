@@ -63,17 +63,15 @@ export default function HeroEditor({ heroData = {}, onChange }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', boxSizing: 'border-box' }}>
 
       {/* ══ TAB BAR ══
-          Uses flexWrap so buttons WRAP to next line — fully visible, zero clipping.
-          Row 1: [🪡 Tailoring Tools Hero] [👗 Women Fashion Hero]
-          Row 2: [⚙️ Carousel Settings]
+          Horizontal scrollable tabs - always in one line
       */}
-      <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '12px 14px' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+      <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '12px 14px', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+        <div style={{ display: 'flex', gap: '8px', minWidth: 'max-content' }}>
           <button
             onClick={() => setActiveTab('tailoring')}
             style={{
               padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px',
-              border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+              border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
               background: activeTab === 'tailoring' ? 'linear-gradient(135deg,#1A0533,#3D0F6B)' : '#F1F5F9',
               color: activeTab === 'tailoring' ? '#FFF' : '#475569',
               boxShadow: activeTab === 'tailoring' ? '0 4px 14px rgba(61,15,107,.3)' : 'none',
@@ -84,7 +82,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
             onClick={() => setActiveTab('fashion')}
             style={{
               padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px',
-              border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+              border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
               background: activeTab === 'fashion' ? 'linear-gradient(135deg,#0A2540,#1A4A7A)' : '#F1F5F9',
               color: activeTab === 'fashion' ? '#FFF' : '#475569',
               boxShadow: activeTab === 'fashion' ? '0 4px 14px rgba(10,37,64,.3)' : 'none',
@@ -94,7 +92,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
           <button
             onClick={() => setShowCarouselSettings(v => !v)}
             style={{
-              padding: '8px 12px', borderRadius: '9px', whiteSpace: 'nowrap',
+              padding: '8px 12px', borderRadius: '9px', whiteSpace: 'nowrap', flexShrink: 0,
               background: showCarouselSettings ? '#0F172A' : '#F8FAFC',
               border: '1px solid #CBD5E1', fontSize: '11px', fontWeight: 700,
               cursor: 'pointer', color: showCarouselSettings ? '#FFF' : '#334155',
