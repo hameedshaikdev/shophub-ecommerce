@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Heart, CheckCircle2, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getProductImage } from '../../utils/productImages';
 
 export default function Toast({ toast, onClose }) {
   if (!toast || !toast.visible) return null;
@@ -45,10 +46,10 @@ export default function Toast({ toast, onClose }) {
             border: '1px solid rgba(255, 255, 255, 0.9)'
           }}>
             <img
-              src={toast.product.image_url || 'https://placehold.co/100x100?text=Item'}
+              src={getProductImage(toast.product)}
               alt={toast.product.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              onError={e => { e.target.style.display = 'none'; }}
+              onError={e => { e.target.src = 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400'; }}
             />
           </div>
         )}

@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import Toast from './components/common/Toast';
@@ -20,6 +21,14 @@ import About from './pages/About';
 import ResetPassword from './pages/ResetPassword';
 import AuthCallback from './pages/AuthCallback';
 import OrderStatus from './pages/OrderStatus';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 // Inner app — has access to AppContext
 function AppInner() {
@@ -71,6 +80,7 @@ function App() {
     <ErrorBoundary>
       <AppProvider>
         <Router>
+          <ScrollToTop />
           <AppInner />
         </Router>
       </AppProvider>

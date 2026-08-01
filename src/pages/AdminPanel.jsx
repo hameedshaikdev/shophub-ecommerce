@@ -804,6 +804,18 @@ export default function AdminPanel() {
     toast(product.active?'Product hidden':'Product visible','success'); fetchProducts();
   }
 
+  async function handleQuickRestock(product, qty) {
+    const newStock = (product.stock || 0) + qty;
+    try {
+      const { error } = await supabase.from('products').update({ stock: newStock }).eq('id', product.id);
+      if (error) throw error;
+      toast(`Restocked ${product.name} +${qty} (total: ${newStock})`, 'success');
+      fetchProducts();
+    } catch(err) {
+      toast('Restock failed: ' + err.message, 'error');
+    }
+  }
+
   async function handleLogout() {
     const ok = await confirm({ title:'Sign Out', message:'Are you sure you want to sign out?', confirm:'Sign Out' });
     if (!ok) return;
@@ -845,7 +857,7 @@ export default function AdminPanel() {
     if (toPrint.length === 0) { toast('Select orders to print', 'warning'); return; }
 
     const pages = toPrint.map((order, idx) => {
-      const a = order.shipping_address || {};
+      const addr = order.shipping_address || {};
       const items = (order.items||[]).map(i =>
         `<tr><td>${i.name}</td><td align="right">${i.quantity}</td><td align="right">₹${(i.price*i.quantity).toFixed(0)}</td></tr>`
       ).join('');
@@ -1117,57 +1129,57 @@ export default function AdminPanel() {
           {page==='orders' && (
             <div className="page-enter" style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
 
-              {/* Toolbar — cleanly aligned */}
-              <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', padding:'14px 16px', boxSizing:'border-box', display:'flex', flexDirection:'column', gap:'12px' }}>
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'10px' }}>
+              {/* Toolbar — full width even distribution */}
+              <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', padding:'14px 16px', boxSizing:'border-box', display:'flex', flexDirection:'column', gap:'12px', width:'100%' }}>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'6px' }}>
                   <div>
                     <h1 style={{ fontSize:'18px', fontWeight:900, color:'#0F172A', margin:0, letterSpacing:'-0.3px' }}>Orders</h1>
                     <p style={{ fontSize:'11px', color:'#64748B', margin:'2px 0 0 0' }}>Manage, verify, ship, and export store purchases</p>
                   </div>
+                </div>
 
-                  {/* Single aligned row for ALL controls */}
-                  <div style={{ display:'flex', gap:'8px', alignItems:'center', flexWrap:'wrap' }}>
-                    {/* Date filter pills */}
-                    <div style={{ display:'flex', gap:'3px', background:'#F1F5F9', padding:'3px', borderRadius:'9px', flexShrink:0 }}>
-                      {['all','today','week','month'].map(f=>(
-                        <button key={f} onClick={()=>setDateFilter(f)}
-                          style={{ padding:'5px 10px', borderRadius:'7px', fontSize:'11px', fontWeight:700, cursor:'pointer', border:'none', whiteSpace:'nowrap', transition:'all 150ms ease',
-                            background: dateFilter===f ? '#FFFFFF' : 'transparent',
-                            color: dateFilter===f ? '#0F172A' : '#64748B',
-                            boxShadow: dateFilter===f ? '0 1px 4px rgba(0,0,0,0.06)' : 'none' }}>
-                          {f==='all'?'All':f==='today'?'Today':f==='week'?'This Week':'This Month'}
-                        </button>
-                      ))}
-                    </div>
-
-                    <button onClick={()=>exportOrdersCSV(selected.length>0?orders.filter(o=>selected.includes(o.id)):orders)}
-                      style={{ display:'flex', alignItems:'center', gap:'5px', padding:'7px 12px', borderRadius:'9px', background:'#FFFFFF', border:'1px solid #CBD5E1', color:'#334155', fontSize:'11px', fontWeight:800, cursor:'pointer', flexShrink:0 }}>
-                      <Download size={13} color="#2563EB" /> Export CSV
+                {/* 1. Date Filter Pills — 100% full width evenly distributed */}
+                <div style={{ display:'flex', width:'100%', gap:'4px', background:'#F1F5F9', padding:'3px', borderRadius:'10px', boxSizing:'border-box' }}>
+                  {['all','today','week','month'].map(f=>(
+                    <button key={f} onClick={()=>setDateFilter(f)}
+                      style={{ flex:1, padding:'6px 4px', borderRadius:'7px', fontSize:'11px', fontWeight:700, cursor:'pointer', border:'none', whiteSpace:'nowrap', textAlign:'center', transition:'all 150ms ease', display:'flex', alignItems:'center', justifyContent:'center',
+                        background: dateFilter===f ? '#FFFFFF' : 'transparent',
+                        color: dateFilter===f ? '#0F172A' : '#64748B',
+                        boxShadow: dateFilter===f ? '0 1px 4px rgba(0,0,0,0.06)' : 'none' }}>
+                      {f==='all'?'All':f==='today'?'Today':f==='week'?'This Week':'This Month'}
                     </button>
+                  ))}
+                </div>
 
-                    <button onClick={()=>{
-                      const labelOrders = dateFilter==='today'
-                        ? orders.filter(o=>new Date(o.created_at).toDateString()===new Date().toDateString())
-                        : dateFilter==='week'
-                        ? orders.filter(o=>new Date(o.created_at)>=new Date(Date.now()-7*86400000))
-                        : dateFilter==='month'
-                        ? orders.filter(o=>{const d=new Date(o.created_at);const n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();})
-                        : orders;
-                      if (labelOrders.length===0){toast('No orders to print','warning');return;}
-                      setSelected(labelOrders.map(o=>o.id));
-                      setTimeout(() => bulkPrint(), 50);
-                    }}
-                      style={{ display:'flex', alignItems:'center', gap:'5px', padding:'7px 12px', borderRadius:'9px',
-                        background:'#0F172A', color:'#FFFFFF',
-                        fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer', flexShrink:0, boxShadow:'0 2px 6px rgba(15,23,42,0.12)' }}>
-                      <Printer size={13} /> Print Labels
-                    </button>
+                {/* 2. Action Buttons Row — 100% full width evenly distributed */}
+                <div style={{ display:'flex', gap:'8px', width:'100%', alignItems:'center' }}>
+                  <button onClick={()=>exportOrdersCSV(selected.length>0?orders.filter(o=>selected.includes(o.id)):orders)}
+                    style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:'5px', padding:'8px 10px', borderRadius:'9px', background:'#FFFFFF', border:'1px solid #CBD5E1', color:'#334155', fontSize:'11px', fontWeight:800, cursor:'pointer' }}>
+                    <Download size={13} color="#2563EB" /> Export CSV
+                  </button>
 
-                    <button onClick={fetchOrders} title="Refresh Data"
-                      style={{ width:'32px', height:'32px', borderRadius:'9px', background:'#FFFFFF', border:'1px solid #CBD5E1', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                      <RefreshCw size={13} color="#475569" />
-                    </button>
-                  </div>
+                  <button onClick={()=>{
+                    const labelOrders = dateFilter==='today'
+                      ? orders.filter(o=>new Date(o.created_at).toDateString()===new Date().toDateString())
+                      : dateFilter==='week'
+                      ? orders.filter(o=>new Date(o.created_at)>=new Date(Date.now()-7*86400000))
+                      : dateFilter==='month'
+                      ? orders.filter(o=>{const d=new Date(o.created_at);const n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();})
+                      : orders;
+                    if (labelOrders.length===0){toast('No orders to print','warning');return;}
+                    setSelected(labelOrders.map(o=>o.id));
+                    setTimeout(() => bulkPrint(), 50);
+                  }}
+                    style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:'5px', padding:'8px 10px', borderRadius:'9px',
+                      background:'#0F172A', color:'#FFFFFF',
+                      fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer', boxShadow:'0 2px 6px rgba(15,23,42,0.12)' }}>
+                    <Printer size={13} /> Print Labels
+                  </button>
+
+                  <button onClick={fetchOrders} title="Refresh Data"
+                    style={{ width:'34px', height:'34px', borderRadius:'9px', background:'#FFFFFF', border:'1px solid #CBD5E1', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                    <RefreshCw size={13} color="#475569" />
+                  </button>
                 </div>
               </div>
 

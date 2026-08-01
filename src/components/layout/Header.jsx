@@ -126,7 +126,7 @@ export default function Header() {
             {/* ── Search ── */}
             <form onSubmit={search} className="sh-desktop-only" style={{ flex:1, maxWidth:'360px', margin:'0 12px' }}>
               <div className="sh-search-wrap">
-                <Search size={17} color="var(--text-3)" />
+                <Search size={17} color="#64748B" />
                 <input value={q} onChange={e => setQ(e.target.value)}
                   placeholder={activeCategory === 'tailoring' ? 'Search tailoring tools…' : 'Search fashion…'} />
               </div>
@@ -135,7 +135,7 @@ export default function Header() {
             {/* Mobile search — inline in navbar */}
             <form onSubmit={search} className="sh-mobile-search-inline sh-mobile-only" style={{ flex:1 }}>
               <div className="sh-search-wrap" style={{ width:'100%', height:'36px', borderRadius:'99px', padding:'0 12px' }}>
-                <Search size={15} color="var(--text-3)" />
+                <Search size={15} color="#64748B" />
                 <input value={q} onChange={e => setQ(e.target.value)}
                   placeholder={activeCategory === 'tailoring' ? 'Search…' : 'Search…'}
                   style={{ fontSize:'13px' }} />
@@ -147,12 +147,12 @@ export default function Header() {
 
               {/* Wishlist button — desktop (always visible for all users) */}
               <Link to="/wishlist" className="sh-icon-btn sh-desktop-only" title="Wishlist" style={{ borderRadius:'14px' }}>
-                <Heart size={18} color="var(--text-2)" />
+                <Heart size={18} color="#0F172A" />
               </Link>
 
               {/* Cart button — desktop (always visible for all users) */}
               <Link to="/cart" className="sh-icon-btn sh-desktop-only" title="Cart" style={{ position:'relative', borderRadius:'14px' }}>
-                <ShoppingCart size={18} color="var(--text-2)" />
+                <ShoppingCart size={18} color="#0F172A" />
                 {getCartCount() > 0 && (
                   <span className="sh-badge">{getCartCount() > 9 ? '9+' : getCartCount()}</span>
                 )}
@@ -162,7 +162,7 @@ export default function Header() {
               {user ? (
                 <div className="sh-desktop-only" style={{ position:'relative' }} ref={dropRef}>
                   <button className="sh-icon-btn" onClick={() => setDropdown(!dropdown)} style={{ borderRadius:'14px' }} title="Account Profile">
-                    <User size={18} color="var(--text-2)" />
+                    <User size={18} color="#0F172A" />
                   </button>
                   {dropdown && (
                     <div style={{
@@ -221,7 +221,7 @@ export default function Header() {
 
               {/* Hamburger — mobile only */}
               <button className="sh-icon-btn sh-mobile-only" onClick={() => setDrawer(true)} style={{ borderRadius:'14px' }} title="Menu">
-                <Menu size={20} color="var(--text-2)" />
+                <Menu size={20} color="#0F172A" />
               </button>
             </div>
           </nav>
@@ -233,7 +233,7 @@ export default function Header() {
         {isHome && (
           <div className="sh-switcher-wrap"
             style={{ background: activeCategory === 'tailoring' ? TAILORING_BG : FASHION_BG }}>
-            <div className="sh-container" style={{ display:'flex', justifyContent:'center', paddingBottom:'20px' }}>
+            <div className="sh-container" style={{ display:'flex', justifyContent:'center', paddingBottom:'28px' }}>
               <SwitcherPills
                 activeCategory={activeCategory}
                 setActiveCategory={setActiveCategory}

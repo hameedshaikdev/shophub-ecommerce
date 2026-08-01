@@ -22,7 +22,7 @@ const CONTENT = {
     sub: 'Premium tools engineered for craftsmen who demand the best. Every stitch, perfected.',
     grad: 'linear-gradient(160deg,#1A0533 0%,#3D0F6B 50%,#1A0533 100%)',
     accentColor: '#C084FC',
-    illustration: 'https://cdn-icons-png.flaticon.com/512/3124/3124828.png',
+    illustration: 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=800&auto=format&fit=crop&q=80',
     illustrationAlt: 'Professional sewing machine',
     collections: [
       { id:'machines',  label:'Sewing Machines',  emoji:'🪡', desc:'Professional grade' },
@@ -45,7 +45,7 @@ const CONTENT = {
     sub: 'Curated fashion for the modern woman. Elegance meets everyday comfort.',
     grad: 'linear-gradient(160deg,#0A2540 0%,#1A4A7A 50%,#0A2540 100%)',
     accentColor: '#60A5FA',
-    illustration: 'https://cdn-icons-png.flaticon.com/512/3050/3050070.png',
+    illustration: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=640&auto=format&fit=crop&q=80',
     illustrationAlt: 'Women fashion',
     collections: [
       { id:'dresses',     label:'Dresses',          emoji:'👗', desc:'Latest trends'    },
@@ -404,9 +404,9 @@ export default function Home() {
   return (
     <div style={{ background:'#FAFAFA', minHeight:'100vh' }}>
 
-      {/* ══ HERO ═════════════════════════════════════════════ */}
-      <div style={{ background:c.grad, position:'relative', overflow:'hidden', minHeight:'520px',
-        display:'flex', alignItems:'center', transition:'background .6s ease' }}>
+      {/* ══ HERO ═════════════════════════════════════════════════ */}
+      <div className="hero-container-wrap hero-compact" style={{ background:c.grad, position:'relative', overflow:'hidden',
+        display:'flex', flexDirection:'column', justifyContent:'center', transition:'background .6s ease' }}>
 
         {/* Glows */}
         <motion.div animate={{scale:[1,1.2,1],opacity:[.3,.55,.3]}}
@@ -429,7 +429,7 @@ export default function Home() {
               background:`${c.accentColor}80`,pointerEvents:'none'}}/>
         ))}
 
-        <div className="sh-container" style={{paddingTop:'56px',paddingBottom:'56px',paddingLeft:'24px',paddingRight:'24px',position:'relative',zIndex:1}}>
+        <div className="sh-container hero-inner-wrap" style={{paddingTop:'56px',paddingBottom:'80px',position:'relative',zIndex:1}}>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'48px',alignItems:'center'}}
             className="hero-grid">
 
@@ -523,36 +523,56 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* RIGHT — Illustration */}
+            {/* RIGHT — Hero Photo */}
             <div className="hero-illustration" style={{display:'flex',alignItems:'center',
-              justifyContent:'center',position:'relative',minHeight:'320px'}}>
+              justifyContent:'center',position:'relative'}}>
               <AnimatePresence mode="wait">
                 <motion.div key={`illus-${activeCategory}`}
-                  initial={{opacity:0,scale:.85,y:20}} animate={{opacity:1,scale:1,y:0}}
-                  exit={{opacity:0,scale:.85,y:-20}} transition={{duration:.6,ease:[.22,1,.36,1]}}
+                  initial={{opacity:0,scale:.88,y:24}} animate={{opacity:1,scale:1,y:0}}
+                  exit={{opacity:0,scale:.88,y:-24}} transition={{duration:.65,ease:[.22,1,.36,1]}}
                   style={{position:'relative',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                  <div style={{position:'absolute',width:'300px',height:'300px',borderRadius:'50%',
-                    background:`${c.accentColor}22`,filter:'blur(48px)',transform:'translateY(10px)'}}/>
-                  <motion.img src={c.illustration} alt={c.illustrationAlt}
-                    animate={{y:[-10,10,-10],rotate:[-1.5,1.5,-1.5]}}
-                    transition={{duration:4.5,repeat:Infinity,ease:'easeInOut'}}
-                    style={{width:'clamp(200px,26vw,320px)',height:'auto',objectFit:'contain',
+                  {/* Glow halo behind photo */}
+                  <div style={{position:'absolute',width:'340px',height:'340px',borderRadius:'50%',
+                    background:`radial-gradient(circle,${c.accentColor}30 0%,transparent 70%)`,
+                    filter:'blur(40px)',transform:'translateY(16px)',zIndex:0}}/>
+                  {/* Spinning ring */}
+                  <motion.div animate={{rotate:360}} transition={{duration:28,repeat:Infinity,ease:'linear'}}
+                    style={{position:'absolute',width:'380px',height:'380px',borderRadius:'50%',
+                      border:`1.5px dashed ${c.accentColor}30`,pointerEvents:'none',zIndex:0}}/>
+                  {/* Photo card */}
+                  <motion.div
+                    className="hero-photo-card"
+                    animate={{y:[-8,8,-8]}}
+                    transition={{duration:5,repeat:Infinity,ease:'easeInOut'}}
+                    style={{
                       position:'relative',zIndex:1,
-                      filter:`drop-shadow(0 24px 56px ${c.accentColor}55)`,
-                      userSelect:'none',pointerEvents:'none'}}/>
-                  <motion.div animate={{rotate:360}} transition={{duration:22,repeat:Infinity,ease:'linear'}}
-                    style={{position:'absolute',width:'340px',height:'340px',borderRadius:'50%',
-                      border:`1.5px dashed ${c.accentColor}28`,pointerEvents:'none'}}/>
+                      width:'clamp(240px,28vw,340px)',
+                      height:'clamp(300px,34vw,420px)',
+                      borderRadius:'28px',
+                      overflow:'hidden',
+                      border:`1.5px solid ${c.accentColor}40`,
+                      boxShadow:`0 32px 80px -12px ${c.accentColor}50, 0 0 0 1px rgba(255,255,255,0.08)`,
+                    }}>
+                    <img src={c.illustration} alt={c.illustrationAlt}
+                      style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top',
+                        userSelect:'none',pointerEvents:'none'}}
+                      onError={e=>{e.target.src='https://images.unsplash.com/photo-1617606002806-94e279c22567?w=800';}}
+                    />
+                    {/* Glass overlay shimmer at bottom */}
+                    <div style={{position:'absolute',bottom:0,left:0,right:0,height:'80px',
+                      background:`linear-gradient(to top, ${c.accentColor}25, transparent)`,
+                      backdropFilter:'blur(2px)'}}/>
+                  </motion.div>
                 </motion.div>
               </AnimatePresence>
             </div>
+
 
           </div>
         </div>
 
         {/* Stats bar */}
-        <div style={{position:'absolute',bottom:0,left:0,right:0,
-          background:'rgba(0,0,0,.25)',backdropFilter:'blur(12px)',
+        <div className="hero-stats-bar" style={{background:'rgba(0,0,0,.25)',backdropFilter:'blur(12px)',
           borderTop:`1px solid rgba(255,255,255,.08)`}}>
           <div className="sh-container" style={{padding:'14px 0'}}>
             <div style={{display:'flex',justifyContent:'space-around',flexWrap:'wrap',gap:'12px'}}>
