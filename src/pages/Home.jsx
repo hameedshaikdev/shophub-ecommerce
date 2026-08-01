@@ -338,14 +338,14 @@ function CollectionCard({ cls='', label, title, count, img, onClick, dark=false 
 
 /* ─── Main Home Component ─────────────────────────────────── */
 export default function Home() {
-  const { activeCategory, addToCart } = useApp();
+  const { activeCategory, setActiveCategory, cmsData, addToCart } = useApp();
   const [searchParams]          = useSearchParams();
   const searchQuery              = searchParams.get('q') || '';
   const [sortBy,           setSortBy]           = useState('featured');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
-  const [products, setProducts] = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [sub,      setSub]      = useState('all');
+  const [products, setProducts]       = useState([]);
+  const [loading,  setLoading]        = useState(true);
+  const [sub,      setSub]            = useState('all');
   const [newArrivals, setNewArrivals] = useState([]);
   const [bestSellers, setBestSellers] = useState([]);
   const [flashDeals,  setFlashDeals]  = useState([]);
@@ -353,7 +353,28 @@ export default function Home() {
 
   const productsRef = useRef(null);
   const filterRef   = useRef(null);
-  const c = CONTENT[activeCategory];
+
+  // Dynamic CMS resolution with static fallbacks
+  const cmsHero = cmsData?.hero?.[activeCategory] || CONTENT[activeCategory];
+  const c = {
+    ...CONTENT[activeCategory],
+    title: cmsHero.title || CONTENT[activeCategory].title,
+    titleAccent: cmsHero.titleAccent || CONTENT[activeCategory].titleAccent,
+    titleLine2: cmsHero.titleLine2 || CONTENT[activeCategory].titleLine2,
+    sub: cmsHero.sub || CONTENT[activeCategory].sub,
+    grad: cmsHero.grad || CONTENT[activeCategory].grad,
+    accentColor: cmsHero.accentColor || CONTENT[activeCategory].accentColor,
+    illustration: cmsHero.illustration || CONTENT[activeCategory].illustration,
+    badgeText: cmsHero.badgeText || 'New Collection 2026',
+    btn1Text: cmsHero.btn1Text || 'Shop Now',
+    btn2Text: cmsHero.btn2Text || 'Explore',
+    collections: cmsData?.collections?.[activeCategory] || CONTENT[activeCategory].collections,
+  };
+
+  // SEO Update
+  useEffect(() => {
+    if (cmsData?.seo?.metaTitle) document.title = cmsData.seo.metaTitle;
+  }, [cmsData]);
 
   useEffect(() => { setSub('all'); }, [activeCategory]);
 

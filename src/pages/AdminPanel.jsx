@@ -18,6 +18,7 @@ import {
   exportOrdersCSV, exportProductsCSV,
   toast, confirm,
 } from '../components/admin/AdminUtils';
+import HomepageManager from '../components/admin/cms/HomepageManager';
 
 const ADMIN_EMAIL = 'as.businezzz@gmail.com';
 
@@ -1097,6 +1098,7 @@ export default function AdminPanel() {
               {[
                 { key:'orders',    label:'Orders',    icon:ShoppingBag },
                 { key:'products',  label:'Products',  icon:Package },
+                { key:'cms',       label:'Homepage CMS', icon:Sparkles },
                 { key:'more',      label:'More',      icon:Settings },
               ].map(({ key, label, icon:Icon }) => (
                 <button key={key} onClick={() => setPage(key)}
@@ -1515,6 +1517,13 @@ export default function AdminPanel() {
                 </button>
               </div>
 
+            </div>
+          )}
+
+          {/* ── HOMEPAGE CMS TAB ── */}
+          {page==='cms' && (
+            <div className="page-enter">
+              <HomepageManager products={products} />
             </div>
           )}
 

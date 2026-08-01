@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../config/supabase';
+import { DEFAULT_CMS_DATA } from '../utils/cmsDefaults';
 
 const AppContext = createContext(null);
 
@@ -100,12 +101,85 @@ export function AppProvider({ children }) {
   };
   const isInWishlist = (id) => wishlist.some(i => i.id === id);
 
+  // ── CMS State Management ──
+  const [cmsData, setCmsData]   = useState(() => {
+    try {
+      const saved = localStorage.getItem('ashub_homepage_cms');
+      return saved ? JSON.parse(saved) : DEFAULT_CMS_DATA;
+    } catch { return DEFAULT_CMS_DATA; }
+  });
+
+  const [cmsDraft, setCmsDraft] = useState(() => {
+    try {
+      const draft = localStorage.getItem('ashub_homepage_cms_draft');
+      return draft ? JSON.parse(draft) : cmsData;
+    } catch { return cmsData; }
+  });
+
+  const [cmsHistory, setCmsHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+
+  // Sync CMS from Supabase if available
+  useEffect(() => {
+    async function loadRemoteCms() {
+      try {
+        const { data, error } = await supabase.from('homepage_cms').select('*').eq('id', 'published').single();
+        if (!error && data?.content) {
+          setCmsData(data.content);
+          localStorage.setItem('ashub_homepage_cms', JSON.stringify(data.content));
+        }
+      } catch { /* use local */ }
+    }
+    loadRemoteCms();
+  }, []);
+
+  const updateCmsDraft = (updater) => {
+    setCmsDraft(prev => {
+      const next = typeof updater === 'function' ? updater(prev) : { ...prev, ...updater };
+      localStorage.setItem('ashub_homepage_cms_draft', JSON.stringify(next));
+      
+      // History tracking
+      setCmsHistory(h => [...h.slice(0, historyIndex + 1), next]);
+      setHistoryIndex(i => i + 1);
+      
+      return next;
+    });
+  };
+
+  const publishCms = async () => {
+    setCmsData(cmsDraft);
+    localStorage.setItem('ashub_homepage_cms', JSON.stringify(cmsDraft));
+    try {
+      await supabase.from('homepage_cms').upsert({ id: 'published', content: cmsDraft, updated_at: new Date().toISOString() });
+    } catch { /* local fallback active */ }
+  };
+
+  const resetCmsDraft = () => {
+    setCmsDraft(cmsData);
+    localStorage.setItem('ashub_homepage_cms_draft', JSON.stringify(cmsData));
+  };
+
+  const undoCms = () => {
+    if (historyIndex > 0) {
+      setHistoryIndex(i => i - 1);
+      setCmsDraft(cmsHistory[historyIndex - 1]);
+    }
+  };
+
+  const redoCms = () => {
+    if (historyIndex < cmsHistory.length - 1) {
+      setHistoryIndex(i => i + 1);
+      setCmsDraft(cmsHistory[historyIndex + 1]);
+    }
+  };
+
   const value = {
     activeCategory, setActiveCategory,
     cart, addToCart, removeFromCart, updateCartQuantity, clearCart, getCartTotal, getCartCount,
     wishlist, addToWishlist, removeFromWishlist, isInWishlist,
     user, setUser, loading,
-    toast, showToast, closeToast
+    toast, showToast, closeToast,
+    cmsData, cmsDraft, updateCmsDraft, publishCms, resetCmsDraft, undoCms, redoCms, canUndo: historyIndex > 0, canRedo: historyIndex < cmsHistory.length - 1
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -1276,3 +1276,10 @@ div[style*="overflow"]::-webkit-scrollbar {
     gap: 16px;
   }
 }
+
+/* CMS Mobile Layout */
+@media (max-width: 768px) {
+  .cms-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
