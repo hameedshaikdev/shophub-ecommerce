@@ -2410,6 +2410,8 @@ img, video, svg {
 /* CMS Checkbox Grids - Mobile Single Column */
 .cms-checkbox-grid {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
 }
 
 @media (max-width: 640px) {
@@ -2417,6 +2419,7 @@ img, video, svg {
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
+    grid-template-columns: none !important;
   }
   
   .cms-checkbox-grid label {

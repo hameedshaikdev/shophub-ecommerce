@@ -89,7 +89,7 @@ export default function NewArrivalsEditor({ newArrivalsData = {}, products = [],
           </div>
         </div>
 
-        <div className="cms-checkbox-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
+        <div className="cms-checkbox-grid">
           {[
             { key: 'showBadges', label: 'Show New Badges' },
             { key: 'showRatings', label: 'Show Star Ratings' },
