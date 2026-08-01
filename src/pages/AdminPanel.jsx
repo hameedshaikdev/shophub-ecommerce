@@ -44,19 +44,20 @@ function printShippingLabel(order) {
   const addr = order.shipping_address || {};
   const html = `<!DOCTYPE html><html><head><title>Label #${order.id.slice(0,8).toUpperCase()}</title>
   <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;padding:20px}
-  .wrap{max-width:580px;margin:0 auto;page-break-after:always}.header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #000;padding-bottom:12px;margin-bottom:14px}
-  .brand{font-size:22px;font-weight:900}.oid{font-family:monospace;font-size:16px;font-weight:900;border:2px solid #000;padding:5px 10px}
-  .box{border:2px solid #000;border-radius:6px;padding:14px;margin-bottom:12px}
+  .wrap{max-width:580px;margin:0 auto;page-break-after:always;border:2px solid #000;padding:20px}
+  .header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #000;padding-bottom:12px;margin-bottom:16px}
+  .brand{font-size:22px;font-weight:900}.oid{font-family:monospace;font-size:16px;font-weight:900;background:#f0f0f0;padding:6px 12px;border-radius:4px}
+  .box{background:#fafafa;border-radius:8px;padding:14px;margin-bottom:14px;border:1px solid #ddd}
   .lbl{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:#666;margin-bottom:7px}
   .name{font-size:20px;font-weight:900;margin-bottom:4px}.ph{font-size:15px;font-weight:700;margin-bottom:8px}
   .addr{font-size:14px;line-height:1.65;color:#333}.pin{font-size:22px;font-weight:900;margin-top:8px;letter-spacing:2px}
-  .from{background:#f8f8f8;border:1.5px solid #ccc}.fn{font-size:16px;font-weight:800;margin-bottom:5px}
+  .from{background:#f5f5f5}.fn{font-size:16px;font-weight:800;margin-bottom:5px}
   .fd{font-size:13px;color:#333;line-height:1.75}table{width:100%;border-collapse:collapse;font-size:13px}
-  th{background:#000;color:white;padding:6px 10px;text-align:left;font-size:11px;text-transform:uppercase}
-  td{padding:7px 10px;border-bottom:1px solid #eee}.tot td{font-weight:900;background:#f8f8f8}
-  .badge{display:inline-block;background:#000;color:white;font-size:11px;font-weight:900;padding:4px 12px;border-radius:4px;margin-top:8px}
-  .foot{border-top:2px dashed #999;padding-top:12px;margin-top:12px;display:flex;justify-content:space-between;font-size:11px}
-  .care{border:1.5px solid #000;padding:4px 10px;border-radius:4px;font-weight:700}
+  th{background:#333;color:white;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase}
+  td{padding:8px 10px;border-bottom:1px solid #e0e0e0}.tot td{font-weight:900;background:#f5f5f5;border-top:2px solid #333}
+  .badge{display:inline-block;background:#000;color:white;font-size:11px;font-weight:900;padding:5px 14px;border-radius:6px;margin-top:10px}
+  .foot{border-top:2px solid #ddd;padding-top:12px;margin-top:14px;display:flex;justify-content:space-between;font-size:11px;color:#555}
+  .care{background:#000;color:#fff;padding:5px 12px;border-radius:4px;font-weight:700}
   @media print{.np{display:none!important}}</style></head><body>
   <div class="wrap">
   <div class="np" style="text-align:right;margin-bottom:14px"><button onclick="window.print()" style="padding:10px 24px;background:#000;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">🖨 Print Label</button></div>
@@ -903,19 +904,19 @@ export default function AdminPanel() {
 
     const html = `<!DOCTYPE html><html><head><title>Batch Labels (${toPrint.length})</title>
     <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;padding:16px;background:#fff}
-    .wrap{max-width:580px;margin:0 auto 20px auto;border:2px solid #000;padding:16px;border-radius:8px;page-break-after:always}
-    .header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:12px}
-    .brand{font-size:22px;font-weight:900}.oid{font-family:monospace;font-size:15px;font-weight:900;border:2px solid #000;padding:4px 8px}
-    .box{border:1.5px solid #000;border-radius:6px;padding:10px;margin-bottom:10px}
+    .wrap{max-width:580px;margin:0 auto 20px auto;border:2px solid #000;padding:18px;border-radius:8px;page-break-after:always;background:#fff}
+    .header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:12px}
+    .brand{font-size:22px;font-weight:900}.oid{font-family:monospace;font-size:15px;font-weight:900;background:#f0f0f0;padding:5px 10px;border-radius:4px}
+    .box{background:#fafafa;border-radius:6px;padding:12px;margin-bottom:12px;border:1px solid #ddd}
     .lbl{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:4px}
     .name{font-size:18px;font-weight:900;margin-bottom:3px}.ph{font-size:14px;font-weight:700;margin-bottom:6px}
     .addr{font-size:13px;line-height:1.5;color:#222}.pin{font-size:18px;font-weight:900;margin-top:6px;letter-spacing:1px}
-    .from{background:#f8f8f8}.fn{font-size:14px;font-weight:800;margin-bottom:3px}.fd{font-size:11px;color:#444;line-height:1.5}
-    table{width:100%;border-collapse:collapse;font-size:11px}th{background:#000;color:#fff;padding:5px 8px;font-size:9px;text-transform:uppercase;text-align:left}
-    td{padding:5px 8px;border-bottom:1px solid #eee}.tot td{font-weight:900;background:#f8f8f8}
-    .badge{display:inline-block;background:#000;color:#fff;font-size:9px;font-weight:900;padding:3px 9px;border-radius:3px;margin-top:6px}
-    .ft{border-top:2px dashed #999;padding-top:9px;margin-top:9px;display:flex;justify-content:space-between;font-size:9px}
-    .care{border:1px solid #000;padding:2px 7px;border-radius:3px;font-weight:700}
+    .from{background:#f5f5f5}.fn{font-size:14px;font-weight:800;margin-bottom:3px}.fd{font-size:11px;color:#444;line-height:1.5}
+    table{width:100%;border-collapse:collapse;font-size:11px}th{background:#333;color:#fff;padding:6px 8px;font-size:9px;text-transform:uppercase;text-align:left}
+    td{padding:6px 8px;border-bottom:1px solid #e0e0e0}.tot td{font-weight:900;background:#f5f5f5;border-top:2px solid #333}
+    .badge{display:inline-block;background:#000;color:#fff;font-size:9px;font-weight:900;padding:4px 10px;border-radius:4px;margin-top:6px}
+    .ft{border-top:2px solid #ddd;padding-top:9px;margin-top:9px;display:flex;justify-content:space-between;font-size:9px;color:#555}
+    .care{background:#000;color:#fff;padding:3px 9px;border-radius:3px;font-weight:700}
     @media print{.np{display:none!important}}</style></head>
     <body><div class="np" style="padding:10px;margin-bottom:16px;background:#F1F5F9;border-radius:8px;display:flex;align-items:center;justify-content:space-between">📦 <strong>${toPrint.length} Labels Ready</strong>
     <button onclick="window.print()" style="padding:8px 20px;background:#0F172A;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">🖨 Print All</button></div>

@@ -2019,3 +2019,175 @@ img, video, svg {
     flex-wrap: nowrap;
   }
 }
+
+/* ─── 21. HOMEPAGE CMS MANAGER — Complete Mobile Responsive ─── */
+
+/* CMS Top Bar — wraps action buttons on mobile */
+@media (max-width: 640px) {
+  .cms-top-bar {
+    padding: 12px !important;
+  }
+  .cms-top-bar > div:first-child {
+    width: 100% !important;
+  }
+  .cms-top-bar > div:last-child {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+  .cms-top-bar > div:last-child::-webkit-scrollbar {
+    display: none !important;
+  }
+}
+
+/* CMS Main Grid — sidebar becomes horizontal tabs on mobile */
+.cms-main-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 16px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+@media (max-width: 767px) {
+  .cms-main-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto 1fr !important;
+    gap: 12px !important;
+  }
+  
+  /* Sidebar becomes horizontal scrollable tabs */
+  .cms-sidebar-nav {
+    padding: 8px 12px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    height: auto !important;
+  }
+  
+  .cms-sidebar-nav::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  .admin-kbd-hide {
+    display: none !important;
+  }
+  
+  .cms-sidebar-inner {
+    flex-direction: row !important;
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  .cms-sidebar-inner button {
+    white-space: nowrap !important;
+    min-width: auto !important;
+    flex-shrink: 0 !important;
+    padding: 8px 14px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* CMS Editor Panels — Full Width Mobile */
+@media (max-width: 640px) {
+  /* Flash Deals Editor */
+  .cms-main-grid > div:last-child > div {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* All CMS panels */
+  .cms-main-grid > div:last-child > div > div {
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+  
+  /* Product selection grids */
+  .cms-main-grid > div:last-child > div > div > div[style*="grid-template-columns"] {
+    grid-template-columns: repeat(auto-fill, minmax(min(130px, 100%), 1fr)) !important;
+    gap: 8px !important;
+  }
+  
+  /* Search input containers */
+  .cms-main-grid input[type="text"],
+  .cms-main-grid input[type="number"],
+  .cms-main-grid input[type="datetime-local"],
+  .cms-main-grid select,
+  .cms-main-grid textarea {
+    font-size: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+  
+  /* Settings grid auto-fit responsive */
+  .cms-main-grid > div:last-child > div > div > div[style*="grid-template-columns: repeat(auto-fit"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* Hero Editor Tabs — Already responsive from previous fix */
+@media (max-width: 640px) {
+  /* Ensure hero editor tabs wrap properly */
+  div[style*="flexWrap: wrap"] > button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* Footer Editor */
+@media (max-width: 640px) {
+  /* Footer editor 2-column grid becomes single column */
+  div[style*="Store Contact Info"] ~ div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Media Library */
+@media (max-width: 640px) {
+  /* Media library search bar full width */
+  div[style*="Media & Asset Library"] ~ div input[type="text"] {
+    max-width: 100% !important;
+  }
+  
+  /* Media cards grid */
+  div[style*="Media & Asset Library"] ~ div[style*="grid-template-columns"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Ultra narrow: single column for media */
+  div[style*="Media & Asset Library"] ~ div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Promo Banners Editor */
+@media (max-width: 640px) {
+  /* Banner input fields full width */
+  div[style*="Banner Title"] input,
+  div[style*="Subtitle"] input,
+  div[style*="Button Text"] input,
+  div[style*="Banner Image URL"] input {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* SEO Editor */
+@media (max-width: 640px) {
+  /* SEO fields grid single column */
+  div[style*="Meta Title"] ~ div,
+  div[style*="Meta Description"] ~ div {
+    grid-template-columns: 1fr !important;
+  }
+}
