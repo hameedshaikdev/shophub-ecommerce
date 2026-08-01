@@ -47,12 +47,12 @@ export default function CollectionsEditor({ collectionsData = {}, onChange }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', overflow: 'hidden', minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
       {/* Tab Switcher */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '14px 16px', borderRadius: '16px', border: '1px solid #E2E8F0', flexWrap: 'wrap', gap: '10px' }}>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '14px 16px', borderRadius: '16px', border: '1px solid #E2E8F0', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+        <div style={{ display: 'flex', gap: '8px', flex: '1 1 auto', minWidth: 0, overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
           <button
             onClick={() => setActiveTab('tailoring')}
             style={{
-              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', flex: '1 1 auto', textAlign: 'center',
+              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
               background: activeTab === 'tailoring' ? 'linear-gradient(135deg, #1A0533, #3D0F6B)' : '#F1F5F9',
               color: activeTab === 'tailoring' ? '#FFFFFF' : '#475569',
             }}
@@ -62,7 +62,7 @@ export default function CollectionsEditor({ collectionsData = {}, onChange }) {
           <button
             onClick={() => setActiveTab('fashion')}
             style={{
-              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', flex: '1 1 auto', textAlign: 'center',
+              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
               background: activeTab === 'fashion' ? 'linear-gradient(135deg, #0A2540, #1A4A7A)' : '#F1F5F9',
               color: activeTab === 'fashion' ? '#FFFFFF' : '#475569',
             }}
@@ -76,7 +76,7 @@ export default function CollectionsEditor({ collectionsData = {}, onChange }) {
           style={{
             display: 'inline-flex', alignItems: 'center', gap: '6px',
             padding: '8px 14px', borderRadius: '10px', background: '#2563EB', color: '#FFF',
-            fontSize: '12px', fontWeight: 700, border: 'none', cursor: 'pointer', flexShrink: 0
+            fontSize: '12px', fontWeight: 700, border: 'none', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap'
           }}
         >
           <Plus size={15} /> Add Card

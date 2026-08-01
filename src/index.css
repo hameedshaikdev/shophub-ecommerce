@@ -2091,13 +2091,17 @@ img, video, svg {
 
 /* Collections Editor Tab Buttons */
 @media (max-width: 640px) {
-  /* Force tabs to NOT grow, stay side by side */
-  button[style*="Tailoring Collections"],
-  button[style*="Women Fashion Collections"] {
-    flex: 0 1 auto !important;
-    min-width: 140px !important;
+  /* Collections tab container - horizontal scroll */
+  div[style*="Tailoring Collections"] {
     font-size: 11px !important;
     padding: 7px 10px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+  
+  /* Hide scrollbar */
+  div[style*="Tailoring Collections"]::-webkit-scrollbar {
+    display: none !important;
   }
   
   /* Collection cards grid - 1 column on mobile */
