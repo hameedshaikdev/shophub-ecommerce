@@ -1302,17 +1302,22 @@ html, body, #root {
   }
   .cms-sidebar-nav {
     border-radius: 12px !important;
-    padding: 6px !important;
+    padding: 6px 4px !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%) !important;
+    mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%) !important;
   }
   .cms-sidebar-inner {
     flex-direction: row !important;
     overflow-x: auto !important;
+    overflow-y: hidden !important;
     scroll-behavior: smooth !important;
-    padding-bottom: 2px !important;
+    padding-bottom: 4px !important;
     scrollbar-width: none !important;
     -webkit-overflow-scrolling: touch !important;
+    gap: 6px !important;
+    padding-right: 24px !important;
   }
   .cms-sidebar-inner::-webkit-scrollbar {
     display: none !important;
@@ -1322,6 +1327,7 @@ html, body, #root {
     flex-shrink: 0 !important;
     padding: 7px 12px !important;
     font-size: 11px !important;
+    border-radius: 8px !important;
   }
   .cms-top-bar {
     padding: 10px 12px !important;

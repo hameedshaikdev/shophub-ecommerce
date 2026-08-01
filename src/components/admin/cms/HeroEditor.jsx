@@ -71,14 +71,18 @@ export default function HeroEditor({ heroData = {}, onChange }) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', overflow: 'hidden', minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
-      {/* Category Tab Selector */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '14px 16px', borderRadius: '16px', border: '1px solid #E2E8F0', flexWrap: 'wrap', gap: '10px' }}>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', overflow: 'hidden', minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
+
+      {/* ── Category Tab Bar + Carousel Settings — always-visible horizontal scroll row ── */}
+      <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '12px 14px' }}>
+        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', paddingBottom: '2px' }}>
+          {/* Tailoring Tab */}
           <button
             onClick={() => setActiveTab('tailoring')}
             style={{
-              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', flex: '1 1 auto', textAlign: 'center',
+              display: 'flex', alignItems: 'center', gap: '6px',
+              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px',
+              border: 'none', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap',
               background: activeTab === 'tailoring' ? 'linear-gradient(135deg, #1A0533, #3D0F6B)' : '#F1F5F9',
               color: activeTab === 'tailoring' ? '#FFFFFF' : '#475569',
               boxShadow: activeTab === 'tailoring' ? '0 4px 14px rgba(61,15,107,0.3)' : 'none'
@@ -86,10 +90,14 @@ export default function HeroEditor({ heroData = {}, onChange }) {
           >
             🪡 Tailoring Tools Hero
           </button>
+
+          {/* Fashion Tab */}
           <button
             onClick={() => setActiveTab('fashion')}
             style={{
-              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', flex: '1 1 auto', textAlign: 'center',
+              display: 'flex', alignItems: 'center', gap: '6px',
+              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px',
+              border: 'none', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap',
               background: activeTab === 'fashion' ? 'linear-gradient(135deg, #0A2540, #1A4A7A)' : '#F1F5F9',
               color: activeTab === 'fashion' ? '#FFFFFF' : '#475569',
               boxShadow: activeTab === 'fashion' ? '0 4px 14px rgba(10,37,64,0.3)' : 'none'
@@ -97,18 +105,24 @@ export default function HeroEditor({ heroData = {}, onChange }) {
           >
             👗 Women Fashion Hero
           </button>
-        </div>
 
-        <button
-          onClick={() => setShowCarouselSettings(!showCarouselSettings)}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            padding: '8px 12px', borderRadius: '9px', background: '#F8FAFC', border: '1px solid #CBD5E1',
-            fontSize: '11px', fontWeight: 700, cursor: 'pointer', color: '#334155', flexShrink: 0
-          }}
-        >
-          <Settings size={14} /> Carousel Settings
-        </button>
+          {/* Carousel Settings Toggle */}
+          <button
+            onClick={() => setShowCarouselSettings(!showCarouselSettings)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              padding: '8px 12px', borderRadius: '9px', flexShrink: 0, whiteSpace: 'nowrap',
+              background: showCarouselSettings ? '#0F172A' : '#F8FAFC',
+              border: '1px solid #CBD5E1', fontSize: '11px', fontWeight: 700,
+              cursor: 'pointer',
+              color: showCarouselSettings ? '#FFFFFF' : '#334155'
+            }}
+          >
+            <Settings size={14} /> Carousel Settings
+          </button>
+        </div>
+        {/* webkit scrollbar hide */}
+        <style>{`.cms-hero-tabs::-webkit-scrollbar { display: none; }`}</style>
       </div>
 
       {/* Carousel Global Settings */}
@@ -133,7 +147,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
                 type="number"
                 value={carouselSettings.slideDuration}
                 onChange={e => updateCarouselSettings('slideDuration', parseInt(e.target.value) || 5000)}
-                style={{ width: '100%', marginTop: '4px', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px' }}
+                style={{ width: '100%', marginTop: '4px', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
               />
             </label>
             <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>
@@ -237,9 +251,10 @@ export default function HeroEditor({ heroData = {}, onChange }) {
         </div>
       </div>
 
-      {/* Multiple Hero Slides List */}
+      {/* ── Hero Slides Manager ── */}
       <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+        {/* Header row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', gap: '8px', flexWrap: 'wrap' }}>
           <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', margin: 0 }}>
             📸 Hero Slides Manager ({slides.length} Slides)
           </h3>
@@ -248,78 +263,101 @@ export default function HeroEditor({ heroData = {}, onChange }) {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '6px',
               padding: '7px 14px', borderRadius: '8px', background: '#2563EB', color: '#FFF',
-              fontSize: '12px', fontWeight: 700, border: 'none', cursor: 'pointer'
+              fontSize: '12px', fontWeight: 700, border: 'none', cursor: 'pointer', flexShrink: 0
             }}
           >
             <Plus size={14} /> Add Slide
           </button>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {/* Slides list */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {slides.map((slide, idx) => (
             <div
               key={slide.id}
               style={{
-                display: 'flex', alignItems: 'center', gap: '10px', padding: '12px',
-                borderRadius: '12px', border: '1px solid #E2E8F0', background: slide.active ? '#F8FAFC' : '#F1F5F9',
-                opacity: slide.active ? 1 : 0.6, flexWrap: 'wrap'
+                borderRadius: '12px', border: '1px solid #E2E8F0',
+                background: slide.active ? '#F8FAFC' : '#F1F5F9',
+                opacity: slide.active ? 1 : 0.6,
+                overflow: 'hidden'
               }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <button onClick={() => handleMoveSlide(idx, -1)} disabled={idx === 0} style={{ border: 'none', background: 'none', cursor: 'pointer', opacity: idx === 0 ? 0.3 : 1 }}><ArrowUp size={13} /></button>
-                <button onClick={() => handleMoveSlide(idx, 1)} disabled={idx === slides.length - 1} style={{ border: 'none', background: 'none', cursor: 'pointer', opacity: idx === slides.length - 1 ? 0.3 : 1 }}><ArrowDown size={13} /></button>
-              </div>
+              {/* Top row: arrows + image + title inputs + action buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px' }}>
+                {/* Up / Down arrows */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flexShrink: 0 }}>
+                  <button onClick={() => handleMoveSlide(idx, -1)} disabled={idx === 0}
+                    style={{ border: 'none', background: 'none', cursor: 'pointer', opacity: idx === 0 ? 0.3 : 1, padding: '1px' }}>
+                    <ArrowUp size={12} />
+                  </button>
+                  <button onClick={() => handleMoveSlide(idx, 1)} disabled={idx === slides.length - 1}
+                    style={{ border: 'none', background: 'none', cursor: 'pointer', opacity: idx === slides.length - 1 ? 0.3 : 1, padding: '1px' }}>
+                    <ArrowDown size={12} />
+                  </button>
+                </div>
 
-              <img
-                src={slide.illustration}
-                alt=""
-                style={{ width: '42px', height: '42px', borderRadius: '8px', objectFit: 'cover' }}
-                onError={e => { e.target.src = 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=100'; }}
-              />
+                {/* Thumbnail */}
+                <img
+                  src={slide.illustration}
+                  alt=""
+                  style={{ width: '38px', height: '38px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }}
+                  onError={e => { e.target.src = 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=100'; }}
+                />
 
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                {/* Title + Accent stacked */}
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <input
                     type="text"
                     value={slide.title}
                     onChange={e => handleUpdateSlide(slide.id, 'title', e.target.value)}
-                    style={{ fontWeight: 800, fontSize: '12px', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '3px 6px', flex: 1, minWidth: 0, boxSizing: 'border-box' }}
+                    style={{ fontWeight: 800, fontSize: '12px', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '3px 6px', width: '100%', boxSizing: 'border-box' }}
                   />
                   <input
                     type="text"
                     value={slide.titleAccent}
                     onChange={e => handleUpdateSlide(slide.id, 'titleAccent', e.target.value)}
-                    style={{ fontWeight: 800, fontSize: '12px', color: '#2563EB', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '3px 6px', flex: 1, minWidth: 0, boxSizing: 'border-box' }}
+                    style={{ fontWeight: 700, fontSize: '11px', color: '#2563EB', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '3px 6px', width: '100%', boxSizing: 'border-box' }}
                   />
                 </div>
-                <div style={{ fontSize: '10px', color: '#64748B', marginTop: '4px' }}>Cat: {slide.category || 'all'}</div>
+
+                {/* Action buttons — always visible, no wrap */}
+                <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                  <button
+                    onClick={() => handleUpdateSlide(slide.id, 'active', !slide.active)}
+                    title={slide.active ? 'Hide' : 'Show'}
+                    style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px', border: '1px solid #CBD5E1', background: '#FFF', cursor: 'pointer', flexShrink: 0 }}
+                  >
+                    {slide.active ? <Eye size={12} color="#059669" /> : <EyeOff size={12} color="#94A3B8" />}
+                  </button>
+                  <button
+                    onClick={() => handleDuplicateSlide(slide)}
+                    title="Duplicate"
+                    style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px', border: '1px solid #CBD5E1', background: '#FFF', cursor: 'pointer', flexShrink: 0 }}
+                  >
+                    <Copy size={12} color="#3B82F6" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteSlide(slide.id)}
+                    title="Delete"
+                    style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px', border: '1px solid #CBD5E1', background: '#FFF', cursor: 'pointer', flexShrink: 0 }}
+                  >
+                    <Trash2 size={12} color="#DC2626" />
+                  </button>
+                </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '4px', marginLeft: 'auto' }}>
-                <button
-                  onClick={() => handleUpdateSlide(slide.id, 'active', !slide.active)}
-                  title={slide.active ? 'Hide Slide' : 'Show Slide'}
-                  style={{ padding: '5px 8px', borderRadius: '6px', border: '1px solid #CBD5E1', background: '#FFF', cursor: 'pointer' }}
-                >
-                  {slide.active ? <Eye size={13} color="#059669" /> : <EyeOff size={13} color="#94A3B8" />}
-                </button>
-                <button
-                  onClick={() => handleDuplicateSlide(slide)}
-                  title="Duplicate Slide"
-                  style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#FFF', cursor: 'pointer' }}
-                >
-                  <Copy size={14} color="#3B82F6" />
-                </button>
-                <button
-                  onClick={() => handleDeleteSlide(slide.id)}
-                  title="Delete Slide"
-                  style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#FFF', cursor: 'pointer' }}
-                >
-                  <Trash2 size={14} color="#DC2626" />
-                </button>
+              {/* Category badge */}
+              <div style={{ padding: '4px 12px 8px 12px', fontSize: '10px', color: '#64748B', fontWeight: 600 }}>
+                Category: <span style={{ fontWeight: 800, color: '#0F172A' }}>{slide.category || 'all'}</span>
               </div>
             </div>
           ))}
+
+          {slides.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '24px', color: '#94A3B8', fontSize: '13px' }}>
+              No slides yet. Click <strong>+ Add Slide</strong> to create one.
+            </div>
+          )}
         </div>
       </div>
     </div>

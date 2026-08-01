@@ -62,21 +62,23 @@ export default function HomepageManager({ products = [] }) {
         className="cms-top-bar"
         style={{
           background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px',
-          padding: '14px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          flexWrap: 'wrap', gap: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
+          padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          gap: '10px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexWrap: 'wrap'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #2563EB, #1D4ED8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', flexShrink: 0 }}>
-            <Sparkles size={18} />
+        {/* Brand */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flexShrink: 0 }}>
+          <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'linear-gradient(135deg, #2563EB, #1D4ED8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', flexShrink: 0 }}>
+            <Sparkles size={16} />
           </div>
           <div>
-            <h2 style={{ fontSize: '16px', fontWeight: 900, color: '#0F172A', margin: 0, lineHeight: 1.2 }}>Homepage CMS</h2>
-            <p style={{ fontSize: '11px', color: '#64748B', margin: '2px 0 0 0' }}>Dynamic Storefront Editor</p>
+            <h2 style={{ fontSize: '15px', fontWeight: 900, color: '#0F172A', margin: 0, lineHeight: 1.2 }}>Homepage CMS</h2>
+            <p style={{ fontSize: '10px', color: '#64748B', margin: '1px 0 0 0' }}>Dynamic Storefront Editor</p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+        {/* Action buttons — horizontal scroll row on mobile */}
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', flexShrink: 0, maxWidth: '100%' }}>
           {/* Undo / Redo */}
           <button
             onClick={undoCms}
@@ -125,9 +127,9 @@ export default function HomepageManager({ products = [] }) {
             disabled={saving}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '5px',
-              padding: '8px 16px', borderRadius: '9px', border: 'none', background: '#059669',
+              padding: '8px 14px', borderRadius: '9px', border: 'none', background: '#059669',
               color: '#FFFFFF', fontSize: '12px', fontWeight: 900, cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(5,150,105,0.25)'
+              boxShadow: '0 4px 12px rgba(5,150,105,0.25)', flexShrink: 0, whiteSpace: 'nowrap'
             }}
           >
             <Send size={14} /> {saving ? 'Saving...' : 'Publish'}
@@ -137,11 +139,12 @@ export default function HomepageManager({ products = [] }) {
 
       {/* Main CMS Layout (Sidebar Nav + Active Section View) */}
       <div className="cms-main-grid" style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '16px', width: '100%', overflowX: 'hidden' }}>
-        {/* Sidebar Nav (Desktop vertical / Mobile horizontal row) */}
-        <div className="cms-sidebar-nav" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '4px', height: 'fit-content' }}>
+        {/* Sidebar Nav — Desktop: vertical column / Mobile: horizontal scrollable pill row */}
+        <div className="cms-sidebar-nav" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '4px', height: 'fit-content', position: 'relative' }}>
           <div className="admin-kbd-hide" style={{ padding: '6px 10px', fontSize: '10px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '1px' }}>
             SECTIONS LIST
           </div>
+          {/* Scrollable inner — CSS converts to flex-row on mobile */}
           <div className="cms-sidebar-inner" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {navItems.map(item => {
               const Icon = item.icon;
@@ -156,7 +159,7 @@ export default function HomepageManager({ products = [] }) {
                     background: active ? '#0F172A' : 'transparent',
                     color: active ? '#FFFFFF' : '#475569',
                     fontWeight: active ? 800 : 600,
-                    fontSize: '12px', transition: 'all 0.15s', whiteSpace: 'nowrap'
+                    fontSize: '12px', transition: 'all 0.15s', whiteSpace: 'nowrap', flexShrink: 0
                   }}
                 >
                   <Icon size={15} color={active ? '#FFFFFF' : '#64748B'} style={{ flexShrink: 0 }} />
