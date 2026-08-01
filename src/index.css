@@ -2409,6 +2409,17 @@ img, video, svg {
 
 /* Force checkbox grids to single column on mobile - more specific */
 @media (max-width: 640px) {
+  /* Target all checkbox grid containers in CMS panels */
+  div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px, 1fr))"] {
+    display: block !important;
+  }
+  
+  div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px, 1fr))"] > label {
+    display: flex !important;
+    width: 100% !important;
+    margin-bottom: 8px !important;
+  }
+  
   /* Flash Deals Display Controls grid */
   div[style*="Display Controls & Badges"] ~ div[style*="grid"] {
     display: flex !important;
