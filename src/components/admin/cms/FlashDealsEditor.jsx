@@ -55,61 +55,61 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
       </div>
 
       {/* Countdown Timer Config */}
-      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-          <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Clock size={18} color="#2563EB" /> Countdown Timer Settings
+      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+          <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Clock size={16} color="#2563EB" /> Countdown Timer Settings
           </h4>
           <button
             onClick={resetTimer}
             style={{
-              display: 'inline-flex', alignItems: 'center', gap: '6px',
-              padding: '6px 14px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#F8FAFC',
-              fontSize: '12px', fontWeight: 700, cursor: 'pointer', color: '#334155'
+              display: 'inline-flex', alignItems: 'center', gap: '5px',
+              padding: '6px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#F8FAFC',
+              fontSize: '11px', fontWeight: 700, cursor: 'pointer', color: '#334155'
             }}
           >
-            <RefreshCw size={13} /> Reset Timer (+3 Days)
+            <RefreshCw size={12} /> Reset (+3 Days)
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Section Title</label>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Section Title</label>
             <input
               type="text"
               value={flash.title || ''}
               onChange={e => updateFlash('title', e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
             />
           </div>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Subtitle</label>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Subtitle</label>
             <input
               type="text"
               value={flash.subtitle || ''}
               onChange={e => updateFlash('subtitle', e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
             />
           </div>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Target End Date & Time</label>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Target End Date & Time</label>
             <input
               type="datetime-local"
               value={flash.endTime ? new Date(flash.endTime).toISOString().slice(0, 16) : ''}
               onChange={e => updateFlash('endTime', new Date(e.target.value).toISOString())}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
             />
           </div>
         </div>
       </div>
 
       {/* Section Controls & Badges */}
-      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '24px' }}>
-        <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Settings size={18} color="#2563EB" /> Display Controls & Badges
+      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px' }}>
+        <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Settings size={16} color="#2563EB" /> Display Controls & Badges
         </h4>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px' }}>
           {[
             { key: 'showDiscount', label: 'Show Discount %' },
             { key: 'showStock', label: 'Show Stock Level' },
@@ -118,12 +118,12 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
             { key: 'showAddToCart', label: 'Show Add to Cart' },
             { key: 'sliderEnabled', label: 'Enable Horizontal Slider' },
           ].map(({ key, label }) => (
-            <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+            <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '8px 10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
               <input
                 type="checkbox"
                 checked={flash[key] ?? true}
                 onChange={e => updateFlash(key, e.target.checked)}
-                style={{ width: '16px', height: '16px', accentColor: '#2563EB' }}
+                style={{ width: '15px', height: '15px', accentColor: '#2563EB' }}
               />
               {label}
             </label>
@@ -132,27 +132,27 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
       </div>
 
       {/* Product Selector */}
-      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
           <div>
-            <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+            <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', margin: 0 }}>
               📦 Select Flash Deal Products ({selectedIds.length} Selected)
             </h4>
-            <p style={{ fontSize: '12px', color: '#64748B', margin: '2px 0 0 0' }}>Click products below to toggle flash sale participation</p>
+            <p style={{ fontSize: '11px', color: '#64748B', margin: '2px 0 0 0' }}>Click products below to toggle flash sale participation</p>
           </div>
-          <div style={{ position: 'relative', width: '220px' }}>
-            <Search size={15} color="#94A3B8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+          <div style={{ position: 'relative', width: '100%', maxWidth: '200px' }}>
+            <Search size={14} color="#94A3B8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
             <input
               type="text"
               placeholder="Search products..."
               value={productSearch}
               onChange={e => setProductSearch(e.target.value)}
-              style={{ width: '100%', padding: '8px 10px 8px 32px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px' }}
+              style={{ width: '100%', padding: '7px 10px 7px 30px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '11px', boxSizing: 'border-box' }}
             />
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px', maxHeight: '380px', overflowY: 'auto', paddingRight: '4px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px', maxHeight: '350px', overflowY: 'auto' }}>
           {filteredProducts.map(prod => {
             const isSelected = selectedIds.includes(prod.id);
             return (

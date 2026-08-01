@@ -56,7 +56,7 @@ export default function BannersEditor({ bannersData = [], onChange }) {
               display: 'flex', flexDirection: 'column', gap: '14px', opacity: banner.active ? 1 : 0.6
             }}
           >
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
               <div>
                 <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Banner Title</label>
                 <input

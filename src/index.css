@@ -1281,5 +1281,36 @@ div[style*="overflow"]::-webkit-scrollbar {
 @media (max-width: 768px) {
   .cms-main-grid {
     grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .cms-sidebar-nav {
+    border-radius: 12px !important;
+    padding: 6px !important;
+  }
+  .cms-sidebar-inner {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    scroll-behavior: smooth !important;
+    padding-bottom: 2px !important;
+    scrollbar-width: none !important;
+  }
+  .cms-sidebar-inner::-webkit-scrollbar {
+    display: none !important;
+  }
+  .cms-sidebar-inner button {
+    width: auto !important;
+    flex-shrink: 0 !important;
+    padding: 7px 12px !important;
+    font-size: 11px !important;
+  }
+  .cms-top-bar {
+    padding: 10px 12px !important;
+    border-radius: 12px !important;
+  }
+  .cms-top-bar h2 {
+    font-size: 14px !important;
+  }
+  .cms-top-bar p {
+    display: none !important;
   }
 }

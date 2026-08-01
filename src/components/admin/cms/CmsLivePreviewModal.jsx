@@ -26,53 +26,53 @@ export default function CmsLivePreviewModal({ draftData, onClose }) {
       {/* Top Controls Bar */}
       <div style={{
         width: '100%', maxWidth: '1200px', background: '#1E293B', borderRadius: '16px 16px 0 0',
-        padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#FFF'
+        padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#FFF'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '14px', fontWeight: 800 }}>⚡ Live CMS Preview</span>
-          <span style={{ fontSize: '11px', background: '#2563EB', padding: '2px 8px', borderRadius: '99px', fontWeight: 700 }}>UNPUBLISHED DRAFT</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 800 }}>⚡ Live Preview</span>
+          <span style={{ fontSize: '10px', background: '#2563EB', padding: '2px 6px', borderRadius: '99px', fontWeight: 700 }}>DRAFT</span>
         </div>
 
         {/* Viewport Switcher */}
-        <div style={{ display: 'flex', gap: '6px', background: '#0F172A', padding: '4px', borderRadius: '10px' }}>
+        <div style={{ display: 'flex', gap: '4px', background: '#0F172A', padding: '3px', borderRadius: '8px', overflowX: 'auto' }}>
           <button
             onClick={() => setViewport('desktop')}
             style={{
-              padding: '6px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+              padding: '5px 10px', borderRadius: '6px', border: 'none', cursor: 'pointer',
               background: viewport === 'desktop' ? '#2563EB' : 'transparent', color: '#FFF',
-              display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 700
+              display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700
             }}
           >
-            <Monitor size={14} /> Desktop (1280px)
+            <Monitor size={13} /> Desktop
           </button>
           <button
             onClick={() => setViewport('tablet')}
             style={{
-              padding: '6px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+              padding: '5px 10px', borderRadius: '6px', border: 'none', cursor: 'pointer',
               background: viewport === 'tablet' ? '#2563EB' : 'transparent', color: '#FFF',
-              display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 700
+              display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700
             }}
           >
-            <Tablet size={14} /> Tablet (768px)
+            <Tablet size={13} /> Tablet
           </button>
           <button
             onClick={() => setViewport('mobile')}
             style={{
-              padding: '6px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+              padding: '5px 10px', borderRadius: '6px', border: 'none', cursor: 'pointer',
               background: viewport === 'mobile' ? '#2563EB' : 'transparent', color: '#FFF',
-              display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 700
+              display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700
             }}
           >
-            <Smartphone size={14} /> Mobile (375px)
+            <Smartphone size={13} /> Mobile
           </button>
         </div>
 
         <button
           onClick={onClose}
-          style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+          style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginLeft: 'auto' }}
         >
-          <X size={18} />
+          <X size={16} />
         </button>
       </div>
 

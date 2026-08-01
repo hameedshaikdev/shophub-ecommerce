@@ -84,7 +84,7 @@ export default function CollectionsEditor({ collectionsData = {}, onChange }) {
       </div>
 
       {/* Grid of Collection Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
         {currentList.map((col, idx) => (
           <div
             key={col.id}

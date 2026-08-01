@@ -1537,12 +1537,14 @@ export default function AdminPanel() {
         )}
       </AnimatePresence>
 
-      {/* Floating Quick Actions */}
-      <QuickActions
-        onAddProduct={() => { setPage('products'); setModal('add'); }}
-        onExportOrders={() => exportOrdersCSV(orders)}
-        onRefresh={() => { fetchOrders(); fetchCounts(); fetchProducts(); toast('Dashboard refreshed','success'); }}
-      />
+      {/* Floating Quick Actions (Hide on CMS page so it doesn't block inputs on mobile) */}
+      {page !== 'cms' && (
+        <QuickActions
+          onAddProduct={() => { setPage('products'); setModal('add'); }}
+          onExportOrders={() => exportOrdersCSV(orders)}
+          onRefresh={() => { fetchOrders(); fetchCounts(); fetchProducts(); toast('Dashboard refreshed','success'); }}
+        />
+      )}
 
       <style>{`@keyframes spin{to{transform:rotate(360deg)}} .prod-overlay{opacity:0!important} div:hover>.prod-overlay,.prod-card:hover .prod-overlay{opacity:1!important}`}</style>
     </div>

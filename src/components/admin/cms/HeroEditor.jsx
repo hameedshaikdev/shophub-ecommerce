@@ -152,156 +152,156 @@ export default function HeroEditor({ heroData = {}, onChange }) {
       )}
 
       {/* Main Content Form */}
-      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '24px' }}>
-        <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', marginBottom: '18px' }}>
+      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px' }}>
+        <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', marginBottom: '16px' }}>
           Hero Section Options ({activeTab.toUpperCase()})
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '16px' }}>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Hero Main Title (e.g. Master Your)</label>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Main Title</label>
             <input
               type="text"
               value={currentHero.title || ''}
               onChange={e => updateCurrentHero('title', e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
             />
           </div>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Accent Highlight Title (e.g. Craft.)</label>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Accent Highlight Title</label>
             <input
               type="text"
               value={currentHero.titleAccent || ''}
               onChange={e => updateCurrentHero('titleAccent', e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
             />
           </div>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Category Sub-line</label>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Category Sub-line</label>
             <input
               type="text"
               value={currentHero.titleLine2 || ''}
               onChange={e => updateCurrentHero('titleLine2', e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
             />
           </div>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Badge Pill Text</label>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Badge Pill Text</label>
             <input
               type="text"
               value={currentHero.badgeText || ''}
               onChange={e => updateCurrentHero('badgeText', e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
             />
           </div>
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Hero Description Subtitle</label>
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Hero Description Subtitle</label>
           <textarea
             rows={2}
             value={currentHero.sub || ''}
             onChange={e => updateCurrentHero('sub', e.target.value)}
-            style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+            style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px' }}>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Hero Photo URL</label>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Hero Photo URL</label>
             <input
               type="text"
               value={currentHero.illustration || ''}
               onChange={e => updateCurrentHero('illustration', e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '11px', boxSizing: 'border-box' }}
             />
           </div>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Background Gradient CSS</label>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Background Gradient CSS</label>
             <input
               type="text"
               value={currentHero.grad || ''}
               onChange={e => updateCurrentHero('grad', e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '11px', boxSizing: 'border-box' }}
             />
           </div>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Accent Glow Color (HEX)</label>
+            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Accent Glow Color (HEX)</label>
             <input
               type="text"
               value={currentHero.accentColor || ''}
               onChange={e => updateCurrentHero('accentColor', e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '11px', boxSizing: 'border-box' }}
             />
           </div>
         </div>
       </div>
 
       {/* Multiple Hero Slides List */}
-      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+          <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', margin: 0 }}>
             📸 Hero Slides Manager ({slides.length} Slides)
           </h3>
           <button
             onClick={handleAddSlide}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '6px',
-              padding: '8px 16px', borderRadius: '10px', background: '#2563EB', color: '#FFF',
+              padding: '7px 14px', borderRadius: '8px', background: '#2563EB', color: '#FFF',
               fontSize: '12px', fontWeight: 700, border: 'none', cursor: 'pointer'
             }}
           >
-            <Plus size={15} /> Add New Slide
+            <Plus size={14} /> Add Slide
           </button>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {slides.map((slide, idx) => (
             <div
               key={slide.id}
               style={{
-                display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px',
+                display: 'flex', alignItems: 'center', gap: '10px', padding: '12px',
                 borderRadius: '12px', border: '1px solid #E2E8F0', background: slide.active ? '#F8FAFC' : '#F1F5F9',
-                opacity: slide.active ? 1 : 0.6
+                opacity: slide.active ? 1 : 0.6, flexWrap: 'wrap'
               }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <button onClick={() => handleMoveSlide(idx, -1)} disabled={idx === 0} style={{ border: 'none', background: 'none', cursor: 'pointer', opacity: idx === 0 ? 0.3 : 1 }}><ArrowUp size={14} /></button>
-                <button onClick={() => handleMoveSlide(idx, 1)} disabled={idx === slides.length - 1} style={{ border: 'none', background: 'none', cursor: 'pointer', opacity: idx === slides.length - 1 ? 0.3 : 1 }}><ArrowDown size={14} /></button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <button onClick={() => handleMoveSlide(idx, -1)} disabled={idx === 0} style={{ border: 'none', background: 'none', cursor: 'pointer', opacity: idx === 0 ? 0.3 : 1 }}><ArrowUp size={13} /></button>
+                <button onClick={() => handleMoveSlide(idx, 1)} disabled={idx === slides.length - 1} style={{ border: 'none', background: 'none', cursor: 'pointer', opacity: idx === slides.length - 1 ? 0.3 : 1 }}><ArrowDown size={13} /></button>
               </div>
 
               <img
                 src={slide.illustration}
                 alt=""
-                style={{ width: '50px', height: '50px', borderRadius: '10px', objectFit: 'cover' }}
+                style={{ width: '42px', height: '42px', borderRadius: '8px', objectFit: 'cover' }}
                 onError={e => { e.target.src = 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=100'; }}
               />
 
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div style={{ flex: 1, minWidth: '160px' }}>
+                <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
                   <input
                     type="text"
                     value={slide.title}
                     onChange={e => handleUpdateSlide(slide.id, 'title', e.target.value)}
-                    style={{ fontWeight: 800, fontSize: '13px', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '4px 8px' }}
+                    style={{ fontWeight: 800, fontSize: '12px', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '3px 6px', flex: 1, minWidth: '80px' }}
                   />
                   <input
                     type="text"
                     value={slide.titleAccent}
                     onChange={e => handleUpdateSlide(slide.id, 'titleAccent', e.target.value)}
-                    style={{ fontWeight: 800, fontSize: '13px', color: '#2563EB', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '4px 8px' }}
+                    style={{ fontWeight: 800, fontSize: '12px', color: '#2563EB', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '3px 6px', flex: 1, minWidth: '60px' }}
                   />
                 </div>
-                <div style={{ fontSize: '11px', color: '#64748B', marginTop: '4px' }}>Category: {slide.category || 'all'}</div>
+                <div style={{ fontSize: '10px', color: '#64748B', marginTop: '4px' }}>Cat: {slide.category || 'all'}</div>
               </div>
 
-              <div style={{ display: 'flex', gap: '6px' }}>
+              <div style={{ display: 'flex', gap: '4px', marginLeft: 'auto' }}>
                 <button
                   onClick={() => handleUpdateSlide(slide.id, 'active', !slide.active)}
                   title={slide.active ? 'Hide Slide' : 'Show Slide'}
-                  style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#FFF', cursor: 'pointer' }}
+                  style={{ padding: '5px 8px', borderRadius: '6px', border: '1px solid #CBD5E1', background: '#FFF', cursor: 'pointer' }}
                 >
-                  {slide.active ? <Eye size={14} color="#059669" /> : <EyeOff size={14} color="#94A3B8" />}
+                  {slide.active ? <Eye size={13} color="#059669" /> : <EyeOff size={13} color="#94A3B8" />}
                 </button>
                 <button
                   onClick={() => handleDuplicateSlide(slide)}
