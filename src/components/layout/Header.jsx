@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, ShoppingCart, User, LogOut, Shield, Menu, X, ChevronRight, Heart } from 'lucide-react';
+import { Search, ShoppingCart, User, LogOut, Shield, Menu, X, ChevronRight, Heart, Package, Info, MessageCircle } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { supabase } from '../../config/supabase';
 
@@ -165,38 +165,53 @@ export default function Header() {
                     <User size={18} color="var(--text-2)" />
                   </button>
                   {dropdown && (
-                    <div className="sh-surface" style={{
+                    <div style={{
                       position:'absolute', right:0, top:'calc(100% + 10px)',
-                      width:'220px', overflow:'hidden', zIndex:300,
-                      borderRadius:'20px',
-                      animation:'sh-scaleIn .2s var(--spring)'
+                      width:'240px', zIndex:9999,
+                      background:'#FFFFFF',
+                      borderRadius:'16px',
+                      border:'1px solid #E2E8F0',
+                      boxShadow:'0 16px 48px -8px rgba(15,23,42,0.22), 0 4px 14px rgba(0,0,0,0.08)',
+                      overflow:'hidden',
+                      animation:'sh-scaleIn .2s ease-out'
                     }}>
-                      <div style={{ padding:'14px 16px', borderBottom:'1px solid var(--border)', background:'#fafafa' }}>
-                        <p style={{ fontSize:'13px', fontWeight:800, color:'var(--text)' }}>
+                      {/* Header */}
+                      <div style={{ padding:'14px 16px', borderBottom:'1px solid #F1F5F9', background:'#F8FAFC' }}>
+                        <p style={{ fontSize:'14px', fontWeight:800, color:'#111827', margin:0, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
                           {user.user_metadata?.full_name || 'My Account'}
                         </p>
-                        <p style={{ fontSize:'11px', color:'var(--text-3)', marginTop:'2px' }}>{user.email}</p>
+                        <p style={{ fontSize:'11px', color:'#6B7280', margin:'3px 0 0 0', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{user.email}</p>
                       </div>
-                      {[['My Profile','/profile'],['My Orders','/orders'],['Wishlist','/wishlist']].map(([l, p]) => (
-                        <Link key={p} to={p} onClick={() => setDropdown(false)}
-                          style={{ display:'block', padding:'11px 16px', fontSize:'14px', fontWeight:600, color:'var(--text)', borderBottom:'1px solid var(--border)' }}
-                          onMouseEnter={e => e.currentTarget.style.background='#fafafa'}
-                          onMouseLeave={e => e.currentTarget.style.background='white'}>
-                          {l}
-                        </Link>
-                      ))}
-                      {user.email === 'as.businezzz@gmail.com' && (
-                        <Link to="/admin" onClick={() => setDropdown(false)}
-                          style={{ display:'flex', alignItems:'center', gap:'8px', padding:'11px 16px', fontSize:'14px', fontWeight:700, color:'var(--primary)', borderBottom:'1px solid var(--border)' }}
-                          onMouseEnter={e => e.currentTarget.style.background='#fafafa'}
-                          onMouseLeave={e => e.currentTarget.style.background='white'}>
-                          <Shield size={14} /> Admin Panel
-                        </Link>
-                      )}
-                      <button onClick={logout}
-                        style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px', padding:'11px 16px', fontSize:'14px', fontWeight:700, color:'#ef4444', background:'none' }}>
-                        <LogOut size={14} /> Sign Out
-                      </button>
+                      {/* Menu rows */}
+                      <div style={{ padding:'6px' }}>
+                        {[
+                          { to:'/profile', label:'My Profile',  icon:<User size={15} color="#4B5563" /> },
+                          { to:'/orders',  label:'My Orders',   icon:<Package size={15} color="#4B5563" /> },
+                          { to:'/wishlist',label:'Wishlist',    icon:<Heart size={15} color="#4B5563" /> },
+                        ].map(({ to, label, icon }) => (
+                          <Link key={to} to={to} onClick={() => setDropdown(false)}
+                            style={{ display:'flex', alignItems:'center', gap:'10px', padding:'10px 12px', fontSize:'13px', fontWeight:700, color:'#1F2937', borderRadius:'10px', textDecoration:'none', transition:'background 150ms' }}
+                            onMouseEnter={e => e.currentTarget.style.background='#F1F5F9'}
+                            onMouseLeave={e => e.currentTarget.style.background='transparent'}>
+                            {icon} {label}
+                          </Link>
+                        ))}
+                        {user.email === 'as.businezzz@gmail.com' && (
+                          <Link to="/admin" onClick={() => setDropdown(false)}
+                            style={{ display:'flex', alignItems:'center', gap:'10px', padding:'10px 12px', marginTop:'2px', fontSize:'13px', fontWeight:800, color:'#DC2626', borderRadius:'10px', textDecoration:'none', background:'rgba(239,68,68,0.07)', transition:'background 150ms' }}
+                            onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.14)'}
+                            onMouseLeave={e => e.currentTarget.style.background='rgba(239,68,68,0.07)'}>
+                            <Shield size={15} color="#DC2626" /> Admin Panel
+                          </Link>
+                        )}
+                        <div style={{ height:'1px', background:'#F1F5F9', margin:'6px 0' }} />
+                        <button onClick={() => { logout(); setDropdown(false); }}
+                          style={{ width:'100%', display:'flex', alignItems:'center', gap:'10px', padding:'10px 12px', fontSize:'13px', fontWeight:800, color:'#EF4444', background:'transparent', border:'none', borderRadius:'10px', cursor:'pointer', transition:'background 150ms' }}
+                          onMouseEnter={e => e.currentTarget.style.background='#FEF2F2'}
+                          onMouseLeave={e => e.currentTarget.style.background='transparent'}>
+                          <LogOut size={15} color="#EF4444" /> Sign Out
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -205,7 +220,7 @@ export default function Header() {
               )}
 
               {/* Hamburger — mobile only */}
-              <button className="sh-icon-btn sh-mobile-only" onClick={() => setDrawer(true)}>
+              <button className="sh-icon-btn sh-mobile-only" onClick={() => setDrawer(true)} style={{ borderRadius:'14px' }} title="Menu">
                 <Menu size={20} color="var(--text-2)" />
               </button>
             </div>
@@ -228,103 +243,207 @@ export default function Header() {
         )}
       </header>
 
-      {/* ══ Mobile Side Drawer ══════════════════════════════════════════════ */}
+      {/* ══ Mobile Side Utility Drawer ══════════════════════════════════════════════ */}
       {drawer && (
         <>
           {/* Backdrop */}
           <div onClick={() => setDrawer(false)} style={{
-            position:'fixed', inset:0, background:'rgba(0,0,0,.5)',
-            zIndex:1000, backdropFilter:'blur(4px)'
+            position:'fixed', inset:0, background:'rgba(0, 0, 0, 0.45)',
+            zIndex:1000, backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)'
           }} />
 
           {/* Drawer panel */}
           <div style={{
-            position:'fixed', top:0, right:0, bottom:0, width:'78vw', maxWidth:'320px',
-            background:'white', zIndex:1001, overflowY:'auto',
-            boxShadow:'-8px 0 40px rgba(0,0,0,.18)',
-            animation:'sh-slideIn .3s var(--spring)'
+            position:'fixed', top:0, right:0, bottom:0, width:'84vw', maxWidth:'340px',
+            background:'#FFFFFF', zIndex:1001, overflowY:'auto', display:'flex', flexDirection:'column',
+            boxShadow:'-8px 0 36px rgba(0, 0, 0, 0.16)',
+            borderTopLeftRadius:'24px', borderBottomLeftRadius:'24px',
+            animation:'sh-slideIn .28s ease-out'
           }}>
-            {/* Drawer header logo */}
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px 20px', borderBottom:'1px solid var(--border)' }}>
-              <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                <img src="/logo.png" alt="AS HUB"
-                  style={{ width:'36px', height:'36px', borderRadius:'50%',
-                    objectFit:'cover', objectPosition:'center 20%',
-                    border:'1.5px solid #E2E8F0' }} />
-                <div>
-                  {user ? (
-                    <>
-                      <p style={{ fontSize:'15px', fontWeight:900, color:'var(--text)' }}>
-                        {user.user_metadata?.full_name || 'Welcome!'}
-                      </p>
-                      <p style={{ fontSize:'11px', color:'var(--text-3)' }}>{user.email}</p>
-                    </>
-                  ) : (
-                    <p style={{ fontSize:'17px', fontWeight:900, color:'var(--text)' }}>AS HUB</p>
-                  )}
-                </div>
-              </div>
-              <button onClick={() => setDrawer(false)} style={{ padding:'8px', borderRadius:'12px', background:'var(--secondary)' }}>
-                <X size={20} color="var(--text-2)" />
+
+            {/* ── HEADER CARD ── */}
+            <div style={{
+              background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
+              color: '#FFFFFF', padding: '24px 20px 20px 20px',
+              borderTopLeftRadius: '24px', position: 'relative'
+            }}>
+              {/* Close Button */}
+              <button onClick={() => setDrawer(false)}
+                style={{
+                  position:'absolute', top:'16px', right:'16px',
+                  width:'34px', height:'34px', borderRadius:'50%',
+                  background:'rgba(255, 255, 255, 0.15)', backdropFilter:'blur(8px)',
+                  border:'1px solid rgba(255, 255, 255, 0.2)',
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  cursor:'pointer'
+                }}>
+                <X size={18} color="#FFFFFF" />
               </button>
-            </div>
 
-            {/* User avatar if logged in */}
-            {user && (
-              <div style={{ padding:'16px 20px', display:'flex', alignItems:'center', gap:'12px', background:'#fafafa', borderBottom:'1px solid var(--border)' }}>
-                <div style={{ width:'48px', height:'48px', borderRadius:'50%', background:'var(--primary-grad)', display:'flex', alignItems:'center', justifyContent:'center', color:'white', fontWeight:900, fontSize:'20px' }}>
-                  {(user.user_metadata?.full_name || user.email)?.[0]?.toUpperCase()}
-                </div>
-                <div>
-                  <p style={{ fontWeight:800, fontSize:'15px', color:'var(--text)' }}>{user.user_metadata?.full_name || 'User'}</p>
-                  <p style={{ fontSize:'12px', color:'var(--text-3)' }}>View Profile</p>
-                </div>
-              </div>
-            )}
-
-            {/* Nav items */}
-            <div style={{ padding:'8px 0' }}>
-              {[
-                { to:'/', label:'🏠 Home' },
-                { to:'/about', label:'ℹ️ About' },
-                ...(user ? [
-                  { to:'/profile', label:'👤 My Profile' },
-                  { to:'/orders',  label:'📦 My Orders' },
-                  { to:'/wishlist',label:'❤️ Wishlist' },
-                  { to:'/cart',    label:`🛒 Cart${getCartCount() > 0 ? ` (${getCartCount()})` : ''}` },
-                ] : []),
-                ...(user?.email === 'as.businezzz@gmail.com' ? [{ to:'/admin', label:'🛡️ Admin Panel', admin:true }] : []),
-              ].map(({ to, label, admin }) => (
-                <Link key={to} to={to}
-                  style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 20px', fontSize:'15px', fontWeight:700, color: admin ? 'var(--primary)' : 'var(--text)', borderBottom:'1px solid #f5f5f5' }}
-                  onMouseEnter={e => e.currentTarget.style.background='#f9f9f9'}
-                  onMouseLeave={e => e.currentTarget.style.background='white'}>
-                  {label}
-                  <ChevronRight size={16} color="var(--text-3)" />
-                </Link>
-              ))}
-            </div>
-
-            {/* Bottom buttons */}
-            <div style={{ padding:'16px 20px', marginTop:'auto', borderTop:'1px solid var(--border)' }}>
+              {/* Profile Details */}
               {user ? (
-                <button onClick={logout}
-                  style={{ width:'100%', padding:'14px', borderRadius:'16px', background:'#FEF2F2', color:'#EF4444', fontWeight:800, fontSize:'15px', border:'1px solid #FECACA' }}>
-                  Sign Out
+                <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginTop:'8px' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'14px' }}>
+                    <div style={{
+                      width:'52px', height:'52px', borderRadius:'50%',
+                      background:'linear-gradient(135deg, #3B82F6, #1D4ED8)',
+                      display:'flex', alignItems:'center', justifyContent:'center',
+                      color:'#FFFFFF', fontWeight:900, fontSize:'22px',
+                      boxShadow:'0 4px 14px rgba(59, 130, 246, 0.4)',
+                      border:'2px solid rgba(255, 255, 255, 0.8)'
+                    }}>
+                      {(user.user_metadata?.full_name || user.email)?.[0]?.toUpperCase()}
+                    </div>
+                    <div style={{ flex:1, overflow:'hidden' }}>
+                      <p style={{ fontSize:'16px', fontWeight:800, color:'#FFFFFF', margin:0, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+                        {user.user_metadata?.full_name || 'User Account'}
+                      </p>
+                      <p style={{ fontSize:'12px', color:'rgba(255,255,255,0.7)', margin:'2px 0 0 0', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <Link to="/profile" onClick={() => setDrawer(false)}
+                    style={{
+                      display:'inline-flex', alignItems:'center', gap:'6px',
+                      background:'rgba(255, 255, 255, 0.15)', backdropFilter:'blur(10px)',
+                      border:'1px solid rgba(255, 255, 255, 0.25)',
+                      padding:'6px 14px', borderRadius:'9999px',
+                      color:'#FFFFFF', fontSize:'12px', fontWeight:700,
+                      width:'fit-content', textDecoration:'none', marginTop:'4px'
+                    }}>
+                    <User size={13} /> View Profile
+                  </Link>
+                </div>
+              ) : (
+                <div style={{ display:'flex', flexDirection:'column', gap:'10px', marginTop:'8px' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                    <img src="/logo.png" alt="AS HUB"
+                      style={{ width:'40px', height:'40px', borderRadius:'12px', background:'white', objectFit:'cover' }} />
+                    <div>
+                      <p style={{ fontSize:'18px', fontWeight:900, color:'#FFFFFF', margin:0 }}>AS HUB</p>
+                      <p style={{ fontSize:'11px', color:'rgba(255,255,255,0.7)', margin:'2px 0 0 0' }}>Tailoring Tools & Fashion</p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize:'13px', color:'rgba(255,255,255,0.85)', margin:'4px 0 0 0' }}>
+                    Sign in to track orders, manage your account, and access exclusive offers.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* ── UTILITY CARDS BODY ── */}
+            <div style={{ padding:'20px 16px', display:'flex', flexDirection:'column', gap:'10px', flex:1 }}>
+
+              <p style={{ fontSize:'11px', fontWeight:800, color:'#9CA3AF', textTransform:'uppercase', letterSpacing:'1px', margin:'0 0 4px 4px' }}>
+                Account Utilities
+              </p>
+
+              {/* My Orders */}
+              {user && (
+                <Link to="/orders" onClick={() => setDrawer(false)}
+                  className="sh-drawer-card-item">
+                  <div className="sh-drawer-icon-box" style={{ background:'rgba(59, 130, 246, 0.1)', color:'#2563EB' }}>
+                    <Package size={18} />
+                  </div>
+                  <div style={{ flex:1 }}>
+                    <p style={{ fontSize:'14px', fontWeight:700, color:'#111827', margin:0 }}>My Orders</p>
+                    <p style={{ fontSize:'11px', color:'#6B7280', margin:0 }}>Track, return, or view past purchases</p>
+                  </div>
+                  <ChevronRight size={16} color="#9CA3AF" />
+                </Link>
+              )}
+
+              {/* About AS HUB */}
+              <Link to="/about" onClick={() => setDrawer(false)}
+                className="sh-drawer-card-item">
+                <div className="sh-drawer-icon-box" style={{ background:'rgba(16, 185, 129, 0.1)', color:'#059669' }}>
+                  <Info size={18} />
+                </div>
+                <div style={{ flex:1 }}>
+                  <p style={{ fontSize:'14px', fontWeight:700, color:'#111827', margin:0 }}>About AS HUB</p>
+                  <p style={{ fontSize:'11px', color:'#6B7280', margin:0 }}>Our story, craftsmanship & values</p>
+                </div>
+                <ChevronRight size={16} color="#9CA3AF" />
+              </Link>
+
+              {/* WhatsApp Support */}
+              <a href="https://wa.me/917013942909?text=Hi!%20I%20need%20help%20with%20AS%20HUB"
+                target="_blank" rel="noopener noreferrer" onClick={() => setDrawer(false)}
+                className="sh-drawer-card-item">
+                <div className="sh-drawer-icon-box" style={{ background:'rgba(34, 197, 94, 0.12)', color:'#16A34A' }}>
+                  <MessageCircle size={18} />
+                </div>
+                <div style={{ flex:1 }}>
+                  <p style={{ fontSize:'14px', fontWeight:700, color:'#111827', margin:0 }}>WhatsApp Support</p>
+                  <p style={{ fontSize:'11px', color:'#6B7280', margin:0 }}>Direct chat with our customer team</p>
+                </div>
+                <ChevronRight size={16} color="#9CA3AF" />
+              </a>
+
+              {/* Admin Section (if admin) */}
+              {user?.email === 'as.businezzz@gmail.com' && (
+                <div style={{ marginTop:'6px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:800, color:'#9CA3AF', textTransform:'uppercase', letterSpacing:'1px', margin:'0 0 4px 4px' }}>
+                    Management
+                  </p>
+                  <Link to="/admin" onClick={() => setDrawer(false)}
+                    className="sh-drawer-card-item"
+                    style={{ background:'linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(245, 158, 11, 0.06))', border:'1px solid rgba(239, 68, 68, 0.2)' }}>
+                    <div className="sh-drawer-icon-box" style={{ background:'linear-gradient(135deg, #EF4444, #F59E0B)', color:'#FFFFFF' }}>
+                      <Shield size={18} />
+                    </div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+                        <p style={{ fontSize:'14px', fontWeight:800, color:'#991B1B', margin:0 }}>Admin Panel</p>
+                        <span style={{ fontSize:'10px', fontWeight:800, background:'#EF4444', color:'white', padding:'1px 6px', borderRadius:'9999px' }}>PRO</span>
+                      </div>
+                      <p style={{ fontSize:'11px', color:'#7F1D1D', margin:0 }}>Manage products, orders & inventory</p>
+                    </div>
+                    <ChevronRight size={16} color="#EF4444" />
+                  </Link>
+                </div>
+              )}
+
+            </div>
+
+            {/* ── FOOTER / AUTH ACTION ── */}
+            <div style={{ padding:'16px 20px', borderTop:'1px solid #F1F5F9', background:'#F8FAFC' }}>
+              {user ? (
+                <button onClick={() => { logout(); setDrawer(false); }}
+                  style={{
+                    width:'100%', padding:'15px', borderRadius:'14px',
+                    background:'linear-gradient(135deg, #FEF2F2, #FFE4E6)',
+                    color:'#DC2626', fontWeight:800, fontSize:'14px',
+                    border:'1px solid #FECACA', cursor:'pointer',
+                    display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
+                    boxShadow:'0 2px 8px rgba(220, 38, 38, 0.08)'
+                  }}>
+                  <LogOut size={16} /> Sign Out
                 </button>
               ) : (
                 <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
-                  <Link to="/login"
-                    style={{ display:'block', textAlign:'center', padding:'14px', borderRadius:'16px', background:'var(--primary-grad)', color:'white', fontWeight:800, fontSize:'15px' }}>
-                    Login
+                  <Link to="/login" onClick={() => setDrawer(false)}
+                    style={{
+                      display:'block', textAlign:'center', padding:'14px', borderRadius:'14px',
+                      background:'linear-gradient(135deg, #1E293B, #0F172A)',
+                      color:'#FFFFFF', fontWeight:800, fontSize:'14px', textDecoration:'none',
+                      boxShadow:'0 4px 14px rgba(15, 23, 42, 0.2)'
+                    }}>
+                    Log In
                   </Link>
-                  <Link to="/signup"
-                    style={{ display:'block', textAlign:'center', padding:'14px', borderRadius:'16px', border:'1.5px solid var(--primary)', color:'var(--primary)', fontWeight:800, fontSize:'15px' }}>
+                  <Link to="/signup" onClick={() => setDrawer(false)}
+                    style={{
+                      display:'block', textAlign:'center', padding:'13px', borderRadius:'14px',
+                      border:'1.5px solid #1E293B', color:'#1E293B',
+                      fontWeight:800, fontSize:'14px', textDecoration:'none', background:'#FFFFFF'
+                    }}>
                     Create Account
                   </Link>
                 </div>
               )}
             </div>
+
           </div>
         </>
       )}

@@ -429,7 +429,7 @@ export default function Home() {
               background:`${c.accentColor}80`,pointerEvents:'none'}}/>
         ))}
 
-        <div className="sh-container" style={{paddingTop:'48px',paddingBottom:'48px',position:'relative',zIndex:1,width:'100%'}}>
+        <div className="sh-container" style={{paddingTop:'56px',paddingBottom:'56px',paddingLeft:'24px',paddingRight:'24px',position:'relative',zIndex:1}}>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'48px',alignItems:'center'}}
             className="hero-grid">
 

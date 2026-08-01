@@ -170,7 +170,7 @@ div[style*="overflow"]::-webkit-scrollbar {
 
 /* ── Action Buttons in Header ── */
 .sh-icon-btn {
-  width: 44px; height: 44px; border-radius: var(--r-pill);
+  width: 44px; height: 44px; border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
   background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.9);
@@ -187,6 +187,13 @@ div[style*="overflow"]::-webkit-scrollbar {
   padding: 0 4px; border: 2px solid white;
   box-shadow: 0 2px 8px rgba(233, 69, 96, 0.4);
 }
+
+.sh-surface {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 14px 40px -6px rgba(15, 23, 42, 0.18), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
 
 /* ── Anti-Gravity Pill Button ── */
 .sh-btn {
@@ -1035,15 +1042,58 @@ div[style*="overflow"]::-webkit-scrollbar {
   }
   .product-main-card {
     grid-template-columns: 1fr !important;
-    padding: 16px !important;
-    gap: 20px !important;
-    border-radius: 18px !important;
+    padding: 14px !important;
+    gap: 18px !important;
+    border-radius: 16px !important;
     box-sizing: border-box !important;
+    width: 100% !important;
   }
   .product-admin-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
   }
+  .sh-container {
+    width: 100% !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    box-sizing: border-box !important;
+  }
+  .hero-content-box {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+}
+
+/* ── Premium Mobile Drawer Card Styling ── */
+.sh-drawer-card-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #F8FAFC;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 250ms ease;
+  min-height: 54px;
+  box-sizing: border-box;
+}
+
+.sh-drawer-card-item:hover, .sh-drawer-card-item:active {
+  background: #FFFFFF;
+  border-color: #CBD5E1;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  transform: translateY(-1px);
+}
+
+.sh-drawer-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 /* ── About Page Mobile Horizontal Scroll Strips ── */
