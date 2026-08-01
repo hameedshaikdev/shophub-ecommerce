@@ -2406,3 +2406,39 @@ img, video, svg {
     white-space: nowrap !important;
   }
 }
+
+/* Force checkbox grids to single column on mobile - more specific */
+@media (max-width: 640px) {
+  /* Flash Deals Display Controls grid */
+  div[style*="Display Controls & Badges"] ~ div[style*="grid"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  
+  div[style*="Display Controls & Badges"] ~ div[style*="grid"] label {
+    width: 100% !important;
+  }
+  
+  /* New Arrivals checkbox grid */
+  div[style*="New Arrivals Section Manager"] ~ div div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  
+  div[style*="New Arrivals Section Manager"] ~ div div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px"] label {
+    width: 100% !important;
+  }
+  
+  /* Top Picks checkbox grid */
+  div[style*="Top Picks & Featured"] ~ div div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  
+  div[style*="Top Picks & Featured"] ~ div div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px"] label {
+    width: 100% !important;
+  }
+}
