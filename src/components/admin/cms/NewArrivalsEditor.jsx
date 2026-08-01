@@ -89,20 +89,20 @@ export default function NewArrivalsEditor({ newArrivalsData = {}, products = [],
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
           {[
             { key: 'showBadges', label: 'Show New Badges' },
             { key: 'showRatings', label: 'Show Star Ratings' },
             { key: 'showQuickView', label: 'Show Quick View Button' },
           ].map(({ key, label }) => (
-            <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+            <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E2E8F0', whiteSpace: 'nowrap', minWidth: 0 }}>
               <input
                 type="checkbox"
                 checked={arrivals[key] ?? true}
                 onChange={e => update(key, e.target.checked)}
-                style={{ width: '16px', height: '16px', accentColor: '#2563EB' }}
+                style={{ width: '16px', height: '16px', accentColor: '#2563EB', flexShrink: 0 }}
               />
-              {label}
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span>
             </label>
           ))}
         </div>
