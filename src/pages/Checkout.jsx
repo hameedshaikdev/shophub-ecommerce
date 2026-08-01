@@ -322,7 +322,7 @@ export default function Checkout() {
                 </div>
               )}
 
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
+              <div className="checkout-form-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
 
                 <div style={{ gridColumn:'1/-1' }}>
                   <label style={{ display:'block', fontSize:'12px', fontWeight:700,
@@ -616,6 +616,16 @@ export default function Checkout() {
         )}
 
       </div>
+      <style>{`
+        @media (max-width: 640px) {
+          .checkout-form-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .checkout-form-grid > div {
+            grid-column: 1 / -1 !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

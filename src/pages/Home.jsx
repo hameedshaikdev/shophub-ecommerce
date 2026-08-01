@@ -252,26 +252,29 @@ function Carousel({ children }) {
     if (ref.current) ref.current.scrollBy({left: dir * 220, behavior:'smooth'});
   };
   return (
-    <div style={{position:'relative'}}>
+    <div className="carousel-outer" style={{position:'relative', overflow:'hidden'}}>
       <button onClick={()=>scroll(-1)}
-        style={{position:'absolute',left:'-16px',top:'50%',transform:'translateY(-50%)',
-          width:'40px',height:'40px',borderRadius:'9999px',background:'rgba(255,255,255,.9)',
+        className="carousel-arrow carousel-arrow-left"
+        style={{position:'absolute',left:'4px',top:'50%',transform:'translateY(-50%)',
+          width:'36px',height:'36px',borderRadius:'9999px',background:'rgba(255,255,255,.95)',
           backdropFilter:'blur(12px)',border:'1px solid rgba(255,255,255,.9)',
-          boxShadow:'0 4px 16px rgba(0,0,0,.1)',
-          cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2}}>
-        <ChevronLeft size={18} color="#475569"/>
+          boxShadow:'0 4px 16px rgba(0,0,0,.15)',
+          cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2,flexShrink:0}}>
+        <ChevronLeft size={16} color="#475569"/>
       </button>
-      <div ref={ref} style={{display:'flex',gap:'16px',overflowX:'auto',alignItems:'stretch',padding:'6px 8px 16px',
+      <div ref={ref} style={{display:'flex',gap:'16px',overflowX:'auto',alignItems:'stretch',
+        padding:'6px 48px 16px',
         scrollbarWidth:'none',msOverflowStyle:'none'}}>
         {children}
       </div>
       <button onClick={()=>scroll(1)}
-        style={{position:'absolute',right:'-16px',top:'50%',transform:'translateY(-50%)',
-          width:'40px',height:'40px',borderRadius:'9999px',background:'rgba(255,255,255,.9)',
+        className="carousel-arrow carousel-arrow-right"
+        style={{position:'absolute',right:'4px',top:'50%',transform:'translateY(-50%)',
+          width:'36px',height:'36px',borderRadius:'9999px',background:'rgba(255,255,255,.95)',
           backdropFilter:'blur(12px)',border:'1px solid rgba(255,255,255,.9)',
-          boxShadow:'0 4px 16px rgba(0,0,0,.1)',
-          cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2}}>
-        <ChevronRight size={18} color="#475569"/>
+          boxShadow:'0 4px 16px rgba(0,0,0,.15)',
+          cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2,flexShrink:0}}>
+        <ChevronRight size={16} color="#475569"/>
       </button>
     </div>
   );
@@ -595,23 +598,23 @@ export default function Home() {
         {/* Stats bar */}
         <div className="hero-stats-bar" style={{background:'rgba(0,0,0,.25)',backdropFilter:'blur(12px)',
           borderTop:`1px solid rgba(255,255,255,.08)`}}>
-          <div className="sh-container" style={{padding:'14px 0'}}>
-            <div style={{display:'flex',justifyContent:'space-around',flexWrap:'wrap',gap:'12px'}}>
+          <div className="sh-container" style={{padding:'12px 0'}}>
+            <div className="hero-stats-inner" style={{display:'flex',justifyContent:'space-around',flexWrap:'wrap',gap:'10px 16px'}}>
               {[
                 {icon:Star,   val:'4.9', suf:' ★', label:'Rating',   isStatic:true},
                 {icon:Package,val:500,   suf:'+',  label:'Products',  isStatic:false},
                 {icon:Users,  val:2000,  suf:'+',  label:'Customers', isStatic:false},
                 {icon:Truck,  val:null,  suf:'',   label:'Pan India Delivery', isStatic:true},
               ].map(({icon:Icon,val,suf,label,isStatic})=>(
-                <div key={label} style={{display:'flex',alignItems:'center',gap:'8px'}}>
-                  <Icon size={14} strokeWidth={2} color={c.accentColor}/>
-                  <span style={{fontSize:'14px',fontWeight:900,color:'white'}}>
+                <div key={label} style={{display:'flex',alignItems:'center',gap:'6px',flexShrink:0}}>
+                  <Icon size={13} strokeWidth={2} color={c.accentColor}/>
+                  <span style={{fontSize:'13px',fontWeight:900,color:'white',whiteSpace:'nowrap'}}>
                     {isStatic
                       ? (val === null ? null : val + suf)
                       : <><Counter value={val} suffix={suf}/></>}
                   </span>
-                  {val !== null && <span style={{fontSize:'11px',color:'rgba(255,255,255,.45)'}}>{label}</span>}
-                  {val === null && <span style={{fontSize:'14px',fontWeight:900,color:'white'}}>{label}</span>}
+                  {val !== null && <span style={{fontSize:'11px',color:'rgba(255,255,255,.45)',whiteSpace:'nowrap'}}>{label}</span>}
+                  {val === null && <span style={{fontSize:'13px',fontWeight:900,color:'white',whiteSpace:'nowrap'}}>{label}</span>}
                 </div>
               ))}
             </div>
@@ -888,6 +891,27 @@ export default function Home() {
           .hero-illustration { display: none !important; }
         }
         @media (min-width: 769px) { .hero-illustration { display: flex !important; } }
+
+        /* ── Carousel: arrows inside, no overflow ── */
+        .carousel-outer { overflow: hidden !important; }
+        @media (max-width: 767px) {
+          .carousel-arrow { width: 30px !important; height: 30px !important; }
+          .carousel-outer > div { padding-left: 40px !important; padding-right: 40px !important; }
+        }
+        @media (min-width: 768px) {
+          .carousel-arrow-left  { left: -4px !important; }
+          .carousel-arrow-right { right: -4px !important; }
+        }
+
+        /* ── Hero stats — 2×2 grid on 360px and below ── */
+        @media (max-width: 360px) {
+          .hero-stats-inner {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
+            justify-items: start !important;
+          }
+        }
 
         /* ── Collections Grid ────────────────────────── */
         .collections-grid {

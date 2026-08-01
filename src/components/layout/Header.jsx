@@ -100,8 +100,8 @@ export default function Header() {
           <nav className="sh-navbar" style={{ display:'flex', alignItems:'center', gap:'8px' }}>
 
             {/* ── Logo ── */}
-            <Link to="/" style={{ display:'flex', alignItems:'center', gap:'10px',
-              flexShrink:0, flex:1, textDecoration:'none' }}>
+            <Link to="/" style={{ display:'flex', alignItems:'center', gap:'8px',
+              flexShrink:0, textDecoration:'none', minWidth:0 }}>
               <div style={{ width:'42px', height:'42px', borderRadius:'14px',
                 border:'1.5px solid rgba(255,255,255,0.8)', overflow:'hidden', flexShrink:0,
                 display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 12px rgba(0,0,0,0.06)', background:'white' }}>
@@ -111,7 +111,7 @@ export default function Header() {
                   onError={e => { e.target.style.display='none'; }} />
               </div>
               <span style={{ fontSize:'18px', fontWeight:900, color:'#0F172A',
-                letterSpacing:'-0.5px' }}>AS HUB</span>
+                letterSpacing:'-0.5px', whiteSpace:'nowrap' }}>AS HUB</span>
             </Link>
 
             {/* ── Desktop Nav Links ── */}
@@ -133,12 +133,12 @@ export default function Header() {
             </form>
 
             {/* Mobile search — inline in navbar */}
-            <form onSubmit={search} className="sh-mobile-search-inline sh-mobile-only" style={{ flex:1 }}>
-              <div className="sh-search-wrap" style={{ width:'100%', height:'36px', borderRadius:'99px', padding:'0 12px' }}>
-                <Search size={15} color="#64748B" />
+            <form onSubmit={search} className="sh-mobile-search-inline sh-mobile-only" style={{ flex:1, minWidth:0 }}>
+              <div className="sh-search-wrap" style={{ width:'100%', height:'38px', borderRadius:'99px', padding:'0 10px' }}>
+                <Search size={14} color="#64748B" style={{ flexShrink:0 }} />
                 <input value={q} onChange={e => setQ(e.target.value)}
-                  placeholder={activeCategory === 'tailoring' ? 'Search…' : 'Search…'}
-                  style={{ fontSize:'13px' }} />
+                  placeholder="Search…"
+                  style={{ fontSize:'13px', minWidth:0, width:'100%' }} />
               </div>
             </form>
 

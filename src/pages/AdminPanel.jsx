@@ -606,7 +606,7 @@ function QuickActions({ onAddProduct, onExportOrders, onRefresh }) {
     { label:'Refresh Data',  icon:RefreshCw,  action:onRefresh,      color:'#8B5CF6', bg:'#F5F3FF' },
   ];
   return (
-    <div style={{ position:'fixed', bottom:'24px', right:'24px', zIndex:500, display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'10px' }}>
+    <div className="admin-fab-wrap" style={{ position:'fixed', bottom:'24px', right:'24px', zIndex:500, display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'10px' }}>
       <AnimatePresence>
         {open && ACTIONS.map((a, i) => (
           <motion.button key={a.label}
@@ -1283,7 +1283,7 @@ export default function AdminPanel() {
                     <Search size={12} color="#94A3B8" style={{ position:'absolute', left:'8px', top:'50%', transform:'translateY(-50%)' }} />
                   </div>
                   <select value={catFilter} onChange={e=>setCatFilter(e.target.value)}
-                    style={{ padding:'7px 8px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'11px', background:'#FFFFFF', fontWeight:700, color:'#334155', flexShrink:0, maxWidth:'90px', boxSizing:'border-box' }}>
+                    style={{ padding:'7px 8px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'11px', background:'#FFFFFF', fontWeight:700, color:'#334155', flexShrink:0, maxWidth:'110px', minWidth:0, boxSizing:'border-box' }}>
                     <option value="all">All</option>
                     <option value="tailoring">Tailoring</option>
                     <option value="fashion">Fashion</option>
@@ -1546,7 +1546,12 @@ export default function AdminPanel() {
         />
       )}
 
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}} .prod-overlay{opacity:0!important} div:hover>.prod-overlay,.prod-card:hover .prod-overlay{opacity:1!important}`}</style>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}} .prod-overlay{opacity:0!important} div:hover>.prod-overlay,.prod-card:hover .prod-overlay{opacity:1!important}
+      @media(max-width:640px){
+        .admin-fab-wrap { bottom: 80px !important; }
+        .admin-fab-wrap button:last-child { width:48px !important; height:48px !important; }
+      }
+      `}</style>
     </div>
   );
 }

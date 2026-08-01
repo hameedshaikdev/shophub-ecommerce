@@ -65,9 +65,9 @@ export default function Cart() {
                 const itemQty = Number(item?.quantity || 1);
 
                 return (
-                  <div key={item.id || Math.random()} style={{ background:'rgba(255, 255, 255, 0.82)', backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)', borderRadius:'28px', padding:'20px', display:'flex', gap:'18px', boxShadow:'0 10px 32px rgba(15,23,42,0.06)', border:'1px solid rgba(255, 255, 255, 0.9)', alignItems:'center', position:'relative' }}>
+                  <div key={item.id || Math.random()} style={{ background:'rgba(255, 255, 255, 0.82)', backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)', borderRadius:'28px', padding:'16px', display:'flex', gap:'14px', boxShadow:'0 10px 32px rgba(15,23,42,0.06)', border:'1px solid rgba(255, 255, 255, 0.9)', alignItems:'center', position:'relative', boxSizing:'border-box' }}>
                     {/* Image */}
-                    <div style={{ width:'88px', height:'88px', borderRadius:'20px', overflow:'hidden', background:'rgba(241,245,249,0.8)', flexShrink:0, boxShadow:'0 4px 14px rgba(0,0,0,0.06)' }}>
+                    <div className="cart-item-img" style={{ width:'80px', height:'80px', borderRadius:'16px', overflow:'hidden', background:'rgba(241,245,249,0.8)', flexShrink:0, boxShadow:'0 4px 14px rgba(0,0,0,0.06)' }}>
                       <img src={getProductImage(item)} alt={item.name || 'Item'}
                         style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'20px' }} />
                     </div>
@@ -114,7 +114,7 @@ export default function Cart() {
             </div>
 
             {/* Order Summary Glass Card */}
-            <div style={{ background:'rgba(255, 255, 255, 0.85)', backdropFilter:'blur(28px)', WebkitBackdropFilter:'blur(28px)', borderRadius:'32px', padding:'32px', boxShadow:'0 20px 48px -8px rgba(15,23,42,0.12), 0 0 24px rgba(233,69,96,0.15)', border:'1px solid rgba(255, 255, 255, 0.95)', height:'fit-content' }}>
+            <div className="cart-summary-card" style={{ background:'rgba(255, 255, 255, 0.85)', backdropFilter:'blur(28px)', WebkitBackdropFilter:'blur(28px)', borderRadius:'28px', padding:'24px', boxShadow:'0 20px 48px -8px rgba(15,23,42,0.12), 0 0 24px rgba(233,69,96,0.15)', border:'1px solid rgba(255, 255, 255, 0.95)', height:'fit-content' }}>
               <h2 style={{ fontWeight:900, fontSize:'20px', color:'#0F172A', marginBottom:'20px', letterSpacing:'-0.4px' }}>Order Summary</h2>
 
               {savings > 0 && (
@@ -162,6 +162,17 @@ export default function Cart() {
         @media(min-width:768px) {
           #cart-layout {
             grid-template-columns: minmax(0,1.6fr) 380px !important;
+          }
+        }
+        @media(max-width:640px) {
+          .cart-item-img {
+            width: 68px !important;
+            height: 68px !important;
+            border-radius: 12px !important;
+          }
+          .cart-summary-card {
+            padding: 16px !important;
+            border-radius: 20px !important;
           }
         }
       `}</style>
