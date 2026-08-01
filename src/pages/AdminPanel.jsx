@@ -27,14 +27,15 @@ const NAV = [
   { key:'products',  label:'Products',  icon:Package },
 ];
 
+/* ── Unified Neutral Slate Status Palette (No loud rainbow colors) ── */
 const ORDER_STATUS = [
-  { key:'all_pending',       label:'All New',   color:'#F59E0B' },
-  { key:'payment_submitted', label:'Verify',    color:'#3B82F6' },
-  { key:'confirmed',         label:'Confirmed', color:'#16A34A' },
-  { key:'preparing',         label:'Preparing', color:'#8B5CF6' },
-  { key:'shipped',           label:'Shipped',   color:'#0369A1' },
-  { key:'delivered',         label:'Delivered', color:'#6B7280' },
-  { key:'payment_rejected',  label:'Rejected',  color:'#EF4444' },
+  { key:'all_pending',       label:'All New',   color:'#334155' },
+  { key:'payment_submitted', label:'Verify',    color:'#2563EB' },
+  { key:'confirmed',         label:'Confirmed', color:'#0F172A' },
+  { key:'preparing',         label:'Preparing', color:'#475569' },
+  { key:'shipped',           label:'Shipped',   color:'#1E293B' },
+  { key:'delivered',         label:'Delivered', color:'#059669' },
+  { key:'payment_rejected',  label:'Rejected',  color:'#DC2626' },
 ];
 
 /* ── Print Label ──────────────────────────────────────────── */
@@ -383,7 +384,7 @@ function ProductModal({ product, onClose, onSave }) {
   );
 }
 
-/* ── Order Card ───────────────────────────────────────────── */
+/* ── Clean Neutral Order Card ──────────────────────────────── */
 function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming, selected, onSelect }) {
   const [open, setOpen] = useState(false);
   const [rejectBox, setRejectBox] = useState(false);
@@ -391,94 +392,108 @@ function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming,
   const addr = order.shipping_address || {};
   const isPending = order.payment_status === 'submitted';
 
-  const STATUS_COLOR = { pending_payment:'#F59E0B', payment_submitted:'#3B82F6', confirmed:'#16A34A', preparing:'#8B5CF6', shipped:'#0369A1', delivered:'#6B7280', payment_rejected:'#EF4444' };
-  const statusColor = STATUS_COLOR[order.status] || '#8E8E93';
+  /* Clean monochrome status color mapping */
+  const STATUS_BG = {
+    pending_payment: '#F1F5F9',
+    payment_submitted: '#EFF6FF',
+    confirmed: '#F8FAFC',
+    preparing: '#F1F5F9',
+    shipped: '#F8FAFC',
+    delivered: '#ECFDF5',
+    payment_rejected: '#FEF2F2'
+  };
+  const STATUS_TEXT = {
+    pending_payment: '#475569',
+    payment_submitted: '#2563EB',
+    confirmed: '#0F172A',
+    preparing: '#334155',
+    shipped: '#1E293B',
+    delivered: '#059669',
+    payment_rejected: '#DC2626'
+  };
+
+  const statusBg = STATUS_BG[order.status] || '#F1F5F9';
+  const statusColor = STATUS_TEXT[order.status] || '#334155';
 
   function waMsg(msg) { window.open(`https://wa.me/91${addr.phone}?text=${encodeURIComponent(msg)}`, '_blank'); }
 
   return (
-    <div style={{ background:'white', borderRadius:'14px', border:'1px solid #F0F0F0', boxShadow:'0 1px 6px rgba(0,0,0,.05)', marginBottom:'10px', overflow:'hidden', transition:'box-shadow .2s' }}
-      onMouseEnter={e => e.currentTarget.style.boxShadow='0 4px 16px rgba(0,0,0,.08)'}
-      onMouseLeave={e => e.currentTarget.style.boxShadow='0 1px 6px rgba(0,0,0,.05)'}>
+    <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', boxShadow:'0 1px 4px rgba(0,0,0,.03)', marginBottom:'10px', overflow:'hidden', transition:'box-shadow .2s' }}
+      onMouseEnter={e => e.currentTarget.style.boxShadow='0 4px 14px rgba(0,0,0,.06)'}
+      onMouseLeave={e => e.currentTarget.style.boxShadow='0 1px 4px rgba(0,0,0,.03)'}>
 
       {/* Card header row */}
-      <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'12px 14px' }}>
+      <div className="admin-order-header-row" style={{ display:'flex', alignItems:'center', gap:'10px', padding:'12px 14px' }}>
         <input type="checkbox" checked={selected} onChange={onSelect}
-          style={{ width:'15px', height:'15px', cursor:'pointer', accentColor:'#1A1A2E', flexShrink:0 }} />
+          style={{ width:'16px', height:'16px', cursor:'pointer', accentColor:'#0F172A', flexShrink:0 }} />
 
         <div style={{ flex:1, minWidth:0 }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
-            <span style={{ fontSize:'13px', fontWeight:800, color:'#0A0A0A', fontFamily:'monospace' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px', flexWrap:'wrap' }}>
+            <span style={{ fontSize:'13px', fontWeight:800, color:'#0F172A', fontFamily:'monospace' }}>
               #{order.id.slice(0,8).toUpperCase()}
             </span>
-            <span style={{ fontSize:'10px', fontWeight:700, padding:'2px 8px', borderRadius:'99px',
-              background:`${statusColor}18`, color:statusColor }}>
+            <span style={{ fontSize:'10px', fontWeight:800, padding:'3px 9px', borderRadius:'99px',
+              background:statusBg, color:statusColor, border:'1px solid #CBD5E1' }}>
               {order.status?.replace(/_/g,' ').toUpperCase()}
             </span>
           </div>
-          <p style={{ fontSize:'12px', color:'#555', fontWeight:600 }}>
-            {addr.fullName} · +91 {addr.phone}
+          <p style={{ fontSize:'12px', color:'#334155', fontWeight:700, margin:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+            {addr.fullName || 'Customer'} · +91 {addr.phone || 'N/A'}
           </p>
-          <p style={{ fontSize:'11px', color:'#8E8E93', marginTop:'1px' }}>
+          <p style={{ fontSize:'11px', color:'#64748B', marginTop:'2px', margin:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
             {order.items?.map(i=>`${i.name} ×${i.quantity}`).join(', ')}
           </p>
         </div>
 
         <div style={{ textAlign:'right', flexShrink:0 }}>
-          <p style={{ fontSize:'16px', fontWeight:900, color:'#0A0A0A' }}>₹{order.total_amount?.toFixed(0)}</p>
-          <p style={{ fontSize:'10px', color:'#8E8E93', marginTop:'2px' }}>
+          <p style={{ fontSize:'15px', fontWeight:900, color:'#0F172A', margin:0 }}>₹{order.total_amount?.toFixed(0)}</p>
+          <p style={{ fontSize:'10px', color:'#64748B', marginTop:'2px', margin:0 }}>
             {new Date(order.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}
           </p>
         </div>
 
         <button onClick={() => setOpen(!open)}
-          style={{ width:'28px', height:'28px', borderRadius:'8px', background:'#F4F4F8',
-            border:'none', cursor:'pointer', display:'flex', alignItems:'center',
-            justifyContent:'center', flexShrink:0, transition:'background .15s' }}
-          onMouseEnter={e => e.currentTarget.style.background='#E8E8EE'}
-          onMouseLeave={e => e.currentTarget.style.background='#F4F4F8'}>
-          <ChevronRight size={14} style={{ transform: open ? 'rotate(90deg)' : 'none', transition:'transform .2s' }} />
+          style={{ width:'30px', height:'30px', borderRadius:'8px', background:'#F1F5F9',
+            border:'1px solid #E2E8F0', cursor:'pointer', display:'flex', alignItems:'center',
+            justifyContent:'center', flexShrink:0, transition:'background .15s' }}>
+          <ChevronRight size={15} color="#475569" style={{ transform: open ? 'rotate(90deg)' : 'none', transition:'transform .2s' }} />
         </button>
       </div>
 
       {/* Expanded details */}
       {open && (
-        <div style={{ borderTop:'1px solid #F8F8F8', padding:'12px 14px',
-          display:'flex', flexDirection:'column', gap:'10px' }}>
+        <div style={{ borderTop:'1px solid #F1F5F9', padding:'14px', display:'flex', flexDirection:'column', gap:'12px', background:'#F8FAFC' }}>
 
           {/* Order timeline */}
-          <div style={{ background:'#F8FAFC', borderRadius:'10px', padding:'10px 12px' }}>
-            <p style={{ fontSize:'10px', fontWeight:700, color:'#8E8E93', textTransform:'uppercase', letterSpacing:'.5px', marginBottom:'10px' }}>Order Timeline</p>
+          <div style={{ background:'#FFFFFF', borderRadius:'12px', padding:'12px 14px', border:'1px solid #E2E8F0' }}>
+            <p style={{ fontSize:'10px', fontWeight:800, color:'#64748B', textTransform:'uppercase', letterSpacing:'.5px', marginBottom:'10px', margin:0 }}>Order Timeline</p>
             {(() => {
               const STAGES = [
-                { key:'pending_payment',   label:'Order Placed',      color:'#8E8E93' },
-                { key:'payment_submitted', label:'Payment Submitted',  color:'#3B82F6' },
-                { key:'confirmed',         label:'Payment Verified',   color:'#16A34A' },
-                { key:'preparing',         label:'Preparing Order',    color:'#8B5CF6' },
-                { key:'shipped',           label:'Shipped',            color:'#0369A1' },
-                { key:'delivered',         label:'Delivered',          color:'#059669' },
+                { key:'pending_payment',   label:'Order Placed' },
+                { key:'payment_submitted', label:'Payment Submitted' },
+                { key:'confirmed',         label:'Payment Verified' },
+                { key:'preparing',         label:'Preparing Order' },
+                { key:'shipped',           label:'Shipped' },
+                { key:'delivered',         label:'Delivered' },
               ];
               const currentIdx = STAGES.findIndex(s => s.key === order.status);
               return STAGES.map((stage, i) => {
                 const done   = i <= currentIdx;
                 const active = i === currentIdx;
                 return (
-                  <div key={stage.key} style={{ display:'flex', alignItems:'flex-start', gap:'10px', marginBottom: i<STAGES.length-1?'8px':'0' }}>
+                  <div key={stage.key} style={{ display:'flex', alignItems:'flex-start', gap:'10px', marginBottom: i<STAGES.length-1?'8px':'0', marginTop:'6px' }}>
                     <div style={{ display:'flex', flexDirection:'column', alignItems:'center', flexShrink:0 }}>
-                      <div style={{ width:'18px', height:'18px', borderRadius:'50%', flexShrink:0,
-                        background: done ? stage.color : '#E2E8F0',
-                        border: active ? `3px solid ${stage.color}` : 'none',
+                      <div style={{ width:'16px', height:'16px', borderRadius:'50%', flexShrink:0,
+                        background: done ? '#0F172A' : '#E2E8F0',
+                        border: active ? '3px solid #2563EB' : 'none',
                         display:'flex', alignItems:'center', justifyContent:'center' }}>
-                        {done && !active && <div style={{ width:'6px', height:'6px', borderRadius:'50%', background:'white' }}/>}
+                        {done && !active && <div style={{ width:'5px', height:'5px', borderRadius:'50%', background:'white' }}/>}
                       </div>
-                      {i < STAGES.length-1 && <div style={{ width:'2px', height:'16px', background: i<currentIdx?stage.color:'#E2E8F0', marginTop:'2px' }}/>}
+                      {i < STAGES.length-1 && <div style={{ width:'2px', height:'16px', background: i<currentIdx?'#0F172A':'#E2E8F0', marginTop:'2px' }}/>}
                     </div>
                     <div style={{ paddingTop:'1px' }}>
-                      <p style={{ fontSize:'12px', fontWeight: active?800:600, color: done?'#0A0A0A':'#C0C0C0', lineHeight:1 }}>{stage.label}</p>
-                      {active && <p style={{ fontSize:'10px', color:stage.color, marginTop:'2px', fontWeight:700 }}>Current Status</p>}
-                      {done && !active && order.verified_at && stage.key==='confirmed' && (
-                        <p style={{ fontSize:'10px', color:'#8E8E93', marginTop:'1px' }}>{new Date(order.verified_at).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</p>
-                      )}
+                      <p style={{ fontSize:'12px', fontWeight: active?800:600, color: done?'#0F172A':'#94A3B8', margin:0 }}>{stage.label}</p>
+                      {active && <p style={{ fontSize:'10px', color:'#2563EB', marginTop:'2px', fontWeight:800, margin:0 }}>Current Stage</p>}
                     </div>
                   </div>
                 );
@@ -487,58 +502,58 @@ function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming,
           </div>
 
           {/* Address */}
-          <div style={{ background:'#F8FAFC', borderRadius:'10px', padding:'10px 12px' }}>
-            <p style={{ fontSize:'10px', fontWeight:700, color:'#8E8E93', textTransform:'uppercase', letterSpacing:'.5px', marginBottom:'6px' }}>Delivery Address</p>
-            <p style={{ fontSize:'13px', fontWeight:700, color:'#0A0A0A' }}>{addr.fullName}</p>
-            <p style={{ fontSize:'12px', color:'#555', lineHeight:1.65, marginTop:'3px' }}>
+          <div style={{ background:'#FFFFFF', borderRadius:'12px', padding:'12px 14px', border:'1px solid #E2E8F0' }}>
+            <p style={{ fontSize:'10px', fontWeight:800, color:'#64748B', textTransform:'uppercase', letterSpacing:'.5px', margin:0 }}>Delivery Address</p>
+            <p style={{ fontSize:'13px', fontWeight:800, color:'#0F172A', marginTop:'4px', margin:0 }}>{addr.fullName}</p>
+            <p style={{ fontSize:'12px', color:'#475569', lineHeight:1.5, marginTop:'4px', margin:0 }}>
               {addr.houseNo}, {addr.streetArea}<br/>Near {addr.landmark}<br/>
               {addr.city}, {addr.state} — {addr.pincode}
             </p>
           </div>
 
           {/* Items */}
-          <div style={{ background:'#F8FAFC', borderRadius:'10px', padding:'10px 12px' }}>
-            <p style={{ fontSize:'10px', fontWeight:700, color:'#8E8E93', textTransform:'uppercase', letterSpacing:'.5px', marginBottom:'6px' }}>Items</p>
+          <div style={{ background:'#FFFFFF', borderRadius:'12px', padding:'12px 14px', border:'1px solid #E2E8F0' }}>
+            <p style={{ fontSize:'10px', fontWeight:800, color:'#64748B', textTransform:'uppercase', letterSpacing:'.5px', margin:0 }}>Items Ordered</p>
             {order.items?.map((item,i) => (
-              <div key={i} style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', marginBottom:'4px' }}>
-                <span style={{ color:'#555' }}>{item.name} ×{item.quantity}</span>
-                <span style={{ fontWeight:700 }}>₹{(item.price*item.quantity).toFixed(0)}</span>
+              <div key={i} style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', marginTop:'6px' }}>
+                <span style={{ color:'#334155', fontWeight:600 }}>{item.name} ×{item.quantity}</span>
+                <span style={{ fontWeight:800, color:'#0F172A' }}>₹{(item.price*item.quantity).toFixed(0)}</span>
               </div>
             ))}
-            {order.utr && <p style={{ fontSize:'11px', color:'#16A34A', fontWeight:700, marginTop:'6px' }}>UTR: {order.utr}</p>}
+            {order.utr && <p style={{ fontSize:'11px', color:'#059669', fontWeight:800, marginTop:'8px', margin:0 }}>UTR: {order.utr}</p>}
             {order.screenshot_url && (
               <a href={order.screenshot_url} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize:'11px', color:'#3B82F6', fontWeight:700, display:'inline-flex', alignItems:'center', gap:'4px', marginTop:'4px', textDecoration:'none' }}>
-                <Eye size={11}/> View Screenshot
+                style={{ fontSize:'11px', color:'#2563EB', fontWeight:800, display:'inline-flex', alignItems:'center', gap:'4px', marginTop:'6px', textDecoration:'none' }}>
+                <Eye size={12}/> View Payment Screenshot
               </a>
             )}
           </div>
 
           {/* Confirm / Reject */}
           {isPending && !rejectBox && (
-            <div style={{ display:'flex', gap:'8px' }}>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
               <button onClick={() => onConfirm(order)} disabled={confirming}
-                style={{ flex:1, padding:'10px', borderRadius:'10px', background:confirming?'#E2E8F0':'#16A34A', color:confirming?'#94A3B8':'white', fontWeight:800, fontSize:'13px', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
-                <CheckCircle size={14}/>{confirming?'...':'Confirm Payment'}
+                style={{ padding:'10px', borderRadius:'10px', background:confirming?'#CBD5E1':'#059669', color:'white', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+                <CheckCircle size={14}/>{confirming?'Verifying...':'Verify Payment'}
               </button>
               <button onClick={() => setRejectBox(true)}
-                style={{ flex:1, padding:'10px', borderRadius:'10px', background:'#FEF2F2', color:'#EF4444', fontWeight:800, fontSize:'13px', border:'1px solid #FECACA', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+                style={{ padding:'10px', borderRadius:'10px', background:'#FEF2F2', color:'#DC2626', fontWeight:800, fontSize:'12px', border:'1px solid #FECACA', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
                 <XCircle size={14}/>Reject
               </button>
             </div>
           )}
 
           {rejectBox && (
-            <div style={{ display:'flex', flexDirection:'column', gap:'7px' }}>
+            <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
               <input value={reason} onChange={e=>setReason(e.target.value)} placeholder="Rejection reason..."
-                style={{ width:'100%', padding:'9px 12px', borderRadius:'10px', border:'1.5px solid #FECACA', fontSize:'12px', fontFamily:'inherit', outline:'none', background:'#FEF2F2' }} />
-              <div style={{ display:'flex', gap:'7px' }}>
+                style={{ width:'100%', padding:'9px 12px', borderRadius:'10px', border:'1px solid #FECACA', fontSize:'12px', outline:'none', background:'#FEF2F2', boxSizing:'border-box' }} />
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
                 <button onClick={() => { onReject(order, reason); setRejectBox(false); }}
-                  style={{ flex:1, padding:'10px', borderRadius:'10px', background:'#EF4444', color:'white', fontWeight:800, fontSize:'13px', border:'none', cursor:'pointer' }}>
+                  style={{ padding:'10px', borderRadius:'10px', background:'#DC2626', color:'white', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer' }}>
                   Confirm Reject
                 </button>
                 <button onClick={() => { setRejectBox(false); setReason(''); }}
-                  style={{ flex:1, padding:'10px', borderRadius:'10px', background:'#F4F4F8', color:'#555', fontWeight:700, fontSize:'13px', border:'none', cursor:'pointer' }}>
+                  style={{ padding:'10px', borderRadius:'10px', background:'#F1F5F9', color:'#475569', fontWeight:700, fontSize:'12px', border:'none', cursor:'pointer' }}>
                   Cancel
                 </button>
               </div>
@@ -548,7 +563,7 @@ function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming,
           {/* Status changer */}
           {['confirmed','preparing','shipped'].includes(order.status) && (
             <select value={order.status} onChange={e => onStatus(order.id, e.target.value)}
-              style={{ width:'100%', padding:'9px 12px', borderRadius:'10px', border:'1.5px solid #E2E8F0', fontSize:'12px', fontFamily:'inherit', background:'white', fontWeight:700 }}>
+              style={{ width:'100%', padding:'10px 12px', borderRadius:'10px', border:'1px solid #CBD5E1', fontSize:'12px', background:'white', fontWeight:800, color:'#0F172A' }}>
               <option value="confirmed">Confirmed</option>
               <option value="preparing">Preparing</option>
               <option value="shipped">Shipped</option>
@@ -557,22 +572,22 @@ function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming,
           )}
 
           {/* Actions row */}
-          <div style={{ display:'flex', gap:'7px' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
             <button onClick={() => waMsg(`Hello ${addr.fullName}, your order #${order.id.slice(0,8).toUpperCase()} status: ${order.status}. Thank you for shopping with AS HUB!`)}
-              style={{ flex:1, padding:'8px', borderRadius:'10px', background:'#F0FDF4', color:'#16A34A', fontWeight:700, fontSize:'12px', border:'1px solid #BBF7D0', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px' }}>
-              <MessageCircle size={13}/> WhatsApp
+              style={{ padding:'9px', borderRadius:'10px', background:'#ECFDF5', color:'#059669', fontWeight:800, fontSize:'12px', border:'1px solid #A7F3D0', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+              <MessageCircle size={14}/> WhatsApp
             </button>
             <a href={`tel:+91${addr.phone}`}
-              style={{ flex:1, padding:'8px', borderRadius:'10px', background:'#EFF6FF', color:'#2563EB', fontWeight:700, fontSize:'12px', border:'1px solid #BFDBFE', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px', textDecoration:'none' }}>
-              <Phone size={13}/> Call
+              style={{ padding:'9px', borderRadius:'10px', background:'#EFF6FF', color:'#2563EB', fontWeight:800, fontSize:'12px', border:'1px solid #BFDBFE', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px', textDecoration:'none' }}>
+              <Phone size={14}/> Call Customer
             </a>
             <button onClick={() => printShippingLabel(order)}
-              style={{ padding:'8px 12px', borderRadius:'10px', background:'#1A1A2E', color:'white', fontWeight:700, fontSize:'12px', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px' }}>
-              <Printer size={13}/> Print
+              style={{ padding:'9px', borderRadius:'10px', background:'#0F172A', color:'white', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+              <Printer size={14}/> Print Label
             </button>
             <button onClick={() => onDelete(order.id)}
-              style={{ padding:'8px 12px', borderRadius:'10px', background:'#FEF2F2', color:'#EF4444', fontWeight:700, fontSize:'12px', border:'1px solid #FECACA', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
-              <Trash2 size={13}/>
+              style={{ padding:'9px', borderRadius:'10px', background:'#FEF2F2', color:'#DC2626', fontWeight:800, fontSize:'12px', border:'1px solid #FECACA', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+              <Trash2 size={14}/> Delete
             </button>
           </div>
         </div>
@@ -585,37 +600,39 @@ function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming,
 function QuickActions({ onAddProduct, onExportOrders, onRefresh }) {
   const [open, setOpen] = useState(false);
   const ACTIONS = [
-    { label:'Add Product',   icon:Plus,       action:onAddProduct,   color:'#1A1A2E' },
-    { label:'Export Orders', icon:Download,   action:onExportOrders, color:'#2563EB' },
-    { label:'Refresh',       icon:RefreshCw,  action:onRefresh,      color:'#16A34A' },
+    { label:'Add Product',   icon:Plus,       action:onAddProduct,   color:'#2563EB', bg:'#EFF6FF' },
+    { label:'Export Orders', icon:Download,   action:onExportOrders, color:'#10B981', bg:'#ECFDF5' },
+    { label:'Refresh Data',  icon:RefreshCw,  action:onRefresh,      color:'#8B5CF6', bg:'#F5F3FF' },
   ];
   return (
-    <div style={{ position:'fixed', bottom:'24px', right:'20px', zIndex:500, display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'8px' }}>
+    <div style={{ position:'fixed', bottom:'24px', right:'24px', zIndex:500, display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'10px' }}>
       <AnimatePresence>
         {open && ACTIONS.map((a, i) => (
           <motion.button key={a.label}
-            initial={{ opacity:0, y:10, scale:.8 }}
+            initial={{ opacity:0, y:12, scale:.85 }}
             animate={{ opacity:1, y:0, scale:1 }}
-            exit={{ opacity:0, y:10, scale:.8 }}
-            transition={{ delay: i*.05, duration:.2 }}
+            exit={{ opacity:0, y:12, scale:.85 }}
+            transition={{ delay: i*.04, duration:.2 }}
             onClick={() => { a.action(); setOpen(false); }}
-            style={{ display:'flex', alignItems:'center', gap:'8px', padding:'9px 16px', borderRadius:'12px',
-              background:'white', border:'1px solid #E2E8F0', cursor:'pointer',
-              boxShadow:'0 4px 16px rgba(0,0,0,.12)', fontSize:'12px', fontWeight:700, color:'#0A0A0A' }}>
-            <a.icon size={14} color={a.color} />
+            style={{ display:'flex', alignItems:'center', gap:'10px', padding:'10px 18px', borderRadius:'14px',
+              background:'#FFFFFF', border:'1px solid #E5E7EB', cursor:'pointer',
+              boxShadow:'0 10px 30px -4px rgba(15, 23, 42, 0.15)', fontSize:'13px', fontWeight:700, color:'#111827' }}>
+            <div style={{ width:'28px', height:'28px', borderRadius:'8px', background:a.bg, display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <a.icon size={15} color={a.color} />
+            </div>
             {a.label}
           </motion.button>
         ))}
       </AnimatePresence>
       <motion.button
-        whileHover={{ scale:1.08 }} whileTap={{ scale:.95 }}
+        whileHover={{ scale:1.06, y:-2 }} whileTap={{ scale:.94 }}
         onClick={() => setOpen(o => !o)}
-        style={{ width:'44px', height:'44px', borderRadius:'50%',
-          background:'linear-gradient(135deg,#1A1A2E,#0F3460)', color:'white',
+        style={{ width:'52px', height:'52px', borderRadius:'50%',
+          background:'linear-gradient(135deg, #1E293B, #0F172A)', color:'#FFFFFF',
           border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center',
-          boxShadow:'0 4px 20px rgba(26,26,46,.4)' }}>
+          boxShadow:'0 8px 24px rgba(15, 23, 42, 0.3)' }}>
         <motion.div animate={{ rotate: open ? 45 : 0 }} transition={{ duration:.2 }}>
-          <Plus size={20} />
+          <Plus size={24} />
         </motion.div>
       </motion.button>
     </div>
@@ -628,7 +645,7 @@ export default function AdminPanel() {
   const { user, setUser } = useApp();
 
   /* ── state ── */
-  const [page,       setPage]       = useState('orders');   // orders | products
+  const [page,       setPage]       = useState('orders');   // orders | products | more
   const [orderTab,   setOrderTab]   = useState('all_pending');
   const [orders,     setOrders]     = useState([]);
   const [allOrders,  setAllOrders]  = useState([]);
@@ -835,50 +852,60 @@ export default function AdminPanel() {
       return `
         ${idx > 0 ? '<div class="pb"></div>' : ''}
         <div class="wrap">
-          <div class="hdr">
-            <div><div class="brand">AS HUB</div><div class="contact">Ph: 7013942909 | as.businezzz@gmail.com</div></div>
-            <div class="oid">#${order.id.slice(0,8).toUpperCase()}<br/><span style="font-size:9px;font-weight:400">${new Date(order.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</span></div>
+        <div class="wrap" style="${idx>0?'page-break-before:always;':''}">
+          <div class="header">
+            <span class="brand">AS HUB</span>
+            <span class="oid">ORDER #${order.id.slice(0,8).toUpperCase()}</span>
           </div>
-          <div class="box"><div class="lbl">Deliver To</div>
-            <div class="nm">${a.fullName||'N/A'}</div>
-            <div class="ph">+91 ${a.phone||'N/A'}</div>
-            <div class="ad">${a.houseNo||''}, ${a.streetArea||''}<br/>Near ${a.landmark||''}<br/>${a.city||''}, ${a.state||''}</div>
-            <div class="pin">PIN: ${a.pincode||''}</div></div>
-          <div class="box from"><div class="lbl">From</div>
-            <div class="fn">Shaik Asmath (AS HUB)</div>
-            <div class="fd">D.No. 25-2-1709, Pragathi Nagar, Podalkur Road,<br/>Nellore, Andhra Pradesh - 524004 | Ph: 7013942909</div></div>
-          <div class="box"><div class="lbl">Items</div>
-            <table><thead><tr><th>Product</th><th>Qty</th><th>Amount</th></tr></thead>
-            <tbody>${items}<tr class="tot"><td colspan="2">Total</td><td>₹${order.total_amount?.toFixed(0)}</td></tr></tbody></table>
-            <span class="badge">✓ Paid via UPI</span></div>
-          <div class="ft"><span>#${order.id.slice(0,8).toUpperCase()} | ${new Date(order.created_at).toLocaleDateString('en-IN')} | ${(order.status||'').toUpperCase()}</span><span class="care">HANDLE WITH CARE</span></div>
-        </div>`;
+          <div class="box">
+            <p class="lbl">DELIVER TO</p>
+            <p class="name">${addr.name || 'Customer'}</p>
+            <p class="ph">📞 ${addr.phone || 'N/A'}</p>
+            <p class="addr">${addr.house || ''}, ${addr.area || ''}, ${addr.city || ''}, ${addr.state || ''}</p>
+            <p class="pin">PIN: ${addr.pincode || ''}</p>
+          </div>
+          <div class="box from">
+            <p class="lbl">FROM (SHIPPER)</p>
+            <p class="fn">AS HUB — Shaik Asmath</p>
+            <p class="fd">D.No. 25-2-1709, Pragathi Nagar, Podalkur Road, Nellore, AP - 524004 | 📞 70139 42909</p>
+          </div>
+          <div class="box">
+            <p class="lbl">ORDER ITEMS (${(order.items||[]).length})</p>
+            <table>
+              <thead><tr><th>Item</th><th>Qty</th><th>Price</th></tr></thead>
+              <tbody>
+                ${(order.items||[]).map(i=>`<tr><td>${i.name}</td><td>${i.quantity}</td><td>₹${i.price}</td></tr>`).join('')}
+                <tr class="tot"><td colspan="2">TOTAL PAID (UPI)</td><td>₹${order.total_amount}</td></tr>
+              </tbody>
+            </table>
+            ${order.utr_number ? `<span class="badge">UTR: ${order.utr_number}</span>` : ''}
+          </div>
+          <div class="ft">
+            <span>PRINTED: ${new Date().toLocaleDateString('en-IN')} ${new Date().toLocaleTimeString('en-IN')}</span>
+            <span class="care">FRAGILE — HANDLE WITH CARE</span>
+          </div>
+        </div>
+      `;
     }).join('');
 
-    const html = `<!DOCTYPE html><html><head><title>${toPrint.length} Shipping Label${toPrint.length>1?'s':''}</title>
-    <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif}
-    .np{text-align:center;padding:14px;background:#f4f4f8;margin-bottom:12px}
-    .wrap{max-width:580px;margin:0 auto;padding:18px}
-    .pb{page-break-after:always;height:24px}
-    .hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:12px}
-    .brand{font-size:20px;font-weight:900}.contact{font-size:10px;color:#666;margin-top:2px}
-    .oid{font-family:monospace;font-size:13px;font-weight:900;border:2px solid #000;padding:4px 8px;text-align:right}
-    .box{border:2px solid #000;border-radius:5px;padding:11px;margin-bottom:9px}
-    .from{background:#f8f8f8;border:1.5px solid #ccc}
-    .lbl{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:5px}
-    .nm{font-size:18px;font-weight:900;margin-bottom:2px}.ph{font-size:13px;font-weight:700;margin-bottom:5px}
-    .ad{font-size:12px;line-height:1.6;color:#333}.pin{font-size:18px;font-weight:900;margin-top:6px;letter-spacing:2px}
-    .fn{font-size:14px;font-weight:800;margin-bottom:3px}.fd{font-size:11px;color:#333;line-height:1.7}
-    table{width:100%;border-collapse:collapse;font-size:11px}
-    th{background:#000;color:#fff;padding:5px 8px;font-size:9px;text-transform:uppercase;text-align:left}
+    const html = `<!DOCTYPE html><html><head><title>Batch Labels (${toPrint.length})</title>
+    <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;padding:16px;background:#fff}
+    .wrap{max-width:580px;margin:0 auto 20px auto;border:2px solid #000;padding:16px;border-radius:8px}
+    .header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:12px}
+    .brand{font-size:22px;font-weight:900}.oid{font-family:monospace;font-size:15px;font-weight:900;border:2px solid #000;padding:4px 8px}
+    .box{border:1.5px solid #000;border-radius:6px;padding:10px;margin-bottom:10px}
+    .lbl{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:4px}
+    .name{font-size:18px;font-weight:900;margin-bottom:3px}.ph{font-size:14px;font-weight:700;margin-bottom:6px}
+    .addr{font-size:13px;line-height:1.5;color:#222}.pin{font-size:18px;font-weight:900;margin-top:6px;letter-spacing:1px}
+    .from{background:#f8f8f8}.fn{font-size:14px;font-weight:800;margin-bottom:3px}.fd{font-size:11px;color:#444;line-height:1.5}
+    table{width:100%;border-collapse:collapse;font-size:11px}th{background:#000;color:#fff;padding:5px 8px;font-size:9px;text-transform:uppercase;text-align:left}
     td{padding:5px 8px;border-bottom:1px solid #eee}.tot td{font-weight:900;background:#f8f8f8}
     .badge{display:inline-block;background:#000;color:#fff;font-size:9px;font-weight:900;padding:3px 9px;border-radius:3px;margin-top:6px}
     .ft{border-top:2px dashed #999;padding-top:9px;margin-top:9px;display:flex;justify-content:space-between;font-size:9px}
     .care{border:1px solid #000;padding:2px 7px;border-radius:3px;font-weight:700}
     @media print{.np{display:none!important}}</style></head>
-    <body>
-    <div class="np"><strong>📦 ${toPrint.length} Shipping Label${toPrint.length>1?'s':''}</strong>
-    <button onclick="window.print()" style="margin-left:12px;padding:9px 22px;background:#1A1A2E;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Print All</button></div>
+    <body><div class="np" style="padding:10px;margin-bottom:16px;background:#F1F5F9;border-radius:8px;display:flex;align-items:center;justify-content:space-between">📦 <strong>${toPrint.length} Labels Ready</strong>
+    <button onclick="window.print()" style="padding:8px 20px;background:#0F172A;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">🖨 Print All</button></div>
     ${pages}</body></html>`;
 
     const w = window.open('','_blank','width=760,height=900');
@@ -886,18 +913,10 @@ export default function AdminPanel() {
     toast(`${toPrint.length} label${toPrint.length>1?'s':''} ready to print`, 'success');
   }
 
-  /* ── derived ── */
-  const filteredProducts = products.filter(p => {
-    const ms = p.name.toLowerCase().includes(search.toLowerCase());
-    const mc = catFilter==='all' || p.category===catFilter;
-    return ms && mc;
-  });
-
   const today = new Date().toDateString();
   const todayOrders  = allOrders.filter(o=>new Date(o.created_at).toDateString()===today).length;
   const todayRevenue = allOrders.filter(o=>new Date(o.created_at).toDateString()===today&&o.payment_status==='verified').reduce((s,o)=>s+(o.total_amount||0),0);
   const monthRevenue = allOrders.filter(o=>{ const d=new Date(o.created_at); const n=new Date(); return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear()&&o.payment_status==='verified'; }).reduce((s,o)=>s+(o.total_amount||0),0);
-  const lowStock = products.filter(p=>p.stock!==null&&p.stock<=5).length;
 
   const thisMonth = new Date().toLocaleDateString('en-IN',{month:'long',year:'numeric'});
   const thisMonthCount = orders.filter(o=>new Date(o.created_at).toLocaleDateString('en-IN',{month:'long',year:'numeric'})===thisMonth).length;
@@ -916,75 +935,74 @@ export default function AdminPanel() {
 
   if (!user||user.email!==ADMIN_EMAIL) return null;
 
-  /* ── STYLE CONSTANTS ── */
-  const BG = '#F6F8FA';
-  const SIDEBAR_W = sideOpen ? 220 : 60;
-
   return (
-    <div style={{ minHeight:'100vh', background:BG, display:'flex', flexDirection:'column' }}>
+    <div style={{ minHeight:'100vh', background:'#F8FAFC', display:'flex', flexDirection:'column', fontFamily:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', overflowX:'hidden' }}>
       <ToastContainer />
       <ConfirmDialog />
       {cmdOpen && <CommandPalette orders={allOrders} products={products} onClose={()=>setCmdOpen(false)} />}
 
-      {/* ── TOP NAV ───────────────────────────────────────── */}
-      <header style={{ background:'white', borderBottom:'1px solid #E8E8EE',
-        height:'56px', display:'flex', alignItems:'center', justifyContent:'space-between',
+      {/* ── TOP NAV (Mobile-first) ─────────────────────────── */}
+      <header style={{ background:'rgba(255,255,255,0.98)', backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)', borderBottom:'1px solid #E5E7EB',
+        height:'58px', display:'flex', alignItems:'center', justifyContent:'space-between',
         padding:'0 16px', position:'sticky', top:0, zIndex:100,
-        boxShadow:'0 1px 8px rgba(0,0,0,.05)', flexShrink:0 }}>
+        boxShadow:'0 1px 4px rgba(0,0,0,.03)', flexShrink:0, gap:'10px', boxSizing:'border-box', width:'100%' }}>
 
-        {/* Left */}
-        <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-          <div style={{ width:'28px', height:'28px', borderRadius:'8px',
-            background:'linear-gradient(135deg,#1A1A2E,#0F3460)',
-            display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <BarChart2 size={15} color="white" />
+        {/* Left Brand with Real Logo Image */}
+        <div style={{ display:'flex', alignItems:'center', gap:'10px', flexShrink:0 }}>
+          <div style={{ width:'34px', height:'34px', borderRadius:'10px', overflow:'hidden',
+            border:'1px solid #E2E8F0', background:'#FFFFFF',
+            display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
+            boxShadow:'0 2px 6px rgba(15,23,42,0.06)' }}>
+            <img src="/logo.png" alt="AS HUB" style={{ width:'100%', height:'100%', objectFit:'cover' }} onError={e=>{e.target.style.display='none'; if(e.target.nextSibling) e.target.nextSibling.style.display='flex';}} />
+            <div style={{ display:'none', width:'100%', height:'100%', alignItems:'center', justifyContent:'center', background:'#1E293B' }}>
+              <BarChart2 size={16} color="#FFFFFF" />
+            </div>
           </div>
-          <span style={{ fontSize:'14px', fontWeight:800, color:'#0A0A0A' }}>AS HUB</span>
+          <span style={{ fontSize:'15px', fontWeight:900, color:'#0F172A', letterSpacing:'-0.3px' }}>AS HUB</span>
         </div>
 
         {/* Center search */}
         <button onClick={()=>setCmdOpen(true)}
           style={{ display:'flex', alignItems:'center', gap:'8px', padding:'7px 12px',
-            borderRadius:'10px', background:'#F4F4F8', border:'1px solid #E8E8EE',
-            cursor:'pointer', fontSize:'12px', color:'#8E8E93', fontWeight:600,
-            flex:1, maxWidth:'220px', margin:'0 10px' }}>
-          <Search size={13} />
-          <span style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>Search... (⌘K)</span>
+            borderRadius:'10px', background:'#F1F5F9', border:'1px solid #E2E8F0',
+            cursor:'pointer', fontSize:'12px', color:'#64748B', fontWeight:600,
+            flex:1, minWidth:0, maxWidth:'300px', transition:'all 200ms ease' }}>
+          <Search size={14} color="#94A3B8" style={{ flexShrink:0 }} />
+          <span style={{ flex:1, textAlign:'left', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>Search orders, products...</span>
+          <span className="admin-kbd-hide" style={{ fontSize:'10px', fontWeight:800, background:'#FFFFFF', border:'1px solid #CBD5E1', padding:'2px 5px', borderRadius:'5px', color:'#475569', flexShrink:0 }}>⌘K</span>
         </button>
 
-        {/* Right */}
-        <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+        {/* Right Actions */}
+        <div style={{ display:'flex', alignItems:'center', gap:'8px', flexShrink:0 }}>
           {/* Notif */}
           <div style={{ position:'relative' }}>
             <button onClick={()=>setNotifOpen(o=>!o)}
-              style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#F4F4F8',
-                border:'none', cursor:'pointer', display:'flex', alignItems:'center',
-                justifyContent:'center', position:'relative' }}>
-              <Bell size={15} color="#555" />
+              style={{ width:'36px', height:'36px', borderRadius:'10px', background:'#F8FAFC',
+                border:'1px solid #E5E7EB', cursor:'pointer', display:'flex', alignItems:'center',
+                justifyContent:'center', position:'relative', transition:'all 200ms ease' }}>
+              <Bell size={16} color="#475569" />
               {unread > 0 && <span style={{ position:'absolute', top:'5px', right:'5px',
-                width:'7px', height:'7px', borderRadius:'50%',
+                width:'8px', height:'8px', borderRadius:'50%',
                 background:'#EF4444', border:'2px solid white' }} />}
             </button>
             {notifOpen && (
-              <div style={{ position:'absolute', right:0, top:'40px', width:'300px',
-                background:'white', borderRadius:'14px', border:'1px solid #E8E8EE',
-                boxShadow:'0 8px 32px rgba(0,0,0,.12)', zIndex:200, overflow:'hidden' }}>
+              <div style={{ position:'absolute', right:0, top:'46px', width:'320px',
+                background:'#FFFFFF', borderRadius:'16px', border:'1px solid #E5E7EB',
+                boxShadow:'0 16px 40px -8px rgba(15, 23, 42, 0.18)', zIndex:200, overflow:'hidden' }}>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
-                  padding:'12px 14px', borderBottom:'1px solid #F0F0F0' }}>
-                  <p style={{ fontSize:'13px', fontWeight:800, color:'#0A0A0A' }}>Notifications {unread>0 && <span style={{ background:'#EF4444', color:'white', fontSize:'9px', fontWeight:800, borderRadius:'99px', padding:'1px 6px', marginLeft:'4px' }}>{unread}</span>}</p>
+                  padding:'12px 16px', borderBottom:'1px solid #F1F5F9', background:'#F8FAFC' }}>
+                  <p style={{ fontSize:'13px', fontWeight:800, color:'#111827', margin:0 }}>Notifications {unread>0 && <span style={{ background:'#EF4444', color:'white', fontSize:'10px', fontWeight:800, borderRadius:'99px', padding:'1px 7px', marginLeft:'4px' }}>{unread}</span>}</p>
                   <button onClick={()=>{ const ids=notifications.map(n=>n.id); localStorage.setItem('admin_notif_read',JSON.stringify(ids)); setNotifRead(ids); setNotifOpen(false); }}
-                    style={{ background:'none', border:'none', cursor:'pointer', fontSize:'11px', fontWeight:700, color:'#3B82F6' }}>Mark all read</button>
+                    style={{ background:'none', border:'none', cursor:'pointer', fontSize:'11px', fontWeight:700, color:'#2563EB' }}>Mark all read</button>
                 </div>
-                <div style={{ maxHeight:'240px', overflowY:'auto' }}>
+                <div style={{ maxHeight:'260px', overflowY:'auto' }}>
                   {notifications.length===0 ? (
-                    <div style={{ padding:'24px', textAlign:'center' }}>
-                      <Bell size={20} color="#E2E8F0" style={{ margin:'0 auto 8px' }}/>
-                      <p style={{ fontSize:'12px', color:'#8E8E93' }}>No notifications</p>
-                    </div>
+                    <p style={{ padding:'20px', textAlign:'center', color:'#94A3B8', fontSize:'12px', margin:0 }}>No notifications</p>
                   ) : notifications.map(n=>(
-                    <div key={n.id} style={{ display:'flex', gap:'10px', padding:'10px 14px', borderBottom:'1px solid #F8F8F8', background:notifRead.includes(n.id)?'white':'#FAFAFA' }}>
-                      <div style={{ width:'7px', height:'7px', borderRadius:'50%', background:n.color, marginTop:'4px', flexShrink:0 }}/>
-                      <div><p style={{ fontSize:'12px', fontWeight:700, color:'#0A0A0A' }}>{n.title}</p><p style={{ fontSize:'11px', color:'#8E8E93', marginTop:'1px' }}>{n.body}</p></div>
+                    <div key={n.id} style={{ padding:'12px 16px', borderBottom:'1px solid #F8FAFC', opacity:n.read?.6:1, background:n.read?'transparent':'#F0F9FF' }}>
+                      <p style={{ fontSize:'12px', fontWeight:800, color:'#111827', margin:0 }}>{n.title}</p>
+                      <p style={{ fontSize:'11px', color:'#64748B', margin:'2px 0 0 0' }}>{n.desc}</p>
+                      <span style={{ fontSize:'10px', color:'#94A3B8', marginTop:'4px', display:'block' }}>{n.time}</span>
                     </div>
                   ))}
                 </div>
@@ -992,292 +1010,174 @@ export default function AdminPanel() {
             )}
           </div>
 
-          {/* Circular Account 'A' Avatar & Dropdown Menu */}
+          {/* User profile dropdown */}
           <div style={{ position:'relative' }}>
-            <button onClick={() => setUserMenuOpen(o => !o)}
-              title="Admin Account"
-              style={{ width:'32px', height:'32px', borderRadius:'50%',
-                background:'linear-gradient(135deg,#1A1A2E,#0F3460)',
-                display:'flex', alignItems:'center', justifyContent:'center',
-                fontSize:'12px', fontWeight:900, color:'white', flexShrink:0,
-                border:'2px solid white', boxShadow:'0 2px 8px rgba(0,0,0,0.12)',
-                cursor:'pointer' }}>
-              {user.email?.[0]?.toUpperCase()}
+            <button onClick={()=>setNotifOpen(false)}
+              style={{ width:'36px', height:'36px', borderRadius:'10px', background:'#0F172A',
+                color:'white', fontWeight:800, fontSize:'14px', border:'none', cursor:'pointer',
+                display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 8px rgba(15,23,42,0.2)' }}>
+              A
             </button>
-
-            {userMenuOpen && (
-              <div style={{ position:'absolute', right:0, top:'42px', width:'210px',
-                background:'white', borderRadius:'14px', border:'1px solid #E8E8EE',
-                boxShadow:'0 10px 32px rgba(0,0,0,.15)', zIndex:250, overflow:'hidden',
-                padding:'6px' }}>
-
-                <div style={{ padding:'10px 12px', borderBottom:'1px solid #F0F0F0', marginBottom:'4px' }}>
-                  <p style={{ fontSize:'10px', fontWeight:800, color:'#8E8E93', textTransform:'uppercase', letterSpacing:'.5px' }}>Signed in as</p>
-                  <p style={{ fontSize:'12px', fontWeight:800, color:'#0A0A0A', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginTop:'2px' }}>{user.email}</p>
-                  <span style={{ fontSize:'10px', fontWeight:800, color:'#16A34A', background:'#F0FDF4', padding:'2px 8px', borderRadius:'99px', display:'inline-block', marginTop:'4px' }}>
-                    ● Administrator
-                  </span>
-                </div>
-
-                {/* Return to Store option inside circular 'A' account menu */}
-                <button onClick={() => { setUserMenuOpen(false); navigate('/'); }}
-                  style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px',
-                    padding:'9px 12px', borderRadius:'10px', background:'transparent',
-                    border:'none', cursor:'pointer', fontSize:'13px', fontWeight:700,
-                    color:'#0F172A', transition:'background .2s', textAlign:'left' }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#F4F4F8'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  <Home size={15} color="#3B82F6" />
-                  <span>Return to Store</span>
-                </button>
-
-                {/* Sign Out option */}
-                <button onClick={() => { setUserMenuOpen(false); handleLogout(); }}
-                  style={{ width:'100%', display:'flex', alignItems:'center', gap:'8px',
-                    padding:'9px 12px', borderRadius:'10px', background:'transparent',
-                    border:'none', cursor:'pointer', fontSize:'13px', fontWeight:700,
-                    color:'#EF4444', transition:'background .2s', textAlign:'left', marginTop:'2px' }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#FEF2F2'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  <LogOut size={15} color="#EF4444" />
-                  <span>Sign Out</span>
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </header>
 
-      {/* ── BODY: TABS + CONTENT (no sidebar) ────────────── */}
+      {/* ── BODY: STICKY SEGMENTED TABS + CONTENT ────────────── */}
       <div style={{ flex:1, minHeight:0 }}>
 
-        {/* Tab switcher */}
-        <div style={{ background:'white', borderBottom:'1px solid #E8E8EE', padding:'10px 16px', overflowX:'auto' }}>
-          <div style={{ display:'flex', gap:'4px', background:'#F4F4F8', padding:'4px', borderRadius:'14px', width:'max-content', minWidth:'100%' }}>
-            {[
-              { key:'orders',    label:'Orders',    icon:ShoppingBag },
-              { key:'products',  label:'Products',  icon:Package },
-              { key:'more',      label:'More',      icon:Settings },
-            ].map(({ key, label, icon:Icon }) => (
-              <button key={key} onClick={() => setPage(key)}
-                style={{ display:'flex', alignItems:'center', gap:'6px',
-                  padding:'8px 18px', borderRadius:'10px', fontWeight:700,
-                  fontSize:'13px', border:'none', cursor:'pointer', transition:'all .2s',
-                  background: page===key ? 'white' : 'transparent',
-                  color: page===key ? '#0A0A0A' : '#8E8E93',
-                  boxShadow: page===key ? '0 2px 8px rgba(0,0,0,.08)' : 'none',
-                  whiteSpace:'nowrap', flexShrink:0 }}>
-                <Icon size={14} strokeWidth={2} />
-                {label}
-                {key==='orders' && counts.all_pending > 0 && (
-                  <span style={{ background:'#EF4444', color:'white', fontSize:'9px',
-                    fontWeight:800, borderRadius:'99px', padding:'1px 5px',
-                    minWidth:'16px', textAlign:'center' }}>
-                    {counts.all_pending > 9 ? '9+' : counts.all_pending}
-                  </span>
-                )}
-              </button>
-            ))}
+        {/* Tab switcher — full width */}
+        <div style={{ background:'#FFFFFF', borderBottom:'1px solid #E5E7EB', padding:'8px 16px', position:'sticky', top:'58px', zIndex:90, boxSizing:'border-box', width:'100%' }}>
+          <div style={{ maxWidth:'1360px', margin:'0 auto' }}>
+            <div style={{ display:'flex', gap:'4px', background:'#F1F5F9', padding:'3px', borderRadius:'12px', border:'1px solid #E2E8F0' }}>
+              {[
+                { key:'orders',    label:'Orders',    icon:ShoppingBag },
+                { key:'products',  label:'Products',  icon:Package },
+                { key:'more',      label:'More',      icon:Settings },
+              ].map(({ key, label, icon:Icon }) => (
+                <button key={key} onClick={() => setPage(key)}
+                  style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:'6px',
+                    padding:'8px 12px', borderRadius:'9px', fontWeight:800,
+                    fontSize:'13px', border:'none', cursor:'pointer', transition:'all 200ms ease',
+                    background: page===key ? '#FFFFFF' : 'transparent',
+                    color: page===key ? '#0F172A' : '#64748B',
+                    boxShadow: page===key ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
+                    whiteSpace:'nowrap', position:'relative' }}>
+                  <Icon size={15} strokeWidth={2.2} color={page===key ? '#2563EB' : '#64748B'} />
+                  {label}
+                  {key==='orders' && counts.all_pending > 0 && (
+                    <span style={{ background:'#DC2626', color:'white', fontSize:'9px',
+                      fontWeight:900, borderRadius:'99px', padding:'1px 5px',
+                      minWidth:'15px', textAlign:'center', marginLeft:'2px' }}>
+                      {counts.all_pending > 9 ? '9+' : counts.all_pending}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Main content */}
-        <main style={{ padding:'20px 16px', maxWidth:'1200px', margin:'0 auto' }}>
+        {/* Main content area */}
+        <main style={{ padding:'16px 16px 90px 16px', maxWidth:'1360px', margin:'0 auto', boxSizing:'border-box', width:'100%' }}>
 
-          {/* ── DASHBOARD ── */}
-          {page==='dashboard' && (
-            <div>
-              <h1 style={{fontSize:'20px',fontWeight:900,color:'#0A0A0A',marginBottom:'20px'}}>Dashboard</h1>
-              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:'12px',marginBottom:'24px'}}>
-                {[
-                  {label:"Today's Orders",value:todayOrders,color:'#3B82F6',bg:'#EFF6FF',icon:ShoppingBag},
-                  {label:'Pending',value:counts.all_pending||0,color:'#F59E0B',bg:'#FFFBEB',icon:AlertCircle},
-                  {label:"Today's Revenue",value:`₹${todayRevenue.toFixed(0)}`,color:'#16A34A',bg:'#F0FDF4',icon:TrendingUp},
-                  {label:'Monthly Revenue',value:`₹${monthRevenue.toFixed(0)}`,color:'#7C3AED',bg:'#F5F3FF',icon:BarChart2},
-                  {label:'Products',value:products.length,color:'#0369A1',bg:'#EFF6FF',icon:Package},
-                  {label:'Low Stock',value:lowStock,color:'#EF4444',bg:'#FEF2F2',icon:AlertTriangle},
-                ].map(({label,value,color,bg,icon:Icon})=>(
-                  <div key={label} style={{background:'white',borderRadius:'14px',padding:'14px',border:'1px solid #F0F0F0',boxShadow:'0 1px 6px rgba(0,0,0,.04)',borderTop:`3px solid ${color}`,transition:'transform .2s,box-shadow .2s',cursor:'default'}}
-                    onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-2px)';e.currentTarget.style.boxShadow='0 6px 20px rgba(0,0,0,.08)';}}
-                    onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 1px 6px rgba(0,0,0,.04)';}}>
-                    <div style={{width:'32px',height:'32px',borderRadius:'8px',background:bg,display:'flex',alignItems:'center',justifyContent:'center',marginBottom:'10px'}}>
-                      <Icon size={16} strokeWidth={2} color={color}/>
-                    </div>
-                    <p style={{fontSize:'20px',fontWeight:900,color,lineHeight:1,marginBottom:'4px'}}>{value}</p>
-                    <p style={{fontSize:'11px',fontWeight:600,color:'#8E8E93',textTransform:'uppercase',letterSpacing:'.4px'}}>{label}</p>
-                  </div>
-                ))}
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:'12px'}}>
-                <div style={{background:'white',borderRadius:'14px',padding:'16px',border:'1px solid #F0F0F0'}}>
-                  <p style={{fontSize:'13px',fontWeight:800,color:'#0A0A0A',marginBottom:'12px'}}>Recent Orders</p>
-                  {allOrders.slice(0,5).map(o=>(
-                    <div key={o.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid #F8F8F8'}}>
-                      <div><p style={{fontSize:'12px',fontWeight:700,color:'#0A0A0A'}}>#{o.id.slice(0,8).toUpperCase()}</p><p style={{fontSize:'11px',color:'#8E8E93'}}>{o.shipping_address?.fullName}</p></div>
-                      <span style={{fontSize:'13px',fontWeight:900,color:'#0A0A0A'}}>₹{o.total_amount?.toFixed(0)}</span>
-                    </div>
-                  ))}
-                  {allOrders.length===0&&<p style={{fontSize:'12px',color:'#8E8E93',textAlign:'center',padding:'16px'}}>No orders yet</p>}
-                </div>
-                <div style={{background:'white',borderRadius:'14px',padding:'16px',border:'1px solid #F0F0F0'}}>
-                  <p style={{fontSize:'13px',fontWeight:800,color:'#0A0A0A',marginBottom:'12px'}}>Inventory Alerts</p>
-                  {products.filter(p=>p.stock!==null&&p.stock<=5).slice(0,6).map(p=>(
-                    <div key={p.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 0',borderBottom:'1px solid #F8F8F8'}}>
-                      <p style={{fontSize:'12px',fontWeight:600,color:'#0A0A0A',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'180px'}}>{p.name}</p>
-                      <span style={{fontSize:'11px',fontWeight:800,padding:'2px 8px',borderRadius:'6px',background:p.stock===0?'#FEF2F2':'#FFFBEB',color:p.stock===0?'#EF4444':'#F59E0B',flexShrink:0}}>{p.stock===0?'Out':'Low:'+p.stock}</span>
-                    </div>
-                  ))}
-                  {products.filter(p=>p.stock!==null&&p.stock<=5).length===0&&<p style={{fontSize:'12px',color:'#8E8E93',textAlign:'center',padding:'16px'}}>All products in stock ✓</p>}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── ORDERS ── */}
+          {/* ── ORDERS TAB ── */}
           {page==='orders' && (
-            <div className="page-enter">
-              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'16px',flexWrap:'wrap',gap:'10px'}}>
-                <h1 style={{fontSize:'18px',fontWeight:900,color:'#0A0A0A'}}>Orders</h1>
-                <div style={{display:'flex',gap:'8px',alignItems:'center',flexWrap:'wrap'}}>
-                  {/* Date filter pills */}
-                  {['all','today','week','month'].map(f=>(
-                    <button key={f} onClick={()=>setDateFilter(f)}
-                      style={{padding:'5px 12px',borderRadius:'8px',fontSize:'12px',fontWeight:600,cursor:'pointer',transition:'all .15s',
-                        border:`1px solid ${dateFilter===f?'#1A1A2E':'#E2E8F0'}`,
-                        background:dateFilter===f?'#1A1A2E':'white',
-                        color:dateFilter===f?'white':'#555'}}>
-                      {f==='all'?'All':f==='today'?'Today':f==='week'?'Week':'Month'}
+            <div className="page-enter" style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
+
+              {/* Toolbar — cleanly aligned */}
+              <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', padding:'14px 16px', boxSizing:'border-box', display:'flex', flexDirection:'column', gap:'12px' }}>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'10px' }}>
+                  <div>
+                    <h1 style={{ fontSize:'18px', fontWeight:900, color:'#0F172A', margin:0, letterSpacing:'-0.3px' }}>Orders</h1>
+                    <p style={{ fontSize:'11px', color:'#64748B', margin:'2px 0 0 0' }}>Manage, verify, ship, and export store purchases</p>
+                  </div>
+
+                  {/* Single aligned row for ALL controls */}
+                  <div style={{ display:'flex', gap:'8px', alignItems:'center', flexWrap:'wrap' }}>
+                    {/* Date filter pills */}
+                    <div style={{ display:'flex', gap:'3px', background:'#F1F5F9', padding:'3px', borderRadius:'9px', flexShrink:0 }}>
+                      {['all','today','week','month'].map(f=>(
+                        <button key={f} onClick={()=>setDateFilter(f)}
+                          style={{ padding:'5px 10px', borderRadius:'7px', fontSize:'11px', fontWeight:700, cursor:'pointer', border:'none', whiteSpace:'nowrap', transition:'all 150ms ease',
+                            background: dateFilter===f ? '#FFFFFF' : 'transparent',
+                            color: dateFilter===f ? '#0F172A' : '#64748B',
+                            boxShadow: dateFilter===f ? '0 1px 4px rgba(0,0,0,0.06)' : 'none' }}>
+                          {f==='all'?'All':f==='today'?'Today':f==='week'?'This Week':'This Month'}
+                        </button>
+                      ))}
+                    </div>
+
+                    <button onClick={()=>exportOrdersCSV(selected.length>0?orders.filter(o=>selected.includes(o.id)):orders)}
+                      style={{ display:'flex', alignItems:'center', gap:'5px', padding:'7px 12px', borderRadius:'9px', background:'#FFFFFF', border:'1px solid #CBD5E1', color:'#334155', fontSize:'11px', fontWeight:800, cursor:'pointer', flexShrink:0 }}>
+                      <Download size={13} color="#2563EB" /> Export CSV
                     </button>
-                  ))}
-                  <button onClick={()=>exportOrdersCSV(selected.length>0?orders.filter(o=>selected.includes(o.id)):orders)}
-                    style={{display:'flex',alignItems:'center',gap:'5px',padding:'6px 12px',borderRadius:'8px',background:'white',border:'1px solid #E2E8F0',color:'#555',fontSize:'12px',fontWeight:700,cursor:'pointer'}}>
-                    <Download size={13}/> Export
-                  </button>
-                  <button onClick={()=>{
-                    // Print all labels for the current date filter selection
-                    const labelOrders = dateFilter==='today'
-                      ? orders.filter(o=>new Date(o.created_at).toDateString()===new Date().toDateString())
-                      : dateFilter==='week'
-                      ? orders.filter(o=>new Date(o.created_at)>=new Date(Date.now()-7*86400000))
-                      : dateFilter==='month'
-                      ? orders.filter(o=>{const d=new Date(o.created_at);const n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();})
-                      : orders;
-                    if (labelOrders.length===0){toast('No orders to print','warning');return;}
-                    // Temporarily select all filtered orders and print
-                    setSelected(labelOrders.map(o=>o.id));
-                    setTimeout(()=>{
-                      const toPrint = labelOrders;
-                      const pages = toPrint.map((order,idx)=>{
-                        const a=order.shipping_address||{};
-                        const items=(order.items||[]).map(i=>`<tr><td>${i.name}</td><td align="right">${i.quantity}</td><td align="right">₹${(i.price*i.quantity).toFixed(0)}</td></tr>`).join('');
-                        return `${idx>0?'<div class="pb"></div>':''}
-                        <div class="wrap">
-                          <div class="hdr"><div><div class="brand">AS HUB</div><div class="contact">Ph: 7013942909</div></div>
-                          <div class="oid">#${order.id.slice(0,8).toUpperCase()}<br/><span style="font-size:9px;font-weight:400">${new Date(order.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</span></div></div>
-                          <div class="box"><div class="lbl">Deliver To</div><div class="nm">${a.fullName||''}</div><div class="ph">+91 ${a.phone||''}</div>
-                          <div class="ad">${a.houseNo||''}, ${a.streetArea||''}<br/>Near ${a.landmark||''}<br/>${a.city||''}, ${a.state||''}</div><div class="pin">PIN: ${a.pincode||''}</div></div>
-                          <div class="box from"><div class="lbl">From</div><div class="fn">Shaik Asmath (AS HUB)</div>
-                          <div class="fd">D.No. 25-2-1709, Pragathi Nagar, Podalkur Road,<br/>Nellore, AP - 524004 | Ph: 7013942909</div></div>
-                          <div class="box"><div class="lbl">Items</div>
-                          <table><thead><tr><th>Product</th><th>Qty</th><th>Amt</th></tr></thead>
-                          <tbody>${items}<tr class="tot"><td colspan="2">Total</td><td>₹${order.total_amount?.toFixed(0)}</td></tr></tbody></table>
-                          <span class="badge">✓ UPI Paid</span></div>
-                          <div class="ft"><span>#${order.id.slice(0,8).toUpperCase()} | ${(order.status||'').toUpperCase()}</span><span class="care">HANDLE WITH CARE</span></div>
-                        </div>`;
-                      }).join('');
-                      const label = dateFilter==='today'?`Today (${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'})})`:dateFilter==='week'?'This Week':dateFilter==='month'?'This Month':'All Orders';
-                      const html=`<!DOCTYPE html><html><head><title>${toPrint.length} Labels — ${label}</title>
-                      <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif}
-                      .np{text-align:center;padding:14px;background:#f4f4f8;margin-bottom:12px}
-                      .wrap{max-width:580px;margin:0 auto;padding:18px}.pb{page-break-after:always;height:24px}
-                      .hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:12px}
-                      .brand{font-size:20px;font-weight:900}.contact{font-size:10px;color:#666;margin-top:2px}
-                      .oid{font-family:monospace;font-size:13px;font-weight:900;border:2px solid #000;padding:4px 8px;text-align:right}
-                      .box{border:2px solid #000;border-radius:5px;padding:11px;margin-bottom:9px}
-                      .from{background:#f8f8f8;border:1.5px solid #ccc}.lbl{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:5px}
-                      .nm{font-size:18px;font-weight:900;margin-bottom:2px}.ph{font-size:13px;font-weight:700;margin-bottom:5px}
-                      .ad{font-size:12px;line-height:1.6;color:#333}.pin{font-size:18px;font-weight:900;margin-top:6px;letter-spacing:2px}
-                      .fn{font-size:14px;font-weight:800;margin-bottom:3px}.fd{font-size:11px;color:#333;line-height:1.7}
-                      table{width:100%;border-collapse:collapse;font-size:11px}th{background:#000;color:#fff;padding:5px 8px;font-size:9px;text-transform:uppercase;text-align:left}
-                      td{padding:5px 8px;border-bottom:1px solid #eee}.tot td{font-weight:900;background:#f8f8f8}
-                      .badge{display:inline-block;background:#000;color:#fff;font-size:9px;font-weight:900;padding:3px 9px;border-radius:3px;margin-top:6px}
-                      .ft{border-top:2px dashed #999;padding-top:9px;margin-top:9px;display:flex;justify-content:space-between;font-size:9px}
-                      .care{border:1px solid #000;padding:2px 7px;border-radius:3px;font-weight:700}
-                      @media print{.np{display:none!important}}</style></head>
-                      <body><div class="np">📦 <strong>${toPrint.length} Labels — ${label}</strong>
-                      <button onclick="window.print()" style="margin-left:12px;padding:9px 22px;background:#1A1A2E;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨 Print All</button></div>
-                      ${pages}</body></html>`;
-                      const w=window.open('','_blank','width=760,height=900');
-                      w.document.write(html);w.document.close();w.focus();
-                      toast(`${toPrint.length} labels ready (${label})`,'success');
-                    },50);
-                  }}
-                    style={{display:'flex',alignItems:'center',gap:'5px',padding:'6px 12px',borderRadius:'8px',
-                      background:dateFilter!=='all'?'#1A1A2E':'white',
-                      border:`1px solid ${dateFilter!=='all'?'#1A1A2E':'#E2E8F0'}`,
-                      color:dateFilter!=='all'?'white':'#555',fontSize:'12px',fontWeight:700,cursor:'pointer'}}>
-                    <Printer size={13}/>
-                    Print {dateFilter==='today'?"Today's":dateFilter==='week'?"Week's":dateFilter==='month'?"Month's":'All'} Labels
-                  </button>
-                  <button onClick={fetchOrders}
-                    style={{width:'32px',height:'32px',borderRadius:'8px',background:'white',border:'1px solid #E2E8F0',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                    <RefreshCw size={14} color="#555"/>
-                  </button>
+
+                    <button onClick={()=>{
+                      const labelOrders = dateFilter==='today'
+                        ? orders.filter(o=>new Date(o.created_at).toDateString()===new Date().toDateString())
+                        : dateFilter==='week'
+                        ? orders.filter(o=>new Date(o.created_at)>=new Date(Date.now()-7*86400000))
+                        : dateFilter==='month'
+                        ? orders.filter(o=>{const d=new Date(o.created_at);const n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();})
+                        : orders;
+                      if (labelOrders.length===0){toast('No orders to print','warning');return;}
+                      setSelected(labelOrders.map(o=>o.id));
+                      setTimeout(() => bulkPrint(), 50);
+                    }}
+                      style={{ display:'flex', alignItems:'center', gap:'5px', padding:'7px 12px', borderRadius:'9px',
+                        background:'#0F172A', color:'#FFFFFF',
+                        fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer', flexShrink:0, boxShadow:'0 2px 6px rgba(15,23,42,0.12)' }}>
+                      <Printer size={13} /> Print Labels
+                    </button>
+
+                    <button onClick={fetchOrders} title="Refresh Data"
+                      style={{ width:'32px', height:'32px', borderRadius:'9px', background:'#FFFFFF', border:'1px solid #CBD5E1', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                      <RefreshCw size={13} color="#475569" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* Order status tabs */}
-              <div style={{display:'flex',gap:'5px',overflowX:'auto',paddingBottom:'4px',marginBottom:'14px'}}>
+              {/* Status Tabs Bar */}
+              <div style={{ display:'flex', gap:'6px', overflowX:'auto', paddingBottom:'4px' }} className="sh-scroll-hide">
                 {ORDER_STATUS.map(t=>(
                   <button key={t.key} onClick={()=>{setOrderTab(t.key);setSelected([]);}}
-                    style={{display:'flex',alignItems:'center',gap:'5px',padding:'6px 12px',borderRadius:'8px',whiteSpace:'nowrap',
-                      fontWeight:700,fontSize:'12px',border:'none',cursor:'pointer',flexShrink:0,transition:'all .15s',
-                      background:orderTab===t.key?t.color:'white',
-                      color:orderTab===t.key?'white':'#555',
-                      boxShadow:orderTab===t.key?`0 3px 10px ${t.color}44`:'0 1px 4px rgba(0,0,0,.06)'}}>
+                    style={{ display:'flex', alignItems:'center', gap:'6px', padding:'8px 14px', borderRadius:'10px', whiteSpace:'nowrap',
+                      fontWeight:800, fontSize:'12px',
+                      border: orderTab===t.key ? '1px solid #0F172A' : '1px solid #E2E8F0',
+                      cursor:'pointer', flexShrink:0, transition:'all 150ms ease',
+                      background: orderTab===t.key ? '#0F172A' : '#FFFFFF',
+                      color: orderTab===t.key ? '#FFFFFF' : '#475569',
+                      boxShadow: orderTab===t.key ? '0 4px 12px rgba(15,23,42,0.15)' : 'none' }}>
                     {t.label}
-                    {counts[t.key]>0&&<span style={{background:orderTab===t.key?'rgba(255,255,255,.3)':t.color+'22',color:orderTab===t.key?'white':t.color,fontSize:'10px',fontWeight:800,borderRadius:'5px',padding:'1px 5px'}}>{counts[t.key]>99?'99+':counts[t.key]}</span>}
+                    {counts[t.key]>0 && (
+                      <span style={{ background: orderTab===t.key ? 'rgba(255,255,255,0.2)' : '#F1F5F9',
+                        color: orderTab===t.key ? '#FFFFFF' : '#0F172A',
+                        fontSize:'9px', fontWeight:900, borderRadius:'99px', padding:'1px 5px' }}>
+                        {counts[t.key]>99?'99+':counts[t.key]}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
 
-              {/* Bulk bar */}
-              {selected.length>0&&(
-                <div style={{display:'flex',alignItems:'center',gap:'8px',flexWrap:'wrap',padding:'10px 14px',background:'#1A1A2E',borderRadius:'10px',marginBottom:'10px'}}>
-                  <span style={{fontSize:'12px',fontWeight:800,color:'white'}}>{selected.length} selected</span>
-                  <div style={{flex:1}}/>
-                  <button onClick={bulkConfirm} style={{padding:'6px 12px',borderRadius:'7px',background:'#16A34A',color:'white',fontSize:'12px',fontWeight:700,border:'none',cursor:'pointer'}}>Confirm</button>
-                  <button onClick={()=>{exportOrdersCSV(orders.filter(o=>selected.includes(o.id)));}} style={{padding:'6px 12px',borderRadius:'7px',background:'#3B82F6',color:'white',fontSize:'12px',fontWeight:700,border:'none',cursor:'pointer'}}>Export</button>
-                  <button onClick={bulkPrint} style={{padding:'6px 12px',borderRadius:'7px',background:'white',color:'#1A1A2E',fontSize:'12px',fontWeight:700,border:'none',cursor:'pointer',display:'flex',alignItems:'center',gap:'4px'}}><Printer size={12}/>Print Labels</button>
-                  <button onClick={bulkDelete} style={{padding:'6px 12px',borderRadius:'7px',background:'#EF4444',color:'white',fontSize:'12px',fontWeight:700,border:'none',cursor:'pointer'}}>Delete</button>
-                  <button onClick={clearSel} style={{padding:'6px 12px',borderRadius:'7px',background:'rgba(255,255,255,.15)',color:'white',fontSize:'12px',fontWeight:700,border:'none',cursor:'pointer'}}>Clear</button>
+              {/* Bulk Action Bar */}
+              {selected.length>0 && (
+                <div style={{ display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap', padding:'10px 12px', background:'#0F172A', borderRadius:'12px', color:'#FFFFFF' }}>
+                  <span style={{ fontSize:'11px', fontWeight:800 }}>✓ {selected.length} selected</span>
+                  <div style={{ flex:1 }}/>
+                  <button onClick={bulkConfirm} style={{ padding:'5px 10px', borderRadius:'7px', background:'#059669', color:'white', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer' }}>Verify</button>
+                  <button onClick={()=>{exportOrdersCSV(orders.filter(o=>selected.includes(o.id)));}} style={{ padding:'5px 10px', borderRadius:'7px', background:'#2563EB', color:'white', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer' }}>CSV</button>
+                  <button onClick={bulkPrint} style={{ padding:'5px 10px', borderRadius:'7px', background:'#FFFFFF', color:'#0F172A', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:'3px' }}><Printer size={11}/>Print</button>
+                  <button onClick={bulkDelete} style={{ padding:'5px 10px', borderRadius:'7px', background:'#DC2626', color:'white', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer' }}>Delete</button>
+                  <button onClick={clearSel} style={{ padding:'5px 10px', borderRadius:'7px', background:'rgba(255,255,255,0.15)', color:'white', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer' }}>✕</button>
                 </div>
               )}
 
-              {/* Select all */}
-              {orders.length>0&&!loading&&(
-                <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'8px',padding:'0 2px'}}>
-                  <input type="checkbox" checked={selected.length===orders.length} onChange={e=>e.target.checked?selectAll():clearSel()} style={{width:'14px',height:'14px',cursor:'pointer'}}/>
-                  <span style={{fontSize:'11px',color:'#8E8E93',fontWeight:600}}>Select all {orders.length}</span>
-                  <span style={{marginLeft:'auto',fontSize:'11px',color:'#8E8E93'}}>{thisMonthCount} this month</span>
+              {/* Select all check */}
+              {orders.length>0 && !loading && (
+                <div style={{ display:'flex', alignItems:'center', gap:'8px', padding:'0 2px' }}>
+                  <input type="checkbox" checked={selected.length===orders.length} onChange={e=>e.target.checked?selectAll():clearSel()} style={{ width:'15px', height:'15px', cursor:'pointer', accentColor:'#0F172A' }} />
+                  <span style={{ fontSize:'11px', color:'#475569', fontWeight:700 }}>Select all {orders.length}</span>
+                  <span style={{ marginLeft:'auto', fontSize:'11px', color:'#64748B', fontWeight:600 }}>{thisMonthCount} this month</span>
                 </div>
               )}
 
-              {/* Orders list */}
+              {/* Orders List / Cards */}
               {loading ? (
-                <div>{[...Array(4)].map((_,i)=><OrderSkeleton key={i}/>)}</div>
+                <div>{[...Array(3)].map((_,i)=><OrderSkeleton key={i}/>)}</div>
               ) : orders.length===0 ? (
-                <EmptyState icon={ShoppingBag} title="No orders" desc="No orders found for the selected filter."/>
+                <EmptyState icon={ShoppingBag} title="No orders found" desc="No orders match your selected filters."/>
               ) : (
                 groupByMonth(orders).map(group=>(
-                  <div key={group.label} style={{marginBottom:'16px'}}>
-                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'6px 2px',marginBottom:'6px'}}>
-                      <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
-                        <div style={{width:'3px',height:'16px',borderRadius:'99px',background:'#1A1A2E'}}/>
-                        <p style={{fontSize:'13px',fontWeight:800,color:'#0A0A0A'}}>{group.label}</p>
-                        <span style={{background:'#F4F4F8',color:'#555',fontSize:'10px',fontWeight:800,borderRadius:'6px',padding:'2px 7px'}}>{group.orders.length}</span>
+                  <div key={group.label}>
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'4px 2px', marginBottom:'6px' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'7px' }}>
+                        <div style={{ width:'3px', height:'14px', borderRadius:'99px', background:'#0F172A' }}/>
+                        <p style={{ fontSize:'13px', fontWeight:900, color:'#111827', margin:0 }}>{group.label}</p>
+                        <span style={{ background:'#F1F5F9', color:'#475569', fontSize:'10px', fontWeight:800, borderRadius:'99px', padding:'1px 7px' }}>{group.orders.length}</span>
                       </div>
-                      <p style={{fontSize:'12px',fontWeight:700,color:'#8E8E93'}}>₹{group.total.toFixed(0)}</p>
+                      <p style={{ fontSize:'11px', fontWeight:800, color:'#059669', margin:0 }}>₹{group.total.toFixed(0)}</p>
                     </div>
                     {group.orders.map(o=>(
                       <OrderCard key={o.id} order={o}
@@ -1293,122 +1193,120 @@ export default function AdminPanel() {
             </div>
           )}
 
-          {/* ── PRODUCTS ── */}
+          {/* ── PRODUCTS TAB — Mobile 2x2 grid ── */}
           {page==='products' && (
-            <div>
-              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'16px',flexWrap:'wrap',gap:'10px'}}>
-                <h1 style={{fontSize:'18px',fontWeight:900,color:'#0A0A0A'}}>Products</h1>
-                <div style={{display:'flex',gap:'8px',alignItems:'center',flexWrap:'wrap'}}>
-                  <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search products..."
-                    style={{padding:'7px 12px',borderRadius:'10px',border:'1.5px solid #E2E8F0',fontSize:'13px',fontFamily:'inherit',outline:'none',background:'white',width:'180px'}}
-                    onFocus={e=>e.target.style.borderColor='#1A1A2E'} onBlur={e=>e.target.style.borderColor='#E2E8F0'}/>
+            <div className="page-enter" style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
+
+              {/* Toolbar */}
+              <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', padding:'14px', boxSizing:'border-box' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'10px' }}>
+                  <div>
+                    <h1 style={{ fontSize:'16px', fontWeight:900, color:'#111827', margin:0 }}>Products</h1>
+                    <p style={{ fontSize:'11px', color:'#6B7280', margin:0 }}>Manage stock &amp; catalog</p>
+                  </div>
+                  <button onClick={()=>setModal('add')}
+                    style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:'4px', padding:'7px 12px', borderRadius:'9px', background:'#0F172A', color:'#FFFFFF', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer', flexShrink:0 }}>
+                    <Plus size={14} /> Add
+                  </button>
+                </div>
+                <div style={{ display:'flex', gap:'6px', alignItems:'center' }}>
+                  <div style={{ position:'relative', flex:1 }}>
+                    <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search..."
+                      style={{ width:'100%', padding:'7px 10px 7px 28px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'12px', outline:'none', background:'#F8FAFC', boxSizing:'border-box' }} />
+                    <Search size={12} color="#94A3B8" style={{ position:'absolute', left:'8px', top:'50%', transform:'translateY(-50%)' }} />
+                  </div>
                   <select value={catFilter} onChange={e=>setCatFilter(e.target.value)}
-                    style={{padding:'7px 12px',borderRadius:'10px',border:'1.5px solid #E2E8F0',fontSize:'13px',fontFamily:'inherit',background:'white',fontWeight:600}}>
+                    style={{ padding:'7px 8px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'11px', background:'#FFFFFF', fontWeight:700, color:'#334155', flexShrink:0 }}>
                     <option value="all">All</option>
                     <option value="tailoring">Tailoring</option>
                     <option value="fashion">Fashion</option>
                   </select>
                   <button onClick={()=>exportProductsCSV(products)}
-                    style={{display:'flex',alignItems:'center',gap:'5px',padding:'7px 12px',borderRadius:'10px',background:'white',border:'1.5px solid #E2E8F0',color:'#555',fontSize:'13px',fontWeight:700,cursor:'pointer'}}>
-                    <Download size={14}/> Export
-                  </button>
-                  <button onClick={()=>setModal('add')}
-                    style={{display:'flex',alignItems:'center',gap:'6px',padding:'7px 16px',borderRadius:'10px',background:'#1A1A2E',color:'white',fontWeight:800,fontSize:'13px',border:'none',cursor:'pointer'}}>
-                    <Plus size={15}/> Add
+                    style={{ display:'flex', alignItems:'center', gap:'3px', padding:'7px 10px', borderRadius:'8px', background:'#F1F5F9', border:'1px solid #E2E8F0', color:'#334155', fontSize:'11px', fontWeight:800, cursor:'pointer', flexShrink:0 }}>
+                    <Download size={12} /> CSV
                   </button>
                 </div>
               </div>
 
-              {/* Stats strip */}
-              <div style={{display:'flex',gap:'8px',marginBottom:'16px',flexWrap:'wrap'}}>
-                {[{l:'Total',v:products.length,c:'#555'},{l:'Active',v:products.filter(p=>p.active).length,c:'#16A34A'},{l:'Hidden',v:products.filter(p=>!p.active).length,c:'#8E8E93'},{l:'Low Stock',v:products.filter(p=>p.stock!==null&&p.stock<=5).length,c:'#EF4444'}].map(({l,v,c})=>(
-                  <div key={l} style={{background:'white',borderRadius:'10px',padding:'8px 14px',border:'1px solid #F0F0F0',display:'flex',alignItems:'center',gap:'6px',boxShadow:'0 1px 4px rgba(0,0,0,.04)'}}>
-                    <span style={{fontSize:'16px',fontWeight:900,color:c}}>{v}</span>
-                    <span style={{fontSize:'11px',fontWeight:600,color:'#8E8E93'}}>{l}</span>
+              {/* Metrics Strip — 2x2 on mobile */}
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
+                {[
+                  { label:'Total', value:products.length },
+                  { label:'Active', value:products.filter(p=>p.active).length },
+                  { label:'Hidden', value:products.filter(p=>!p.active).length },
+                  { label:'Low Stock', value:products.filter(p=>p.stock!==null&&p.stock<=5).length },
+                ].map(({ label, value }) => (
+                  <div key={label} style={{ background:'#FFFFFF', borderRadius:'10px', padding:'10px 12px', border:'1px solid #E5E7EB' }}>
+                    <p style={{ fontSize:'10px', fontWeight:800, color:'#6B7280', textTransform:'uppercase', letterSpacing:'0.4px', margin:0 }}>{label}</p>
+                    <p style={{ fontSize:'20px', fontWeight:900, color:'#111827', margin:'2px 0 0 0' }}>{value}</p>
                   </div>
                 ))}
               </div>
 
+              {/* Product Cards Grid — 2x2 on mobile via CSS class */}
               {loading ? (
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))',gap:'12px'}}>
+                <div className="admin-products-grid">
                   {[...Array(6)].map((_,i)=><ProductSkeleton key={i}/>)}
                 </div>
               ) : filteredProducts.length===0 ? (
-                <EmptyState icon={Package} title="No products" desc={search?`No products match "${search}"`:"Add your first product"} action="Add Product" onAction={()=>setModal('add')}/>
+                <EmptyState icon={Package} title="No products found" desc={search?`No products match "${search}"`:"Click Add to create your first product"} action="Add Product" onAction={()=>setModal('add')}/>
               ) : (
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(145px,1fr))',gap:'12px'}}
-                  className="product-admin-grid">
+                <div className="admin-products-grid">
                   {filteredProducts.map(p => {
                     const discount = p.original_price > p.price ? Math.round((1-p.price/p.original_price)*100) : null;
-                    const stockStatus = p.stock===0 ? {label:'Out of Stock',c:'#EF4444',bg:'#FEF2F2'} : p.stock<=5 ? {label:`Low: ${p.stock}`,c:'#F59E0B',bg:'#FFFBEB'} : {label:`${p.stock} in stock`,c:'#16A34A',bg:'#F0FDF4'};
+                    const stockStatus = p.stock===0
+                      ? {label:'Out of Stock',c:'#DC2626',bg:'#FEF2F2'}
+                      : p.stock<=5
+                      ? {label:`Low: ${p.stock}`,c:'#D97706',bg:'#FFFBEB'}
+                      : {label:`${p.stock} in stock`,c:'#059669',bg:'#ECFDF5'};
                     return (
-                      <div key={p.id} style={{background:'white',borderRadius:'16px',overflow:'hidden',border:'1px solid #F0F0F0',boxShadow:'0 1px 8px rgba(0,0,0,.05)',opacity:p.active?1:.7,transition:'transform .2s,box-shadow .2s',display:'flex',flexDirection:'column'}}
-                        onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-4px)';e.currentTarget.style.boxShadow='0 10px 28px rgba(0,0,0,.10)';}}
-                        onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 1px 8px rgba(0,0,0,.05)';}}>
+                      <div key={p.id} style={{ background:'#FFFFFF', borderRadius:'12px', overflow:'hidden', border:'1px solid #E5E7EB', opacity:p.active?1:.7, display:'flex', flexDirection:'column' }}>
 
-                        {/* Image area */}
-                        <div style={{position:'relative',height:'180px',background:'#F8F9FA',overflow:'hidden'}}>
-                          {p.image_url ? (
-                            <img src={p.image_url} alt={p.name}
-                              style={{width:'100%',height:'100%',objectFit:'cover',display:'block',transition:'transform .4s'}}
-                              onError={e=>{e.target.style.display='none';e.target.nextSibling.style.display='flex';}}
-                            />
-                          ) : null}
-                          {/* Elegant placeholder */}
-                          <div style={{display:p.image_url?'none':'flex',width:'100%',height:'100%',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:'8px',background:'linear-gradient(135deg,#F8F9FA,#EEF0F3)'}}>
-                            <Package size={32} strokeWidth={1} color="#C8CDD5"/>
-                            <span style={{fontSize:'11px',color:'#C8CDD5',fontWeight:600}}>No Image</span>
+                        {/* Image */}
+                        <div className="admin-prod-card-img" style={{ position:'relative', height:'150px', background:'#F8FAFC', overflow:'hidden' }}>
+                          {p.image_url
+                            ? <img src={p.image_url} alt={p.name} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} onError={e=>{e.target.style.display='none';e.target.nextSibling.style.display='flex';}}/>
+                            : null
+                          }
+                          <div style={{ display:p.image_url?'none':'flex', width:'100%', height:'100%', alignItems:'center', justifyContent:'center', background:'#F1F5F9' }}>
+                            <Package size={28} strokeWidth={1} color="#94A3B8"/>
                           </div>
-                          {/* Badges */}
-                          {discount && <div style={{position:'absolute',top:'8px',left:'8px',background:'#EF4444',color:'white',fontSize:'10px',fontWeight:800,padding:'3px 8px',borderRadius:'6px'}}>-{discount}%</div>}
-                          {!p.active && <div style={{position:'absolute',top:'8px',right:'8px',background:'rgba(0,0,0,.6)',color:'white',fontSize:'10px',fontWeight:700,padding:'3px 8px',borderRadius:'6px'}}>Hidden</div>}
-                          {/* Hover overlay with Preview */}
-                          <div className="prod-overlay" style={{position:'absolute',inset:0,background:'rgba(0,0,0,.35)',display:'flex',alignItems:'center',justifyContent:'center',opacity:0,transition:'opacity .2s'}}>
-                            <a href={`/product/${p.id}`} target="_blank" rel="noopener noreferrer"
-                              style={{display:'flex',alignItems:'center',gap:'5px',padding:'7px 14px',borderRadius:'8px',background:'white',color:'#0A0A0A',fontSize:'12px',fontWeight:800,textDecoration:'none'}}>
-                              <Eye size={13}/> Preview
-                            </a>
-                          </div>
+                          {discount && <div style={{ position:'absolute', top:'6px', left:'6px', background:'#DC2626', color:'white', fontSize:'9px', fontWeight:900, padding:'2px 6px', borderRadius:'9999px' }}>-{discount}%</div>}
+                          {!p.active && <div style={{ position:'absolute', top:'6px', right:'6px', background:'rgba(15,23,42,0.75)', color:'white', fontSize:'9px', fontWeight:800, padding:'2px 6px', borderRadius:'9999px' }}>Hidden</div>}
                         </div>
 
                         {/* Info */}
-                        <div style={{padding:'12px 14px',flex:1,display:'flex',flexDirection:'column',gap:'6px'}}>
-                          <div>
-                            <p style={{fontSize:'13px',fontWeight:800,color:'#0A0A0A',lineHeight:1.35,marginBottom:'3px',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden'}}>{p.name}</p>
-                            <p style={{fontSize:'11px',color:'#8E8E93',fontWeight:500}}>{p.category}{p.sub_category ? ` · ${p.sub_category}` : ''}</p>
-                          </div>
-                          <div style={{display:'flex',alignItems:'baseline',gap:'5px'}}>
-                            <span style={{fontSize:'16px',fontWeight:900,color:'#0A0A0A'}}>₹{p.price}</span>
-                            {p.original_price>p.price && <span style={{fontSize:'12px',color:'#C0C0C0',textDecoration:'line-through'}}>₹{p.original_price}</span>}
+                        <div style={{ padding:'8px 8px 0', flex:1, display:'flex', flexDirection:'column', gap:'4px' }}>
+                          <p className="admin-prod-card-title" style={{ fontSize:'12px', fontWeight:800, color:'#111827', lineHeight:1.3, margin:0, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>{p.name}</p>
+                          <div style={{ display:'flex', alignItems:'baseline', gap:'4px' }}>
+                            <span className="admin-prod-card-price" style={{ fontSize:'14px', fontWeight:900, color:'#111827' }}>₹{p.price}</span>
+                            {p.original_price>p.price && <span style={{ fontSize:'10px', color:'#9CA3AF', textDecoration:'line-through' }}>₹{p.original_price}</span>}
                           </div>
                           {p.stock!==null && (
-                            <div style={{display:'inline-flex',alignItems:'center',padding:'2px 8px',borderRadius:'6px',background:stockStatus.bg,width:'fit-content'}}>
-                              <span style={{fontSize:'10px',fontWeight:700,color:stockStatus.c}}>{stockStatus.label}</span>
-                            </div>
+                            <span style={{ fontSize:'9px', fontWeight:800, color:stockStatus.c, background:stockStatus.bg, padding:'2px 6px', borderRadius:'9999px', width:'fit-content' }}>{stockStatus.label}</span>
                           )}
-                          {p.unit && <p style={{fontSize:'11px',color:'#8E8E93'}}>{p.unit}</p>}
                         </div>
 
-                        {/* Actions */}
-                        <div style={{padding:'0 14px 12px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'5px'}}>
+                        {/* Actions 2x2 */}
+                        <div style={{ padding:'6px 8px 8px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:'4px' }}>
                           <button onClick={()=>setModal(p)}
-                            style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'4px',padding:'7px',borderRadius:'8px',background:'#EFF6FF',color:'#2563EB',fontWeight:700,fontSize:'11px',border:'none',cursor:'pointer'}}>
-                            <Edit2 size={11}/> Edit
+                            style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'3px', padding:'6px 4px', borderRadius:'7px', background:'#F1F5F9', color:'#1E293B', fontWeight:800, fontSize:'10px', border:'none', cursor:'pointer' }}>
+                            <Edit2 size={10}/> Edit
                           </button>
                           <button onClick={async()=>{
                             const {id:_,...rest}=p;
                             const {error}=await supabase.from('products').insert([{...rest,name:rest.name+' (Copy)',active:false}]);
-                            if(!error){toast('Product duplicated','success');fetchProducts();}else toast('Error','error');
-                          }} style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'4px',padding:'7px',borderRadius:'8px',background:'#F5F3FF',color:'#7C3AED',fontWeight:700,fontSize:'11px',border:'none',cursor:'pointer'}}>
-                            Duplicate
+                            if(!error){toast('Duplicated','success');fetchProducts();}else toast('Error','error');
+                          }} style={{ display:'flex', alignItems:'center', justifyContent:'center', padding:'6px 4px', borderRadius:'7px', background:'#F5F3FF', color:'#7C3AED', fontWeight:800, fontSize:'10px', border:'none', cursor:'pointer' }}>
+                            Dup
                           </button>
                           <button onClick={()=>handleToggleActive(p)}
-                            style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'4px',padding:'7px',borderRadius:'8px',background:p.active?'#FFFBEB':'#F0FDF4',color:p.active?'#92400E':'#15803D',fontWeight:700,fontSize:'11px',border:'none',cursor:'pointer'}}>
+                            style={{ display:'flex', alignItems:'center', justifyContent:'center', padding:'6px 4px', borderRadius:'7px', background:p.active?'#FFFBEB':'#ECFDF5', color:p.active?'#D97706':'#059669', fontWeight:800, fontSize:'10px', border:'none', cursor:'pointer' }}>
                             {p.active?'Hide':'Show'}
                           </button>
                           <button onClick={()=>handleDeleteProduct(p.id)}
-                            style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'4px',padding:'7px',borderRadius:'8px',background:'#FEF2F2',color:'#EF4444',fontWeight:700,fontSize:'11px',border:'1px solid #FECACA',cursor:'pointer'}}>
-                            <Trash2 size={11}/> Delete
+                            style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'3px', padding:'6px 4px', borderRadius:'7px', background:'#FEF2F2', color:'#DC2626', fontWeight:800, fontSize:'10px', border:'none', cursor:'pointer' }}>
+                            <Trash2 size={10}/> Del
                           </button>
                         </div>
                       </div>
@@ -1419,121 +1317,137 @@ export default function AdminPanel() {
             </div>
           )}
 
-          {/* ── MORE (Inventory + Reports + Settings) ── */}
+          {/* ── MORE TAB — Inventory Hub, clean no colored top borders ── */}
           {page==='more' && (
-            <div style={{ display:'flex', flexDirection:'column', gap:'28px' }}>
+            <div className="page-enter" style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
 
-              {/* ── INVENTORY ── */}
-              <div>
-                <h2 style={{fontSize:'15px',fontWeight:900,color:'#0A0A0A',marginBottom:'14px',display:'flex',alignItems:'center',gap:'8px'}}><AlertTriangle size={16} color="#F59E0B"/> Inventory</h2>
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:'12px'}}>
-                  {/* Out of Stock */}
-                  <div style={{background:'white',borderRadius:'14px',padding:'14px',border:'1px solid #FECACA'}}>
-                    <p style={{fontSize:'12px',fontWeight:800,color:'#EF4444',marginBottom:'10px'}}>Out of Stock ({products.filter(p=>p.stock===0).length})</p>
-                    {products.filter(p=>p.stock===0).slice(0,5).map(p=>(
-                      <div key={p.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'6px 0',borderBottom:'1px solid #FEF2F2'}}>
-                        <p style={{fontSize:'12px',fontWeight:600,color:'#0A0A0A',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginRight:'8px'}}>{p.name}</p>
-                        <span style={{fontSize:'10px',fontWeight:800,color:'#EF4444',background:'#FEF2F2',padding:'2px 7px',borderRadius:'5px',flexShrink:0}}>0 left</span>
+              {/* Banner */}
+              <div style={{ background:'linear-gradient(135deg, #1E293B, #0F172A)', color:'#FFFFFF', padding:'16px', borderRadius:'14px' }}>
+                <p style={{ fontSize:'11px', fontWeight:800, color:'#60A5FA', margin:'0 0 4px 0', textTransform:'uppercase', letterSpacing:'0.6px' }}>Business Hub</p>
+                <h1 style={{ fontSize:'18px', fontWeight:900, color:'#FFFFFF', margin:'0 0 2px 0' }}>AS HUB Control</h1>
+                <p style={{ fontSize:'11px', color:'rgba(255,255,255,0.7)', margin:0 }}>Inventory, analytics &amp; exports</p>
+              </div>
+
+              {/* ── INVENTORY MANAGEMENT (Working quick restock) ── */}
+              <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', overflow:'hidden' }}>
+                <div style={{ padding:'12px 14px', borderBottom:'1px solid #F1F5F9', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                  <p style={{ fontSize:'13px', fontWeight:900, color:'#111827', margin:0 }}>📦 Inventory Alerts</p>
+                  <button onClick={()=>{fetchProducts();}} style={{ fontSize:'10px', fontWeight:800, color:'#2563EB', background:'#EFF6FF', padding:'3px 8px', borderRadius:'6px', border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:'3px' }}>
+                    <RefreshCw size={10} /> Refresh
+                  </button>
+                </div>
+
+                {/* Out of Stock */}
+                <div style={{ padding:'12px 14px', borderBottom:'1px solid #F1F5F9' }}>
+                  <p style={{ fontSize:'11px', fontWeight:800, color:'#DC2626', margin:'0 0 8px 0', display:'flex', alignItems:'center', gap:'5px' }}>
+                    <XCircle size={13} /> Out of Stock ({products.filter(p=>p.stock===0).length})
+                  </p>
+                  {products.filter(p=>p.stock===0).map(p=>(
+                    <div key={p.id} style={{ display:'flex', flexDirection:'column', gap:'6px', padding:'8px 0', borderBottom:'1px dashed #FEE2E2' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                        {p.image_url && <img src={p.image_url} alt={p.name} style={{ width:'30px', height:'30px', borderRadius:'6px', objectFit:'cover', flexShrink:0 }} />}
+                        <span style={{ fontSize:'12px', fontWeight:700, color:'#111827', flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.name}</span>
+                        <span style={{ fontSize:'10px', fontWeight:800, color:'#DC2626', background:'#FEF2F2', padding:'2px 6px', borderRadius:'5px', flexShrink:0 }}>0 left</span>
                       </div>
-                    ))}
-                    {products.filter(p=>p.stock===0).length===0&&<p style={{fontSize:'12px',color:'#16A34A',fontWeight:700,textAlign:'center',padding:'6px'}}>All stocked ✓</p>}
-                  </div>
-                  {/* Low Stock */}
-                  <div style={{background:'white',borderRadius:'14px',padding:'14px',border:'1px solid #FDE68A'}}>
-                    <p style={{fontSize:'12px',fontWeight:800,color:'#F59E0B',marginBottom:'10px'}}>Low Stock ≤5 ({products.filter(p=>p.stock>0&&p.stock<=5).length})</p>
-                    {products.filter(p=>p.stock>0&&p.stock<=5).slice(0,5).map(p=>(
-                      <div key={p.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'6px 0',borderBottom:'1px solid #FFFBEB'}}>
-                        <p style={{fontSize:'12px',fontWeight:600,color:'#0A0A0A',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginRight:'8px'}}>{p.name}</p>
-                        <span style={{fontSize:'10px',fontWeight:800,color:'#F59E0B',background:'#FFFBEB',padding:'2px 7px',borderRadius:'5px',flexShrink:0}}>{p.stock} left</span>
+                      <div style={{ display:'flex', gap:'4px', paddingLeft:'38px' }}>
+                        <span style={{ fontSize:'10px', color:'#64748B', fontWeight:600, lineHeight:'24px' }}>Restock:</span>
+                        {[5,10,20].map(qty=>(
+                          <button key={qty} onClick={()=>handleQuickRestock(p,qty)}
+                            style={{ padding:'3px 8px', borderRadius:'5px', background:'#F1F5F9', color:'#0F172A', border:'1px solid #E2E8F0', fontWeight:800, fontSize:'10px', cursor:'pointer' }}>+{qty}</button>
+                        ))}
+                        <button onClick={()=>setModal(p)} style={{ padding:'3px 8px', borderRadius:'5px', background:'#0F172A', color:'white', border:'none', fontWeight:800, fontSize:'10px', cursor:'pointer', marginLeft:'auto' }}>Edit</button>
                       </div>
-                    ))}
-                    {products.filter(p=>p.stock>0&&p.stock<=5).length===0&&<p style={{fontSize:'12px',color:'#16A34A',fontWeight:700,textAlign:'center',padding:'6px'}}>No low stock ✓</p>}
-                  </div>
-                  {/* Hidden */}
-                  <div style={{background:'white',borderRadius:'14px',padding:'14px',border:'1px solid #E2E8F0'}}>
-                    <p style={{fontSize:'12px',fontWeight:800,color:'#555',marginBottom:'10px'}}>Hidden Products ({products.filter(p=>!p.active).length})</p>
-                    {products.filter(p=>!p.active).slice(0,5).map(p=>(
-                      <div key={p.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'6px 0',borderBottom:'1px solid #F8F8F8'}}>
-                        <p style={{fontSize:'12px',fontWeight:600,color:'#0A0A0A',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginRight:'8px'}}>{p.name}</p>
-                        <button onClick={()=>handleToggleActive(p)} style={{fontSize:'10px',fontWeight:800,color:'#2563EB',background:'#EFF6FF',padding:'2px 8px',borderRadius:'5px',border:'none',cursor:'pointer',flexShrink:0}}>Show</button>
+                    </div>
+                  ))}
+                  {products.filter(p=>p.stock===0).length===0 && <p style={{ fontSize:'11px', color:'#059669', fontWeight:700, margin:0, padding:'4px 0' }}>All products in stock ✓</p>}
+                </div>
+
+                {/* Low Stock */}
+                <div style={{ padding:'12px 14px', borderBottom:'1px solid #F1F5F9' }}>
+                  <p style={{ fontSize:'11px', fontWeight:800, color:'#D97706', margin:'0 0 8px 0', display:'flex', alignItems:'center', gap:'5px' }}>
+                    <AlertTriangle size={13} /> Low Stock ≤5 ({products.filter(p=>p.stock>0&&p.stock<=5).length})
+                  </p>
+                  {products.filter(p=>p.stock>0&&p.stock<=5).map(p=>(
+                    <div key={p.id} style={{ display:'flex', flexDirection:'column', gap:'6px', padding:'8px 0', borderBottom:'1px dashed #FEF9C3' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                        {p.image_url && <img src={p.image_url} alt={p.name} style={{ width:'30px', height:'30px', borderRadius:'6px', objectFit:'cover', flexShrink:0 }} />}
+                        <span style={{ fontSize:'12px', fontWeight:700, color:'#111827', flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{p.name}</span>
+                        <span style={{ fontSize:'10px', fontWeight:800, color:'#D97706', background:'#FFFBEB', padding:'2px 6px', borderRadius:'5px', flexShrink:0 }}>{p.stock} left</span>
                       </div>
-                    ))}
-                    {products.filter(p=>!p.active).length===0&&<p style={{fontSize:'12px',color:'#16A34A',fontWeight:700,textAlign:'center',padding:'6px'}}>All visible ✓</p>}
-                  </div>
+                      <div style={{ display:'flex', gap:'4px', paddingLeft:'38px' }}>
+                        <span style={{ fontSize:'10px', color:'#64748B', fontWeight:600, lineHeight:'24px' }}>Add:</span>
+                        {[5,10,20].map(qty=>(
+                          <button key={qty} onClick={()=>handleQuickRestock(p,qty)}
+                            style={{ padding:'3px 8px', borderRadius:'5px', background:'#F1F5F9', color:'#0F172A', border:'1px solid #E2E8F0', fontWeight:800, fontSize:'10px', cursor:'pointer' }}>+{qty}</button>
+                        ))}
+                        <button onClick={()=>setModal(p)} style={{ padding:'3px 8px', borderRadius:'5px', background:'#0F172A', color:'white', border:'none', fontWeight:800, fontSize:'10px', cursor:'pointer', marginLeft:'auto' }}>Edit</button>
+                      </div>
+                    </div>
+                  ))}
+                  {products.filter(p=>p.stock>0&&p.stock<=5).length===0 && <p style={{ fontSize:'11px', color:'#059669', fontWeight:700, margin:0, padding:'4px 0' }}>No low stock alerts ✓</p>}
+                </div>
+
+                {/* Hidden Products */}
+                <div style={{ padding:'12px 14px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:800, color:'#475569', margin:'0 0 8px 0', display:'flex', alignItems:'center', gap:'5px' }}>
+                    <Eye size={13} /> Hidden ({products.filter(p=>!p.active).length})
+                  </p>
+                  {products.filter(p=>!p.active).map(p=>(
+                    <div key={p.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'7px 0', borderBottom:'1px dashed #F1F5F9' }}>
+                      <span style={{ fontSize:'12px', fontWeight:700, color:'#111827', flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginRight:'8px' }}>{p.name}</span>
+                      <button onClick={()=>handleToggleActive(p)} style={{ fontSize:'10px', fontWeight:800, color:'#2563EB', background:'#EFF6FF', padding:'3px 8px', borderRadius:'6px', border:'none', cursor:'pointer', flexShrink:0 }}>Unhide</button>
+                    </div>
+                  ))}
+                  {products.filter(p=>!p.active).length===0 && <p style={{ fontSize:'11px', color:'#059669', fontWeight:700, margin:0, padding:'4px 0' }}>All items visible ✓</p>}
                 </div>
               </div>
 
-              {/* ── REPORTS ── */}
-              <div>
-                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'14px',flexWrap:'wrap',gap:'8px'}}>
-                  <h2 style={{fontSize:'15px',fontWeight:900,color:'#0A0A0A',display:'flex',alignItems:'center',gap:'8px'}}><BarChart2 size={16} color="#7C3AED"/> Reports</h2>
-                  <div style={{display:'flex',gap:'6px',flexWrap:'wrap'}}>
-                    <button onClick={()=>exportOrdersCSV(allOrders)} style={{display:'flex',alignItems:'center',gap:'4px',padding:'6px 12px',borderRadius:'8px',background:'#1A1A2E',color:'white',fontSize:'11px',fontWeight:700,border:'none',cursor:'pointer'}}><Download size={12}/> Orders CSV</button>
-                    <button onClick={()=>exportProductsCSV(products)} style={{display:'flex',alignItems:'center',gap:'4px',padding:'6px 12px',borderRadius:'8px',background:'white',border:'1px solid #E2E8F0',color:'#555',fontSize:'11px',fontWeight:700,cursor:'pointer'}}><Download size={12}/> Products CSV</button>
-                    <button onClick={()=>window.print()} style={{display:'flex',alignItems:'center',gap:'4px',padding:'6px 12px',borderRadius:'8px',background:'white',border:'1px solid #E2E8F0',color:'#555',fontSize:'11px',fontWeight:700,cursor:'pointer'}}><Printer size={12}/> Print</button>
+              {/* ── PERFORMANCE METRICS ── */}
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
+                {[
+                  { label:'Total Revenue', value:`₹${allOrders.filter(o=>o.payment_status==='verified').reduce((s,o)=>s+(o.total_amount||0),0).toFixed(0)}` },
+                  { label:"Today's Sales", value:`₹${todayRevenue.toFixed(0)}` },
+                  { label:'Month Revenue', value:`₹${monthRevenue.toFixed(0)}` },
+                  { label:'Verified Orders', value:allOrders.filter(o=>o.payment_status==='verified').length },
+                ].map(({ label, value }) => (
+                  <div key={label} style={{ background:'#FFFFFF', borderRadius:'12px', padding:'12px', border:'1px solid #E5E7EB' }}>
+                    <p style={{ fontSize:'10px', fontWeight:800, color:'#64748B', textTransform:'uppercase', letterSpacing:'0.4px', margin:0 }}>{label}</p>
+                    <p style={{ fontSize:'18px', fontWeight:900, color:'#111827', margin:'4px 0 0 0' }}>{value}</p>
                   </div>
+                ))}
+              </div>
+
+              {/* ── STORE INFO ── */}
+              <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', overflow:'hidden' }}>
+                <div style={{ padding:'12px 14px', borderBottom:'1px solid #F1F5F9' }}>
+                  <p style={{ fontSize:'13px', fontWeight:900, color:'#111827', margin:0 }}>⚙️ Store Info</p>
                 </div>
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:'10px',marginBottom:'14px'}}>
-                  {[
-                    {label:'Total Revenue',value:`₹${allOrders.filter(o=>o.payment_status==='verified').reduce((s,o)=>s+(o.total_amount||0),0).toFixed(0)}`,color:'#16A34A',icon:TrendingUp},
-                    {label:'Total Orders',value:allOrders.length,color:'#2563EB',icon:ShoppingBag},
-                    {label:'Confirmed',value:allOrders.filter(o=>o.payment_status==='verified').length,color:'#7C3AED',icon:CheckCircle},
-                    {label:'Pending',value:allOrders.filter(o=>o.payment_status==='submitted').length,color:'#F59E0B',icon:AlertCircle},
-                  ].map(({label,value,color,icon:Icon})=>(
-                    <div key={label} style={{background:'white',borderRadius:'12px',padding:'14px',border:'1px solid #F0F0F0',borderTop:`3px solid ${color}`}}>
-                      <Icon size={14} color={color} style={{marginBottom:'8px'}}/>
-                      <p style={{fontSize:'20px',fontWeight:900,color,lineHeight:1,marginBottom:'4px'}}>{value}</p>
-                      <p style={{fontSize:'10px',fontWeight:600,color:'#8E8E93',textTransform:'uppercase',letterSpacing:'.4px'}}>{label}</p>
+                <div style={{ padding:'0 14px' }}>
+                  {[{l:'Store Name',v:'AS HUB'},{l:'Owner',v:'Shaik Asmath'},{l:'Email',v:'as.businezzz@gmail.com'},{l:'Phone',v:'+91 70139 42909'},{l:'UPI VPA',v:'7995747250@ptyes'},{l:'WhatsApp',v:'+91 70139 42909'}].map(({l,v})=>(
+                    <div key={l} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #F8FAFC', gap:'8px' }}>
+                      <span style={{ fontSize:'11px', fontWeight:600, color:'#6B7280' }}>{l}</span>
+                      <span style={{ fontSize:'11px', fontWeight:800, color:'#111827', textAlign:'right', wordBreak:'break-all' }}>{v}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{background:'white',borderRadius:'14px',padding:'14px',border:'1px solid #F0F0F0'}}>
-                  <p style={{fontSize:'12px',fontWeight:800,color:'#0A0A0A',marginBottom:'10px'}}>Top Products by Orders</p>
-                  {(() => {
-                    const c={};
-                    allOrders.forEach(o=>{(o.items||[]).forEach(i=>{c[i.name]=(c[i.name]||0)+i.quantity;});});
-                    return Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name,qty])=>(
-                      <div key={name} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 0',borderBottom:'1px solid #F8F8F8'}}>
-                        <p style={{fontSize:'12px',fontWeight:600,color:'#0A0A0A',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginRight:'10px'}}>{name}</p>
-                        <span style={{fontSize:'11px',fontWeight:800,color:'#7C3AED',background:'#F5F3FF',padding:'2px 8px',borderRadius:'6px',flexShrink:0}}>{qty} sold</span>
-                      </div>
-                    ));
-                  })()}
-                </div>
               </div>
 
-              {/* ── SETTINGS ── */}
-              <div>
-                <h2 style={{fontSize:'15px',fontWeight:900,color:'#0A0A0A',marginBottom:'14px',display:'flex',alignItems:'center',gap:'8px'}}><Settings size={16} color="#555"/> Settings</h2>
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:'12px'}}>
-                  <div style={{background:'white',borderRadius:'14px',padding:'16px',border:'1px solid #F0F0F0'}}>
-                    <p style={{fontSize:'12px',fontWeight:800,color:'#555',textTransform:'uppercase',letterSpacing:'.5px',marginBottom:'12px'}}>Business Details</p>
-                    {[{l:'Shop Name',v:'AS HUB'},{l:'Owner',v:'Shaik Asmath'},{l:'Email',v:'as.businezzz@gmail.com'},{l:'Phone',v:'+91 70139 42909'}].map(({l,v})=>(
-                      <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'8px 0',borderBottom:'1px solid #F8F8F8',gap:'8px'}}>
-                        <span style={{fontSize:'12px',fontWeight:600,color:'#8E8E93',flexShrink:0}}>{l}</span>
-                        <span style={{fontSize:'12px',fontWeight:700,color:'#0A0A0A',textAlign:'right'}}>{v}</span>
-                      </div>
-                    ))}
+              {/* ── EXPORTS ── */}
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
+                <button onClick={()=>exportOrdersCSV(allOrders)}
+                  style={{ background:'#FFFFFF', borderRadius:'12px', padding:'14px', border:'1px solid #E5E7EB', display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', textAlign:'left' }}>
+                  <div style={{ width:'36px', height:'36px', borderRadius:'9px', background:'#EFF6FF', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                    <Download size={18} color="#2563EB" />
                   </div>
-                  <div style={{background:'white',borderRadius:'14px',padding:'16px',border:'1px solid #F0F0F0'}}>
-                    <p style={{fontSize:'12px',fontWeight:800,color:'#555',textTransform:'uppercase',letterSpacing:'.5px',marginBottom:'12px'}}>Payment & Contact</p>
-                    {[{l:'UPI ID',v:'7995747250@ptyes'},{l:'UPI Name',v:'Shaik Asmath'},{l:'WhatsApp',v:'+91 70139 42909'},{l:'Method',v:'UPI Only'}].map(({l,v})=>(
-                      <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'8px 0',borderBottom:'1px solid #F8F8F8',gap:'8px'}}>
-                        <span style={{fontSize:'12px',fontWeight:600,color:'#8E8E93',flexShrink:0}}>{l}</span>
-                        <span style={{fontSize:'12px',fontWeight:700,color:'#0A0A0A',textAlign:'right'}}>{v}</span>
-                      </div>
-                    ))}
+                  <div><p style={{ fontSize:'12px', fontWeight:800, color:'#111827', margin:0 }}>Orders</p><p style={{ fontSize:'10px', color:'#6B7280', margin:0 }}>Export CSV</p></div>
+                </button>
+                <button onClick={()=>exportProductsCSV(products)}
+                  style={{ background:'#FFFFFF', borderRadius:'12px', padding:'14px', border:'1px solid #E5E7EB', display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', textAlign:'left' }}>
+                  <div style={{ width:'36px', height:'36px', borderRadius:'9px', background:'#ECFDF5', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                    <Download size={18} color="#059669" />
                   </div>
-                  <div style={{background:'white',borderRadius:'14px',padding:'16px',border:'1px solid #F0F0F0'}}>
-                    <p style={{fontSize:'12px',fontWeight:800,color:'#555',textTransform:'uppercase',letterSpacing:'.5px',marginBottom:'12px'}}>Address</p>
-                    {[{l:'House',v:'D.No. 25-2-1709'},{l:'Area',v:'Pragathi Nagar, Podalkur Rd'},{l:'City',v:'Nellore'},{l:'State',v:'Andhra Pradesh'},{l:'PIN',v:'524004'}].map(({l,v})=>(
-                      <div key={l} style={{display:'flex',justifyContent:'space-between',padding:'8px 0',borderBottom:'1px solid #F8F8F8',gap:'8px'}}>
-                        <span style={{fontSize:'12px',fontWeight:600,color:'#8E8E93',flexShrink:0}}>{l}</span>
-                        <span style={{fontSize:'12px',fontWeight:700,color:'#0A0A0A',textAlign:'right'}}>{v}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                  <div><p style={{ fontSize:'12px', fontWeight:800, color:'#111827', margin:0 }}>Catalog</p><p style={{ fontSize:'10px', color:'#6B7280', margin:0 }}>Export CSV</p></div>
+                </button>
               </div>
 
             </div>

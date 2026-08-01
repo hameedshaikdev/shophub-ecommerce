@@ -1139,3 +1139,55 @@ div[style*="overflow"]::-webkit-scrollbar {
     flex-shrink: 0 !important;
   }
 }
+
+/* ── Admin Panel Mobile Responsiveness & 2x2 Grid ── */
+@media (max-width: 640px) {
+  .admin-main-container {
+    padding: 14px 10px 88px 10px !important;
+  }
+  .admin-header-nav {
+    padding: 0 12px !important;
+  }
+  .admin-search-btn {
+    max-width: 130px !important;
+    padding: 6px 10px !important;
+  }
+  .admin-search-kbd {
+    display: none !important;
+  }
+  .admin-products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .admin-prod-card-img {
+    height: 125px !important;
+  }
+  .admin-prod-card-title {
+    font-size: 12px !important;
+    line-height: 1.25 !important;
+  }
+  .admin-prod-card-price {
+    font-size: 14px !important;
+  }
+  .admin-toolbar-card {
+    padding: 12px 14px !important;
+    gap: 10px !important;
+  }
+  .admin-order-header-row {
+    padding: 10px 12px !important;
+  }
+  /* Hide ⌘K keyboard shortcut badge on mobile */
+  .admin-kbd-hide {
+    display: none !important;
+  }
+}
+
+/* Desktop: admin products grid 3+ columns */
+@media (min-width: 641px) {
+  .admin-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 16px;
+  }
+}
