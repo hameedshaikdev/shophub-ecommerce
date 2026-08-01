@@ -89,13 +89,13 @@ export default function NewArrivalsEditor({ newArrivalsData = {}, products = [],
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
           {[
             { key: 'showBadges', label: 'Show New Badges' },
             { key: 'showRatings', label: 'Show Star Ratings' },
             { key: 'showQuickView', label: 'Show Quick View Button' },
           ].map(({ key, label }) => (
-            <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+            <label key={key} className="arrivals-checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
               <input
                 type="checkbox"
                 checked={arrivals[key] ?? true}

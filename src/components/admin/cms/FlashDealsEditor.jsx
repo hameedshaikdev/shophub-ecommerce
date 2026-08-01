@@ -109,7 +109,7 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
           <Settings size={16} color="#2563EB" /> Display Controls & Badges
         </h4>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
           {[
             { key: 'showDiscount', label: 'Show Discount %' },
             { key: 'showStock', label: 'Show Stock Level' },
@@ -118,7 +118,7 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
             { key: 'showAddToCart', label: 'Show Add to Cart' },
             { key: 'sliderEnabled', label: 'Enable Horizontal Slider' },
           ].map(({ key, label }) => (
-            <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '8px 10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+            <label key={key} className="flash-checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '8px 10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
               <input
                 type="checkbox"
                 checked={flash[key] ?? true}

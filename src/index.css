@@ -2295,9 +2295,14 @@ img, video, svg {
     gap: 8px !important;
   }
   
-  /* Checkbox grids - single column on mobile */
-  div[style*="gridTemplateColumns: repeat(auto-fit, minmax(200px"] ,
-  div[style*="gridTemplateColumns: repeat(auto-fit, minmax(220px"] {
+  /* Checkbox grids - single column on mobile, full width */
+  .flash-checkbox-label,
+  .arrivals-checkbox-label {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px"] {
     grid-template-columns: 1fr !important;
     gap: 8px !important;
   }
