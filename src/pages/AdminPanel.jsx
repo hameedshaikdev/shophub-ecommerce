@@ -6,7 +6,7 @@ import {
   CheckCircle, XCircle, MessageCircle, Phone, Truck,
   Plus, Edit2, Trash2, Eye, X, Save, Upload,
   AlertTriangle, AlertCircle, Download, Printer,
-  Menu, Settings, TrendingUp, ShieldCheck, Home
+  Menu, Settings, TrendingUp, ShieldCheck, Home, Sparkles
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { supabase } from '../config/supabase';
