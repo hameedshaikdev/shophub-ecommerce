@@ -6,7 +6,8 @@ import {
   CheckCircle, XCircle, MessageCircle, Phone, Truck,
   Plus, Edit2, Trash2, Eye, X, Save, Upload,
   AlertTriangle, AlertCircle, Download, Printer,
-  Menu, Settings, TrendingUp, ShieldCheck, Home, Sparkles
+  Menu, Settings, TrendingUp, ShieldCheck, Home, Sparkles,
+  RotateCcw, Calendar
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { supabase } from '../config/supabase';
@@ -1473,14 +1474,14 @@ buildPages(4);
                     <Plus size={14} /> Add
                   </button>
                 </div>
-                <div style={{ display:'flex', gap:'6px', alignItems:'center', overflow:'hidden', width:'100%', boxSizing:'border-box' }}>
-                  <div style={{ position:'relative', flex:1, minWidth:0 }}>
+                <div className="admin-products-toolbar-row" style={{ display:'flex', gap:'6px', alignItems:'center', flexWrap:'wrap', width:'100%', boxSizing:'border-box' }}>
+                  <div style={{ position:'relative', flex:'1 1 120px', minWidth:'120px' }}>
                     <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search..."
                       style={{ width:'100%', padding:'7px 10px 7px 28px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'12px', outline:'none', background:'#F8FAFC', boxSizing:'border-box' }} />
                     <Search size={12} color="#94A3B8" style={{ position:'absolute', left:'8px', top:'50%', transform:'translateY(-50%)' }} />
                   </div>
                   <select value={catFilter} onChange={e=>setCatFilter(e.target.value)}
-                    style={{ padding:'7px 8px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'11px', background:'#FFFFFF', fontWeight:700, color:'#334155', flexShrink:0, maxWidth:'110px', minWidth:0, boxSizing:'border-box' }}>
+                    style={{ padding:'7px 8px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'11px', background:'#FFFFFF', fontWeight:700, color:'#334155', flexShrink:0, maxWidth:'110px', minWidth:'70px', boxSizing:'border-box' }}>
                     <option value="all">All</option>
                     <option value="tailoring">Tailoring</option>
                     <option value="fashion">Fashion</option>
@@ -1666,19 +1667,85 @@ buildPages(4);
                 </div>
               </div>
 
-              {/* ── PERFORMANCE METRICS ── */}
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
-                {[
-                  { label:'Total Revenue', value:`₹${allOrders.filter(o=>o.payment_status==='verified').reduce((s,o)=>s+(o.total_amount||0),0).toFixed(0)}` },
-                  { label:"Today's Sales", value:`₹${todayRevenue.toFixed(0)}` },
-                  { label:'Month Revenue', value:`₹${monthRevenue.toFixed(0)}` },
-                  { label:'Verified Orders', value:allOrders.filter(o=>o.payment_status==='verified').length },
-                ].map(({ label, value }) => (
-                  <div key={label} style={{ background:'#FFFFFF', borderRadius:'12px', padding:'12px', border:'1px solid #E5E7EB' }}>
-                    <p style={{ fontSize:'10px', fontWeight:800, color:'#64748B', textTransform:'uppercase', letterSpacing:'0.4px', margin:0 }}>{label}</p>
-                    <p style={{ fontSize:'18px', fontWeight:900, color:'#111827', margin:'4px 0 0 0' }}>{value}</p>
+              {/* ── PERFORMANCE METRICS & ANALYTICS TOOLBAR ── */}
+              <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', padding:'14px', boxSizing:'border-box' }}>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'8px', marginBottom:'12px' }}>
+                  <div>
+                    <h2 style={{ fontSize:'15px', fontWeight:900, color:'#111827', margin:0, display:'flex', alignItems:'center', gap:'6px' }}>
+                      📊 Performance Analytics
+                    </h2>
+                    <p style={{ fontSize:'11px', color:'#6B7280', margin:'2px 0 0 0' }}>Real-time revenue, orders & sales insights</p>
                   </div>
-                ))}
+                  <div style={{ display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap' }}>
+                    {/* Reset Button */}
+                    <button onClick={() => { setDateFilter('all'); setCatFilter('all'); toast('Analytics filters reset!', 'info'); }}
+                      title="Reset analytics filters"
+                      style={{ display:'flex', alignItems:'center', gap:'4px', padding:'6px 10px', borderRadius:'8px', background:'#F1F5F9', border:'1px solid #CBD5E1', color:'#334155', fontSize:'11px', fontWeight:800, cursor:'pointer' }}>
+                      <RotateCcw size={12} /> Reset
+                    </button>
+                    {/* Export analytics CSV */}
+                    <button onClick={() => exportProductsCSV(allOrders)}
+                      title="Export sales analytics"
+                      style={{ display:'flex', alignItems:'center', gap:'4px', padding:'6px 10px', borderRadius:'8px', background:'#EFF6FF', border:'1px solid #BFDBFE', color:'#2563EB', fontSize:'11px', fontWeight:800, cursor:'pointer' }}>
+                      <Download size={12} /> Export CSV
+                    </button>
+                  </div>
+                </div>
+
+                {/* Filter Controls Row */}
+                <div style={{ display:'flex', gap:'8px', alignItems:'center', marginBottom:'12px', flexWrap:'wrap' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'4px', fontSize:'11px', fontWeight:700, color:'#475569' }}>
+                    <Calendar size={13} color="#2563EB" />
+                    <span>Range:</span>
+                  </div>
+                  <select value={dateFilter} onChange={e=>setDateFilter(e.target.value)}
+                    style={{ padding:'5px 8px', borderRadius:'8px', border:'1px solid #CBD5E1', fontSize:'11px', fontWeight:700, color:'#1E293B', background:'#F8FAFC', outline:'none' }}>
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="month">This Month</option>
+                  </select>
+                </div>
+
+                {/* Grid of 6 Performance Cards */}
+                {(() => {
+                  const verifiedOrders = allOrders.filter(o => o.payment_status === 'verified');
+                  const filteredList = dateFilter === 'today'
+                    ? allOrders.filter(o => new Date(o.created_at).toDateString() === today)
+                    : dateFilter === 'month'
+                    ? allOrders.filter(o => { const d=new Date(o.created_at); const n=new Date(); return d.getMonth()===n.getMonth() && d.getFullYear()===n.getFullYear(); })
+                    : allOrders;
+
+                  const verifiedFiltered = filteredList.filter(o => o.payment_status === 'verified');
+                  const totalRev = verifiedFiltered.reduce((s,o) => s + (o.total_amount || 0), 0);
+                  const avgOrderVal = verifiedFiltered.length > 0 ? (totalRev / verifiedFiltered.length) : 0;
+                  const convRate = filteredList.length > 0 ? ((verifiedFiltered.length / filteredList.length) * 100) : 0;
+
+                  return (
+                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
+                      {[
+                        { label:'Total Revenue',   value:`₹${totalRev.toFixed(0)}`,        icon:'💰' },
+                        { label:"Today's Sales",   value:`₹${todayRevenue.toFixed(0)}`,     icon:'📅' },
+                        { label:'Month Revenue',   value:`₹${monthRevenue.toFixed(0)}`,     icon:'📆' },
+                        { label:'Verified Orders', value:verifiedFiltered.length,            icon:'✅' },
+                        { label:'Avg Order Value', value:`₹${avgOrderVal.toFixed(0)}`,      icon:'📊' },
+                        { label:'Paid Conversion', value:`${convRate.toFixed(0)}%`,          icon:'🎯' },
+                      ].map(({ label, value, icon }) => (
+                        <div key={label} style={{
+                          background: '#F9FAFB',
+                          borderRadius: '10px',
+                          padding: '10px 12px',
+                          border: '1px solid #E5E7EB',
+                          borderLeft: '3px solid #111827',
+                        }}>
+                          <p style={{ fontSize:'10px', fontWeight:700, color:'#6B7280', textTransform:'uppercase', letterSpacing:'0.5px', margin:0, display:'flex', alignItems:'center', gap:'4px' }}>
+                            <span>{icon}</span> {label}
+                          </p>
+                          <p style={{ fontSize:'17px', fontWeight:900, color:'#111827', margin:'4px 0 0 0', letterSpacing:'-0.5px' }}>{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* ── STORE INFO ── */}

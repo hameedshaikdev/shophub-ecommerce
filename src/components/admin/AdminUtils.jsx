@@ -201,11 +201,20 @@ export function CommandPalette({ orders=[], products=[], onClose }) {
               <X size={16} />
             </button>
           )}
-          <kbd style={{ display:'flex', alignItems:'center', gap:'3px',
-            padding:'3px 8px', borderRadius:'6px', background:'#F4F4F8',
-            fontSize:'11px', fontWeight:700, color:'#8E8E93', border:'1px solid #E2E8F0' }}>
-            ESC
-          </kbd>
+          <button onClick={onClose}
+            title="Close Search (or ESC)"
+            aria-label="Close"
+            style={{
+              display:'flex', alignItems:'center', justifyContent:'center',
+              width:'30px', height:'30px', borderRadius:'50%',
+              background:'#F1F5F9', border:'1px solid #E2E8F0',
+              color:'#475569', cursor:'pointer', flexShrink:0,
+              transition:'all .15s ease'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background='#FEF2F2'; e.currentTarget.style.color='#EF4444'; }}
+            onMouseLeave={e => { e.currentTarget.style.background='#F1F5F9'; e.currentTarget.style.color='#475569'; }}>
+            <X size={16} />
+          </button>
         </div>
 
         {/* Results */}
@@ -301,15 +310,26 @@ export function CommandPalette({ orders=[], products=[], onClose }) {
         </div>
 
         <div style={{ padding:'10px 20px', borderTop:'1px solid #F0F0F0',
-          display:'flex', gap:'16px' }}>
-          {[['↑↓', 'Navigate'], ['↵', 'Open'], ['Esc', 'Close']].map(([k, l]) => (
-            <div key={k} style={{ display:'flex', alignItems:'center', gap:'5px' }}>
+          display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div style={{ display:'flex', gap:'14px', alignItems:'center' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'5px' }}>
               <kbd style={{ padding:'2px 7px', borderRadius:'5px', background:'#F4F4F8',
-                fontSize:'11px', fontWeight:700, color:'#555',
-                border:'1px solid #E2E8F0' }}>{k}</kbd>
-              <span style={{ fontSize:'11px', color:'#8E8E93' }}>{l}</span>
+                fontSize:'11px', fontWeight:700, color:'#555', border:'1px solid #E2E8F0' }}>↑↓</kbd>
+              <span style={{ fontSize:'11px', color:'#8E8E93' }}>Navigate</span>
             </div>
-          ))}
+            <div style={{ display:'flex', alignItems:'center', gap:'5px' }}>
+              <kbd style={{ padding:'2px 7px', borderRadius:'5px', background:'#F4F4F8',
+                fontSize:'11px', fontWeight:700, color:'#555', border:'1px solid #E2E8F0' }}>↵</kbd>
+              <span style={{ fontSize:'11px', color:'#8E8E93' }}>Open</span>
+            </div>
+          </div>
+          <button onClick={onClose} style={{
+            display:'flex', alignItems:'center', gap:'4px', padding:'5px 12px',
+            borderRadius:'8px', background:'#FEF2F2', border:'1px solid #FCA5A5',
+            color:'#DC2626', fontSize:'12px', fontWeight:800, cursor:'pointer'
+          }}>
+            <X size={14} /> Close
+          </button>
         </div>
       </motion.div>
     </motion.div>

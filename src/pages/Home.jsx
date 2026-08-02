@@ -123,15 +123,28 @@ function DealTimer() {
   }, []);
   const pad = n => String(n).padStart(2,'0');
   return (
-    <div style={{display:'flex',alignItems:'center',gap:'6px'}}>
+    <div style={{display:'flex',alignItems:'center',gap:'6px'}} className="flash-deal-timer-wrap">
       {[time.h, time.m, time.s].map((v,i) => (
         <span key={i} style={{display:'flex',alignItems:'center',gap:'6px'}}>
-          <span style={{background:'#1A1A2E',color:'white',fontWeight:900,fontSize:'18px',
-            padding:'6px 10px',borderRadius:'8px',minWidth:'44px',textAlign:'center',
-            fontFamily:'monospace'}}>
-            {pad(v)}
-          </span>
-          {i < 2 && <span style={{fontWeight:900,fontSize:'18px',color:'#1A1A2E'}}>:</span>}
+          <div className="flash-timer-card" style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06))',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255,255,255,0.25)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.3)',
+            color: 'white',
+            fontWeight: 900,
+            fontSize: '16px',
+            padding: '6px 10px',
+            borderRadius: '10px',
+            minWidth: '40px',
+            textAlign: 'center',
+            fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+            letterSpacing: '0.5px'
+          }}>
+            <span className={i === 2 ? 'flash-timer-sec' : ''}>{pad(v)}</span>
+          </div>
+          {i < 2 && <span style={{fontWeight:900,fontSize:'16px',color:'rgba(255,255,255,0.7)',animation:'timerColonPulse 1s infinite'}}>:</span>}
         </span>
       ))}
     </div>
@@ -310,21 +323,22 @@ function CollectionCard({ cls='', label, title, count, img, onClick, dark=false 
             ? 'linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.85) 100%)'
             : 'linear-gradient(180deg,rgba(0,0,0,.0) 25%,rgba(0,0,0,.8) 100%)' }}/>
 
-        <div style={{ position:'absolute', inset:0, padding:'20px 22px',
+        <div className="col-card-padding" style={{ position:'absolute', inset:0, padding:'18px 20px',
           display:'flex', flexDirection:'column', justifyContent:'space-between' }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'6px' }}>
             {label && (
-              <span style={{ fontSize:'10px', fontWeight:800, letterSpacing:'1.2px',
-                textTransform:'uppercase', color:'rgba(255,255,255,.9)',
-                background:'rgba(255,255,255,.2)', backdropFilter:'blur(12px)',
-                padding:'4px 12px', borderRadius:'9999px',
-                border:'1px solid rgba(255,255,255,.3)', boxShadow:'0 4px 12px rgba(0,0,0,.1)' }}>{label}</span>
+              <span className="col-card-label" style={{ fontSize:'10px', fontWeight:800, letterSpacing:'0.5px',
+                textTransform:'uppercase', color:'rgba(255,255,255,.95)',
+                background:'rgba(255,255,255,.22)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)',
+                padding:'4px 10px', borderRadius:'9999px',
+                border:'1px solid rgba(255,255,255,.35)', boxShadow:'0 4px 12px rgba(0,0,0,.1)',
+                whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:'70%' }}>{label}</span>
             )}
-            {count && <span style={{ fontSize:'11px', fontWeight:600, color:'rgba(255,255,255,.7)' }}>{count}</span>}
+            {count && <span className="col-card-count" style={{ fontSize:'11px', fontWeight:700, color:'rgba(255,255,255,.8)', whiteSpace:'nowrap' }}>{count}</span>}
           </div>
           <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', gap:'8px' }}>
-            <h3 style={{ fontSize:'clamp(15px,1.8vw,20px)', fontWeight:900, color:'white',
-              letterSpacing:'-.4px', lineHeight:1.1 }}>{title}</h3>
+            <h3 className="col-card-title" style={{ fontSize:'clamp(14px,1.8vw,20px)', fontWeight:900, color:'white',
+              letterSpacing:'-.3px', lineHeight:1.15, margin:0, overflow:'hidden', textOverflow:'ellipsis', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }}>{title}</h3>
             <motion.div whileHover={{ x:4, scale:1.1 }}
               style={{ width:'34px', height:'34px', borderRadius:'9999px', flexShrink:0,
                 background:'rgba(255,255,255,.22)', backdropFilter:'blur(12px)',
@@ -643,11 +657,14 @@ export default function Home() {
             <Reveal>
               <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
                 marginBottom:'24px',flexWrap:'wrap',gap:'12px'}}>
-                <div style={{display:'flex',alignItems:'center',gap:'14px'}}>
-                  <div style={{background:'#EF4444',color:'white',fontSize:'11px',fontWeight:900,
-                    padding:'6px 14px',borderRadius:'8px',display:'flex',alignItems:'center',
-                    gap:'5px',animation:'pulse 1.5s infinite'}}>
-                    <Zap size={12} fill="white"/> FLASH DEALS
+                <div style={{display:'flex',alignItems:'center',gap:'14px',flexWrap:'wrap'}}>
+                  <div className="flash-deals-badge-glow" style={{
+                    background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%)',
+                    color:'white',fontSize:'11px',fontWeight:900,
+                    padding:'7px 16px',borderRadius:'9999px',display:'flex',alignItems:'center',
+                    gap:'6px', letterSpacing:'1px', textTransform:'uppercase'
+                  }}>
+                    <Zap size={14} fill="white" className="zap-flash-icon"/> FLASH DEALS
                   </div>
                   <DealTimer/>
                 </div>

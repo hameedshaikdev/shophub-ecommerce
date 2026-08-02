@@ -5,7 +5,7 @@ import {
   Heart, Minus, Plus, ShoppingCart, ArrowLeft,
   Truck, RefreshCw, Star, Package,
   ChevronRight, MessageCircle, Sparkles, ShieldCheck,
-  Maximize2, X
+  Maximize2, X, Play, Tv, ExternalLink
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
@@ -293,6 +293,69 @@ export default function ProductDetail() {
                 </p>
               </div>
             )}
+
+            {/* ── PRODUCT VIDEOS & DEMOS ── */}
+            {(() => {
+              const rawV = product.video_links || product.videos || [];
+              let videoList = [];
+              try {
+                if (Array.isArray(rawV)) videoList = [...rawV];
+                else if (typeof rawV === 'string' && rawV.trim()) videoList = JSON.parse(rawV);
+              } catch (e) {
+                if (typeof rawV === 'string' && rawV.startsWith('http')) videoList = [{ title: 'Product Demo', url: rawV }];
+              }
+
+              if (product.video_url && !videoList.some(v => (v.url || v) === product.video_url)) {
+                videoList.push({ title: 'Product Overview', url: product.video_url });
+              }
+
+              if (videoList.length === 0) return null;
+
+              const getEmbedUrl = (urlStr) => {
+                if (!urlStr || typeof urlStr !== 'string') return null;
+                const m = urlStr.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+                return m ? `https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3` : null;
+              };
+
+              return (
+                <div className="pd-description-card" style={{ background: '#F8FAFC', border: '1.5px solid #E2E8F0', marginTop: '16px' }}>
+                  <p className="pd-section-subheading" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#0F172A', margin: 0 }}>
+                    <Tv size={16} color="#2563EB" /> Product Videos & Demos
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '12px' }}>
+                    {videoList.map((v, idx) => {
+                      const vUrl = typeof v === 'string' ? v : (v.url || v.link || '');
+                      const vTitle = typeof v === 'object' && v.title ? v.title : `Product Demo ${idx + 1}`;
+                      const embedUrl = getEmbedUrl(vUrl);
+
+                      return (
+                        <div key={idx} style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', border: '1px solid #E2E8F0', padding: '12px', boxShadow: '0 4px 12px rgba(15,23,42,0.03)' }}>
+                          <p style={{ fontSize: '13px', fontWeight: 800, color: '#1E293B', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px', margin: '0 0 10px 0' }}>
+                            <Play size={14} color="#EF4444" fill="#EF4444" /> {vTitle}
+                          </p>
+                          {embedUrl ? (
+                            <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', borderRadius: '12px', overflow: 'hidden', background: '#000' }}>
+                              <iframe
+                                src={embedUrl}
+                                title={vTitle}
+                                style={{ width: '100%', height: '100%', border: 'none' }}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              />
+                            </div>
+                          ) : (
+                            <a href={vUrl} target="_blank" rel="noopener noreferrer"
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '10px 16px', borderRadius: '10px', background: '#EFF6FF', color: '#2563EB', fontWeight: 800, fontSize: '12px', textDecoration: 'none', border: '1px solid #BFDBFE' }}>
+                              <ExternalLink size={14} /> Watch Video Demo
+                            </a>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Quantity selector */}
             {product.stock !== 0 && (

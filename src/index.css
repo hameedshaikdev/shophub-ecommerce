@@ -347,18 +347,18 @@ div[style*="overflow"]::-webkit-scrollbar {
   background: rgba(241, 245, 249, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.8);
 }
-.sh-subtab:hover { color: var(--text); background: rgba(233, 69, 96, 0.08); transform: translateY(-2px); }
+.sh-subtab:hover { color: #0F172A; background: rgba(15, 23, 42, 0.08); transform: translateY(-2px); }
 .sh-subtab.active {
   color: white;
-  background: var(--primary-grad);
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
   border-color: transparent;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.25), 0 0 12px rgba(233, 69, 96, 0.2);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.25);
 }
 [data-theme="fashion"] .sh-subtab.active {
   color: white;
-  background: linear-gradient(135deg, #E94560, #D92345);
+  background: linear-gradient(135deg, #0F172A 0%, #2563EB 100%);
   border-color: transparent;
-  box-shadow: 0 6px 20px rgba(233, 69, 96, 0.35);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
 }
 .sh-subtab-icon { font-size: 15px; }
 
@@ -1194,6 +1194,18 @@ div[style*="overflow"]::-webkit-scrollbar {
   display: none !important;
 }
 
+/* ── About stats row — always horizontal ── */
+.about-stats-row {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  align-items: center !important;
+}
+.about-stats-row > div {
+  flex-shrink: 0 !important;
+}
+
 @media(max-width: 767px) {
   .about-horizontal-row .about-card-item,
   .about-horizontal-row > div {
@@ -1214,14 +1226,10 @@ div[style*="overflow"]::-webkit-scrollbar {
     margin-bottom: 0 !important;
   }
   .about-stats-row {
-    display: flex !important;
-    gap: 16px !important;
     overflow-x: auto !important;
+    flex-wrap: nowrap !important;
     padding-bottom: 8px !important;
     scrollbar-width: none !important;
-  }
-  .about-stats-row > div {
-    flex-shrink: 0 !important;
   }
 }
 
@@ -2644,4 +2652,69 @@ img, video, svg {
     padding-bottom: 6px !important;
   }
 }
+
+/* ─── Flash Deals High-Level CSS Animations & Glow System ─── */
+.flash-deals-badge-glow {
+  animation: flashBadgeGlow 2s infinite ease-in-out !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.6), 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+}
+
+.zap-flash-icon {
+  animation: zapPulse 1.2s infinite ease-in-out !important;
+}
+
+.flash-timer-sec {
+  display: inline-block;
+  animation: timerSecPulse 1s infinite cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@keyframes flashBadgeGlow {
+  0%, 100% {
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.5), 0 4px 14px rgba(0, 0, 0, 0.25);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 26px rgba(239, 68, 68, 0.9), 0 0 40px rgba(255, 59, 48, 0.5);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes zapPulse {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.2) rotate(-8deg); opacity: 0.85; }
+}
+
+@keyframes timerSecPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.9; }
+}
+
+@keyframes timerColonPulse {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 0.3; }
+}
+
+/* ─── Mobile Collection Card Text Guard ─── */
+@media (max-width: 560px) {
+  .col-card-padding {
+    padding: 12px 14px !important;
+  }
+  .col-card-label {
+    font-size: 9px !important;
+    padding: 3px 8px !important;
+    letter-spacing: 0.3px !important;
+    white-space: nowrap !important;
+    max-width: 75% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .col-card-title {
+    font-size: 13px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    letter-spacing: -0.2px !important;
+  }
+}
+
 

@@ -97,7 +97,7 @@ export default function Header() {
     <>
       <header className="sh-header">
         <div className="sh-container">
-          <nav className="sh-navbar" style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+          <nav className="sh-navbar">
 
             {/* ── Logo ── */}
             <Link to="/" style={{ display:'flex', alignItems:'center', gap:'8px',
@@ -124,7 +124,7 @@ export default function Header() {
             </div>
 
             {/* ── Search ── */}
-            <form onSubmit={search} className="sh-desktop-only" style={{ flex:1, maxWidth:'360px', margin:'0 12px' }}>
+            <form onSubmit={search} className="sh-desktop-only" style={{ flex:1, maxWidth:'480px', margin:'0 auto' }}>
               <div className="sh-search-wrap">
                 <Search size={17} color="#64748B" />
                 <input value={q} onChange={e => setQ(e.target.value)}
@@ -143,7 +143,7 @@ export default function Header() {
             </form>
 
             {/* ── Actions ── */}
-            <div style={{ display:'flex', alignItems:'center', gap:'8px', flexShrink:0 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'10px', flexShrink:0, marginLeft:'auto' }}>
 
               {/* Wishlist button — desktop (always visible for all users) */}
               <Link to="/wishlist" className="sh-icon-btn sh-desktop-only" title="Wishlist" style={{ borderRadius:'14px' }}>

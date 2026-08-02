@@ -102,64 +102,64 @@ export default function ProductCard({ product, onQuickView }) {
             </div>
           )}
 
-          {/* Wishlist */}
+          {/* Wishlist Button — Perfect Circle */}
           <motion.button
             onClick={handleWish}
-            whileHover={{ scale: 1.16 }}
+            whileHover={{ scale: 1.14 }}
             whileTap={{ scale: 0.88 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            title={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
             style={{
-              position: 'absolute', top: '10px', right: '10px',
-              width: '32px', height: '32px', borderRadius: '50%',
-              background: 'rgba(255,255,255,0.92)',
-              backdropFilter: 'blur(8px)',
+              position: 'absolute', top: '8px', right: '8px', zIndex: 3,
+              width: '34px', height: '34px', borderRadius: '50%',
+              background: inWishlist ? '#FEF2F2' : 'rgba(255, 255, 255, 0.92)',
+              backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: 'none', cursor: 'pointer',
-              boxShadow: '0 2px 10px rgba(0,0,0,.12)', zIndex: 2
+              border: inWishlist ? '1px solid #FECDD3' : '1px solid rgba(255, 255, 255, 0.9)',
+              cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.12)'
             }}>
-            <Heart size={14} fill={inWishlist ? '#E94560' : 'none'} color={inWishlist ? '#E94560' : '#666'} />
+            <Heart size={14} fill={inWishlist ? '#EF4444' : 'none'} color={inWishlist ? '#EF4444' : '#475569'} />
           </motion.button>
 
-          {/* Quick View */}
+          {/* Quick View Button — Perfect Circle */}
           {onQuickView && (
             <motion.button
               onClick={handleQuickViewClick}
-              whileHover={{ scale: 1.16 }}
+              whileHover={{ scale: 1.14 }}
               whileTap={{ scale: 0.88 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               title="Quick View"
               style={{
-                position: 'absolute', top: '48px', right: '10px',
-                width: '32px', height: '32px', borderRadius: '50%',
-                background: 'rgba(255,255,255,0.92)',
-                backdropFilter: 'blur(8px)',
+                position: 'absolute', top: '58px', right: '8px', zIndex: 3,
+                width: '34px', height: '34px', borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.92)',
+                backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: 'none', cursor: 'pointer',
-                boxShadow: '0 2px 10px rgba(0,0,0,.12)', zIndex: 2
+                border: '1px solid rgba(255, 255, 255, 0.9)',
+                cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.12)'
               }}>
               <Eye size={14} color="#475569" />
             </motion.button>
           )}
 
-          {/* Add-to-cart button (bottom right of image) */}
+          {/* Add to Cart Button — Perfect Circle */}
           {product.stock !== 0 && (
             <motion.button
               onClick={handleAdd}
-              whileHover={{ scale: 1.12 }}
+              whileHover={{ scale: 1.14 }}
               whileTap={{ scale: 0.88 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+              title="Add to Cart"
               style={{
-                position: 'absolute', bottom: '10px', right: '10px',
-                width: '36px', height: '36px', borderRadius: '50%',
+                position: 'absolute', bottom: '8px', right: '8px', zIndex: 3,
+                width: '34px', height: '34px', borderRadius: '50%',
                 background: added
-                  ? 'linear-gradient(135deg, #30D158, #25B046)'
-                  : 'linear-gradient(135deg, #2563EB, #1D4ED8)',
+                  ? 'linear-gradient(135deg, #10B981, #059669)'
+                  : 'linear-gradient(135deg, #0F172A, #1E293B)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: 'none', cursor: 'pointer', color: 'white',
-                boxShadow: `0 4px 14px ${added ? 'rgba(48,209,88,.45)' : 'rgba(37,99,235,.4)'}`,
-                transition: 'background .3s, box-shadow .3s', zIndex: 2
+                border: '2px solid rgba(255, 255, 255, 0.6)', cursor: 'pointer', color: 'white',
+                boxShadow: `0 4px 14px ${added ? 'rgba(16,185,129,.45)' : 'rgba(15,23,42,.38)'}`,
+                transition: 'background .25s ease, box-shadow .25s ease'
               }}>
-              {added ? <span style={{ fontSize: '14px', fontWeight: 'bold' }}>✓</span> : <ShoppingCart size={15} />}
+              {added ? <span style={{ fontSize: '13px', fontWeight: 'bold' }}>✓</span> : <ShoppingCart size={14} />}
             </motion.button>
           )}
         </div>
