@@ -43,9 +43,10 @@ export default function FooterEditor({ footerData = {}, onChange }) {
         <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', marginBottom: '14px' }}>Store Contact Info</h4>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))', gap: '12px', marginBottom: '16px' }}>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Phone / WhatsApp Number</label>
+            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Phone Number</label>
             <input
               type="text"
+              placeholder="e.g. 7013942909"
               value={footer.phone || ''}
               onChange={e => update('phone', e.target.value)}
               style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
@@ -55,6 +56,7 @@ export default function FooterEditor({ footerData = {}, onChange }) {
             <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Contact Email</label>
             <input
               type="text"
+              placeholder="e.g. store@gmail.com"
               value={footer.email || ''}
               onChange={e => update('email', e.target.value)}
               style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
@@ -64,6 +66,7 @@ export default function FooterEditor({ footerData = {}, onChange }) {
             <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Full Physical Address</label>
             <input
               type="text"
+              placeholder="Full store address"
               value={footer.address || ''}
               onChange={e => update('address', e.target.value)}
               style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
@@ -72,11 +75,12 @@ export default function FooterEditor({ footerData = {}, onChange }) {
         </div>
 
         <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', marginBottom: '14px' }}>Social Media Links</h4>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))', gap: '16px' }}>
           <div>
             <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>WhatsApp Number (Country code)</label>
             <input
               type="text"
+              placeholder="e.g. 917013942909"
               value={footer.socials?.whatsapp || ''}
               onChange={e => updateSocials('whatsapp', e.target.value)}
               style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
@@ -86,8 +90,19 @@ export default function FooterEditor({ footerData = {}, onChange }) {
             <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Instagram URL</label>
             <input
               type="text"
+              placeholder="https://instagram.com/..."
               value={footer.socials?.instagram || ''}
               onChange={e => updateSocials('instagram', e.target.value)}
+              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Facebook URL</label>
+            <input
+              type="text"
+              placeholder="https://facebook.com/..."
+              value={footer.socials?.facebook || ''}
+              onChange={e => updateSocials('facebook', e.target.value)}
               style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
             />
           </div>

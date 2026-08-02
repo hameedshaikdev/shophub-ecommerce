@@ -138,14 +138,12 @@ export default function HomepageManager({ products = [] }) {
       </div>
 
       {/* Main CMS Layout (Sidebar Nav + Active Section View) */}
-      <div className="cms-main-grid" style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '16px', width: '100%', overflowX: 'hidden' }}>
+      <div className="cms-main-grid" style={{ display: 'grid', gap: '16px', width: '100%', overflowX: 'hidden' }}>
         {/* Sidebar Nav — Desktop: vertical column / Mobile: horizontal scrollable pill row */}
-        <div className="cms-sidebar-nav" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '4px', height: 'fit-content', position: 'relative', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
-          <div className="admin-kbd-hide" style={{ padding: '6px 10px', fontSize: '10px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '1px' }}>
-            SECTIONS LIST
-          </div>
+        <div className="cms-sidebar-nav">
+          <div className="cms-sidebar-label">SECTIONS LIST</div>
           {/* Scrollable inner — CSS converts to flex-row on mobile */}
-          <div className="cms-sidebar-inner" style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: 'max-content' }}>
+          <div className="cms-sidebar-inner">
             {navItems.map(item => {
               const Icon = item.icon;
               const active = activeSection === item.key;
@@ -153,17 +151,9 @@ export default function HomepageManager({ products = [] }) {
                 <button
                   key={item.key}
                   onClick={() => setActiveSection(item.key)}
-                  className="cms-section-btn"
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '8px', width: '100%',
-                    padding: '9px 12px', borderRadius: '8px', border: 'none', cursor: 'pointer',
-                    background: active ? '#0F172A' : 'transparent',
-                    color: active ? '#FFFFFF' : '#475569',
-                    fontWeight: active ? 800 : 600,
-                    fontSize: '12px', transition: 'all 0.15s', whiteSpace: 'nowrap', flexShrink: 0
-                  }}
+                  className={`cms-section-btn${active ? ' active-tab' : ''}`}
                 >
-                  <Icon size={15} color={active ? '#FFFFFF' : '#64748B'} style={{ flexShrink: 0 }} />
+                  <Icon size={15} style={{ flexShrink: 0 }} />
                   {item.label}
                 </button>
               );

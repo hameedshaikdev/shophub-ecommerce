@@ -836,7 +836,7 @@ export default function AdminPanel() {
   const toggleSelect = (id) => setSelected(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
   const selectAll = () => setSelected(orders.map(o=>o.id));
   const clearSel = () => setSelected([]);
-  async function bulkConfirm() {
+async function bulkConfirm() {
     const ok = await confirm({ title:`Confirm ${selected.length} orders?`, message:'Will mark all as verified.', confirm:'Confirm All' });
     if (!ok) return;
     for (const id of selected) {
@@ -852,80 +852,273 @@ export default function AdminPanel() {
     clearSel(); fetchOrders(); fetchCounts(); toast(`${selected.length} orders deleted`,'success');
   }
 
-  function bulkPrint() {
-    const toPrint = selected.length > 0
-      ? orders.filter(o => selected.includes(o.id))
-      : [];
-    if (toPrint.length === 0) { toast('Select orders to print', 'warning'); return; }
+  function bulkPrint(overrideOrders) {
+    let toPrint = [];
+    if (selected.length > 0) {
+      toPrint = orders.filter(o => selected.includes(o.id));
+    } else if (Array.isArray(overrideOrders) && overrideOrders.length > 0) {
+      toPrint = overrideOrders;
+    } else {
+      toPrint = orders;
+    }
+    if (!toPrint || !Array.isArray(toPrint) || toPrint.length === 0) {
+      toast('Select orders to print', 'warning');
+      return;
+    }
 
-    const pages = toPrint.map((order, idx) => {
+    function buildLabelHTML(order) {
       const addr = order.shipping_address || {};
       const items = (order.items||[]).map(i =>
-        `<tr><td>${i.name}</td><td align="right">${i.quantity}</td><td align="right">₹${(i.price*i.quantity).toFixed(0)}</td></tr>`
+        `<tr><td>${i.name}</td><td>${i.quantity}</td><td align="right">Rs.${(i.price*i.quantity).toFixed(0)}</td></tr>`
       ).join('');
-      return `
-        ${idx > 0 ? '<div class="pb"></div>' : ''}
-        <div class="wrap">
-        <div class="wrap" style="${idx>0?'page-break-before:always;':''}">
-          <div class="header">
-            <span class="brand">AS HUB</span>
-            <span class="oid">ORDER #${order.id.slice(0,8).toUpperCase()}</span>
-          </div>
-          <div class="box">
-            <p class="lbl">DELIVER TO</p>
-            <p class="name">${addr.name || 'Customer'}</p>
-            <p class="ph">📞 ${addr.phone || 'N/A'}</p>
-            <p class="addr">${addr.house || ''}, ${addr.area || ''}, ${addr.city || ''}, ${addr.state || ''}</p>
-            <p class="pin">PIN: ${addr.pincode || ''}</p>
-          </div>
-          <div class="box from">
-            <p class="lbl">FROM (SHIPPER)</p>
-            <p class="fn">AS HUB — Shaik Asmath</p>
-            <p class="fd">D.No. 25-2-1709, Pragathi Nagar, Podalkur Road, Nellore, AP - 524004 | 📞 70139 42909</p>
-          </div>
-          <div class="box">
-            <p class="lbl">ORDER ITEMS (${(order.items||[]).length})</p>
-            <table>
-              <thead><tr><th>Item</th><th>Qty</th><th>Price</th></tr></thead>
-              <tbody>
-                ${(order.items||[]).map(i=>`<tr><td>${i.name}</td><td>${i.quantity}</td><td>₹${i.price}</td></tr>`).join('')}
-                <tr class="tot"><td colspan="2">TOTAL PAID (UPI)</td><td>₹${order.total_amount}</td></tr>
-              </tbody>
-            </table>
-            ${order.utr_number ? `<span class="badge">UTR: ${order.utr_number}</span>` : ''}
-          </div>
-          <div class="ft">
-            <span>PRINTED: ${new Date().toLocaleDateString('en-IN')} ${new Date().toLocaleTimeString('en-IN')}</span>
-            <span class="care">FRAGILE — HANDLE WITH CARE</span>
-          </div>
+      return `<div class='label-card'>
+        <div class='lc-header'><span class='brand'>AS HUB</span><span class='oid'>ORDER #${order.id.slice(0,8).toUpperCase()}</span></div>
+        <div class='box'>
+          <p class='lbl'>DELIVER TO</p>
+          <p class='cname'>${addr.name||'Customer'}</p>
+          <p class='ph'>Ph: ${addr.phone||'N/A'}</p>
+          <p class='addr'>${[addr.house,addr.area,addr.city,addr.state].filter(Boolean).join(', ')}</p>
+          <p class='pin'>PIN: ${addr.pincode||''}</p>
         </div>
-      `;
-    }).join('');
+        <div class='box from'>
+          <p class='lbl'>FROM (SHIPPER)</p>
+          <p class='fn'>AS HUB - Shaik Asmath</p>
+          <p class='fd'>D.No. 25-2-1709, Pragathi Nagar, Podalkur Road, Nellore, AP-524004 | Ph: 7013942909</p>
+        </div>
+        <div class='box items-box'>
+          <p class='lbl'>ORDER ITEMS (${(order.items||[]).length})</p>
+          <table><thead><tr><th>Item</th><th>Qty</th><th align="right">Price</th></tr></thead>
+          <tbody>${items}<tr class='tot'><td colspan='2'>TOTAL PAID (UPI)</td><td align="right">Rs.${order.total_amount}</td></tr></tbody></table>
+          ${order.utr_number?`<span class='badge'>UTR: ${order.utr_number}</span>`:''}
+        </div>
+        <div class='ft'>
+          <span>PRINTED: ${new Date().toLocaleDateString('en-IN')} ${new Date().toLocaleTimeString('en-IN')}</span>
+          <span class='care'>FRAGILE - HANDLE WITH CARE</span>
+        </div>
+      </div>`;
+    }
+
+    const labelsJson = JSON.stringify(toPrint.map(buildLabelHTML));
 
     const html = `<!DOCTYPE html><html><head><title>Batch Labels (${toPrint.length})</title>
-    <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;padding:16px;background:#fff}
-    .wrap{max-width:580px;margin:0 auto 20px auto;border:2px solid #000;padding:18px;border-radius:8px;page-break-after:always;background:#fff}
-    .header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:12px}
-    .brand{font-size:22px;font-weight:900}.oid{font-family:monospace;font-size:15px;font-weight:900;background:#f0f0f0;padding:5px 10px;border-radius:4px}
-    .box{background:#fafafa;border-radius:6px;padding:12px;margin-bottom:12px;border:1px solid #ddd}
-    .lbl{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:4px}
-    .name{font-size:18px;font-weight:900;margin-bottom:3px}.ph{font-size:14px;font-weight:700;margin-bottom:6px}
-    .addr{font-size:13px;line-height:1.5;color:#222}.pin{font-size:18px;font-weight:900;margin-top:6px;letter-spacing:1px}
-    .from{background:#f5f5f5}.fn{font-size:14px;font-weight:800;margin-bottom:3px}.fd{font-size:11px;color:#444;line-height:1.5}
-    table{width:100%;border-collapse:collapse;font-size:11px}th{background:#333;color:#fff;padding:6px 8px;font-size:9px;text-transform:uppercase;text-align:left}
-    td{padding:6px 8px;border-bottom:1px solid #e0e0e0}.tot td{font-weight:900;background:#f5f5f5;border-top:2px solid #333}
-    .badge{display:inline-block;background:#000;color:#fff;font-size:9px;font-weight:900;padding:4px 10px;border-radius:4px;margin-top:6px}
-    .ft{border-top:2px solid #ddd;padding-top:9px;margin-top:9px;display:flex;justify-content:space-between;font-size:9px;color:#555}
-    .care{background:#000;color:#fff;padding:3px 9px;border-radius:3px;font-weight:700}
-    @media print{.np{display:none!important}}</style></head>
-    <body><div class="np" style="padding:10px;margin-bottom:16px;background:#F1F5F9;border-radius:8px;display:flex;align-items:center;justify-content:space-between">📦 <strong>${toPrint.length} Labels Ready</strong>
-    <button onclick="window.print()" style="padding:8px 20px;background:#0F172A;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">🖨 Print All</button></div>
-    ${pages}</body></html>`;
+<style>
+/* ── Reset ── */
+*{margin:0;padding:0;box-sizing:border-box}
 
-    const w = window.open('','_blank','width=760,height=900');
-    w.document.write(html); w.document.close(); w.focus();
+/* ── Force exact A4 paper size with ZERO margin so browser default margins don't split pages ── */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+/* ── Body ── */
+body {
+  font-family: Arial, sans-serif;
+  background: #d0d0d0;
+  color: #000;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* ── Screen controls bar (hidden during print) ── */
+.np {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 18px; background: #1E293B; color: #fff;
+  gap: 10px; flex-wrap: wrap; position: sticky; top: 0; z-index: 999;
+}
+.np-title { font-size: 13px; font-weight: 800; }
+.np-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.np label { font-size: 11px; font-weight: 600; color: #CBD5E1; }
+.np select { padding: 5px 8px; border-radius: 6px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; background: #fff; color: #0F172A; }
+.print-btn { padding: 8px 18px; background: #2563EB; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 800; cursor: pointer; }
+.print-btn:hover { background: #1D4ED8; }
+
+#pagesContainer {
+  padding: 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+
+/* ── Exact A4 Page Container ── */
+.page-wrap {
+  width: 210mm;
+  height: 297mm;
+  max-height: 297mm;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(0,0,0,.20);
+  overflow: hidden;
+  display: grid;
+  gap: 3mm;
+  padding: 8mm; /* Internal page margin */
+  box-sizing: border-box;
+}
+
+/* ── Base Label Card ── */
+.label-card {
+  border: 1.5px solid #000;
+  border-radius: 4px;
+  background: #fff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.lc-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #000; padding-bottom: 3px; margin-bottom: 2px; flex-shrink: 0; }
+.brand { font-weight: 900; }
+.oid { font-family: monospace; font-weight: 900; background: #f0f0f0; padding: 2px 4px; border-radius: 3px; }
+.box { background: #fafafa; border-radius: 3px; padding: 3px 4px; margin-bottom: 2px; border: 1px solid #ddd; flex-shrink: 0; }
+.lbl { font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 1px; }
+.cname { font-weight: 900; margin-bottom: 1px; }
+.ph { font-weight: 700; margin-bottom: 1px; }
+.addr { line-height: 1.3; color: #222; }
+.pin { font-weight: 900; margin-top: 1px; }
+.from { background: #f5f5f5; }
+.fn { font-weight: 800; margin-bottom: 1px; }
+.fd { color: #555; line-height: 1.3; }
+.items-box { flex: 1; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #333; color: #fff; padding: 2px 3px; text-transform: uppercase; text-align: left; }
+td { padding: 2px 3px; border-bottom: 1px solid #e0e0e0; }
+.tot td { font-weight: 900; background: #f5f5f5; border-top: 1.5px solid #333; }
+.badge { display: inline-block; background: #000; color: #fff; font-weight: 900; padding: 1px 4px; border-radius: 2px; margin-top: 1px; }
+.ft { border-top: 1px solid #ddd; padding-top: 2px; margin-top: auto; display: flex; justify-content: space-between; color: #666; flex-shrink: 0; }
+.care { background: #000; color: #fff; padding: 1px 4px; border-radius: 2px; font-weight: 700; }
+
+/* ── Density Adjustments for Each Layout ── */
+.density-1 .label-card { padding: 10px; }
+.density-1 { font-size: 11px; }
+.density-1 .brand { font-size: 18px; }
+.density-1 .oid { font-size: 12px; }
+.density-1 .cname { font-size: 15px; }
+
+.density-2 .label-card { padding: 8px; }
+.density-2 { font-size: 10px; }
+.density-2 .brand { font-size: 15px; }
+.density-2 .oid { font-size: 10px; }
+.density-2 .cname { font-size: 13px; }
+
+.density-4 .label-card { padding: 5px 6px; }
+.density-4 { font-size: 8px; }
+.density-4 .brand { font-size: 12px; }
+.density-4 .oid { font-size: 8px; }
+.density-4 .lbl { font-size: 6px; }
+.density-4 .cname { font-size: 10px; }
+.density-4 .ph { font-size: 8px; }
+.density-4 .addr { font-size: 7.5px; }
+.density-4 .pin { font-size: 9.5px; }
+
+.density-6 .label-card { padding: 4px; }
+.density-6 { font-size: 7px; }
+.density-6 .brand { font-size: 10px; }
+.density-6 .oid { font-size: 7px; }
+.density-6 .lbl { font-size: 5.5px; }
+.density-6 .cname { font-size: 8.5px; }
+
+.density-8 .label-card { padding: 3px; }
+.density-8 { font-size: 6.5px; }
+.density-8 .brand { font-size: 9px; }
+.density-8 .oid { font-size: 6.5px; }
+.density-8 .lbl { font-size: 5px; }
+.density-8 .cname { font-size: 8px; }
+
+/* ── Print Overrides ── */
+@media print {
+  html, body {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    overflow: hidden !important;
+  }
+  .np { display: none !important; }
+  #pagesContainer {
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    display: block !important;
+    width: 210mm !important;
+  }
+  .page-wrap {
+    width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 8mm !important;
+    box-shadow: none !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    overflow: hidden !important;
+  }
+  .page-wrap:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+}
+</style></head>
+<body>
+<div class="np">
+  <span class="np-title">&#128230; ${toPrint.length} Labels Ready</span>
+  <div class="np-controls">
+    <label for="perPage">Labels per A4 page:</label>
+    <select id="perPage" onchange="buildPages(this.value)">
+      <option value="1">1 per page (full size)</option>
+      <option value="2">2 per page</option>
+      <option value="4" selected>4 per page (2&times;2)</option>
+      <option value="6">6 per page (2&times;3)</option>
+      <option value="8">8 per page (2&times;4)</option>
+    </select>
+    <button class="print-btn" onclick="window.print()">&#128438; Print All Labels</button>
+  </div>
+</div>
+<div id="pagesContainer"></div>
+<script>
+var LAYOUT = {
+  '1': { cols: 1, rows: 1 },
+  '2': { cols: 1, rows: 2 },
+  '4': { cols: 2, rows: 2 },
+  '6': { cols: 2, rows: 3 },
+  '8': { cols: 2, rows: 4 }
+};
+var LABELS = ${labelsJson};
+
+function buildPages(n) {
+  n = parseInt(n);
+  var cfg = LAYOUT[String(n)] || { cols: 2, rows: 2 };
+  var perPage = cfg.cols * cfg.rows;
+  var gtc = '';
+  for (var ci = 0; ci < cfg.cols; ci++) gtc += (ci ? ' ' : '') + '1fr';
+  var gtr = '';
+  for (var ri = 0; ri < cfg.rows; ri++) gtr += (ri ? ' ' : '') + '1fr';
+
+  var c = document.getElementById('pagesContainer');
+  c.innerHTML = '';
+
+  for (var i = 0; i < LABELS.length; i += perPage) {
+    var pw = document.createElement('div');
+    pw.className = 'page-wrap density-' + n;
+    pw.style.gridTemplateColumns = gtc;
+    pw.style.gridTemplateRows = gtr;
+    pw.innerHTML = LABELS.slice(i, i + perPage).join('');
+    c.appendChild(pw);
+  }
+}
+buildPages(4);
+</script>
+</body></html>`;
+
+    const w = window.open('','_blank','width=960,height=960');
+    if (!w) { toast('Please allow popups to print labels', 'warning'); return; }
+    w.document.write(html);
+    w.document.close();
+    w.focus();
     toast(`${toPrint.length} label${toPrint.length>1?'s':''} ready to print`, 'success');
   }
+
 
   /* derived */
   const filteredProducts = products.filter(p => {
@@ -1126,7 +1319,7 @@ export default function AdminPanel() {
         </div>
 
         {/* Main content area */}
-        <main style={{ padding:'16px 16px 90px 16px', maxWidth:'1360px', margin:'0 auto', boxSizing:'border-box', width:'100%' }}>
+        <main className="admin-main" style={{ padding:'16px 16px 90px 16px', maxWidth:'1360px', margin:'0 auto', boxSizing:'border-box', width:'100%' }}>
 
           {/* ── ORDERS TAB ── */}
           {page==='orders' && (
@@ -1162,16 +1355,19 @@ export default function AdminPanel() {
                   </button>
 
                   <button onClick={()=>{
-                    const labelOrders = dateFilter==='today'
-                      ? orders.filter(o=>new Date(o.created_at).toDateString()===new Date().toDateString())
-                      : dateFilter==='week'
-                      ? orders.filter(o=>new Date(o.created_at)>=new Date(Date.now()-7*86400000))
-                      : dateFilter==='month'
-                      ? orders.filter(o=>{const d=new Date(o.created_at);const n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();})
-                      : orders;
-                    if (labelOrders.length===0){toast('No orders to print','warning');return;}
-                    setSelected(labelOrders.map(o=>o.id));
-                    setTimeout(() => bulkPrint(), 50);
+                    if (selected.length > 0) {
+                      bulkPrint();
+                    } else {
+                      const labelOrders = dateFilter==='today'
+                        ? orders.filter(o=>new Date(o.created_at).toDateString()===new Date().toDateString())
+                        : dateFilter==='week'
+                        ? orders.filter(o=>new Date(o.created_at)>=new Date(Date.now()-7*86400000))
+                        : dateFilter==='month'
+                        ? orders.filter(o=>{const d=new Date(o.created_at);const n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();})
+                        : orders;
+                      if (labelOrders.length===0){toast('No orders to print','warning');return;}
+                      bulkPrint(labelOrders);
+                    }
                   }}
                     style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:'5px', padding:'8px 10px', borderRadius:'9px',
                       background:'#0F172A', color:'#FFFFFF',
@@ -1216,7 +1412,7 @@ export default function AdminPanel() {
                   <div style={{ flex:1 }}/>
                   <button onClick={bulkConfirm} style={{ padding:'5px 10px', borderRadius:'7px', background:'#059669', color:'white', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer' }}>Verify</button>
                   <button onClick={()=>{exportOrdersCSV(orders.filter(o=>selected.includes(o.id)));}} style={{ padding:'5px 10px', borderRadius:'7px', background:'#2563EB', color:'white', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer' }}>CSV</button>
-                  <button onClick={bulkPrint} style={{ padding:'5px 10px', borderRadius:'7px', background:'#FFFFFF', color:'#0F172A', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:'3px' }}><Printer size={11}/>Print</button>
+                  <button onClick={() => bulkPrint()} style={{ padding:'5px 10px', borderRadius:'7px', background:'#FFFFFF', color:'#0F172A', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:'3px' }}><Printer size={11}/>Print</button>
                   <button onClick={bulkDelete} style={{ padding:'5px 10px', borderRadius:'7px', background:'#DC2626', color:'white', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer' }}>Delete</button>
                   <button onClick={clearSel} style={{ padding:'5px 10px', borderRadius:'7px', background:'rgba(255,255,255,0.15)', color:'white', fontSize:'11px', fontWeight:800, border:'none', cursor:'pointer' }}>✕</button>
                 </div>

@@ -46,40 +46,45 @@ export default function ProductCard({ product, onQuickView }) {
   return (
     <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', height: '100%' }}>
       <motion.div
-        whileHover={{ y: -4, boxShadow: '0 12px 32px rgba(0,0,0,0.13)' }}
-        transition={{ duration: 0.25, ease: 'easeOut' }}
+        whileHover={{
+          y: -6,
+          boxShadow: '0 20px 40px -10px rgba(15, 23, 42, 0.18), 0 0 0 1.5px rgba(37, 99, 235, 0.25)',
+          borderColor: 'rgba(37, 99, 235, 0.3)'
+        }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         style={{
           background: '#ffffff',
-          borderRadius: '10px',
+          borderRadius: '14px',
           overflow: 'hidden',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-          border: '1px solid #f0f0f0',
+          boxShadow: '0 4px 16px rgba(15, 23, 42, 0.06)',
+          border: '1px solid #E2E8F0',
           cursor: 'pointer',
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
+          transition: 'border-color 0.3s ease',
         }}>
 
-        {/* Image area — square, no inner margin */}
-        <div style={{ position: 'relative', width: '100%', aspectRatio: '1', overflow: 'hidden', background: '#f5f5f5', flexShrink: 0 }}>
+        {/* Image area — slightly larger aspect ratio with image zoom */}
+        <div style={{ position: 'relative', width: '100%', aspectRatio: '1.04', overflow: 'hidden', background: '#f8fafc', flexShrink: 0 }}>
           <motion.img
             src={imageUrl}
             alt={product.name || 'Product'}
             loading="lazy"
             onError={() => setImgError(true)}
-            whileHover={{ scale: 1.06 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ scale: 1.10 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
 
           {/* Top-Left Badge (SALE, NEW, etc.) */}
           {badge && (
             <div style={{
-              position: 'absolute', top: '8px', left: '8px',
+              position: 'absolute', top: '10px', left: '10px',
               background: 'linear-gradient(135deg, #1A1A2E, #0F3460)', color: 'white',
               fontSize: '9px', fontWeight: 800, letterSpacing: '.4px',
-              padding: '3px 8px', borderRadius: '4px',
+              padding: '4px 9px', borderRadius: '6px',
               boxShadow: '0 2px 8px rgba(0,0,0,.3)',
               zIndex: 2, maxWidth: '65%', whiteSpace: 'nowrap',
               overflow: 'hidden', textOverflow: 'ellipsis'
@@ -100,33 +105,39 @@ export default function ProductCard({ product, onQuickView }) {
           {/* Wishlist */}
           <motion.button
             onClick={handleWish}
-            whileHover={{ scale: 1.14 }} whileTap={{ scale: .92 }}
+            whileHover={{ scale: 1.16 }}
+            whileTap={{ scale: 0.88 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             style={{
-              position: 'absolute', top: '8px', right: '8px',
-              width: '30px', height: '30px', borderRadius: '50%',
+              position: 'absolute', top: '10px', right: '10px',
+              width: '32px', height: '32px', borderRadius: '50%',
               background: 'rgba(255,255,255,0.92)',
+              backdropFilter: 'blur(8px)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               border: 'none', cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0,0,0,.12)', zIndex: 2
+              boxShadow: '0 2px 10px rgba(0,0,0,.12)', zIndex: 2
             }}>
-            <Heart size={13} fill={inWishlist ? '#E94560' : 'none'} color={inWishlist ? '#E94560' : '#666'} />
+            <Heart size={14} fill={inWishlist ? '#E94560' : 'none'} color={inWishlist ? '#E94560' : '#666'} />
           </motion.button>
 
           {/* Quick View */}
           {onQuickView && (
             <motion.button
               onClick={handleQuickViewClick}
-              whileHover={{ scale: 1.14 }} whileTap={{ scale: .92 }}
+              whileHover={{ scale: 1.16 }}
+              whileTap={{ scale: 0.88 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               title="Quick View"
               style={{
-                position: 'absolute', top: '44px', right: '8px',
-                width: '30px', height: '30px', borderRadius: '50%',
+                position: 'absolute', top: '48px', right: '10px',
+                width: '32px', height: '32px', borderRadius: '50%',
                 background: 'rgba(255,255,255,0.92)',
+                backdropFilter: 'blur(8px)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: 'none', cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0,0,0,.12)', zIndex: 2
+                boxShadow: '0 2px 10px rgba(0,0,0,.12)', zIndex: 2
               }}>
-              <Eye size={13} color="#475569" />
+              <Eye size={14} color="#475569" />
             </motion.button>
           )}
 
@@ -134,19 +145,21 @@ export default function ProductCard({ product, onQuickView }) {
           {product.stock !== 0 && (
             <motion.button
               onClick={handleAdd}
-              whileHover={{ scale: 1.1 }} whileTap={{ scale: .92 }}
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.88 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               style={{
-                position: 'absolute', bottom: '8px', right: '8px',
-                width: '34px', height: '34px', borderRadius: '50%',
+                position: 'absolute', bottom: '10px', right: '10px',
+                width: '36px', height: '36px', borderRadius: '50%',
                 background: added
                   ? 'linear-gradient(135deg, #30D158, #25B046)'
-                  : 'linear-gradient(135deg, #1A1A2E, #0F3460)',
+                  : 'linear-gradient(135deg, #2563EB, #1D4ED8)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: 'none', cursor: 'pointer', color: 'white',
-                boxShadow: `0 4px 14px ${added ? 'rgba(48,209,88,.45)' : 'rgba(26,26,46,.35)'}`,
+                boxShadow: `0 4px 14px ${added ? 'rgba(48,209,88,.45)' : 'rgba(37,99,235,.4)'}`,
                 transition: 'background .3s, box-shadow .3s', zIndex: 2
               }}>
-              {added ? <span style={{ fontSize: '14px' }}>✓</span> : <ShoppingCart size={14} />}
+              {added ? <span style={{ fontSize: '14px', fontWeight: 'bold' }}>✓</span> : <ShoppingCart size={15} />}
             </motion.button>
           )}
         </div>

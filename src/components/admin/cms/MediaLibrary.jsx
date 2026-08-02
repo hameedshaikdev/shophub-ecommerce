@@ -106,31 +106,33 @@ export default function MediaLibrary({ mediaList = [], onSelect, onUpdateMedia }
       )}
 
       {/* Toolbar */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+        <div style={{ position: 'relative' }}>
           <Search size={16} color="#94A3B8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
             placeholder="Search media..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            style={{ width: '100%', padding: '9px 12px 9px 36px', borderRadius: '10px', border: '1px solid #E2E8F0', fontSize: '13px' }}
+            style={{ width: '100%', padding: '9px 12px 9px 36px', borderRadius: '10px', border: '1px solid #E2E8F0', fontSize: '13px', boxSizing: 'border-box' }}
           />
         </div>
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', overflowX: 'auto', paddingBottom: '4px' }}>
-          <Filter size={14} color="#64748B" />
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', overflowX: 'auto', paddingBottom: '2px', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+          <Filter size={14} color="#64748B" style={{ flexShrink: 0 }} />
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
               style={{
-                padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
-                border: 'none', cursor: 'pointer',
+                padding: '7px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 700,
+                border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
                 background: categoryFilter === cat ? '#0F172A' : '#F1F5F9',
-                color: categoryFilter === cat ? '#FFFFFF' : '#475569'
+                color: categoryFilter === cat ? '#FFFFFF' : '#475569',
+                boxShadow: categoryFilter === cat ? '0 2px 8px rgba(15,23,42,0.2)' : 'none',
+                transition: 'all 0.15s'
               }}
             >
-              {cat.toUpperCase()}
+              {cat === 'all' ? 'All' : cat.charAt(0).toUpperCase() + cat.slice(1)}
             </button>
           ))}
         </div>

@@ -1,8 +1,22 @@
-import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { useApp } from '../../context/AppContext';
+
 export default function Footer() {
   const location = useLocation();
+  const { cmsData, cmsDraft } = useApp();
   if (location.pathname.startsWith('/admin')) return null;
+
+  const isPreviewMode = window.location.search.includes('preview=draft');
+  const activeCms = isPreviewMode ? (cmsDraft || cmsData) : cmsData;
+  const f = activeCms?.footer || {};
+  const s = f.socials || {};
+
+  const fbUrl = s.facebook || 'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr';
+  const igUrl = s.instagram || 'https://www.instagram.com/as_tailoring_tools_textiles';
+  const waNum = s.whatsapp || '917013942909';
+  const phone = f.phone || '7013942909';
+  const email = f.email || 'as.businezzz@gmail.com';
+  const copyright = f.copyright || '© 2026 AS HUB · All Rights Reserved';
 
   return (
     <footer style={{ background:'#0F172A', paddingBottom:'80px' }}>
@@ -35,49 +49,52 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Tagline */}
+        {/* Tagline / About */}
         <p style={{ fontSize:'13px', color:'rgba(255,255,255,.85)',
-          lineHeight:1.75, maxWidth:'300px' }}>
-          Premium tailoring tools &amp; women's fashion.<br/>
-          Quality you can trust, delivered to your door.
+          lineHeight:1.75, maxWidth:'340px' }}>
+          {f.aboutText || "Premium tailoring tools & women's fashion. Quality you can trust, delivered to your door."}
         </p>
 
         {/* Social icons */}
-        <div style={{ display:'flex', gap:'10px' }}>
+        <div style={{ display:'flex', gap:'10px', alignItems: 'center' }}>
 
           {/* Facebook */}
-          <a href="https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr"
-            target="_blank" rel="noopener noreferrer"
-            style={{ width:'36px', height:'36px', borderRadius:'10px',
-              background:'#1877F2', display:'flex', alignItems:'center',
-              justifyContent:'center', transition:'transform .2s' }}
-            onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
-            onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-            </svg>
-          </a>
+          {fbUrl && (
+            <a href={fbUrl}
+              target="_blank" rel="noopener noreferrer" title="Facebook"
+              style={{ width:'36px', height:'36px', borderRadius:'10px',
+                background:'#1877F2', display:'flex', alignItems:'center',
+                justifyContent:'center', transition:'transform .2s' }}
+              onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
+              onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </a>
+          )}
 
           {/* Instagram */}
-          <a href="https://www.instagram.com/as_tailoring_tools_textiles"
-            target="_blank" rel="noopener noreferrer"
-            style={{ width:'36px', height:'36px', borderRadius:'10px',
-              background:'linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)',
-              display:'flex', alignItems:'center', justifyContent:'center',
-              transition:'transform .2s' }}
-            onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
-            onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-              stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="5"/>
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-            </svg>
-          </a>
+          {igUrl && (
+            <a href={igUrl}
+              target="_blank" rel="noopener noreferrer" title="Instagram"
+              style={{ width:'36px', height:'36px', borderRadius:'10px',
+                background:'linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)',
+                display:'flex', alignItems:'center', justifyContent:'center',
+                transition:'transform .2s' }}
+              onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
+              onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+            </a>
+          )}
 
-          {/* YouTube — clean simple version */}
+          {/* YouTube */}
           <a href="https://youtube.com/@astailoringtoolstextiles"
-            target="_blank" rel="noopener noreferrer"
+            target="_blank" rel="noopener noreferrer" title="YouTube"
             style={{ width:'36px', height:'36px', borderRadius:'10px',
               background:'#FF0000', display:'flex', alignItems:'center',
               justifyContent:'center', transition:'transform .2s' }}
@@ -89,35 +106,41 @@ export default function Footer() {
           </a>
 
           {/* WhatsApp */}
-          <a href="https://wa.me/917013942909"
-            target="_blank" rel="noopener noreferrer"
-            style={{ width:'36px', height:'36px', borderRadius:'10px',
-              background:'#25D366', display:'flex', alignItems:'center',
-              justifyContent:'center', transition:'transform .2s' }}
-            onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
-            onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a8.6 8.6 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.57-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-              <path d="M12.004 2a9.96 9.96 0 0 0-8.463 15.23L2 22l4.916-1.489A9.96 9.96 0 1 0 12.004 2zm0 18.214a8.228 8.228 0 0 1-4.354-1.244l-.31-.186-3.23.98.886-3.146-.203-.32a8.23 8.23 0 1 1 7.211 3.916z"/>
-            </svg>
-          </a>
+          {waNum && (
+            <a href={`https://wa.me/${waNum.replace(/\D/g, '')}`}
+              target="_blank" rel="noopener noreferrer" title="WhatsApp"
+              style={{ width:'36px', height:'36px', borderRadius:'10px',
+                background:'#25D366', display:'flex', alignItems:'center',
+                justifyContent:'center', transition:'transform .2s' }}
+              onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
+              onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a8.6 8.6 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.57-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12.004 2a9.96 9.96 0 0 0-8.463 15.23L2 22l4.916-1.489A9.96 9.96 0 1 0 12.004 2zm0 18.214a8.228 8.228 0 0 1-4.354-1.244l-.31-.186-3.23.98.886-3.146-.203-.32a8.23 8.23 0 1 1 7.211 3.916z"/>
+              </svg>
+            </a>
+          )}
         </div>
 
-        {/* Contact — plain white, no hover */}
-        <div style={{ display:'flex', gap:'20px', flexWrap:'wrap', justifyContent:'center' }}>
-          <a href="mailto:as.businezzz@gmail.com"
-            style={{ fontSize:'12px', color:'rgba(255,255,255,.85)', textDecoration:'none' }}>
-            as.businezzz@gmail.com
-          </a>
-          <span style={{ color:'rgba(255,255,255,.4)' }}>·</span>
-          <a href="tel:+917013942909"
-            style={{ fontSize:'12px', color:'rgba(255,255,255,.85)', textDecoration:'none' }}>
-            +91 70139 42909
-          </a>
+        {/* Contact details */}
+        <div style={{ display:'flex', gap:'16px', flexWrap:'wrap', justifyContent:'center', alignItems: 'center' }}>
+          {email && (
+            <a href={`mailto:${email}`}
+              style={{ fontSize:'12px', color:'rgba(255,255,255,.85)', textDecoration:'none' }}>
+              {email}
+            </a>
+          )}
+          {email && phone && <span style={{ color:'rgba(255,255,255,.4)' }}>·</span>}
+          {phone && (
+            <a href={`tel:+91${phone.replace(/\D/g, '')}`}
+              style={{ fontSize:'12px', color:'rgba(255,255,255,.85)', textDecoration:'none' }}>
+              +91 {phone}
+            </a>
+          )}
         </div>
 
         <p style={{ fontSize:'11px', color:'rgba(255,255,255,.4)' }}>
-          © 2026 AS HUB · All Rights Reserved · Made with ❤️ in India
+          {copyright}
         </p>
       </div>
     </footer>

@@ -341,9 +341,12 @@ function CollectionCard({ cls='', label, title, count, img, onClick, dark=false 
 
 /* ─── Main Home Component ─────────────────────────────────── */
 export default function Home() {
-  const { activeCategory, setActiveCategory, cmsData, addToCart } = useApp();
+  const { activeCategory, setActiveCategory, cmsData, cmsDraft, addToCart } = useApp();
   const [searchParams]          = useSearchParams();
   const searchQuery              = searchParams.get('q') || '';
+  const isPreviewMode            = searchParams.get('preview') === 'draft';
+  const activeCms                = isPreviewMode ? (cmsDraft || cmsData) : cmsData;
+
   const [sortBy,           setSortBy]           = useState('featured');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [products, setProducts]       = useState([]);
@@ -358,7 +361,7 @@ export default function Home() {
   const filterRef   = useRef(null);
 
   // Dynamic CMS resolution with static fallbacks
-  const cmsHero = cmsData?.hero?.[activeCategory] || CONTENT[activeCategory];
+  const cmsHero = activeCms?.hero?.[activeCategory] || CONTENT[activeCategory];
   const c = {
     ...CONTENT[activeCategory],
     title: cmsHero.title || CONTENT[activeCategory].title,
@@ -371,13 +374,13 @@ export default function Home() {
     badgeText: cmsHero.badgeText || 'New Collection 2026',
     btn1Text: cmsHero.btn1Text || 'Shop Now',
     btn2Text: cmsHero.btn2Text || 'Explore',
-    collections: cmsData?.collections?.[activeCategory] || CONTENT[activeCategory].collections,
+    collections: activeCms?.collections?.[activeCategory] || CONTENT[activeCategory].collections,
   };
 
   // SEO Update
   useEffect(() => {
-    if (cmsData?.seo?.metaTitle) document.title = cmsData.seo.metaTitle;
-  }, [cmsData]);
+    if (activeCms?.seo?.metaTitle) document.title = activeCms.seo.metaTitle;
+  }, [activeCms]);
 
   useEffect(() => { setSub('all'); }, [activeCategory]);
 
@@ -633,22 +636,16 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* ══ CATEGORY FILTER ══════════════════════════════════ */}
-      <div ref={filterRef} style={{background:'white',borderBottom:'1px solid #E2E8F0',
-        position:'sticky',top:'56px',zIndex:40,boxShadow:'0 2px 8px rgba(0,0,0,.04)'}}>
-        <CategoryFilter categories={c.subs} selected={sub} onSelect={setSub}/>
-      </div>
-
       {/* ══ FLASH DEALS (if any discounted products) ═════════ */}
       {flashDeals.length > 0 && (
-        <div style={{background:'linear-gradient(135deg,#1A1A2E,#0F3460)',padding:'32px 0'}}>
+        <div style={{background:'linear-gradient(135deg,#1A1A2E,#0F3460)',padding:'80px 0'}}>
           <div className="sh-container">
             <Reveal>
               <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
-                marginBottom:'20px',flexWrap:'wrap',gap:'12px'}}>
+                marginBottom:'24px',flexWrap:'wrap',gap:'12px'}}>
                 <div style={{display:'flex',alignItems:'center',gap:'14px'}}>
                   <div style={{background:'#EF4444',color:'white',fontSize:'11px',fontWeight:900,
-                    padding:'5px 12px',borderRadius:'8px',display:'flex',alignItems:'center',
+                    padding:'6px 14px',borderRadius:'8px',display:'flex',alignItems:'center',
                     gap:'5px',animation:'pulse 1.5s infinite'}}>
                     <Zap size={12} fill="white"/> FLASH DEALS
                   </div>
@@ -671,11 +668,11 @@ export default function Home() {
 
 
       {/* ══ FEATURED COLLECTIONS ════════════════════════════ */}
-      <div style={{padding:'56px 0',background:'#FAFAFA'}}>
+      <div className="collections-section" style={{padding:'48px 0 32px',background:'#FAFAFA'}}>
         <div className="sh-container">
           <Reveal>
-            <div style={{marginBottom:'28px'}}>
-              <p style={{fontSize:'11px',fontWeight:700,color:'#8E8E93',textTransform:'uppercase',letterSpacing:'2px',marginBottom:'6px'}}>
+            <div style={{marginBottom:'20px'}}>
+              <p style={{fontSize:'11px',fontWeight:700,color:'#8E8E93',textTransform:'uppercase',letterSpacing:'2px',marginBottom:'4px'}}>
                 {activeCategory==='tailoring'?'Browse by category':'Shop by Style'}
               </p>
               <h2 style={{fontSize:'clamp(22px,4vw,32px)',fontWeight:900,color:'#0A0A0A',letterSpacing:'-1px'}}>
@@ -709,10 +706,10 @@ export default function Home() {
 
       {/* ══ NEW ARRIVALS ════════════════════════════════════ */}
       {newArrivals.length > 0 && (
-        <div style={{padding:'48px 0',background:'#F8F9FA'}}>
+        <div className="new-arrivals-section" style={{padding:'48px 0 24px',background:'#F8F9FA'}}>
           <div className="sh-container">
             <Reveal>
-              <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'24px'}}>
+              <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'20px'}}>
                 <div style={{background:'#1A1A2E',color:'white',fontSize:'10px',fontWeight:900,
                   padding:'4px 10px',borderRadius:'6px',letterSpacing:'1px',
                   animation:'pulse 2s infinite'}}>NEW</div>
@@ -731,29 +728,24 @@ export default function Home() {
       )}
 
       {/* ══ ALL PRODUCTS ════════════════════════════════════ */}
-      <div ref={productsRef} className="sh-container" style={{padding:'56px 0 0'}}>
+      <div ref={productsRef} className="sh-container products-section-container" style={{padding:'48px 0 0'}}>
+        {/* Category Filter Bar */}
+        <div ref={filterRef} style={{
+          background:'rgba(255,255,255,0.92)', backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
+          border:'1px solid #E2E8F0', borderRadius:'16px', padding:'4px 8px', marginBottom:'16px',
+          position:'sticky', top:'60px', zIndex:40, boxShadow:'0 4px 20px rgba(0,0,0,0.04)'
+        }}>
+          <CategoryFilter categories={c.subs} selected={sub} onSelect={setSub}/>
+        </div>
+
         <Reveal>
-          <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',
-            marginBottom:'20px',flexWrap:'wrap',gap:'12px'}}>
-            <div>
-              <p style={{fontSize:'11px',fontWeight:700,textTransform:'uppercase',
-                letterSpacing:'1.5px',color:'#8E8E93',marginBottom:'6px'}}>
-                {activeCategory==='tailoring'?'Tailoring Collection':"Women's Fashion"}
-              </p>
-              <h2 style={{fontSize:'clamp(20px,3vw,28px)',fontWeight:900,color:'#0A0A0A',
-                letterSpacing:'-0.5px',lineHeight:1.1}}>
-                {searchQuery ? `Results for "${searchQuery}"`
-                  : sub==='all'
-                    ? (activeCategory==='tailoring'?'All Tailoring Tools':'All Fashion Items')
-                    : c.subs.find(s=>s.id===sub)?.label}
+          {searchQuery && (
+            <div style={{ marginBottom:'12px' }}>
+              <h2 style={{ fontSize:'20px', fontWeight:800, color:'#0A0A0A', margin:0 }}>
+                Results for "{searchQuery}"
               </h2>
             </div>
-            {!loading && (
-              <p style={{fontSize:'13px',color:'#8E8E93',fontWeight:600}}>
-                {products.length} item{products.length!==1?'s':''}
-              </p>
-            )}
-          </div>
+          )}
 
           {/* Interactive Glass Sort Controls */}
           {!loading && products.length > 0 && (
@@ -836,12 +828,12 @@ export default function Home() {
         )}
       </div>
 
-      {/* ══ BEST SELLERS ════════════════════════════════════ */}
+      {/* ══ BEST SELLERS / TOP PICKS ════════════════════════════════════ */}
       {bestSellers.length > 0 && !searchQuery && (
-        <div style={{padding:'56px 0',background:'white',marginTop:'56px'}}>
+        <div className="top-picks-section" style={{padding:'48px 0 24px',background:'white',marginTop:'48px'}}>
           <div className="sh-container">
             <Reveal>
-              <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'24px'}}>
+              <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'20px'}}>
                 <div style={{background:'linear-gradient(135deg,#F59E0B,#D97706)',color:'white',
                   fontSize:'10px',fontWeight:900,padding:'4px 10px',borderRadius:'6px',
                   display:'flex',alignItems:'center',gap:'4px'}}>
@@ -863,10 +855,10 @@ export default function Home() {
 
       {/* ══ RECENTLY VIEWED ═════════════════════════════════ */}
       {recentlyViewed.length > 0 && (
-        <div style={{padding:'48px 0',background:'#F8F9FA'}}>
+        <div style={{padding:'88px 0',background:'#F8F9FA'}}>
           <div className="sh-container">
             <Reveal>
-              <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'24px'}}>
+              <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'28px'}}>
                 <Clock size={18} color="#8E8E93"/>
                 <h2 style={{fontSize:'clamp(18px,3vw,24px)',fontWeight:900,color:'#0A0A0A',
                   letterSpacing:'-0.5px'}}>Recently Viewed</h2>
@@ -917,12 +909,12 @@ export default function Home() {
         .collections-grid {
           display: grid;
           grid-template-columns: repeat(12, 1fr);
-          grid-auto-rows: 200px;
-          gap: 12px;
+          grid-auto-rows: 150px;
+          gap: 10px;
         }
 
         /* Desktop layout */
-        .col-card { min-height: 180px; }
+        .col-card { min-height: 130px; }
         .cg-featured { grid-column: span 5; grid-row: span 2; }
         .cg-med      { grid-column: span 4; grid-row: span 1; }
         .cg-small    { grid-column: span 3; grid-row: span 1; }
@@ -930,7 +922,7 @@ export default function Home() {
 
         /* Tablet */
         @media (max-width: 900px) and (min-width: 561px) {
-          .collections-grid { grid-auto-rows: 170px; gap: 10px; }
+          .collections-grid { grid-auto-rows: 130px; gap: 8px; }
           .cg-featured { grid-column: span 6; grid-row: span 2; }
           .cg-med      { grid-column: span 6; grid-row: span 1; }
           .cg-small    { grid-column: span 4; grid-row: span 1; }
@@ -941,7 +933,7 @@ export default function Home() {
         @media (max-width: 560px) {
           .collections-grid {
             grid-template-columns: 1fr 1fr;
-            grid-auto-rows: 160px;
+            grid-auto-rows: 120px;
             gap: 8px;
           }
           .cg-featured { grid-column: 1 / -1; grid-row: span 1; }

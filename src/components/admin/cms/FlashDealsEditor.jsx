@@ -43,13 +43,13 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
           <p style={{ fontSize: '13px', color: '#A5B4FC', margin: 0 }}>Set campaign timer, pick promotional items, and adjust section layout</p>
         </div>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.1)', padding: '10px 18px', borderRadius: '12px', cursor: 'pointer' }}>
-          <span style={{ fontSize: '13px', fontWeight: 800 }}>Campaign Active</span>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.1)', padding: '10px 18px', borderRadius: '12px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}>
+          <span style={{ fontSize: '13px', fontWeight: 800, whiteSpace: 'nowrap' }}>Campaign Active</span>
           <input
             type="checkbox"
             checked={flash.enabled ?? true}
             onChange={e => updateFlash('enabled', e.target.checked)}
-            style={{ width: '18px', height: '18px', accentColor: '#10B981', cursor: 'pointer' }}
+            style={{ width: '18px', height: '18px', accentColor: '#10B981', cursor: 'pointer', flexShrink: 0 }}
           />
         </label>
       </div>
@@ -60,21 +60,11 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
           <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Clock size={16} color="#2563EB" /> Countdown Timer Settings
           </h4>
-          <button
-            onClick={resetTimer}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '5px',
-              padding: '6px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', background: '#F8FAFC',
-              fontSize: '11px', fontWeight: 700, cursor: 'pointer', color: '#334155'
-            }}
-          >
-            <RefreshCw size={12} /> Reset (+3 Days)
-          </button>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))', gap: '12px' }}>
           <div>
-            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Section Title</label>
+            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Section Title</label>
             <input
               type="text"
               value={flash.title || ''}
@@ -83,7 +73,7 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
             />
           </div>
           <div>
-            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Subtitle</label>
+            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Subtitle</label>
             <input
               type="text"
               value={flash.subtitle || ''}
@@ -92,11 +82,11 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
             />
           </div>
           <div>
-            <label style={{ fontSize: '11px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '4px' }}>Target End Date & Time</label>
+            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Target End Date & Time</label>
             <input
               type="datetime-local"
-              value={flash.endTime ? new Date(flash.endTime).toISOString().slice(0, 16) : ''}
-              onChange={e => updateFlash('endTime', new Date(e.target.value).toISOString())}
+              value={flash.targetEndTime || ''}
+              onChange={e => updateFlash('targetEndTime', e.target.value)}
               style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
             />
           </div>
@@ -118,14 +108,14 @@ export default function FlashDealsEditor({ flashDealsData = {}, products = [], o
             { key: 'showAddToCart', label: 'Show Add to Cart' },
             { key: 'sliderEnabled', label: 'Enable Horizontal Slider' },
           ].map(({ key, label }) => (
-            <label key={key} className="flash-checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '8px 10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+            <label key={key} className="flash-checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
               <input
                 type="checkbox"
                 checked={flash[key] ?? true}
                 onChange={e => updateFlash(key, e.target.checked)}
-                style={{ width: '15px', height: '15px', accentColor: '#2563EB' }}
+                style={{ width: '16px', height: '16px', minWidth: '16px', minHeight: '16px', flexShrink: 0, accentColor: '#2563EB' }}
               />
-              {label}
+              <span style={{ flex: '1 1 auto', minWidth: 0 }}>{label}</span>
             </label>
           ))}
         </div>

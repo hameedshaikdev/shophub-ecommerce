@@ -33,13 +33,13 @@ export default function NewArrivalsEditor({ newArrivalsData = {}, products = [],
           <p style={{ fontSize: '13px', color: '#64748B', margin: '4px 0 0 0' }}>Configure dynamic product feeds, display styles, and card features</p>
         </div>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#F8FAFC', border: '1px solid #CBD5E1', padding: '10px 18px', borderRadius: '12px', cursor: 'pointer' }}>
-          <span style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A' }}>Section Active</span>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#F8FAFC', border: '1px solid #CBD5E1', padding: '10px 18px', borderRadius: '12px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}>
+          <span style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', whiteSpace: 'nowrap' }}>Section Active</span>
           <input
             type="checkbox"
             checked={arrivals.enabled ?? true}
             onChange={e => update('enabled', e.target.checked)}
-            style={{ width: '18px', height: '18px', accentColor: '#2563EB', cursor: 'pointer' }}
+            style={{ width: '18px', height: '18px', accentColor: '#2563EB', cursor: 'pointer', flexShrink: 0 }}
           />
         </label>
       </div>
@@ -95,14 +95,14 @@ export default function NewArrivalsEditor({ newArrivalsData = {}, products = [],
             { key: 'showRatings', label: 'Show Star Ratings' },
             { key: 'showQuickView', label: 'Show Quick View Button' },
           ].map(({ key, label }) => (
-            <label key={key} className="arrivals-checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+            <label key={key} className="arrivals-checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', fontWeight: 600, color: '#334155', cursor: 'pointer', background: '#F8FAFC', padding: '10px 14px', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
               <input
                 type="checkbox"
                 checked={arrivals[key] ?? true}
                 onChange={e => update(key, e.target.checked)}
-                style={{ width: '16px', height: '16px', accentColor: '#2563EB' }}
+                style={{ width: '16px', height: '16px', minWidth: '16px', minHeight: '16px', flexShrink: 0, accentColor: '#2563EB' }}
               />
-              {label}
+              <span style={{ flex: '1 1 auto', minWidth: 0 }}>{label}</span>
             </label>
           ))}
         </div>

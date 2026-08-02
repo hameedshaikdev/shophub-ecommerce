@@ -32,13 +32,13 @@ export default function TopPicksEditor({ topPicksData = {}, products = [], onCha
           <p style={{ fontSize: '13px', color: '#64748B', margin: '4px 0 0 0' }}>Highlight best-sellers and curated items for customers</p>
         </div>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#F8FAFC', border: '1px solid #CBD5E1', padding: '10px 18px', borderRadius: '12px', cursor: 'pointer' }}>
-          <span style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A' }}>Section Active</span>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#F8FAFC', border: '1px solid #CBD5E1', padding: '10px 18px', borderRadius: '12px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}>
+          <span style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', whiteSpace: 'nowrap' }}>Section Active</span>
           <input
             type="checkbox"
             checked={picks.enabled ?? true}
             onChange={e => update('enabled', e.target.checked)}
-            style={{ width: '18px', height: '18px', accentColor: '#F59E0B', cursor: 'pointer' }}
+            style={{ width: '18px', height: '18px', accentColor: '#F59E0B', cursor: 'pointer', flexShrink: 0 }}
           />
         </label>
       </div>

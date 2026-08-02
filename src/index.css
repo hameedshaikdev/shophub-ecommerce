@@ -1286,7 +1286,16 @@ html, body, #root {
 
 /* CMS Mobile & Tablet Responsive Layout */
 @media (max-width: 768px) {
-  main {
+  main#main-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+  main.admin-main,
+  .admin-main-container {
     padding: 12px 10px 90px 10px !important;
     overflow-x: hidden !important;
     max-width: 100% !important;
@@ -1575,7 +1584,7 @@ img, video, svg {
 @media (max-width: 560px) {
   .collections-grid {
     grid-template-columns: 1fr 1fr !important;
-    grid-auto-rows: 150px !important;
+    grid-auto-rows: 120px !important;
     gap: 8px !important;
     width: 100% !important;
     overflow: hidden !important;
@@ -1584,12 +1593,12 @@ img, video, svg {
   .cg-med      { grid-column: span 1 !important; grid-row: span 1 !important; }
   .cg-small    { grid-column: span 1 !important; grid-row: span 1 !important; }
   .cg-wide     { grid-column: 1 / -1 !important; grid-row: span 1 !important; }
-  .col-card    { min-height: 140px !important; }
+  .col-card    { min-height: 110px !important; }
 }
 @media (max-width: 340px) {
   .collections-grid {
     grid-template-columns: 1fr !important;
-    grid-auto-rows: 140px !important;
+    grid-auto-rows: 110px !important;
   }
   .cg-featured, .cg-med, .cg-small, .cg-wide {
     grid-column: 1 / -1 !important;
@@ -1896,8 +1905,8 @@ img, video, svg {
     width: auto !important;
     white-space: nowrap !important;
   }
-  /* All CMS inputs full width */
-  .cms-main-grid input,
+  /* All CMS text/select inputs full width (excluding checkboxes/radios) */
+  .cms-main-grid input:not([type="checkbox"]):not([type="radio"]),
   .cms-main-grid textarea,
   .cms-main-grid select {
     width: 100% !important;
@@ -1905,6 +1914,20 @@ img, video, svg {
     box-sizing: border-box !important;
     font-size: 16px !important;
   }
+
+  .cms-main-grid input[type="checkbox"],
+  .cms-main-grid input[type="radio"] {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+  }
+
   /* CMS grid children: single column */
   .cms-main-grid > div > div[style*="grid"] {
     grid-template-columns: 1fr !important;
@@ -2145,6 +2168,37 @@ img, video, svg {
   overflow-x: hidden;
 }
 
+/* ─── CMS Sidebar Nav — Desktop base styles ─── */
+.cms-sidebar-nav {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: fit-content;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.cms-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.cms-sidebar-label {
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
 @media (max-width: 767px) {
   .cms-main-grid {
     grid-template-columns: 1fr !important;
@@ -2152,38 +2206,55 @@ img, video, svg {
     gap: 12px !important;
   }
   
-  /* Sidebar becomes horizontal scrollable tabs */
+  /* Sidebar becomes horizontal scrollable tab row on mobile */
   .cms-sidebar-nav {
-    padding: 8px 12px !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    padding: 8px 10px !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
     height: auto !important;
+    gap: 6px !important;
+    align-items: center !important;
   }
-  
+
   .cms-sidebar-nav::-webkit-scrollbar {
     display: none !important;
   }
-  
+
+  /* Hide "SECTIONS LIST" label on mobile */
+  .cms-sidebar-label {
+    display: none !important;
+  }
+
   .admin-kbd-hide {
     display: none !important;
   }
-  
+
   .cms-sidebar-inner {
     flex-direction: row !important;
     gap: 6px !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    width: auto !important;
+    flex: 1 !important;
   }
-  
-  .cms-sidebar-inner button {
+
+  .cms-sidebar-inner::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .cms-section-btn {
     white-space: nowrap !important;
-    min-width: auto !important;
     flex-shrink: 0 !important;
+    width: auto !important;
     padding: 8px 14px !important;
     font-size: 11px !important;
+    border-radius: 20px !important;
   }
 }
 
@@ -2407,11 +2478,52 @@ img, video, svg {
   }
 }
 
-/* CMS Checkbox Grids - Mobile Single Column */
+/* CMS Checkbox Grids - Mobile Single Column & Proper Flex Alignment */
 .cms-checkbox-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 10px;
+}
+
+.cms-checkbox-grid label,
+.flash-checkbox-label,
+.arrivals-checkbox-label {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+}
+
+.cms-checkbox-grid label input[type="checkbox"],
+.flash-checkbox-label input[type="checkbox"],
+.arrivals-checkbox-label input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+.cms-checkbox-grid label span,
+.flash-checkbox-label span,
+.arrivals-checkbox-label span {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
 }
 
 @media (max-width: 640px) {
@@ -2419,58 +2531,117 @@ img, video, svg {
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
-    grid-template-columns: none !important;
+    width: 100% !important;
   }
   
-  .cms-checkbox-grid label {
+  .cms-checkbox-grid label,
+  .flash-checkbox-label,
+  .arrivals-checkbox-label {
     width: 100% !important;
-    box-sizing: border-box !important;
+  }
+
+  /* Single horizontal scrollable row for options & sub-tabs */
+  .cms-options-row,
+  .cms-horizontal-options {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding-bottom: 2px !important;
+  }
+
+  .cms-options-row::-webkit-scrollbar,
+  .cms-horizontal-options::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .cms-options-row button,
+  .cms-horizontal-options button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
   }
 }
 
-/* Force checkbox grids to single column on mobile - more specific */
-@media (max-width: 640px) {
-  /* Target all checkbox grid containers in CMS panels */
-  div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px, 1fr))"] {
-    display: block !important;
+/* ─── CMS Section Buttons — Tab Visibility Fix ─── */
+
+/* Base tab button style */
+.cms-section-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border: none !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 10px 14px !important;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  color: #64748B !important;
+  background: #F8FAFC !important;
+  letter-spacing: 0.1px !important;
+  width: 100%;
+}
+
+/* Hover state */
+.cms-section-btn:hover {
+  background: #E2E8F0 !important;
+  color: #334155 !important;
+}
+
+/* Active / selected tab */
+.cms-section-btn.active-tab {
+  background: #0F172A !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25) !important;
+}
+
+/* On mobile: tabs are horizontal pill row - slightly smaller, rounder */
+@media (max-width: 767px) {
+  .cms-section-btn {
+    padding: 8px 14px !important;
+    font-size: 11px !important;
+    border-radius: 8px !important;
+    width: auto !important;
   }
-  
-  div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px, 1fr))"] > label {
-    display: flex !important;
-    width: 100% !important;
-    margin-bottom: 8px !important;
+
+  /* Active tab on mobile gets a strong visible style with blue accent */
+  .cms-section-btn.active-tab {
+    background: linear-gradient(135deg, #1E40AF, #2563EB) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
   }
-  
-  /* Flash Deals Display Controls grid */
-  div[style*="Display Controls & Badges"] ~ div[style*="grid"] {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-  }
-  
-  div[style*="Display Controls & Badges"] ~ div[style*="grid"] label {
-    width: 100% !important;
-  }
-  
-  /* New Arrivals checkbox grid */
-  div[style*="New Arrivals Section Manager"] ~ div div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px"] {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-  }
-  
-  div[style*="New Arrivals Section Manager"] ~ div div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px"] label {
-    width: 100% !important;
-  }
-  
-  /* Top Picks checkbox grid */
-  div[style*="Top Picks & Featured"] ~ div div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px"] {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-  }
-  
-  div[style*="Top Picks & Featured"] ~ div div[style*="gridTemplateColumns: repeat(auto-fit, minmax(180px"] label {
-    width: 100% !important;
+
+  /* Sidebar nav fade indicator removed on mobile for clarity */
+  .cms-sidebar-nav {
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
   }
 }
+
+/* ─── Optimized Spacing for New Arrivals & Top Picks (Mobile & Tablet) ─── */
+@media (max-width: 768px) {
+  .new-arrivals-section {
+    padding: 32px 0 16px !important;
+  }
+  .top-picks-section {
+    padding: 32px 0 16px !important;
+    margin-top: 24px !important;
+  }
+  .new-arrivals-section .carousel-outer > div[style*="overflow"],
+  .top-picks-section .carousel-outer > div[style*="overflow"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-bottom: 6px !important;
+  }
+}
+

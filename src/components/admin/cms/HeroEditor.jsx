@@ -65,8 +65,8 @@ export default function HeroEditor({ heroData = {}, onChange }) {
       {/* ══ TAB BAR ══
           Horizontal scrollable tabs - always in one line
       */}
-      <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '12px 14px', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
-        <div style={{ display: 'flex', gap: '8px', minWidth: 'max-content' }}>
+      <div className="cms-horizontal-options" style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '12px 14px', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+        <div style={{ display: 'flex', gap: '8px', minWidth: 'max-content', flexWrap: 'nowrap' }}>
           <button
             onClick={() => setActiveTab('tailoring')}
             style={{
