@@ -26,7 +26,7 @@ export default function Footer() {
 
         {/* Logo + name */}
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-          <img src="/logo.png" alt="AS HUB"
+          <img src="/logo.png" alt="Asmalabel"
             style={{ width:'48px', height:'48px', borderRadius:'50%',
               objectFit:'cover', objectPosition:'center',
               border:'2.5px solid #1A1A2E', flexShrink:0 }}
@@ -42,7 +42,7 @@ export default function Footer() {
           </div>
           <div style={{ textAlign:'left' }}>
             <p style={{ fontSize:'20px', fontWeight:900, color:'white',
-              letterSpacing:'-.3px', lineHeight:1 }}>AS HUB</p>
+              letterSpacing:'-.3px', lineHeight:1 }}>Asmalabel</p>
             <p style={{ fontSize:'11px', color:'rgba(255,255,255,.85)', marginTop:'3px' }}>
               Tailoring &amp; Fashion
             </p>

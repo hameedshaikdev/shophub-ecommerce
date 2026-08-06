@@ -2718,3 +2718,54 @@ img, video, svg {
 }
 
 
+
+/* ── Social Media Section responsive grid ── */
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* Single column on small mobile */
+@media (max-width: 640px) {
+  .social-grid {
+    grid-template-columns: 1fr;
+    max-width: 440px;
+    gap: 12px;
+  }
+}
+
+/* On small phones optimize card layout */
+@media (max-width: 480px) {
+  .social-card {
+    padding: 14px !important;
+    gap: 10px !important;
+  }
+  
+  .social-card > div:first-of-type {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  
+  .social-card > div:first-of-type svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  
+  .social-card-inner .social-label {
+    font-size: 11px !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .social-card-inner .social-count {
+    font-size: 16px !important;
+  }
+  
+  .social-card-icon {
+    width: 36px !important;
+    height: 36px !important;
+  }
+}
+

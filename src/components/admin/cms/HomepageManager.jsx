@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   Sparkles, Zap, Grid, Star, Image as ImageIcon,
   Globe, FileText, Save, Send, RotateCcw, Eye,
-  CheckCircle, ArrowLeft, Undo, Redo, Layers
+  CheckCircle, ArrowLeft, Undo, Redo, Layers, Users
 } from 'lucide-react';
 import { useApp } from '../../../context/AppContext';
 import HeroEditor from './HeroEditor';
@@ -15,6 +15,7 @@ import FooterEditor from './FooterEditor';
 import SeoEditor from './SeoEditor';
 import MediaLibrary from './MediaLibrary';
 import CmsLivePreviewModal from './CmsLivePreviewModal';
+import SocialMediaManager from '../SocialMediaManager';
 import { toast } from '../AdminUtils';
 
 export default function HomepageManager({ products = [] }) {
@@ -36,6 +37,7 @@ export default function HomepageManager({ products = [] }) {
     { key: 'banners', label: 'Promo Banners', icon: Layers },
     { key: 'footer', label: 'Footer Content', icon: FileText },
     { key: 'seo', label: 'SEO & Social', icon: Globe },
+    { key: 'social', label: 'Social Media Stats', icon: Users },
     { key: 'media', label: 'Media Library', icon: ImageIcon },
   ];
 
@@ -220,6 +222,10 @@ export default function HomepageManager({ products = [] }) {
               seoData={cmsDraft.seo}
               onChange={val => updateCmsDraft({ seo: val })}
             />
+          )}
+
+          {activeSection === 'social' && (
+            <SocialMediaManager />
           )}
 
           {activeSection === 'media' && (

@@ -137,11 +137,11 @@ export const DEFAULT_CMS_DATA = {
   ],
 
   footer: {
-    aboutText: 'AS HUB — Premium Tailoring Tools & Women Fashion Store in Nellore, Andhra Pradesh.',
+    aboutText: 'Asmalabel — Premium Tailoring Tools & Women Fashion Store in Nellore, Andhra Pradesh.',
     phone: '7013942909',
     email: 'as.businezzz@gmail.com',
     address: 'D.No. 25-2-1709, Pragathi Nagar, Podalkur Road, Nellore - 524004',
-    copyright: '© 2026 AS HUB. All rights reserved. Crafted for excellence.',
+    copyright: '© 2026 Asmalabel. All rights reserved. Crafted for excellence.',
     socials: {
       whatsapp: '917013942909',
       instagram: '',
@@ -150,12 +150,12 @@ export const DEFAULT_CMS_DATA = {
   },
 
   seo: {
-    metaTitle: 'AS HUB — Premium Tailoring Tools & Women Fashion',
-    metaDescription: 'Shop professional tailoring tools, sewing machines, scissors, threads & premium women fashion online at AS HUB.',
-    ogTitle: 'AS HUB — Quality Tailoring Equipment & Fashion',
+    metaTitle: 'Asmalabel — Premium Tailoring Tools & Women Fashion',
+    metaDescription: 'Shop professional tailoring tools, sewing machines, scissors, threads & premium women fashion online at Asmalabel.',
+    ogTitle: 'Asmalabel — Quality Tailoring Equipment & Fashion',
     ogDescription: 'Discover top quality sewing machines, tailoring accessories & designer women wear.',
     ogImage: 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=1200',
-    keywords: 'tailoring tools, sewing machine, scissors, fashion, dresses, AS HUB, Nellore',
+    keywords: 'tailoring tools, sewing machine, scissors, fashion, dresses, Asmalabel, Nellore',
     canonicalUrl: 'https://ashub.com',
   },
 

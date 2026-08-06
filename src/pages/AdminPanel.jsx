@@ -20,8 +20,13 @@ import {
   toast, confirm,
 } from '../components/admin/AdminUtils';
 import HomepageManager from '../components/admin/cms/HomepageManager';
+import SocialMediaManager from '../components/admin/SocialMediaManager';
 
 const ADMIN_EMAIL = 'as.businezzz@gmail.com';
+
+const SHOP = {
+  shopName: 'Asmalabel',
+};
 
 const NAV = [
   { key:'dashboard', label:'Dashboard', icon:LayoutDashboard },
@@ -62,13 +67,13 @@ function printShippingLabel(order) {
   @media print{.np{display:none!important}}</style></head><body>
   <div class="wrap">
   <div class="np" style="text-align:right;margin-bottom:14px"><button onclick="window.print()" style="padding:10px 24px;background:#000;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">🖨 Print Label</button></div>
-  <div class="header"><div><div class="brand">AS HUB</div><div style="font-size:11px;color:#666;margin-top:2px">Ph: 7013942909 | as.businezzz@gmail.com</div></div>
+  <div class="header"><div><div class="brand">Asmalabel</div><div style="font-size:11px;color:#666;margin-top:2px">Ph: 7013942909 | as.businezzz@gmail.com</div></div>
   <div class="oid">#${order.id.slice(0,8).toUpperCase()}<div style="font-size:11px;color:#666;font-weight:400;text-align:right;margin-top:3px">${new Date(order.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div></div></div>
   <div class="box"><div class="lbl">📦 Deliver To</div><div class="name">${addr.fullName||'N/A'}</div>
   <div class="ph">📞 +91 ${addr.phone||'N/A'}</div>
   <div class="addr">${addr.houseNo||''}, ${addr.streetArea||''}<br>Near ${addr.landmark||'N/A'}<br>${addr.city||''}, ${addr.state||''}</div>
   <div class="pin">PIN: ${addr.pincode||'N/A'}</div>${addr.email?`<div style="font-size:12px;color:#555;margin-top:6px">✉ ${addr.email}</div>`:''}</div>
-  <div class="box from"><div class="lbl">From</div><div class="fn">Shaik Asmath (AS HUB)</div>
+  <div class="box from"><div class="lbl">From</div><div class="fn">Shaik Asmath (Asmalabel)</div>
   <div class="fd">D.No. 25-2-1709,<br>Pragathi Nagar, Podalkur Road,<br>Nellore, Andhra Pradesh - 524004<br>Ph: 7013942909</div></div>
   <div class="box"><div class="lbl">Items</div><table><thead><tr><th>Product</th><th style="text-align:right">Qty</th><th style="text-align:right">Amount</th></tr></thead>
   <tbody>${(order.items||[]).map(i=>`<tr><td>${i.name}</td><td style="text-align:right">${i.quantity}</td><td style="text-align:right">₹${(i.price*i.quantity).toFixed(0)}</td></tr>`).join('')}
@@ -576,7 +581,7 @@ function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming,
 
           {/* Actions row */}
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
-            <button onClick={() => waMsg(`Hello ${addr.fullName}, your order #${order.id.slice(0,8).toUpperCase()} status: ${order.status}. Thank you for shopping with AS HUB!`)}
+            <button onClick={() => waMsg(`Hello ${addr.fullName}, your order #${order.id.slice(0,8).toUpperCase()} status: ${order.status}. Thank you for shopping with Asmalabel!`)}
               style={{ padding:'9px', borderRadius:'10px', background:'#ECFDF5', color:'#059669', fontWeight:800, fontSize:'12px', border:'1px solid #A7F3D0', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
               <MessageCircle size={14}/> WhatsApp
             </button>
@@ -763,7 +768,7 @@ export default function AdminPanel() {
     try {
       await supabase.from('orders').update({ payment_status:'verified', status:'confirmed', verified_by:user.email, verified_at:new Date().toISOString() }).eq('id',order.id);
       const a = order.shipping_address||{};
-      window.open(`https://wa.me/91${a.phone}?text=${encodeURIComponent(`Payment Verified — AS HUB\n\nDear ${a.fullName},\n\nYour payment of ₹${order.total_amount?.toFixed(0)} for Order #${order.id.slice(0,8).toUpperCase()} has been verified!\n\nThank you for shopping with AS HUB!`)}`, '_blank');
+      window.open(`https://wa.me/91${a.phone}?text=${encodeURIComponent(`*PAYMENT VERIFIED - ${SHOP.shopName}*\n\nDear ${a.fullName},\n\nYour payment of Rs.${order.total_amount?.toFixed(0)} for Order #${order.id.slice(0,8).toUpperCase()} has been successfully verified!\n\n=========================================\nORDER SUMMARY:\n=========================================\nOrder ID: #${order.id.slice(0,8).toUpperCase()}\nAmount Paid: Rs.${order.total_amount?.toFixed(0)}\nPayment Method: UPI\nStatus: CONFIRMED\n\n=========================================\nNEXT STEPS:\n=========================================\n* Your order is being prepared\n* Estimated delivery: 3-7 business days\n* You will receive tracking details soon\n\nThank you for shopping with ${SHOP.shopName}!\n\nFor any queries, reply to this message or call us at +91 7013942909.\n\nHappy Shopping!`)}`, '_blank');
       toast('Payment confirmed!','success');
       fetchOrders(); fetchCounts();
     } catch(err) { toast('Error: '+err.message,'error'); }
@@ -774,7 +779,7 @@ export default function AdminPanel() {
     try {
       await supabase.from('orders').update({ payment_status:'rejected', status:'payment_rejected', rejection_reason:reason||'Payment not verified' }).eq('id',order.id);
       const a = order.shipping_address||{};
-      window.open(`https://wa.me/91${a.phone}?text=${encodeURIComponent(`Payment Failed — AS HUB\n\nDear ${a.fullName},\n\nWe could not verify your payment for Order #${order.id.slice(0,8).toUpperCase()}.\n\nReason: ${reason||'Payment not received'}\n\nPlease contact us or retry.`)}`, '_blank');
+      window.open(`https://wa.me/91${a.phone}?text=${encodeURIComponent(`*PAYMENT FAILED - ${SHOP.shopName}*\n\nDear ${a.fullName},\n\nWe could not verify your payment for Order #${order.id.slice(0,8).toUpperCase()}.\n\n=========================================\nREASON:\n=========================================\n${reason||'Payment not received'}\n\n=========================================\nWHAT TO DO NEXT:\n=========================================\n* Please check your UPI app for transaction status\n* If amount was deducted, send us the screenshot\n* Or you can retry the payment\n\nContact us for immediate assistance:\nWhatsApp: +91 7013942909\nEmail: as.businezzz@gmail.com\n\nWe're here to help!`)}`, '_blank');
       toast('Order rejected','warning');
       fetchOrders(); fetchCounts();
     } catch(err) { toast('Error: '+err.message,'error'); }
@@ -1293,6 +1298,7 @@ buildPages(4);
               {[
                 { key:'orders',    label:'Orders',    icon:ShoppingBag },
                 { key:'products',  label:'Products',  icon:Package },
+                { key:'social',    label:'Social',    icon:Users },
                 { key:'cms',       label:'CMS',       icon:Sparkles },
                 { key:'more',      label:'More',      icon:Settings },
               ].map(({ key, label, icon:Icon }) => (
@@ -1678,7 +1684,18 @@ buildPages(4);
                   </div>
                   <div style={{ display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap' }}>
                     {/* Reset Button */}
-                    <button onClick={() => { setDateFilter('all'); setCatFilter('all'); toast('Analytics filters reset!', 'info'); }}
+                    <button onClick={async () => { 
+                      const ok = await confirm({ 
+                        title:'Reset Analytics', 
+                        message:'This will clear all analytics filters (date range and category). Continue?', 
+                        confirm:'Reset Filters',
+                        type:'warning'
+                      }); 
+                      if (!ok) return;
+                      setDateFilter('all'); 
+                      setCatFilter('all'); 
+                      toast('Analytics filters reset to default!', 'success'); 
+                    }}
                       title="Reset analytics filters"
                       style={{ display:'flex', alignItems:'center', gap:'4px', padding:'6px 10px', borderRadius:'8px', background:'#F1F5F9', border:'1px solid #CBD5E1', color:'#334155', fontSize:'11px', fontWeight:800, cursor:'pointer' }}>
                       <RotateCcw size={12} /> Reset
@@ -1750,11 +1767,38 @@ buildPages(4);
 
               {/* ── STORE INFO ── */}
               <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', overflow:'hidden' }}>
-                <div style={{ padding:'12px 14px', borderBottom:'1px solid #F1F5F9' }}>
+                <div style={{ padding:'12px 14px', borderBottom:'1px solid #F1F5F9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                   <p style={{ fontSize:'13px', fontWeight:900, color:'#111827', margin:0 }}>⚙️ Store Info</p>
+                  <button
+                    onClick={async () => {
+                      const ok = await confirm({
+                        title: 'Reset Store Info',
+                        message: 'This will clear all selected data placeholders in the Store Info section. Continue?',
+                        confirm: 'Reset',
+                        type: 'warning'
+                      });
+                      if (!ok) return;
+                      toast('Store Info display reset!', 'info');
+                    }}
+                    title="Reset display data"
+                    style={{
+                      padding: '4px 10px',
+                      fontSize: '11px',
+                      fontWeight: 800,
+                      background: '#FEF2F2',
+                      color: '#EF4444',
+                      border: '1px solid #FECACA',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}>
+                    <RotateCcw size={11} /> Reset
+                  </button>
                 </div>
                 <div style={{ padding:'0 14px' }}>
-                  {[{l:'Store Name',v:'AS HUB'},{l:'Owner',v:'Shaik Asmath'},{l:'Email',v:'as.businezzz@gmail.com'},{l:'Phone',v:'+91 70139 42909'},{l:'UPI VPA',v:'7995747250@ptyes'},{l:'WhatsApp',v:'+91 70139 42909'}].map(({l,v})=>(
+                  {[{l:'Store Name',v:'Asmalabel'},{l:'Owner',v:'Shaik Asmath'},{l:'Email',v:'as.businezzz@gmail.com'},{l:'Phone',v:'+91 70139 42909'},{l:'UPI VPA',v:'7995747250@ptyes'},{l:'WhatsApp',v:'+91 70139 42909'}].map(({l,v})=>(
                     <div key={l} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #F8FAFC', gap:'8px' }}>
                       <span style={{ fontSize:'11px', fontWeight:600, color:'#6B7280' }}>{l}</span>
                       <span style={{ fontSize:'11px', fontWeight:800, color:'#111827', textAlign:'right', wordBreak:'break-all' }}>{v}</span>
@@ -1781,6 +1825,13 @@ buildPages(4);
                 </button>
               </div>
 
+            </div>
+          )}
+
+          {/* ── SOCIAL MEDIA TAB ── */}
+          {page==='social' && (
+            <div className="page-enter">
+              <SocialMediaManager />
             </div>
           )}
 

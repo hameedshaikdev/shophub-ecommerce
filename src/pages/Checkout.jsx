@@ -12,7 +12,7 @@ const SHOP = {
   upiId:          '7995747250@ptyes',
   upiName:        'Shaik Asmath',
   whatsappNumber: '917013942909',
-  shopName:       'AS HUB',
+  shopName:       'Asmalabel',
 };
 
 /* ─── Validators ────────────────────────────────────────────── */
@@ -214,35 +214,35 @@ export default function Checkout() {
 
       const addr  = order.shipping_address;
       const items = order.items
-        .map(i => `  ✦ ${i.name} ×${i.quantity}  →  ₹${(i.price * i.quantity).toFixed(0)}`)
+        .map(i => `  * ${i.name} x${i.quantity}  -  Rs.${(i.price * i.quantity).toFixed(0)}`)
         .join('%0A');
 
       const msg =
-        `🛍️ *PAYMENT SUBMITTED — ${SHOP.shopName}*%0A` +
-        `━━━━━━━━━━━━━━━━━━━━%0A` +
-        `🔖 *Order ID :* %23${order.id.slice(0,8).toUpperCase()}%0A` +
-        `💰 *Amount   :* ₹${order.total_amount.toFixed(0)}%0A` +
-        `🏧 *UPI ID   :* ${SHOP.upiId}%0A` +
-        (utr ? `🔢 *UTR No   :* ${utr}%0A` : '') +
-        `━━━━━━━━━━━━━━━━━━━━%0A` +
-        `👤 *CUSTOMER*%0A` +
-        `• Name  : ${addr.fullName}%0A` +
-        `• Phone : +91 ${addr.phone}%0A` +
-        `• Email : ${addr.email}%0A` +
-        `━━━━━━━━━━━━━━━━━━━━%0A` +
-        `📦 *ITEMS ORDERED*%0A` +
+        `*PAYMENT SUBMITTED - ${SHOP.shopName}*%0A` +
+        `=========================================%0A` +
+        `Order ID : %23${order.id.slice(0,8).toUpperCase()}%0A` +
+        `Amount   : Rs.${order.total_amount.toFixed(0)}%0A` +
+        `UPI ID   : ${SHOP.upiId}%0A` +
+        (utr ? `UTR No   : ${utr}%0A` : '') +
+        `=========================================%0A` +
+        `*CUSTOMER*%0A` +
+        `Name  : ${addr.fullName}%0A` +
+        `Phone : +91 ${addr.phone}%0A` +
+        `Email : ${addr.email}%0A` +
+        `=========================================%0A` +
+        `*ITEMS ORDERED*%0A` +
         `${items}%0A` +
-        `━━━━━━━━━━━━━━━━━━━━%0A` +
-        `📍 *DELIVERY ADDRESS*%0A` +
-        `• Flat/House : ${addr.houseNo}%0A` +
-        `• Street/Area: ${addr.streetArea}%0A` +
-        `• Landmark   : Near ${addr.landmark}%0A` +
-        `• City       : ${addr.city}%0A` +
-        `• State      : ${addr.state}%0A` +
-        `• Pincode    : ${addr.pincode}%0A` +
-        `━━━━━━━━━━━━━━━━━━━━%0A` +
-        `⚠️ *Please verify payment and confirm order.*%0A` +
-        `✅ Payment done via UPI — Please ship!`;
+        `=========================================%0A` +
+        `*DELIVERY ADDRESS*%0A` +
+        `Flat/House : ${addr.houseNo}%0A` +
+        `Street/Area: ${addr.streetArea}%0A` +
+        `Landmark   : Near ${addr.landmark}%0A` +
+        `City       : ${addr.city}%0A` +
+        `State      : ${addr.state}%0A` +
+        `Pincode    : ${addr.pincode}%0A` +
+        `=========================================%0A` +
+        `*Please verify payment and confirm order.*%0A` +
+        `Payment done via UPI - Please ship!`;
 
       clearCart();
       window.open(`https://wa.me/${SHOP.whatsappNumber}?text=${msg}`, '_blank');
@@ -584,7 +584,7 @@ export default function Checkout() {
             </button>
             <p style={{ textAlign:'center', fontSize:'12px', color:'var(--text-3)',
               marginTop:'-8px' }}>
-              This notifies AS HUB on WhatsApp for payment verification
+              This notifies Asmalabel on WhatsApp for payment verification
             </p>
 
             {/* Mini order summary */}

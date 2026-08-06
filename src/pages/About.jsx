@@ -1,10 +1,19 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import {
   BadgeCheck, Truck, ShieldCheck, MessageCircle, Star, Package,
   Mail, Phone, Clock, Scissors, Sparkles, Target, Heart, Award,
   Users, ChevronDown, Zap, RefreshCcw,
 } from 'lucide-react';
+import { supabase } from '../config/supabase';
+
+/* ── Fallback counts shown while loading or if DB not yet set up ── */
+const FALLBACK = {
+  instagram_tailoring: { followers: 0, handle: '@as_tailoring_tools_textiles', description: 'Professional sewing machines, tailoring tools, daily tips & tutorials for craftsmen', url: 'https://www.instagram.com/as_tailoring_tools_textiles' },
+  instagram_fashion:   { followers: 0, handle: '@asma_label.in',              description: "Women's fashion, ethnic wear collections, trending outfits & style inspiration",      url: 'https://www.instagram.com/asma_label.in' },
+  youtube:             { followers: 0, handle: '@astailoringtoolstextiles',    description: 'Sewing tutorials, machine reviews, tailoring tips & DIY fashion projects',            url: 'https://youtube.com/@astailoringtoolstextiles' },
+  facebook:            { followers: 0, handle: 'Asmalabel',                   description: 'Latest products, customer reviews, special offers & business updates',                url: 'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr' },
+};
 
 const fu = { hidden:{opacity:0,y:32},  visible:{opacity:1,y:0, transition:{duration:.6,ease:[.22,1,.36,1]}} };
 const fl = { hidden:{opacity:0,x:-32}, visible:{opacity:1,x:0, transition:{duration:.6,ease:[.22,1,.36,1]}} };
@@ -104,7 +113,51 @@ function RCard({ name, initials, bg, rating, text, product }) {
   );
 }
 
+/* ── Format follower count nicely ─────────────────────────── */
+// Accepts raw numbers: 20000 → "20K+", 1500 → "1.5K+", 1000000 → "1M+"
+function fmtCount(n) {
+  const num = Number(n);
+  if (!num || num === 0) return '—';
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, '')}M+`;
+  if (num >= 1_000)     return `${(num / 1_000).toFixed(num >= 10_000 ? 0 : 1).replace(/\.0$/, '')}K+`;
+  return `${num}+`;
+}
+
 export default function About() {
+  const [socialStats, setSocialStats] = useState(FALLBACK);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSocialStats() {
+      try {
+        const { data, error } = await supabase
+          .from('social_media_stats')
+          .select('*');
+        if (error) throw error;
+        if (data && data.length > 0) {
+          const merged = { ...FALLBACK };
+          data.forEach(item => {
+            if (merged[item.platform]) {
+              merged[item.platform] = {
+                followers:   item.followers   ?? merged[item.platform].followers,
+                handle:      item.handle      || merged[item.platform].handle,
+                description: item.description || merged[item.platform].description,
+                url:         item.platform_url || merged[item.platform].url,
+              };
+            }
+          });
+          setSocialStats(merged);
+        }
+      } catch (err) {
+        // silently fall back to FALLBACK values already set in state
+        console.error('Social stats fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSocialStats();
+  }, []);
+
   const FEATURES = [
     { icon:BadgeCheck,    title:'Genuine Products',    desc:'Every product verified before listing.',         ic:'#16A34A', ib:'#F0FDF4' },
     { icon:Truck,         title:'Fast Delivery',       desc:'Pan India. Dispatched within 24 hours.',        ic:'#2563EB', ib:'#EFF6FF' },
@@ -164,7 +217,7 @@ export default function About() {
             <motion.h1 variants={fu}
               style={{ fontSize:'clamp(28px,5vw,56px)', fontWeight:900, color:'white',
                 letterSpacing:'-1.5px', lineHeight:1.1, marginBottom:'12px', maxWidth:'700px' }}>
-              About <span style={{ color:'#C084FC' }}>AS HUB</span>
+              About <span style={{ color:'#C084FC' }}>Asmalabel</span>
             </motion.h1>
             <motion.p variants={fu}
               style={{ fontSize:'clamp(14px,1.8vw,17px)', color:'rgba(255,255,255,.65)',
@@ -196,7 +249,162 @@ export default function About() {
         </div>
       </div>
 
-      {/* TRUST STRIP (Horizontal on mobile) */}
+      {/* CONNECT WITH US - Social Media Section */}
+      <div style={{ padding:'48px 16px', background:'white' }}>
+        <div style={CW}>
+          <R><div style={{ marginBottom:'32px', textAlign:'center', maxWidth:'600px', margin:'0 auto 32px' }}>
+            <Label c='#7C3AED'>Connect With Us</Label>
+            <h2 style={{ fontSize:'clamp(22px,4vw,34px)', fontWeight:900, color:'#0A0A0A',
+              letterSpacing:'-0.8px', lineHeight:1.2, marginBottom:'10px' }}>
+              Our Social Media
+            </h2>
+            <p style={{ fontSize:'14px', color:'#64748B', lineHeight:1.7 }}>
+              Follow us for daily inspiration, tutorials and exclusive offers!
+            </p>
+          </div></R>
+
+          {/* 2-col on tablet+, 1-col on mobile */}
+          <div className="social-grid">
+
+            {[
+              {
+                key: 'instagram_tailoring',
+                platform: 'Instagram',
+                sub: 'Tailoring Tools',
+                color: '#7C3AED',
+                bg: '#F5F3FF',
+                statLabel: 'Followers',
+                statB: 'Daily Posts',
+                url: socialStats.instagram_tailoring.url || 'https://www.instagram.com/as_tailoring_tools_textiles',
+                handle: socialStats.instagram_tailoring.handle,
+                desc: socialStats.instagram_tailoring.description || 'Professional sewing tools, machines & tailoring tips for craftsmen',
+                count: socialStats.instagram_tailoring.followers,
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                  </svg>
+                ),
+              },
+              {
+                key: 'instagram_fashion',
+                platform: 'Instagram',
+                sub: 'Fashion Label',
+                color: '#DB2777',
+                bg: '#FFF1F2',
+                statLabel: 'Followers',
+                statB: 'Fashion Posts',
+                url: socialStats.instagram_fashion.url || 'https://www.instagram.com/asma_label.in',
+                handle: socialStats.instagram_fashion.handle,
+                desc: socialStats.instagram_fashion.description || "Women's fashion, ethnic wear & style inspiration",
+                count: socialStats.instagram_fashion.followers,
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DB2777" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                  </svg>
+                ),
+              },
+              {
+                key: 'youtube',
+                platform: 'YouTube',
+                sub: 'Video Channel',
+                color: '#DC2626',
+                bg: '#FEF2F2',
+                statLabel: 'Subscribers',
+                statB: 'Video Tutorials',
+                url: socialStats.youtube.url || 'https://youtube.com/@astailoringtoolstextiles',
+                handle: socialStats.youtube.handle,
+                desc: socialStats.youtube.description || 'Sewing tutorials, machine reviews & DIY fashion projects',
+                count: socialStats.youtube.followers,
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#DC2626">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                ),
+              },
+              {
+                key: 'facebook',
+                platform: 'Facebook',
+                sub: 'Business Page',
+                color: '#2563EB',
+                bg: '#EFF6FF',
+                statLabel: 'Followers',
+                statB: 'Active',
+                url: socialStats.facebook.url || 'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr',
+                handle: socialStats.facebook.handle,
+                desc: socialStats.facebook.description || 'Latest products, customer reviews & special offers',
+                count: socialStats.facebook.followers,
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                  </svg>
+                ),
+              },
+            ].map((s, i) => (
+              <motion.a
+                key={s.key}
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity:0, y:16 }}
+                whileInView={{ opacity:1, y:0 }}
+                viewport={{ once:true }}
+                transition={{ delay: i * 0.08 }}
+                whileHover={{ y:-4, boxShadow:'0 12px 36px rgba(0,0,0,.10)' }}
+                className="social-card"
+                style={{
+                  background:'white',
+                  border:'1.5px solid #E2E8F0',
+                  borderRadius:'18px',
+                  padding:'16px',
+                  textDecoration:'none',
+                  display:'flex',
+                  alignItems:'flex-start',
+                  gap:'12px',
+                  transition:'all 0.25s ease',
+                  boxShadow:'0 1px 6px rgba(0,0,0,.04)',
+                }}>
+
+                {/* Left: Icon circle */}
+                <div style={{ width:'48px', height:'48px', borderRadius:'12px',
+                  background: s.bg, display:'flex', alignItems:'center',
+                  justifyContent:'center', flexShrink:0 }}>
+                  {s.icon}
+                </div>
+
+                {/* Middle: text */}
+                <div style={{ flex:1, minWidth:0, paddingRight:'8px' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'4px', flexWrap:'wrap' }}>
+                    <span style={{ fontSize:'14px', fontWeight:900, color:'#0A0A0A', whiteSpace:'nowrap' }}>{s.platform}</span>
+                    <span style={{ fontSize:'10px', fontWeight:700, color:s.color,
+                      background:s.bg, padding:'3px 8px', borderRadius:'99px', whiteSpace:'nowrap' }}>{s.sub}</span>
+                  </div>
+                  <p style={{ fontSize:'11px', fontWeight:700, color:'#475569', margin:'0 0 6px',
+                    overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.handle}</p>
+                  <p style={{ fontSize:'12px', color:'#64748B', margin:0, lineHeight:1.5,
+                    wordBreak:'break-word', display:'-webkit-box', WebkitLineClamp:2,
+                    WebkitBoxOrient:'vertical', overflow:'hidden' }}>{s.desc}</p>
+                </div>
+
+                {/* Right: follower count */}
+                <div style={{ textAlign:'right', flexShrink:0, minWidth:'64px', paddingTop:'2px' }}>
+                  <p style={{ fontSize:'20px', fontWeight:900, color:s.color, margin:0, lineHeight:1.1 }}>
+                    {loading ? '…' : fmtCount(s.count)}
+                  </p>
+                  <p style={{ fontSize:'10px', color:'#94A3B8', margin:'4px 0 0', fontWeight:600, whiteSpace:'nowrap' }}>{s.statLabel}</p>
+                </div>
+
+              </motion.a>
+            ))}
+
+          </div>
+        </div>
+      </div>
+
+      {/* TRUST STRIP moved down - keeping original position */}
       <div style={{ background:'white', borderBottom:'1px solid #F0F0F0' }}>
         <div style={CW}>
           <div className="sh-scroll-hide" style={{ display:'flex', overflowX:'auto', gap:'12px', padding:'12px 4px' }}>
@@ -311,7 +519,7 @@ export default function About() {
       <div style={{ padding:'56px 20px', background:'white' }}>
         <div style={CW}>
           <R><div style={{ marginBottom:'32px' }}>
-            <Label>Why AS HUB</Label>
+            <Label>Why Asmalabel</Label>
             <h2 style={{ fontSize:'clamp(22px,3.5vw,32px)', fontWeight:900, color:'#0A0A0A', letterSpacing:'-0.5px' }}>
               Why Choose Us?
             </h2>

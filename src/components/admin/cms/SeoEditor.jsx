@@ -13,17 +13,17 @@ export default function SeoEditor({ seoData = {}, onChange }) {
         <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0F172A', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Globe size={20} color="#2563EB" /> Search Engine Optimization (SEO) & Social Sharing
         </h3>
-        <p style={{ fontSize: '13px', color: '#64748B', margin: '0 0 20px 0' }}>Configure how AS HUB homepage appears on Google search and social media shares</p>
+        <p style={{ fontSize: '13px', color: '#64748B', margin: '0 0 20px 0' }}>Configure how Asmalabel homepage appears on Google search and social media shares</p>
 
         {/* Live Search Preview Box */}
         <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '16px', marginBottom: '24px' }}>
           <div style={{ fontSize: '11px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', marginBottom: '8px' }}>Google Search Preview</div>
           <div style={{ fontSize: '16px', fontWeight: 700, color: '#1D4ED8', textDecoration: 'underline', marginBottom: '4px' }}>
-            {seo.metaTitle || 'AS HUB — Premium Tailoring Tools & Women Fashion'}
+            {seo.metaTitle || 'Asmalabel — Premium Tailoring Tools & Women Fashion'}
           </div>
           <div style={{ fontSize: '12px', color: '#059669', marginBottom: '4px' }}>{seo.canonicalUrl || 'https://ashub.com'}</div>
           <div style={{ fontSize: '13px', color: '#475569', lineHeight: 1.5 }}>
-            {seo.metaDescription || 'Shop professional tailoring tools, sewing machines, scissors, threads & premium women fashion online at AS HUB.'}
+            {seo.metaDescription || 'Shop professional tailoring tools, sewing machines, scissors, threads & premium women fashion online at Asmalabel.'}
           </div>
         </div>
 

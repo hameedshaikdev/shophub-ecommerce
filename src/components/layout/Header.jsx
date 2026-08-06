@@ -105,13 +105,13 @@ export default function Header() {
               <div style={{ width:'42px', height:'42px', borderRadius:'14px',
                 border:'1.5px solid rgba(255,255,255,0.8)', overflow:'hidden', flexShrink:0,
                 display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 12px rgba(0,0,0,0.06)', background:'white' }}>
-                <img src="/logo.png" alt="AS HUB"
+                <img src="/logo.png" alt="Asmalabel"
                   style={{ width:'120%', height:'120%', objectFit:'cover',
                     objectPosition:'center' }}
                   onError={e => { e.target.style.display='none'; }} />
               </div>
               <span style={{ fontSize:'18px', fontWeight:900, color:'#0F172A',
-                letterSpacing:'-0.5px', whiteSpace:'nowrap' }}>AS HUB</span>
+                letterSpacing:'-0.5px', whiteSpace:'nowrap' }}>Asmalabel</span>
             </Link>
 
             {/* ── Desktop Nav Links ── */}
@@ -319,10 +319,10 @@ export default function Header() {
               ) : (
                 <div style={{ display:'flex', flexDirection:'column', gap:'10px', marginTop:'8px' }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                    <img src="/logo.png" alt="AS HUB"
+                    <img src="/logo.png" alt="Asmalabel"
                       style={{ width:'40px', height:'40px', borderRadius:'12px', background:'white', objectFit:'cover' }} />
                     <div>
-                      <p style={{ fontSize:'18px', fontWeight:900, color:'#FFFFFF', margin:0 }}>AS HUB</p>
+                      <p style={{ fontSize:'18px', fontWeight:900, color:'#FFFFFF', margin:0 }}>Asmalabel</p>
                       <p style={{ fontSize:'11px', color:'rgba(255,255,255,0.7)', margin:'2px 0 0 0' }}>Tailoring Tools & Fashion</p>
                     </div>
                   </div>
@@ -355,21 +355,21 @@ export default function Header() {
                 </Link>
               )}
 
-              {/* About AS HUB */}
+              {/* About Asmalabel */}
               <Link to="/about" onClick={() => setDrawer(false)}
                 className="sh-drawer-card-item">
                 <div className="sh-drawer-icon-box" style={{ background:'rgba(16, 185, 129, 0.1)', color:'#059669' }}>
                   <Info size={18} />
                 </div>
                 <div style={{ flex:1 }}>
-                  <p style={{ fontSize:'14px', fontWeight:700, color:'#111827', margin:0 }}>About AS HUB</p>
+                  <p style={{ fontSize:'14px', fontWeight:700, color:'#111827', margin:0 }}>About Asmalabel</p>
                   <p style={{ fontSize:'11px', color:'#6B7280', margin:0 }}>Our story, craftsmanship & values</p>
                 </div>
                 <ChevronRight size={16} color="#9CA3AF" />
               </Link>
 
               {/* WhatsApp Support */}
-              <a href="https://wa.me/917013942909?text=Hi!%20I%20need%20help%20with%20AS%20HUB"
+              <a href="https://wa.me/917013942909?text=Hi!%20I%20need%20help%20with%20Asmalabel"
                 target="_blank" rel="noopener noreferrer" onClick={() => setDrawer(false)}
                 className="sh-drawer-card-item">
                 <div className="sh-drawer-icon-box" style={{ background:'rgba(34, 197, 94, 0.12)', color:'#16A34A' }}>

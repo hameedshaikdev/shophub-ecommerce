@@ -34,14 +34,12 @@ function ScrollToTop() {
 function AppInner() {
   const { loading, toast, closeToast } = useApp();
 
-  // Show splash screen while auth initializes
+  // Show loading spinner
   if (loading) {
     return (
-      <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#F8FAFC', gap:'16px' }}>
-        <div style={{ fontSize:'36px', fontWeight:900, background:'linear-gradient(135deg,#1A1A2E,#E94560)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
-          AS HUB
-        </div>
-        <div style={{ width:'36px', height:'36px', border:'3px solid #E2E8F0', borderTop:'3px solid #E94560', borderRadius:'50%', animation:'spin .8s linear infinite' }} />
+      <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', gap:'24px' }}>
+        <h1 style={{ fontSize:'48px', fontWeight:900, color:'white', letterSpacing:'-1px' }}>Asmalabel</h1>
+        <div style={{ width:'48px', height:'48px', border:'4px solid rgba(255,255,255,0.1)', borderTop:'4px solid #60A5FA', borderRadius:'50%', animation:'spin .8s linear infinite' }} />
         <style>{`@keyframes spin { to { transform:rotate(360deg); } }`}</style>
       </div>
     );

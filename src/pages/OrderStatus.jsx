@@ -192,7 +192,7 @@ export default function OrderStatus() {
 
   const waContact = () => {
     const msg =
-      `Hello AS HUB,%0A%0A` +
+      `Hello Asmalabel,%0A%0A` +
       `My payment has not been verified after 10 minutes.%0A%0A` +
       `Order ID: %23${order.id.slice(0,8).toUpperCase()}%0A` +
       `Customer: ${addr.fullName || ''}%0A` +
@@ -318,7 +318,7 @@ export default function OrderStatus() {
                 🎉 Payment Verified Successfully!
               </p>
               <p style={{ fontSize:'13px', color:'#16A34A', marginTop:'4px' }}>
-                Your order has been confirmed. Thank you for shopping with AS HUB!
+                Your order has been confirmed. Thank you for shopping with Asmalabel!
               </p>
             </div>
           )}
@@ -393,7 +393,7 @@ export default function OrderStatus() {
               justifyContent:'center', gap:'10px',
               boxShadow:'0 6px 20px rgba(37,211,102,.35)' }}>
             <MessageCircle size={20} />
-            Contact AS HUB on WhatsApp
+            Contact Asmalabel on WhatsApp
           </button>
 
           <a href="tel:+917013942909"
@@ -403,7 +403,7 @@ export default function OrderStatus() {
               display:'flex', alignItems:'center', justifyContent:'center',
               gap:'10px', textDecoration:'none', boxShadow:'var(--shadow-sm)' }}>
             <Phone size={20} color="#3B82F6" />
-            Call AS HUB
+            Call Asmalabel
           </a>
 
           {isRejected && (
