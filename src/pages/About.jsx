@@ -12,7 +12,7 @@ const FALLBACK = {
   instagram_tailoring: { followers: 0, handle: '@as_tailoring_tools_textiles', description: 'Professional sewing machines, tailoring tools, daily tips & tutorials for craftsmen', url: 'https://www.instagram.com/as_tailoring_tools_textiles' },
   instagram_fashion:   { followers: 0, handle: '@asma_label.in',              description: "Women's fashion, ethnic wear collections, trending outfits & style inspiration",      url: 'https://www.instagram.com/asma_label.in' },
   youtube:             { followers: 0, handle: '@astailoringtoolstextiles',    description: 'Sewing tutorials, machine reviews, tailoring tips & DIY fashion projects',            url: 'https://youtube.com/@astailoringtoolstextiles' },
-  facebook:            { followers: 0, handle: 'Asmalabel',                   description: 'Latest products, customer reviews, special offers & business updates',                url: 'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr' },
+  facebook:            { followers: 0, handle: 'As Textile & Tailoring',      description: 'Send your fabrics to us and get magic created just for you - online tailoring store', url: 'https://www.facebook.com/share/166X2VepUx/?mibextid=wwXIfr' },
 };
 
 const fu = { hidden:{opacity:0,y:32},  visible:{opacity:1,y:0, transition:{duration:.6,ease:[.22,1,.36,1]}} };
