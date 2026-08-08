@@ -6,13 +6,12 @@ import { useApp } from '../../context/AppContext';
 import { getProductImage, parseProductTags } from '../../utils/productImages';
 
 export default function ProductCard({ product, onQuickView }) {
-  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist, activeCategory } = useApp();
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
   const [added,    setAdded]    = useState(false);
   const [imgError, setImgError] = useState(false);
 
   if (!product) return null;
 
-  const isTailoring = activeCategory === 'tailoring';
   const inWishlist = product.id ? isInWishlist(product.id) : false;
   const { badge, discount_tag } = parseProductTags(product);
 
@@ -49,22 +48,22 @@ export default function ProductCard({ product, onQuickView }) {
       <motion.div
         whileHover={{
           y: -6,
-          boxShadow: isTailoring ? '0 12px 35px rgba(61, 41, 72, 0.13)' : '0 20px 40px -10px rgba(15, 23, 42, 0.18), 0 0 0 1.5px rgba(37, 99, 235, 0.25)',
-          borderColor: isTailoring ? '#CDBDDA' : 'rgba(37, 99, 235, 0.3)'
+          boxShadow: '0 20px 40px -10px rgba(15, 23, 42, 0.18), 0 0 0 1.5px rgba(37, 99, 235, 0.25)',
+          borderColor: 'rgba(37, 99, 235, 0.3)'
         }}
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         style={{
           background: '#ffffff',
-          borderRadius: '20px',
+          borderRadius: '14px',
           overflow: 'hidden',
-          boxShadow: isTailoring ? '0 4px 20px rgba(61, 41, 72, 0.06)' : '0 4px 16px rgba(15, 23, 42, 0.06)',
-          border: isTailoring ? '1px solid #E5DCEB' : '1px solid #E2E8F0',
+          boxShadow: '0 4px 16px rgba(15, 23, 42, 0.06)',
+          border: '1px solid #E2E8F0',
           cursor: 'pointer',
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
-          transition: 'all 0.3s ease',
+          transition: 'border-color 0.3s ease',
         }}>
 
         {/* Image area — slightly larger aspect ratio with image zoom */}
@@ -112,13 +111,13 @@ export default function ProductCard({ product, onQuickView }) {
             style={{
               position: 'absolute', top: '8px', right: '8px', zIndex: 3,
               width: '34px', height: '34px', borderRadius: '50%',
-              background: inWishlist ? (isTailoring ? '#FAF8FC' : '#FEF2F2') : 'rgba(255, 255, 255, 0.92)',
+              background: inWishlist ? '#FEF2F2' : 'rgba(255, 255, 255, 0.92)',
               backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: inWishlist ? (isTailoring ? '1px solid #E5DCEB' : '1px solid #FECDD3') : '1px solid rgba(255, 255, 255, 0.9)',
+              border: inWishlist ? '1px solid #FECDD3' : '1px solid rgba(255, 255, 255, 0.9)',
               cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.12)'
             }}>
-            <Heart size={14} fill={inWishlist ? (isTailoring ? '#A95F76' : '#EF4444') : 'none'} color={inWishlist ? (isTailoring ? '#A95F76' : '#EF4444') : (isTailoring ? '#8B72A8' : '#475569')} />
+            <Heart size={14} fill={inWishlist ? '#EF4444' : 'none'} color={inWishlist ? '#EF4444' : '#475569'} />
           </motion.button>
 
           {/* Quick View Button — Perfect Circle */}
@@ -137,7 +136,7 @@ export default function ProductCard({ product, onQuickView }) {
                 border: '1px solid rgba(255, 255, 255, 0.9)',
                 cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.12)'
               }}>
-              <Eye size={14} color={isTailoring ? '#8B72A8' : '#475569'} />
+              <Eye size={14} color="#475569" />
             </motion.button>
           )}
 
@@ -153,11 +152,11 @@ export default function ProductCard({ product, onQuickView }) {
                 position: 'absolute', bottom: '8px', right: '8px', zIndex: 3,
                 width: '34px', height: '34px', borderRadius: '50%',
                 background: added
-                  ? (isTailoring ? 'linear-gradient(135deg, #638B70, #4C6F58)' : 'linear-gradient(135deg, #10B981, #059669)')
-                  : (isTailoring ? 'linear-gradient(135deg, #6B5188, #563E70)' : 'linear-gradient(135deg, #0F172A, #1E293B)'),
+                  ? 'linear-gradient(135deg, #10B981, #059669)'
+                  : 'linear-gradient(135deg, #0F172A, #1E293B)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: '2px solid rgba(255, 255, 255, 0.8)', cursor: 'pointer', color: 'white',
-                boxShadow: `0 4px 14px ${added ? 'rgba(99,139,112,.45)' : (isTailoring ? 'rgba(107,81,136,.35)' : 'rgba(15,23,42,.38)')}`,
+                border: '2px solid rgba(255, 255, 255, 0.6)', cursor: 'pointer', color: 'white',
+                boxShadow: `0 4px 14px ${added ? 'rgba(16,185,129,.45)' : 'rgba(15,23,42,.38)'}`,
                 transition: 'background .25s ease, box-shadow .25s ease'
               }}>
               {added ? <span style={{ fontSize: '13px', fontWeight: 'bold' }}>✓</span> : <ShoppingCart size={14} />}
@@ -165,7 +164,7 @@ export default function ProductCard({ product, onQuickView }) {
           )}
         </div>
 
-        {/* Info section */}
+        {/* Info section — clean, minimal like Flipkart */}
         <div style={{ padding: '10px 12px 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
 
           {/* Rating */}
@@ -173,12 +172,12 @@ export default function ProductCard({ product, onQuickView }) {
             {[...Array(5)].map((_, i) => (
               <Star key={i} size={10} fill={i < 4 ? '#FFB800' : 'none'} color={i < 4 ? '#FFB800' : '#D1D5DB'} />
             ))}
-            <span style={{ fontSize: '10px', color: isTailoring ? '#746B78' : '#888', marginLeft: '3px', fontWeight: 600 }}>(4.8)</span>
+            <span style={{ fontSize: '10px', color: '#888', marginLeft: '3px', fontWeight: 600 }}>(4.8)</span>
           </div>
 
           {/* Product Name */}
           <p style={{
-            fontSize: '13px', fontWeight: 600, color: isTailoring ? '#29232D' : '#212121', lineHeight: 1.3,
+            fontSize: '13px', fontWeight: 600, color: '#212121', lineHeight: 1.3,
             display: '-webkit-box', WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical', overflow: 'hidden', margin: 0
           }}>
@@ -187,24 +186,24 @@ export default function ProductCard({ product, onQuickView }) {
 
           {/* Unit */}
           {product.unit && (
-            <p style={{ fontSize: '11px', color: isTailoring ? '#746B78' : '#888', margin: 0, fontWeight: 400 }}>
+            <p style={{ fontSize: '11px', color: '#888', margin: 0, fontWeight: 400 }}>
               {product.unit}
             </p>
           )}
 
           {/* Price row */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: 'auto', paddingTop: '6px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '15px', fontWeight: 700, color: isTailoring ? '#29232D' : '#212121' }}>
+            <span style={{ fontSize: '15px', fontWeight: 700, color: '#212121' }}>
               ₹{priceNum.toFixed(0)}
             </span>
             {origPriceNum > priceNum && (
-              <span style={{ fontSize: '11px', color: isTailoring ? '#A39AA7' : '#aaa', textDecoration: 'line-through', fontWeight: 400 }}>
+              <span style={{ fontSize: '11px', color: '#aaa', textDecoration: 'line-through', fontWeight: 400 }}>
                 ₹{origPriceNum.toFixed(0)}
               </span>
             )}
             {(discount_tag || discount) && (
               <span style={{
-                fontSize: '10px', fontWeight: 700, color: isTailoring ? '#A95F76' : '#388E3C',
+                fontSize: '10px', fontWeight: 700, color: '#388E3C',
               }}>
                 {discount_tag || `-${discount}% off`}
               </span>
