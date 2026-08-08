@@ -73,6 +73,29 @@ input, textarea, select { outline:none; border:none; font-family:inherit; backgr
 }
 
 /* ── Body Backdrop with Luxury Glow ── */
+[data-theme="tailoring"] {
+  --lavender-primary:      #8B7BB8;
+  --lavender-deep:         #66558F;
+  --lavender-dark:         #463866;
+  --lavender-soft:         #EDE8F7;
+  --lavender-light:        #F6F3FB;
+  --lavender-tint:         #FAF8FD;
+  --lavender-offwhite:     #FCFBFE;
+  --lavender-text-primary: #211D29;
+  --lavender-text-secondary: #6F6879;
+  --lavender-text-muted:   #9992A3;
+  --lavender-border:       #E5DFEF;
+  --lavender-border-subtle:#D8CFE8;
+  --lavender-success:      #5E9B7A;
+  --lavender-discount:     #B86B82;
+}
+
+[data-theme="tailoring"] body {
+  background: linear-gradient(180deg, #FCFBFE 0%, #F8F5FC 45%, #FCFBFE 100%) !important;
+  background-attachment: fixed !important;
+  color: #211D29 !important;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: radial-gradient(circle at 50% 0%, #F1F5F9 0%, #F8FAFC 50%, #EEF2F6 100%);
@@ -140,8 +163,11 @@ div[style*="overflow"]::-webkit-scrollbar {
   border-bottom: 1px solid #E2E8F0 !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
 }
-/* Constant navbar - no background color change on switch */
-[data-theme="tailoring"] .sh-header,
+[data-theme="tailoring"] .sh-header {
+  background: #FCFBFE !important;
+  border-bottom: 1px solid #E5DFEF !important;
+  box-shadow: 0 4px 20px rgba(70, 56, 102, 0.05) !important;
+}
 [data-theme="fashion"] .sh-header {
   background: #FFFFFF !important;
   border-bottom: 1px solid #E2E8F0 !important;
@@ -272,10 +298,11 @@ div[style*="overflow"]::-webkit-scrollbar {
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
-/* dark bg (tailoring) */
+/* lavender bg (tailoring) */
 [data-theme="tailoring"] .sh-switcher {
-  background: rgba(0, 0, 0, 0.32);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  background: #EDE8F7;
+  border: 1px solid #D8CFE8;
+  box-shadow: 0 4px 16px rgba(70, 56, 102, 0.08);
 }
 /* light bg (fashion) */
 [data-theme="fashion"] .sh-switcher {
@@ -310,12 +337,12 @@ div[style*="overflow"]::-webkit-scrollbar {
 }
 
 /* tailoring theme text */
-[data-theme="tailoring"] .sh-switcher-btn { color: rgba(255,255,255,1); }
+[data-theme="tailoring"] .sh-switcher-btn { color: #6F6879; }
 /* fashion theme text */
 [data-theme="fashion"]   .sh-switcher-btn { color: #1a3a6c; }
 
 /* active button text */
-[data-theme="tailoring"] .sh-switcher-btn.active { color: #3B0F6B; }
+[data-theme="tailoring"] .sh-switcher-btn.active { color: #66558F; }
 [data-theme="fashion"]   .sh-switcher-btn.active { color: #0F3460; }
 
 .sh-switcher-emoji { font-size: 20px; line-height: 1; }
@@ -328,6 +355,10 @@ div[style*="overflow"]::-webkit-scrollbar {
   backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+[data-theme="tailoring"] .sh-subtabs {
+  background: rgba(252, 251, 254, 0.92);
+  border-bottom: 1px solid #E5DFEF;
 }
 [data-theme="fashion"] .sh-subtabs {
   background: rgba(255, 255, 255, 0.85);
@@ -353,6 +384,22 @@ div[style*="overflow"]::-webkit-scrollbar {
   background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
   border-color: transparent;
   box-shadow: 0 6px 20px rgba(15, 23, 42, 0.25);
+}
+[data-theme="tailoring"] .sh-subtab {
+  background: #FCFBFE;
+  border: 1px solid #E5DFEF;
+  color: #211D29;
+}
+[data-theme="tailoring"] .sh-subtab:hover {
+  background: #EDE8F7;
+  color: #66558F;
+  border-color: #D8CFE8;
+}
+[data-theme="tailoring"] .sh-subtab.active {
+  color: white;
+  background: #66558F;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(102, 85, 143, 0.25);
 }
 [data-theme="fashion"] .sh-subtab.active {
   color: white;

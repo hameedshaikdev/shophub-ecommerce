@@ -224,7 +224,7 @@ export default function About() {
                 maxWidth:'520px', lineHeight:1.7, marginBottom:'32px' }}>
               Premium tailoring tools and curated women's fashion delivered across India.
             </motion.p>
-            <motion.div variants={sg} className="about-stats-row sh-scroll-hide">
+            <motion.div variants={sg} className="about-stats-row sh-scroll-hide" style={{ display:'flex', flexDirection:'row', flexWrap:'wrap', gap:'16px 28px', alignItems:'center' }}>
               {[
                 {icon:Star, stat:'4.9', label:'Rating'},
                 {icon:Package, stat:'500+', label:'Products'},
@@ -239,8 +239,8 @@ export default function About() {
                     <Icon size={16} strokeWidth={1.8} color='#C084FC' />
                   </div>
                   <div>
-                    <p style={{ fontSize:'16px', fontWeight:900, color:'white', lineHeight:1 }}>{stat}</p>
-                    <p style={{ fontSize:'10px', color:'rgba(255,255,255,.5)', marginTop:'2px' }}>{label}</p>
+                    <p style={{ fontSize:'16px', fontWeight:900, color:'white', lineHeight:1, margin:0 }}>{stat}</p>
+                    <p style={{ fontSize:'10px', color:'rgba(255,255,255,.5)', marginTop:'2px', margin:0 }}>{label}</p>
                   </div>
                 </motion.div>
               ))}

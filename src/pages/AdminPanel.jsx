@@ -1480,21 +1480,21 @@ buildPages(4);
                     <Plus size={14} /> Add
                   </button>
                 </div>
-                <div className="admin-products-toolbar-row" style={{ display:'flex', gap:'6px', alignItems:'center', flexWrap:'wrap', width:'100%', boxSizing:'border-box' }}>
-                  <div style={{ position:'relative', flex:'1 1 120px', minWidth:'120px' }}>
+                <div className="admin-products-toolbar-row" style={{ display:'flex', gap:'8px', alignItems:'center', flexWrap:'wrap', width:'100%', boxSizing:'border-box' }}>
+                  <div style={{ position:'relative', flex:'1 1 140px', minWidth:'120px' }}>
                     <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search..."
-                      style={{ width:'100%', padding:'7px 10px 7px 28px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'12px', outline:'none', background:'#F8FAFC', boxSizing:'border-box' }} />
-                    <Search size={12} color="#94A3B8" style={{ position:'absolute', left:'8px', top:'50%', transform:'translateY(-50%)' }} />
+                      style={{ width:'100%', padding:'8px 10px 8px 30px', borderRadius:'10px', border:'1px solid #CBD5E1', fontSize:'12px', outline:'none', background:'#FFFFFF', boxSizing:'border-box' }} />
+                    <Search size={13} color="#64748B" style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)' }} />
                   </div>
                   <select value={catFilter} onChange={e=>setCatFilter(e.target.value)}
-                    style={{ padding:'7px 8px', borderRadius:'8px', border:'1px solid #E2E8F0', fontSize:'11px', background:'#FFFFFF', fontWeight:700, color:'#334155', flexShrink:0, maxWidth:'110px', minWidth:'70px', boxSizing:'border-box' }}>
-                    <option value="all">All</option>
-                    <option value="tailoring">Tailoring</option>
-                    <option value="fashion">Fashion</option>
+                    style={{ padding:'8px 12px', borderRadius:'10px', border:'1px solid #CBD5E1', fontSize:'12px', background:'#FFFFFF', fontWeight:700, color:'#0F172A', cursor:'pointer', flex:'0 1 auto', minWidth:'110px', boxSizing:'border-box' }}>
+                    <option value="all">All Categories</option>
+                    <option value="tailoring">Tailoring Tools</option>
+                    <option value="fashion">Women's Fashion</option>
                   </select>
                   <button onClick={()=>exportProductsCSV(products)}
-                    style={{ display:'flex', alignItems:'center', gap:'3px', padding:'7px 10px', borderRadius:'8px', background:'#F1F5F9', border:'1px solid #E2E8F0', color:'#334155', fontSize:'11px', fontWeight:800, cursor:'pointer', flexShrink:0 }}>
-                    <Download size={12} /> CSV
+                    style={{ display:'flex', alignItems:'center', gap:'4px', padding:'8px 12px', borderRadius:'10px', background:'#F1F5F9', border:'1px solid #CBD5E1', color:'#0F172A', fontSize:'12px', fontWeight:800, cursor:'pointer', flexShrink:0 }}>
+                    <Download size={13} /> CSV
                   </button>
                 </div>
               </div>
