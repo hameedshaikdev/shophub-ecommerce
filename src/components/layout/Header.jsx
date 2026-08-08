@@ -4,7 +4,7 @@ import { Search, ShoppingCart, User, LogOut, Shield, Menu, X, ChevronRight, Hear
 import { useApp } from '../../context/AppContext';
 import { supabase } from '../../config/supabase';
 
-const TAILORING_BG = 'linear-gradient(180deg,#FAF8FD 0%,#F6F3FB 60%,#EDE8F7 100%)';
+const TAILORING_BG = 'linear-gradient(180deg,#FFFCF8 0%,#FAF8FC 60%,#F5F0F9 100%)';
 const FASHION_BG   = 'linear-gradient(180deg,#B8D4F0 0%,#DCEEFF 100%)';
 
 const CATS = [

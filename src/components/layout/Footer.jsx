@@ -21,8 +21,8 @@ export default function Footer() {
 
   return (
     <footer style={{
-      background: isTailoring ? '#2D2540' : '#0F172A',
-      color: isTailoring ? '#F8F5FC' : 'white',
+      background: isTailoring ? '#2D2035' : '#0F172A',
+      color: isTailoring ? '#F8F3FA' : 'white',
       paddingBottom:'80px',
       transition: 'background 0.3s ease'
     }}>
@@ -35,28 +35,28 @@ export default function Footer() {
           <img src="/logo.png" alt="Asmalabel"
             style={{ width:'48px', height:'48px', borderRadius:'50%',
               objectFit:'cover', objectPosition:'center',
-              border: isTailoring ? '2.5px solid #463866' : '2.5px solid #1A1A2E', flexShrink:0 }}
+              border: isTailoring ? '2.5px solid #3D2948' : '2.5px solid #1A1A2E', flexShrink:0 }}
             onError={e => {
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'flex';
             }} />
           <div style={{ display:'none', width:'48px', height:'48px', borderRadius:'50%',
-            background: isTailoring ? 'linear-gradient(135deg,#463866,#66558F)' : 'linear-gradient(135deg,#1E2A45,#0F3460)',
+            background: isTailoring ? 'linear-gradient(135deg,#3D2948,#6B5188)' : 'linear-gradient(135deg,#1E2A45,#0F3460)',
             alignItems:'center', justifyContent:'center',
             fontSize:'18px', fontWeight:900, color:'white', flexShrink:0 }}>
             A
           </div>
           <div style={{ textAlign:'left' }}>
-            <p style={{ fontSize:'20px', fontWeight:900, color: isTailoring ? '#F8F5FC' : 'white',
+            <p style={{ fontSize:'20px', fontWeight:900, color: isTailoring ? '#F8F3FA' : 'white',
               letterSpacing:'-.3px', lineHeight:1 }}>Asmalabel</p>
-            <p style={{ fontSize:'11px', color: isTailoring ? '#C9C1D8' : 'rgba(255,255,255,.85)', marginTop:'3px' }}>
+            <p style={{ fontSize:'11px', color: isTailoring ? '#C8BBD0' : 'rgba(255,255,255,.85)', marginTop:'3px' }}>
               Tailoring &amp; Fashion
             </p>
           </div>
         </div>
 
         {/* Tagline / About */}
-        <p style={{ fontSize:'13px', color: isTailoring ? '#C9C1D8' : 'rgba(255,255,255,.85)',
+        <p style={{ fontSize:'13px', color: isTailoring ? '#C8BBD0' : 'rgba(255,255,255,.85)',
           lineHeight:1.75, maxWidth:'340px' }}>
           {f.aboutText || "Premium tailoring tools & women's fashion. Quality you can trust, delivered to your door."}
         </p>

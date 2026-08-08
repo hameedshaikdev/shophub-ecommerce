@@ -20,8 +20,8 @@ const CONTENT = {
     title: 'Master Your', titleAccent: 'Craft.',
     titleLine2: 'Professional Tailoring Tools',
     sub: 'Premium tools engineered for craftsmen who demand the best. Every stitch, perfected.',
-    grad: 'linear-gradient(160deg,#FAF8FD 0%,#F6F3FB 50%,#EDE8F7 100%)',
-    accentColor: '#66558F',
+    grad: 'linear-gradient(160deg,#F5F0F9 0%,#EDE6F5 50%,#FAF8FC 100%)',
+    accentColor: '#6B5188',
     illustration: 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=800&auto=format&fit=crop&q=80',
     illustrationAlt: 'Professional sewing machine',
     collections: [
@@ -484,11 +484,11 @@ export default function Home() {
                     exit={{opacity:0,y:10}} transition={{duration:.3}}
                     style={{display:'inline-flex',alignItems:'center',gap:'7px',
                       padding:'6px 16px',borderRadius:'99px',
-                      background: activeCategory==='tailoring' ? '#EDE8F7' : 'rgba(255,255,255,.13)',
+                      background: activeCategory==='tailoring' ? '#EDE6F5' : 'rgba(255,255,255,.13)',
                       backdropFilter:'blur(12px)',
-                      border: activeCategory==='tailoring' ? '1px solid #D8CFE8' : '1px solid rgba(255,255,255,.2)',
+                      border: activeCategory==='tailoring' ? '1px solid #E5DCEB' : '1px solid rgba(255,255,255,.2)',
                       fontSize:'11px',fontWeight:700,
-                      color: activeCategory==='tailoring' ? '#66558F' : 'rgba(255,255,255,.9)',
+                      color: activeCategory==='tailoring' ? '#6B5188' : 'rgba(255,255,255,.9)',
                       letterSpacing:'1.2px',textTransform:'uppercase'}}>
                     <Sparkles size={12} strokeWidth={2.5}/> New Collection 2026
                   </motion.span>
@@ -501,7 +501,7 @@ export default function Home() {
                   initial={{opacity:0,y:24}} animate={{opacity:1,y:0}}
                   exit={{opacity:0,y:-24}} transition={{duration:.45,ease:[.22,1,.36,1]}}>
                   <h1 style={{fontSize:'clamp(36px,6vw,64px)',fontWeight:900,
-                    color: activeCategory==='tailoring' ? '#211D29' : 'white',
+                    color: activeCategory==='tailoring' ? '#29232D' : 'white',
                     lineHeight:1.02,letterSpacing:'-2.5px',margin:0}}>
                     {c.title}
                   </h1>
@@ -511,7 +511,7 @@ export default function Home() {
                     {c.titleAccent}
                   </h1>
                   <p style={{fontSize:'clamp(14px,1.8vw,17px)',fontWeight:500,
-                    color: activeCategory==='tailoring' ? '#6F6879' : 'rgba(255,255,255,.5)',
+                    color: activeCategory==='tailoring' ? '#746B78' : 'rgba(255,255,255,.5)',
                     letterSpacing:'-.2px',marginBottom:'16px'}}>
                     {c.titleLine2}
                   </p>
@@ -523,7 +523,7 @@ export default function Home() {
                   initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
                   transition={{duration:.4,delay:.1}}
                   style={{fontSize:'clamp(13px,1.5vw,15px)',
-                    color: activeCategory==='tailoring' ? '#6F6879' : 'rgba(255,255,255,.6)',
+                    color: activeCategory==='tailoring' ? '#746B78' : 'rgba(255,255,255,.6)',
                     maxWidth:'420px',lineHeight:1.8,marginBottom:'32px'}}>
                   {c.sub}
                 </motion.p>
@@ -532,25 +532,25 @@ export default function Home() {
               {/* CTAs */}
               <motion.div variants={fu} style={{display:'flex',gap:'12px',flexWrap:'wrap',marginBottom:'36px'}}>
                 <motion.button onClick={() => scrollTo(productsRef)}
-                  whileHover={{scale:1.04,boxShadow: activeCategory==='tailoring' ? '0 12px 32px rgba(102,85,143,.3)' : '0 12px 36px rgba(0,0,0,.35)'}}
+                  whileHover={{scale:1.04,boxShadow: activeCategory==='tailoring' ? '0 12px 32px rgba(107,81,136,.35)' : '0 12px 36px rgba(0,0,0,.35)'}}
                   whileTap={{scale:.97}}
                   style={{display:'inline-flex',alignItems:'center',gap:'9px',padding:'14px 30px',
                     borderRadius:'14px',
-                    background: activeCategory==='tailoring' ? '#66558F' : 'white',
+                    background: activeCategory==='tailoring' ? '#6B5188' : 'white',
                     color: activeCategory==='tailoring' ? '#FFFFFF' : '#0A0A0A',
                     fontSize:'14px',fontWeight:800,border:'none',cursor:'pointer',
-                    boxShadow: activeCategory==='tailoring' ? '0 6px 24px rgba(102,85,143,.25)' : '0 4px 24px rgba(0,0,0,.28)'}}>
+                    boxShadow: activeCategory==='tailoring' ? '0 6px 24px rgba(107,81,136,.25)' : '0 4px 24px rgba(0,0,0,.28)'}}>
                   <Package size={16} strokeWidth={2.5}/> Shop Now
                 </motion.button>
                 <motion.button onClick={() => scrollTo(filterRef)}
-                  whileHover={{scale:1.04,background: activeCategory==='tailoring' ? '#EDE8F7' : 'rgba(255,255,255,.2)'}}
+                  whileHover={{scale:1.04,background: activeCategory==='tailoring' ? '#F5F0F9' : 'rgba(255,255,255,.2)'}}
                   whileTap={{scale:.97}}
                   style={{display:'inline-flex',alignItems:'center',gap:'9px',padding:'14px 24px',
                     borderRadius:'14px',
-                    background: activeCategory==='tailoring' ? '#FCFBFE' : 'rgba(255,255,255,.12)',
+                    background: activeCategory==='tailoring' ? '#FFFFFF' : 'rgba(255,255,255,.12)',
                     backdropFilter:'blur(12px)',
-                    border: activeCategory==='tailoring' ? '1.5px solid #D8CFE8' : '1.5px solid rgba(255,255,255,.25)',
-                    color: activeCategory==='tailoring' ? '#66558F' : 'white',
+                    border: activeCategory==='tailoring' ? '1.5px solid #CDBDDA' : '1.5px solid rgba(255,255,255,.25)',
+                    color: activeCategory==='tailoring' ? '#6B5188' : 'white',
                     fontSize:'14px',fontWeight:700,cursor:'pointer'}}>
                   Explore
                   <motion.span animate={{x:[0,4,0]}} transition={{duration:1.5,repeat:Infinity}}>
@@ -568,7 +568,7 @@ export default function Home() {
                 ].map(({icon:Icon,text})=>(
                   <div key={text} style={{display:'flex',alignItems:'center',gap:'5px'}}>
                     <Icon size={13} strokeWidth={2} color={c.accentColor}/>
-                    <span style={{fontSize:'11px',fontWeight:600,color: activeCategory==='tailoring' ? '#6F6879' : 'rgba(255,255,255,.55)'}}>{text}</span>
+                    <span style={{fontSize:'11px',fontWeight:600,color: activeCategory==='tailoring' ? '#746B78' : 'rgba(255,255,255,.55)'}}>{text}</span>
                   </div>
                 ))}
               </motion.div>
@@ -624,9 +624,9 @@ export default function Home() {
 
         {/* Stats bar */}
         <div className="hero-stats-bar" style={{
-          background: activeCategory==='tailoring' ? '#FCFBFE' : 'rgba(0,0,0,.25)',
+          background: activeCategory==='tailoring' ? '#FFFCF8' : 'rgba(0,0,0,.25)',
           backdropFilter:'blur(12px)',
-          borderTop: activeCategory==='tailoring' ? '1px solid #E5DFEF' : '1px solid rgba(255,255,255,.08)'
+          borderTop: activeCategory==='tailoring' ? '1px solid #E5DCEB' : '1px solid rgba(255,255,255,.08)'
         }}>
           <div className="sh-container" style={{padding:'12px 0'}}>
             <div className="hero-stats-inner" style={{display:'flex',justifyContent:'space-around',flexWrap:'wrap',gap:'10px 16px'}}>
@@ -637,14 +637,14 @@ export default function Home() {
                 {icon:Truck,  val:null,  suf:'',   label:'Pan India Delivery', isStatic:true},
               ].map(({icon:Icon,val,suf,label,isStatic})=>(
                 <div key={label} style={{display:'flex',alignItems:'center',gap:'6px',flexShrink:0}}>
-                  <Icon size={13} strokeWidth={2} color={c.accentColor}/>
-                  <span style={{fontSize:'13px',fontWeight:900,color: activeCategory==='tailoring' ? '#211D29' : 'white',whiteSpace:'nowrap'}}>
+                  <Icon size={13} strokeWidth={2} color={activeCategory==='tailoring' ? '#8B72A8' : c.accentColor}/>
+                  <span style={{fontSize:'13px',fontWeight:900,color: activeCategory==='tailoring' ? '#29232D' : 'white',whiteSpace:'nowrap'}}>
                     {isStatic
                       ? (val === null ? null : val + suf)
                       : <><Counter value={val} suffix={suf}/></>}
                   </span>
-                  {val !== null && <span style={{fontSize:'11px',color: activeCategory==='tailoring' ? '#6F6879' : 'rgba(255,255,255,.45)',whiteSpace:'nowrap'}}>{label}</span>}
-                  {val === null && <span style={{fontSize:'13px',fontWeight:900,color: activeCategory==='tailoring' ? '#211D29' : 'white',whiteSpace:'nowrap'}}>{label}</span>}
+                  {val !== null && <span style={{fontSize:'11px',color: activeCategory==='tailoring' ? '#746B78' : 'rgba(255,255,255,.45)',whiteSpace:'nowrap'}}>{label}</span>}
+                  {val === null && <span style={{fontSize:'13px',fontWeight:900,color: activeCategory==='tailoring' ? '#29232D' : 'white',whiteSpace:'nowrap'}}>{label}</span>}
                 </div>
               ))}
             </div>
@@ -655,10 +655,10 @@ export default function Home() {
         <motion.div animate={{y:[0,7,0]}} transition={{duration:2,repeat:Infinity}}
           onClick={() => scrollTo(filterRef)}
           style={{position:'absolute',bottom:'60px',left:'50%',transform:'translateX(-50%)',
-            cursor:'pointer',color:'rgba(255,255,255,.3)',zIndex:1,
+            cursor:'pointer',color: activeCategory==='tailoring' ? '#A39AA7' : 'rgba(255,255,255,.3)',zIndex:1,
             display:'flex',flexDirection:'column',alignItems:'center',gap:'3px'}}>
           <span style={{fontSize:'9px',fontWeight:700,letterSpacing:'1.5px',
-            textTransform:'uppercase',color:'rgba(255,255,255,.3)'}}>scroll</span>
+            textTransform:'uppercase',color: activeCategory==='tailoring' ? '#A39AA7' : 'rgba(255,255,255,.3)'}}>scroll</span>
           <ChevronDown size={18} strokeWidth={1.5}/>
         </motion.div>
       </div>
@@ -666,7 +666,7 @@ export default function Home() {
       {/* ══ FLASH DEALS (if any discounted products) ═════════ */}
       {flashDeals.length > 0 && (
         <div style={{
-          background: activeCategory==='tailoring' ? 'linear-gradient(135deg, #66558F 0%, #463866 100%)' : 'linear-gradient(135deg,#1A1A2E,#0F3460)',
+          background: activeCategory==='tailoring' ? '#F5F0F9' : 'linear-gradient(135deg,#1A1A2E,#0F3460)',
           padding:'80px 0'
         }}>
           <div className="sh-container">
@@ -675,7 +675,7 @@ export default function Home() {
                 marginBottom:'24px',flexWrap:'wrap',gap:'12px'}}>
                 <div style={{display:'flex',alignItems:'center',gap:'14px',flexWrap:'wrap'}}>
                   <div className="flash-deals-badge-glow" style={{
-                    background: activeCategory==='tailoring' ? 'linear-gradient(135deg, #8B7BB8 0%, #66558F 100%)' : 'linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%)',
+                    background: activeCategory==='tailoring' ? 'linear-gradient(135deg, #6B5188 0%, #563E70 100%)' : 'linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%)',
                     color:'white',fontSize:'11px',fontWeight:900,
                     padding:'7px 16px',borderRadius:'9999px',display:'flex',alignItems:'center',
                     gap:'6px', letterSpacing:'1px', textTransform:'uppercase'
@@ -684,7 +684,7 @@ export default function Home() {
                   </div>
                   <DealTimer/>
                 </div>
-                <span style={{fontSize:'12px',fontWeight:700,color: activeCategory==='tailoring' ? '#EDE8F7' : 'rgba(255,255,255,.5)'}}>
+                <span style={{fontSize:'12px',fontWeight:700,color: activeCategory==='tailoring' ? '#746B78' : 'rgba(255,255,255,.5)'}}>
                   Limited time offers
                 </span>
               </div>
@@ -692,7 +692,7 @@ export default function Home() {
             <Carousel>
               {flashDeals.map(p => (
                 <MiniCard key={p.id} product={p}
-                  badge={{label:'SALE',icon:'🔥',bg: activeCategory==='tailoring' ? '#FAF8FD' : '#FEF2F2',color: activeCategory==='tailoring' ? '#B86B82' : '#EF4444'}}/>
+                  badge={{label:'SALE',icon:'🔥',bg: activeCategory==='tailoring' ? '#FAF8FC' : '#FEF2F2',color: activeCategory==='tailoring' ? '#A95F76' : '#EF4444'}}/>
               ))}
             </Carousel>
           </div>
@@ -701,14 +701,14 @@ export default function Home() {
 
 
       {/* ══ FEATURED COLLECTIONS ════════════════════════════ */}
-      <div className="collections-section" style={{padding:'48px 0 32px',background: activeCategory==='tailoring' ? '#FCFBFE' : '#FAFAFA'}}>
+      <div className="collections-section" style={{padding:'48px 0 32px',background: activeCategory==='tailoring' ? '#FFFCF8' : '#FAFAFA'}}>
         <div className="sh-container">
           <Reveal>
             <div style={{marginBottom:'20px'}}>
-              <p style={{fontSize:'11px',fontWeight:700,color: activeCategory==='tailoring' ? '#8B7BB8' : '#8E8E93',textTransform:'uppercase',letterSpacing:'2px',marginBottom:'4px'}}>
+              <p style={{fontSize:'11px',fontWeight:700,color: activeCategory==='tailoring' ? '#8B72A8' : '#8E8E93',textTransform:'uppercase',letterSpacing:'2px',marginBottom:'4px'}}>
                 {activeCategory==='tailoring'?'Browse by category':'Shop by Style'}
               </p>
-              <h2 style={{fontSize:'clamp(22px,4vw,32px)',fontWeight:900,color: activeCategory==='tailoring' ? '#211D29' : '#0A0A0A',letterSpacing:'-1px'}}>
+              <h2 style={{fontSize:'clamp(22px,4vw,32px)',fontWeight:900,color: activeCategory==='tailoring' ? '#29232D' : '#0A0A0A',letterSpacing:'-1px'}}>
                 {activeCategory==='tailoring'?'Our Collections':'Find Your Look'}
               </h2>
             </div>
@@ -739,25 +739,25 @@ export default function Home() {
 
       {/* ══ NEW ARRIVALS ════════════════════════════════════ */}
       {newArrivals.length > 0 && (
-        <div className="new-arrivals-section" style={{padding:'48px 0 24px',background: activeCategory==='tailoring' ? '#FAF8FD' : '#F8F9FA'}}>
+        <div className="new-arrivals-section" style={{padding:'48px 0 24px',background: activeCategory==='tailoring' ? '#FAF8FC' : '#F8F9FA'}}>
           <div className="sh-container">
             <Reveal>
               <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'20px'}}>
                 <div style={{
-                  background: activeCategory==='tailoring' ? '#EDE8F7' : '#1A1A2E',
-                  color: activeCategory==='tailoring' ? '#66558F' : 'white',
+                  background: activeCategory==='tailoring' ? '#EDE6F5' : '#1A1A2E',
+                  color: activeCategory==='tailoring' ? '#6B5188' : 'white',
                   fontSize:'10px',fontWeight:900,
                   padding:'4px 10px',borderRadius:'6px',letterSpacing:'1px',
-                  border: activeCategory==='tailoring' ? '1px solid #D8CFE8' : 'none',
+                  border: activeCategory==='tailoring' ? '1px solid #E5DCEB' : 'none',
                   animation:'pulse 2s infinite'}}>NEW</div>
-                <h2 style={{fontSize:'clamp(20px,3vw,28px)',fontWeight:900,color: activeCategory==='tailoring' ? '#211D29' : '#0A0A0A',
+                <h2 style={{fontSize:'clamp(20px,3vw,28px)',fontWeight:900,color: activeCategory==='tailoring' ? '#29232D' : '#0A0A0A',
                   letterSpacing:'-0.5px'}}>New Arrivals</h2>
               </div>
             </Reveal>
             <Carousel>
               {newArrivals.map(p => (
                 <MiniCard key={p.id} product={p}
-                  badge={{label:'NEW',icon:'✨',bg: activeCategory==='tailoring' ? '#FAF8FD' : '#F0FDF4',color: activeCategory==='tailoring' ? '#66558F' : '#16A34A'}}/>
+                  badge={{label:'NEW',icon:'✨',bg: activeCategory==='tailoring' ? '#FAF8FC' : '#F0FDF4',color: activeCategory==='tailoring' ? '#6B5188' : '#16A34A'}}/>
               ))}
             </Carousel>
           </div>
@@ -768,12 +768,12 @@ export default function Home() {
       <div ref={productsRef} className="sh-container products-section-container" style={{padding:'48px 0 0'}}>
         {/* Category Filter Bar */}
         <div ref={filterRef} style={{
-          background: activeCategory==='tailoring' ? 'rgba(252,251,254,0.94)' : 'rgba(255,255,255,0.92)',
+          background: activeCategory==='tailoring' ? 'rgba(255,252,248,0.94)' : 'rgba(255,255,255,0.92)',
           backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
-          border: activeCategory==='tailoring' ? '1px solid #E5DFEF' : '1px solid #E2E8F0',
+          border: activeCategory==='tailoring' ? '1px solid #E5DCEB' : '1px solid #E2E8F0',
           borderRadius:'16px', padding:'4px 8px', marginBottom:'16px',
           position:'sticky', top:'60px', zIndex:40,
-          boxShadow: activeCategory==='tailoring' ? '0 4px 20px rgba(70,56,102,0.05)' : '0 4px 20px rgba(0,0,0,0.04)'
+          boxShadow: activeCategory==='tailoring' ? '0 4px 20px rgba(61,41,72,0.05)' : '0 4px 20px rgba(0,0,0,0.04)'
         }}>
           <CategoryFilter categories={c.subs} selected={sub} onSelect={setSub}/>
         </div>
@@ -781,7 +781,7 @@ export default function Home() {
         <Reveal>
           {searchQuery && (
             <div style={{ marginBottom:'12px' }}>
-              <h2 style={{ fontSize:'20px', fontWeight:800, color: activeCategory==='tailoring' ? '#211D29' : '#0A0A0A', margin:0 }}>
+              <h2 style={{ fontSize:'20px', fontWeight:800, color: activeCategory==='tailoring' ? '#29232D' : '#0A0A0A', margin:0 }}>
                 Results for "{searchQuery}"
               </h2>
             </div>
@@ -791,15 +791,15 @@ export default function Home() {
           {!loading && products.length > 0 && (
             <div style={{
               display:'flex', alignItems:'center', justifyContent:'space-between',
-              background: activeCategory==='tailoring' ? '#FCFBFE' : 'rgba(255,255,255,0.76)',
+              background: activeCategory==='tailoring' ? '#FFFCF8' : 'rgba(255,255,255,0.76)',
               backdropFilter:'blur(20px)', WebkitBackdropFilter:'blur(20px)',
-              border: activeCategory==='tailoring' ? '1px solid #E5DFEF' : '1px solid rgba(255,255,255,0.9)',
+              border: activeCategory==='tailoring' ? '1px solid #E5DCEB' : '1px solid rgba(255,255,255,0.9)',
               borderRadius:'9999px',
               padding:'6px 14px', marginBottom:'24px', flexWrap:'wrap', gap:'8px',
-              boxShadow: activeCategory==='tailoring' ? '0 4px 16px rgba(70,56,102,0.04)' : '0 4px 16px rgba(15,23,42,0.04)'
+              boxShadow: activeCategory==='tailoring' ? '0 4px 16px rgba(61,41,72,0.04)' : '0 4px 16px rgba(15,23,42,0.04)'
             }}>
-              <div className="sh-scroll-hide" style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', fontWeight:700, color: activeCategory==='tailoring' ? '#6F6879' : '#475569', overflowX:'auto' }}>
-                <ArrowUpDown size={14} color={activeCategory==='tailoring' ? '#8B7BB8' : '#E94560'} style={{ flexShrink: 0 }} />
+              <div className="sh-scroll-hide" style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', fontWeight:700, color: activeCategory==='tailoring' ? '#746B78' : '#475569', overflowX:'auto' }}>
+                <ArrowUpDown size={14} color={activeCategory==='tailoring' ? '#8B72A8' : '#E94560'} style={{ flexShrink: 0 }} />
                 <span style={{ flexShrink: 0 }}>Sort:</span>
                 {[
                   ['featured', 'Featured'],
@@ -810,8 +810,8 @@ export default function Home() {
                   <button key={val} onClick={() => setSortBy(val)}
                     style={{
                       padding:'5px 13px', borderRadius:'9999px', fontSize:'12px', fontWeight:800,
-                      background: sortBy === val ? (activeCategory==='tailoring' ? '#66558F' : 'linear-gradient(135deg, #1A1A2E, #0F3460)') : 'transparent',
-                      color: sortBy === val ? 'white' : (activeCategory==='tailoring' ? '#6F6879' : '#64748B'),
+                      background: sortBy === val ? (activeCategory==='tailoring' ? '#6B5188' : 'linear-gradient(135deg, #1A1A2E, #0F3460)') : 'transparent',
+                      color: sortBy === val ? 'white' : (activeCategory==='tailoring' ? '#746B78' : '#64748B'),
                       border: 'none', cursor:'pointer', transition:'all .25s ease', flexShrink: 0
                     }}>
                     {label}
@@ -873,29 +873,29 @@ export default function Home() {
       {bestSellers.length > 0 && !searchQuery && (
         <div className="top-picks-section" style={{
           padding:'48px 0 24px',
-          background: activeCategory==='tailoring' ? '#FCFBFE' : 'white',
+          background: activeCategory==='tailoring' ? '#FFFCF8' : 'white',
           marginTop:'48px'
         }}>
           <div className="sh-container">
             <Reveal>
               <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'20px'}}>
                 <div style={{
-                  background: activeCategory==='tailoring' ? '#EDE8F7' : 'linear-gradient(135deg,#F59E0B,#D97706)',
-                  color: activeCategory==='tailoring' ? '#66558F' : 'white',
+                  background: activeCategory==='tailoring' ? '#EDE6F5' : 'linear-gradient(135deg,#F59E0B,#D97706)',
+                  color: activeCategory==='tailoring' ? '#6B5188' : 'white',
                   fontSize:'10px',fontWeight:900,padding:'4px 10px',borderRadius:'6px',
-                  border: activeCategory==='tailoring' ? '1px solid #D8CFE8' : 'none',
+                  border: activeCategory==='tailoring' ? '1px solid #E5DCEB' : 'none',
                   display:'flex',alignItems:'center',gap:'4px'}}>
                   <TrendingUp size={11}/> BEST SELLERS
                 </div>
                 <h2 style={{fontSize:'clamp(20px,3vw,28px)',fontWeight:900,
-                  color: activeCategory==='tailoring' ? '#211D29' : '#0A0A0A',
+                  color: activeCategory==='tailoring' ? '#29232D' : '#0A0A0A',
                   letterSpacing:'-0.5px'}}>Top Picks</h2>
               </div>
             </Reveal>
             <Carousel>
               {bestSellers.map(p => (
                 <MiniCard key={p.id} product={p}
-                  badge={{label:'TOP',icon:'⭐',bg: activeCategory==='tailoring' ? '#FAF8FD' : '#FFFBEB',color: activeCategory==='tailoring' ? '#66558F' : '#D97706'}}/>
+                  badge={{label:'TOP',icon:'⭐',bg: activeCategory==='tailoring' ? '#FAF8FC' : '#FFFBEB',color: activeCategory==='tailoring' ? '#6B5188' : '#D97706'}}/>
               ))}
             </Carousel>
           </div>
@@ -904,13 +904,13 @@ export default function Home() {
 
       {/* ══ RECENTLY VIEWED ═════════════════════════════════ */}
       {recentlyViewed.length > 0 && (
-        <div style={{padding:'88px 0',background: activeCategory==='tailoring' ? '#F6F3FB' : '#F8F9FA'}}>
+        <div style={{padding:'88px 0',background: activeCategory==='tailoring' ? '#F5F0F9' : '#F8F9FA'}}>
           <div className="sh-container">
             <Reveal>
               <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'28px'}}>
-                <Clock size={18} color={activeCategory==='tailoring' ? '#8B7BB8' : '#8E8E93'}/>
+                <Clock size={18} color={activeCategory==='tailoring' ? '#8B72A8' : '#8E8E93'}/>
                 <h2 style={{fontSize:'clamp(18px,3vw,24px)',fontWeight:900,
-                  color: activeCategory==='tailoring' ? '#211D29' : '#0A0A0A',
+                  color: activeCategory==='tailoring' ? '#29232D' : '#0A0A0A',
                   letterSpacing:'-0.5px'}}>Recently Viewed</h2>
               </div>
             </Reveal>
