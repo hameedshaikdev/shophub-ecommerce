@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   Sparkles, Zap, Grid, Star, Image as ImageIcon,
   Globe, FileText, Save, Send, RotateCcw, Eye,
-  CheckCircle, ArrowLeft, Undo, Redo, Layers, Users
+  CheckCircle, ArrowLeft, Undo, Redo, Layers, Users, AlertTriangle
 } from 'lucide-react';
 import { useApp } from '../../../context/AppContext';
 import HeroEditor from './HeroEditor';
@@ -26,6 +26,7 @@ export default function HomepageManager({ products = [] }) {
 
   const [activeSection, setActiveSection] = useState('hero');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showResetWarningModal, setShowResetWarningModal] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const navItems = [
@@ -52,9 +53,10 @@ export default function HomepageManager({ products = [] }) {
     toast('Homepage CMS Published Successfully!', 'success');
   };
 
-  const handleDiscard = () => {
+  const handleConfirmResetAll = () => {
     resetCmsDraft();
-    toast('Discarded draft changes', 'info');
+    setShowResetWarningModal(false);
+    toast('Reset all CMS placeholder values to defaults', 'info');
   };
 
   return (
@@ -110,17 +112,16 @@ export default function HomepageManager({ products = [] }) {
           >
             <Eye size={14} /> Preview
           </button>
-
-          {/* Discard */}
           <button
-            onClick={handleDiscard}
+            onClick={() => setShowResetWarningModal(true)}
+            title="Reset placeholder values to defaults"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '5px',
-              padding: '8px 12px', borderRadius: '9px', border: '1px solid #E2E8F0', background: '#FFFFFF',
-              color: '#64748B', fontSize: '12px', fontWeight: 700, cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap'
+              padding: '8px 12px', borderRadius: '9px', border: '1px solid #FECACA', background: '#FEF2F2',
+              color: '#DC2626', fontSize: '12px', fontWeight: 800, cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap'
             }}
           >
-            <RotateCcw size={14} /> Discard
+            <RotateCcw size={14} /> Reset Defaults
           </button>
 
           {/* Publish */}
@@ -143,28 +144,30 @@ export default function HomepageManager({ products = [] }) {
       <div className="cms-main-grid" style={{ display: 'grid', gap: '16px', width: '100%', overflowX: 'hidden' }}>
         {/* Sidebar Nav — Desktop: vertical column / Mobile: horizontal scrollable pill row */}
         <div className="cms-sidebar-nav">
-          <div className="cms-sidebar-label">SECTIONS LIST</div>
-          {/* Scrollable inner — CSS converts to flex-row on mobile */}
-          <div className="cms-sidebar-inner">
-            {navItems.map(item => {
-              const Icon = item.icon;
-              const active = activeSection === item.key;
-              return (
-                <button
-                  key={item.key}
-                  onClick={() => setActiveSection(item.key)}
-                  className={`cms-section-btn${active ? ' active-tab' : ''}`}
-                >
-                  <Icon size={15} style={{ flexShrink: 0 }} />
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
+          {navItems.map(item => {
+            const Icon = item.icon;
+            const isActive = activeSection === item.key;
+            return (
+              <button
+                key={item.key}
+                onClick={() => setActiveSection(item.key)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '10px', width: '100%',
+                  padding: '10px 14px', borderRadius: '12px', border: 'none',
+                  background: isActive ? 'linear-gradient(135deg, #1E293B, #0F172A)' : 'transparent',
+                  color: isActive ? '#FFFFFF' : '#475569', fontWeight: isActive ? 800 : 600,
+                  fontSize: '13px', cursor: 'pointer', textAlign: 'left', transition: 'all 150ms ease'
+                }}
+              >
+                <Icon size={16} color={isActive ? '#60A5FA' : '#64748B'} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Editor Body */}
-        <div style={{ width: '100%', minWidth: 0, overflow: 'hidden', boxSizing: 'border-box' }}>
+        {/* Section View */}
+        <div className="cms-section-content">
           {activeSection === 'hero' && (
             <HeroEditor
               heroData={cmsDraft.hero}
@@ -174,7 +177,7 @@ export default function HomepageManager({ products = [] }) {
 
           {activeSection === 'flash' && (
             <FlashDealsEditor
-              flashDealsData={cmsDraft.flashDeals}
+              dealsData={cmsDraft.flashDeals}
               products={products}
               onChange={val => updateCmsDraft({ flashDeals: val })}
             />
@@ -189,7 +192,7 @@ export default function HomepageManager({ products = [] }) {
 
           {activeSection === 'arrivals' && (
             <NewArrivalsEditor
-              newArrivalsData={cmsDraft.newArrivals}
+              arrivalsData={cmsDraft.newArrivals}
               products={products}
               onChange={val => updateCmsDraft({ newArrivals: val })}
             />
@@ -197,7 +200,7 @@ export default function HomepageManager({ products = [] }) {
 
           {activeSection === 'picks' && (
             <TopPicksEditor
-              topPicksData={cmsDraft.topPicks}
+              picksData={cmsDraft.topPicks}
               products={products}
               onChange={val => updateCmsDraft({ topPicks: val })}
             />
@@ -243,6 +246,48 @@ export default function HomepageManager({ products = [] }) {
           draftData={cmsDraft}
           onClose={() => setShowPreviewModal(false)}
         />
+      )}
+
+      {/* Warning Confirmation Modal for Resetting Placeholders */}
+      {showResetWarningModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 99999,
+          background: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
+        }}>
+          <div style={{
+            background: '#FFFFFF', borderRadius: '24px', maxWidth: '440px', width: '100%',
+            padding: '28px', boxShadow: '0 24px 60px rgba(0,0,0,0.25)', border: '1px solid #E2E8F0',
+            fontFamily: "'Plus Jakarta Sans', sans-serif", animation: 'fadeIn 200ms ease'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#FEF2F2', border: '1px solid #FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#DC2626', flexShrink: 0 }}>
+                <AlertTriangle size={24} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Reset Placeholder Values?</h3>
+                <p style={{ fontSize: '12px', fontWeight: 700, color: '#DC2626', margin: '2px 0 0' }}>⚠️ Warning: This action cannot be undone</p>
+              </div>
+            </div>
+            <p style={{ fontSize: '13px', color: '#475569', lineHeight: 1.6, margin: '0 0 24px', fontWeight: 500 }}>
+              Are you sure you want to reset all input values and placeholders in this section back to the original default store values? Any custom text, titles, or image URLs will be replaced.
+            </p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowResetWarningModal(false)}
+                style={{ padding: '10px 18px', borderRadius: '12px', background: '#F1F5F9', border: '1px solid #CBD5E1', color: '#475569', fontSize: '13px', fontWeight: 800, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmResetAll}
+                style={{ padding: '10px 18px', borderRadius: '12px', background: '#DC2626', border: 'none', color: '#FFFFFF', fontSize: '13px', fontWeight: 900, cursor: 'pointer', boxShadow: '0 4px 14px rgba(220,38,38,0.25)' }}
+              >
+                Yes, Reset All Values
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

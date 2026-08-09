@@ -102,17 +102,35 @@ export function AppProvider({ children }) {
   const isInWishlist = (id) => wishlist.some(i => i.id === id);
 
   // ── CMS State Management ──
+  const getSanitizedCms = (data) => {
+    if (!data) return DEFAULT_CMS_DATA;
+    const cols = data.collections?.tailoring || [];
+    const isStale = cols.some(c => c.label === 'Sewing Machines' || (c.image && c.image.includes('unsplash.com/photo-1617606002806')));
+    if (isStale || !cols.length) {
+      const updated = {
+        ...data,
+        collections: DEFAULT_CMS_DATA.collections,
+      };
+      try {
+        localStorage.setItem('ashub_homepage_cms', JSON.stringify(updated));
+        localStorage.setItem('ashub_homepage_cms_draft', JSON.stringify(updated));
+      } catch { /* ignore */ }
+      return updated;
+    }
+    return data;
+  };
+
   const [cmsData, setCmsData]   = useState(() => {
     try {
       const saved = localStorage.getItem('ashub_homepage_cms');
-      return saved ? JSON.parse(saved) : DEFAULT_CMS_DATA;
+      return saved ? getSanitizedCms(JSON.parse(saved)) : DEFAULT_CMS_DATA;
     } catch { return DEFAULT_CMS_DATA; }
   });
 
   const [cmsDraft, setCmsDraft] = useState(() => {
     try {
       const draft = localStorage.getItem('ashub_homepage_cms_draft');
-      return draft ? JSON.parse(draft) : cmsData;
+      return draft ? getSanitizedCms(JSON.parse(draft)) : cmsData;
     } catch { return cmsData; }
   });
 

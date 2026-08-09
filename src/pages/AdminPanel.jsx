@@ -665,6 +665,33 @@ export default function AdminPanel() {
   const [search,     setSearch]     = useState('');
   const [catFilter,  setCatFilter]  = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
+  const [resetMetrics, setResetMetrics] = useState(() => {
+    try {
+      return localStorage.getItem('ashub_analytics_reset') === 'true';
+    } catch { return false; }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('ashub_analytics_reset', resetMetrics ? 'true' : 'false');
+    } catch { /* ignore */ }
+  }, [resetMetrics]);
+  const [storeInfoEditing, setStoreInfoEditing] = useState(false);
+  const [storeInfo, setStoreInfo] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ashub_store_info');
+      if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return {
+      name: 'Asmalabel',
+      owner: 'Shaik Asmath',
+      email: 'as.businezzz@gmail.com',
+      phone: '+91 70139 42909',
+      upi: '7995747250@ptyes',
+      whatsapp: '+91 70139 42909',
+    };
+  });
+  const [tempStoreInfo, setTempStoreInfo] = useState(storeInfo);
   const [cmdOpen,    setCmdOpen]    = useState(false);
   const [notifOpen,  setNotifOpen]  = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -1156,7 +1183,7 @@ buildPages(4);
   if (!user||user.email!==ADMIN_EMAIL) return null;
 
   return (
-    <div style={{ minHeight:'100vh', background:'#F8FAFC', display:'flex', flexDirection:'column', fontFamily:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', overflowX:'hidden' }}>
+    <div className="admin-panel" style={{ minHeight:'100vh', background:'#F8FAFC', display:'flex', flexDirection:'column', fontFamily:"'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif", overflowX:'hidden' }}>
       <ToastContainer />
       <ConfirmDialog />
       {cmdOpen && <CommandPalette orders={allOrders} products={products} onClose={()=>setCmdOpen(false)} />}
@@ -1173,12 +1200,12 @@ buildPages(4);
             border:'1px solid #E2E8F0', background:'#FFFFFF',
             display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0,
             boxShadow:'0 2px 6px rgba(15,23,42,0.06)' }}>
-            <img src="/logo.png" alt="AS HUB" style={{ width:'100%', height:'100%', objectFit:'cover' }} onError={e=>{e.target.style.display='none'; if(e.target.nextSibling) e.target.nextSibling.style.display='flex';}} />
+            <img src="/logo.png" alt="Asmalabel Hub" style={{ width:'100%', height:'100%', objectFit:'cover' }} onError={e=>{e.target.style.display='none'; if(e.target.nextSibling) e.target.nextSibling.style.display='flex';}} />
             <div style={{ display:'none', width:'100%', height:'100%', alignItems:'center', justifyContent:'center', background:'#1E293B' }}>
               <BarChart2 size={16} color="#FFFFFF" />
             </div>
           </div>
-          <span style={{ fontSize:'15px', fontWeight:900, color:'#0F172A', letterSpacing:'-0.3px' }}>AS HUB</span>
+          <span style={{ fontSize:'18px', fontWeight:900, color:'#0F172A', fontFamily:"'Playfair Display', Georgia, serif", letterSpacing:'-0.5px' }}>Asmalabel</span>
         </div>
 
         {/* Center search */}
@@ -1595,7 +1622,7 @@ buildPages(4);
               {/* Banner */}
               <div style={{ background:'linear-gradient(135deg, #1E293B, #0F172A)', color:'#FFFFFF', padding:'16px', borderRadius:'14px' }}>
                 <p style={{ fontSize:'11px', fontWeight:800, color:'#60A5FA', margin:'0 0 4px 0', textTransform:'uppercase', letterSpacing:'0.6px' }}>Business Hub</p>
-                <h1 style={{ fontSize:'18px', fontWeight:900, color:'#FFFFFF', margin:'0 0 2px 0' }}>AS HUB Control</h1>
+                <h1 style={{ fontSize:'18px', fontWeight:800, color:'#FFFFFF', margin:'0 0 2px 0', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Asmalabel Admin</h1>
                 <p style={{ fontSize:'11px', color:'rgba(255,255,255,0.7)', margin:0 }}>Inventory, analytics &amp; exports</p>
               </div>
 
@@ -1683,23 +1710,31 @@ buildPages(4);
                     <p style={{ fontSize:'11px', color:'#6B7280', margin:'2px 0 0 0' }}>Real-time revenue, orders & sales insights</p>
                   </div>
                   <div style={{ display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap' }}>
-                    {/* Reset Button */}
+                    {/* Reset Button with Warning */}
                     <button onClick={async () => { 
                       const ok = await confirm({ 
-                        title:'Reset Analytics', 
-                        message:'This will clear all analytics filters (date range and category). Continue?', 
-                        confirm:'Reset Filters',
+                        title:'⚠️ Reset Analytics Metric Values?', 
+                        message:'Warning: Are you sure you want to remove and reset all Performance Analytics values (Total Revenue, Today Sales, Month Revenue, Verified Orders, Avg Order Value, Paid Conversion) back to ₹0 / default placeholders? This action cannot be undone.', 
+                        confirm:'Yes, Reset Values',
                         type:'warning'
                       }); 
                       if (!ok) return;
+                      setResetMetrics(true);
                       setDateFilter('all'); 
                       setCatFilter('all'); 
-                      toast('Analytics filters reset to default!', 'success'); 
+                      toast('Performance Analytics metrics reset to ₹0 / default placeholders!', 'success'); 
                     }}
-                      title="Reset analytics filters"
-                      style={{ display:'flex', alignItems:'center', gap:'4px', padding:'6px 10px', borderRadius:'8px', background:'#F1F5F9', border:'1px solid #CBD5E1', color:'#334155', fontSize:'11px', fontWeight:800, cursor:'pointer' }}>
-                      <RotateCcw size={12} /> Reset
+                      title="Reset analytics metric values to ₹0 placeholders"
+                      style={{ display:'flex', alignItems:'center', gap:'4px', padding:'6px 10px', borderRadius:'8px', background:'#FEF2F2', border:'1px solid #FECACA', color:'#DC2626', fontSize:'11px', fontWeight:800, cursor:'pointer' }}>
+                      <RotateCcw size={12} /> Reset Values
                     </button>
+                    {resetMetrics && (
+                      <button onClick={() => { setResetMetrics(false); toast('Restored live performance metrics calculation!', 'info'); }}
+                        title="Restore live order calculations"
+                        style={{ display:'flex', alignItems:'center', gap:'4px', padding:'6px 10px', borderRadius:'8px', background:'#F0FDF4', border:'1px solid #BBF7D0', color:'#16A34A', fontSize:'11px', fontWeight:800, cursor:'pointer' }}>
+                        <RefreshCw size={12} /> Restore Live Data
+                      </button>
+                    )}
                     {/* Export analytics CSV */}
                     <button onClick={() => exportProductsCSV(allOrders)}
                       title="Export sales analytics"
@@ -1733,17 +1768,20 @@ buildPages(4);
                     : allOrders;
 
                   const verifiedFiltered = filteredList.filter(o => o.payment_status === 'verified');
-                  const totalRev = verifiedFiltered.reduce((s,o) => s + (o.total_amount || 0), 0);
-                  const avgOrderVal = verifiedFiltered.length > 0 ? (totalRev / verifiedFiltered.length) : 0;
-                  const convRate = filteredList.length > 0 ? ((verifiedFiltered.length / filteredList.length) * 100) : 0;
+                  const totalRev = resetMetrics ? 0 : verifiedFiltered.reduce((s,o) => s + (o.total_amount || 0), 0);
+                  const todaySales = resetMetrics ? 0 : todayRevenue;
+                  const monthSales = resetMetrics ? 0 : monthRevenue;
+                  const orderCount = resetMetrics ? 0 : verifiedFiltered.length;
+                  const avgOrderVal = resetMetrics ? 0 : (verifiedFiltered.length > 0 ? (totalRev / verifiedFiltered.length) : 0);
+                  const convRate = resetMetrics ? 0 : (filteredList.length > 0 ? ((verifiedFiltered.length / filteredList.length) * 100) : 0);
 
                   return (
                     <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
                       {[
                         { label:'Total Revenue',   value:`₹${totalRev.toFixed(0)}`,        icon:'💰' },
-                        { label:"Today's Sales",   value:`₹${todayRevenue.toFixed(0)}`,     icon:'📅' },
-                        { label:'Month Revenue',   value:`₹${monthRevenue.toFixed(0)}`,     icon:'📆' },
-                        { label:'Verified Orders', value:verifiedFiltered.length,            icon:'✅' },
+                        { label:"Today's Sales",   value:`₹${todaySales.toFixed(0)}`,      icon:'📅' },
+                        { label:'Month Revenue',   value:`₹${monthSales.toFixed(0)}`,      icon:'📆' },
+                        { label:'Verified Orders', value:orderCount,                       icon:'✅' },
                         { label:'Avg Order Value', value:`₹${avgOrderVal.toFixed(0)}`,      icon:'📊' },
                         { label:'Paid Conversion', value:`${convRate.toFixed(0)}%`,          icon:'🎯' },
                       ].map(({ label, value, icon }) => (
@@ -1769,39 +1807,72 @@ buildPages(4);
               <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', overflow:'hidden' }}>
                 <div style={{ padding:'12px 14px', borderBottom:'1px solid #F1F5F9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                   <p style={{ fontSize:'13px', fontWeight:900, color:'#111827', margin:0 }}>⚙️ Store Info</p>
-                  <button
-                    onClick={async () => {
-                      const ok = await confirm({
-                        title: 'Reset Store Info',
-                        message: 'This will clear all selected data placeholders in the Store Info section. Continue?',
-                        confirm: 'Reset',
-                        type: 'warning'
-                      });
-                      if (!ok) return;
-                      toast('Store Info display reset!', 'info');
-                    }}
-                    title="Reset display data"
-                    style={{
-                      padding: '4px 10px',
-                      fontSize: '11px',
-                      fontWeight: 800,
-                      background: '#FEF2F2',
-                      color: '#EF4444',
-                      border: '1px solid #FECACA',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}>
-                    <RotateCcw size={11} /> Reset
-                  </button>
+                  {!storeInfoEditing ? (
+                    <button
+                      onClick={() => {
+                        setTempStoreInfo({ ...storeInfo });
+                        setStoreInfoEditing(true);
+                      }}
+                      title="Edit store info details"
+                      style={{
+                        padding: '5px 12px', fontSize: '11px', fontWeight: 800,
+                        background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE',
+                        borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+                      }}>
+                      <Edit2 size={12} /> Edit
+                    </button>
+                  ) : (
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <button
+                        onClick={() => setStoreInfoEditing(false)}
+                        style={{
+                          padding: '4px 10px', fontSize: '11px', fontWeight: 700,
+                          background: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1',
+                          borderRadius: '8px', cursor: 'pointer'
+                        }}>
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => {
+                          setStoreInfo(tempStoreInfo);
+                          try { localStorage.setItem('ashub_store_info', JSON.stringify(tempStoreInfo)); } catch { /* ignore */ }
+                          setStoreInfoEditing(false);
+                          toast('Store Info updated successfully!', 'success');
+                        }}
+                        style={{
+                          padding: '4px 12px', fontSize: '11px', fontWeight: 800,
+                          background: '#059669', color: '#FFFFFF', border: 'none',
+                          borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+                        }}>
+                        <Save size={12} /> Save
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <div style={{ padding:'0 14px' }}>
-                  {[{l:'Store Name',v:'Asmalabel'},{l:'Owner',v:'Shaik Asmath'},{l:'Email',v:'as.businezzz@gmail.com'},{l:'Phone',v:'+91 70139 42909'},{l:'UPI VPA',v:'7995747250@ptyes'},{l:'WhatsApp',v:'+91 70139 42909'}].map(({l,v})=>(
-                    <div key={l} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #F8FAFC', gap:'8px' }}>
-                      <span style={{ fontSize:'11px', fontWeight:600, color:'#6B7280' }}>{l}</span>
-                      <span style={{ fontSize:'11px', fontWeight:800, color:'#111827', textAlign:'right', wordBreak:'break-all' }}>{v}</span>
+                <div style={{ padding:'6px 14px 12px 14px' }}>
+                  {[
+                    { key: 'name', label: 'Store Name', val: storeInfo.name },
+                    { key: 'owner', label: 'Owner', val: storeInfo.owner },
+                    { key: 'email', label: 'Email', val: storeInfo.email },
+                    { key: 'phone', label: 'Phone', val: storeInfo.phone },
+                    { key: 'upi', label: 'UPI VPA', val: storeInfo.upi },
+                    { key: 'whatsapp', label: 'WhatsApp', val: storeInfo.whatsapp }
+                  ].map(({ key, label, val }) => (
+                    <div key={key} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 0', borderBottom:'1px solid #F8FAFC', gap:'12px' }}>
+                      <span style={{ fontSize:'11px', fontWeight:700, color:'#64748B', whiteSpace:'nowrap' }}>{label}</span>
+                      {!storeInfoEditing ? (
+                        <span style={{ fontSize:'11px', fontWeight:800, color:'#111827', textAlign:'right', wordBreak:'break-all' }}>{val}</span>
+                      ) : (
+                        <input
+                          type="text"
+                          value={tempStoreInfo[key] || ''}
+                          onChange={e => setTempStoreInfo({ ...tempStoreInfo, [key]: e.target.value })}
+                          style={{
+                            padding: '4px 8px', borderRadius: '6px', border: '1px solid #CBD5E1',
+                            fontSize: '11px', fontWeight: 700, color: '#0F172A', textAlign: 'right', flex: 1, maxWidth: '240px'
+                          }}
+                        />
+                      )}
                     </div>
                   ))}
                 </div>

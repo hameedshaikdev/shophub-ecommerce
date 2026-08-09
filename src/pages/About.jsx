@@ -3,7 +3,7 @@ import { motion, useInView } from 'framer-motion';
 import {
   BadgeCheck, Truck, ShieldCheck, MessageCircle, Star, Package,
   Mail, Phone, Clock, Scissors, Sparkles, Target, Heart, Award,
-  Users, ChevronDown, Zap, RefreshCcw,
+  Users, ChevronDown, Zap, RefreshCcw, ArrowRight,
 } from 'lucide-react';
 import { supabase } from '../config/supabase';
 
@@ -201,7 +201,7 @@ export default function About() {
 
       {/* HERO */}
       <div style={{ background:'linear-gradient(160deg,#1A1A2E 0%,#0F3460 100%)',
-        position:'relative', overflow:'hidden', padding:'48px 20px 48px' }}>
+        position:'relative', overflow:'hidden', padding:'56px 20px 64px' }}>
         <motion.div animate={{ scale:[1,1.3,1], opacity:[.3,.5,.3] }}
           transition={{ duration:8, repeat:Infinity }}
           style={{ position:'absolute', width:'500px', height:'500px', borderRadius:'50%',
@@ -239,8 +239,8 @@ export default function About() {
                     <Icon size={16} strokeWidth={1.8} color='#C084FC' />
                   </div>
                   <div>
-                    <p style={{ fontSize:'16px', fontWeight:900, color:'white', lineHeight:1 }}>{stat}</p>
-                    <p style={{ fontSize:'10px', color:'rgba(255,255,255,.5)', marginTop:'2px' }}>{label}</p>
+                    <p style={{ fontSize:'16px', fontWeight:900, color:'white', lineHeight:1, margin:0 }}>{stat}</p>
+                    <p style={{ fontSize:'10px', color:'rgba(255,255,255,.5)', marginTop:'2px', margin:0 }}>{label}</p>
                   </div>
                 </motion.div>
               ))}
@@ -250,20 +250,21 @@ export default function About() {
       </div>
 
       {/* CONNECT WITH US - Social Media Section */}
-      <div style={{ padding:'48px 16px', background:'white' }}>
+      <div style={{ padding:'80px 20px 88px', background:'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%)' }}>
         <div style={CW}>
-          <R><div style={{ marginBottom:'32px', textAlign:'center', maxWidth:'600px', margin:'0 auto 32px' }}>
-            <Label c='#7C3AED'>Connect With Us</Label>
-            <h2 style={{ fontSize:'clamp(22px,4vw,34px)', fontWeight:900, color:'#0A0A0A',
-              letterSpacing:'-0.8px', lineHeight:1.2, marginBottom:'10px' }}>
+          <R><div style={{ marginBottom:'48px', textAlign:'center', maxWidth:'640px', margin:'0 auto 48px' }}>
+            <Label c='#6B4F8A'>Connect With Us</Label>
+            <h2 style={{ fontSize:'clamp(26px,4vw,38px)', fontWeight:900, color:'#0F172A',
+              fontFamily: "'Playfair Display', Georgia, serif",
+              letterSpacing:'-0.8px', lineHeight:1.2, marginBottom:'12px' }}>
               Our Social Media
             </h2>
-            <p style={{ fontSize:'14px', color:'#64748B', lineHeight:1.7 }}>
-              Follow us for daily inspiration, tutorials and exclusive offers!
+            <p style={{ fontSize:'15px', color:'#64748B', lineHeight:1.7, fontFamily:"'Plus Jakarta Sans', sans-serif" }}>
+              Follow us for daily inspiration, tailoring tutorials, and exclusive new collection updates.
             </p>
           </div></R>
 
-          {/* 2-col on tablet+, 1-col on mobile */}
+          {/* 2-col responsive grid */}
           <div className="social-grid">
 
             {[
@@ -271,16 +272,21 @@ export default function About() {
                 key: 'instagram_tailoring',
                 platform: 'Instagram',
                 sub: 'Tailoring Tools',
-                color: '#7C3AED',
-                bg: '#F5F3FF',
+                color: '#E1306C',
+                badgeBg: '#FCE4EC',
+                badgeColor: '#C13584',
+                handleColor: '#C13584',
+                borderColor: 'rgba(225, 48, 108, 0.25)',
+                iconGrad: 'linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FD1D1D 100%)',
+                btnGrad: 'linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FD1D1D 100%)',
+                glow: 'rgba(225, 48, 108, 0.3)',
                 statLabel: 'Followers',
-                statB: 'Daily Posts',
                 url: socialStats.instagram_tailoring.url || 'https://www.instagram.com/as_tailoring_tools_textiles',
                 handle: socialStats.instagram_tailoring.handle,
                 desc: socialStats.instagram_tailoring.description || 'Professional sewing tools, machines & tailoring tips for craftsmen',
                 count: socialStats.instagram_tailoring.followers,
                 icon: (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
@@ -291,16 +297,21 @@ export default function About() {
                 key: 'instagram_fashion',
                 platform: 'Instagram',
                 sub: 'Fashion Label',
-                color: '#DB2777',
-                bg: '#FFF1F2',
+                color: '#E1306C',
+                badgeBg: '#FCE4EC',
+                badgeColor: '#C13584',
+                handleColor: '#C13584',
+                borderColor: 'rgba(225, 48, 108, 0.25)',
+                iconGrad: 'linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FD1D1D 100%)',
+                btnGrad: 'linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FD1D1D 100%)',
+                glow: 'rgba(225, 48, 108, 0.3)',
                 statLabel: 'Followers',
-                statB: 'Fashion Posts',
                 url: socialStats.instagram_fashion.url || 'https://www.instagram.com/asma_label.in',
                 handle: socialStats.instagram_fashion.handle,
                 desc: socialStats.instagram_fashion.description || "Women's fashion, ethnic wear & style inspiration",
                 count: socialStats.instagram_fashion.followers,
                 icon: (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DB2777" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
@@ -312,15 +323,20 @@ export default function About() {
                 platform: 'YouTube',
                 sub: 'Video Channel',
                 color: '#DC2626',
-                bg: '#FEF2F2',
+                badgeBg: '#FEE2E2',
+                badgeColor: '#DC2626',
+                handleColor: '#B91C1C',
+                borderColor: 'rgba(220, 38, 38, 0.2)',
+                iconGrad: 'linear-gradient(135deg, #EF4444 0%, #B91C1C 100%)',
+                btnGrad: 'linear-gradient(135deg, #EF4444 0%, #B91C1C 100%)',
+                glow: 'rgba(239, 68, 68, 0.25)',
                 statLabel: 'Subscribers',
-                statB: 'Video Tutorials',
                 url: socialStats.youtube.url || 'https://youtube.com/@astailoringtoolstextiles',
                 handle: socialStats.youtube.handle,
                 desc: socialStats.youtube.description || 'Sewing tutorials, machine reviews & DIY fashion projects',
                 count: socialStats.youtube.followers,
                 icon: (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#DC2626">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF">
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                   </svg>
                 ),
@@ -330,15 +346,20 @@ export default function About() {
                 platform: 'Facebook',
                 sub: 'Business Page',
                 color: '#2563EB',
-                bg: '#EFF6FF',
+                badgeBg: '#DBEAFE',
+                badgeColor: '#2563EB',
+                handleColor: '#1D4ED8',
+                borderColor: 'rgba(37, 99, 235, 0.2)',
+                iconGrad: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+                btnGrad: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+                glow: 'rgba(59, 130, 246, 0.25)',
                 statLabel: 'Followers',
-                statB: 'Active',
                 url: socialStats.facebook.url || 'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr',
                 handle: socialStats.facebook.handle,
                 desc: socialStats.facebook.description || 'Latest products, customer reviews & special offers',
                 count: socialStats.facebook.followers,
                 icon: (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
                   </svg>
                 ),
@@ -349,52 +370,63 @@ export default function About() {
                 href={s.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity:0, y:16 }}
+                initial={{ opacity:0, y:20 }}
                 whileInView={{ opacity:1, y:0 }}
                 viewport={{ once:true }}
-                transition={{ delay: i * 0.08 }}
-                whileHover={{ y:-4, boxShadow:'0 12px 36px rgba(0,0,0,.10)' }}
+                transition={{ delay: i * 0.08, duration: 0.4 }}
+                whileHover={{ y:-4, boxShadow:`0 20px 40px ${s.glow}`, borderColor: s.color }}
                 className="social-card"
                 style={{
-                  background:'white',
-                  border:'1.5px solid #E2E8F0',
-                  borderRadius:'18px',
-                  padding:'16px',
-                  textDecoration:'none',
-                  display:'flex',
-                  alignItems:'flex-start',
-                  gap:'12px',
-                  transition:'all 0.25s ease',
-                  boxShadow:'0 1px 6px rgba(0,0,0,.04)',
+                  background: '#FFFFFF',
+                  borderRadius: '22px',
+                  padding: '24px',
+                  border: `1.5px solid ${s.borderColor}`,
+                  boxShadow: '0 6px 24px rgba(15, 23, 42, 0.04)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '18px',
+                  fontFamily: "'Plus Jakarta Sans', sans-serif"
                 }}>
 
-                {/* Left: Icon circle */}
-                <div style={{ width:'48px', height:'48px', borderRadius:'12px',
-                  background: s.bg, display:'flex', alignItems:'center',
-                  justifyContent:'center', flexShrink:0 }}>
+                {/* Left: Brand Icon Box with vibrant gradient */}
+                <div style={{ width:'56px', height:'56px', borderRadius:'18px',
+                  background: s.iconGrad, display:'flex', alignItems:'center',
+                  justifyContent:'center', flexShrink:0, boxShadow:`0 8px 20px ${s.glow}` }}>
                   {s.icon}
                 </div>
 
-                {/* Middle: text */}
-                <div style={{ flex:1, minWidth:0, paddingRight:'8px' }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'4px', flexWrap:'wrap' }}>
-                    <span style={{ fontSize:'14px', fontWeight:900, color:'#0A0A0A', whiteSpace:'nowrap' }}>{s.platform}</span>
-                    <span style={{ fontSize:'10px', fontWeight:700, color:s.color,
-                      background:s.bg, padding:'3px 8px', borderRadius:'99px', whiteSpace:'nowrap' }}>{s.sub}</span>
+                {/* Middle: Title, Handle, Description */}
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'4px', flexWrap:'wrap' }}>
+                    <span style={{ fontSize:'16px', fontWeight:800, color:'#0F172A', whiteSpace:'nowrap' }}>{s.platform}</span>
+                    <span style={{ fontSize:'11px', fontWeight:800, color: s.badgeColor,
+                      background: s.badgeBg, padding:'4px 10px', borderRadius:'99px',
+                      whiteSpace:'nowrap', letterSpacing:'0.2px' }}>{s.sub}</span>
                   </div>
-                  <p style={{ fontSize:'11px', fontWeight:700, color:'#475569', margin:'0 0 6px',
+                  <p style={{ fontSize:'13px', fontWeight:700, color: s.handleColor, margin:'0 0 4px',
                     overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.handle}</p>
                   <p style={{ fontSize:'12px', color:'#64748B', margin:0, lineHeight:1.5,
                     wordBreak:'break-word', display:'-webkit-box', WebkitLineClamp:2,
                     WebkitBoxOrient:'vertical', overflow:'hidden' }}>{s.desc}</p>
                 </div>
 
-                {/* Right: follower count */}
-                <div style={{ textAlign:'right', flexShrink:0, minWidth:'64px', paddingTop:'2px' }}>
-                  <p style={{ fontSize:'20px', fontWeight:900, color:s.color, margin:0, lineHeight:1.1 }}>
+                {/* Right: Stat count + Brand Button */}
+                <div style={{ textAlign:'right', flexShrink:0, minWidth:'84px', display:'flex', flexDirection:'column', alignItems:'flex-end' }}>
+                  <p style={{ fontSize:'24px', fontWeight:900, color: s.color, margin:0, lineHeight:1.1, letterSpacing:'-0.5px' }}>
                     {loading ? '…' : fmtCount(s.count)}
                   </p>
-                  <p style={{ fontSize:'10px', color:'#94A3B8', margin:'4px 0 0', fontWeight:600, whiteSpace:'nowrap' }}>{s.statLabel}</p>
+                  <p style={{ fontSize:'11px', color:'#94A3B8', margin:'3px 0 8px', fontWeight:700, whiteSpace:'nowrap' }}>{s.statLabel}</p>
+                  <span style={{
+                    fontSize: '12px', fontWeight: 800, color: '#FFFFFF',
+                    background: s.btnGrad, padding: '7px 16px', borderRadius: '99px',
+                    display: 'inline-flex', alignItems: 'center', gap: '4px',
+                    boxShadow: `0 4px 14px ${s.glow}`
+                  }}>
+                    Follow <ArrowRight size={12} strokeWidth={2.5} />
+                  </span>
                 </div>
 
               </motion.a>

@@ -48,8 +48,8 @@ export default function ProductCard({ product, onQuickView }) {
       <motion.div
         whileHover={{
           y: -6,
-          boxShadow: '0 20px 40px -10px rgba(15, 23, 42, 0.18), 0 0 0 1.5px rgba(37, 99, 235, 0.25)',
-          borderColor: 'rgba(37, 99, 235, 0.3)'
+          boxShadow: '0 20px 40px -10px rgba(15, 23, 42, 0.12), 0 0 20px rgba(255, 255, 255, 0.6)',
+          borderColor: '#CBD5E1'
         }}
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         style={{
@@ -63,7 +63,7 @@ export default function ProductCard({ product, onQuickView }) {
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
-          transition: 'border-color 0.3s ease',
+          transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
         }}>
 
         {/* Image area — slightly larger aspect ratio with image zoom */}

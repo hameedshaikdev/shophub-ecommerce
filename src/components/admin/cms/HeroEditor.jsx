@@ -72,7 +72,7 @@ export default function HeroEditor({ heroData = {}, onChange }) {
             style={{
               padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px',
               border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
-              background: activeTab === 'tailoring' ? 'linear-gradient(135deg,#1A0533,#3D0F6B)' : '#F1F5F9',
+              background: activeTab === 'tailoring' ? 'linear-gradient(135deg, #F3EEFA, #D4C3ED)' : '#F1F5F9',
               color: activeTab === 'tailoring' ? '#FFF' : '#475569',
               boxShadow: activeTab === 'tailoring' ? '0 4px 14px rgba(61,15,107,.3)' : 'none',
             }}

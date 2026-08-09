@@ -20,19 +20,19 @@ const CONTENT = {
     title: 'Master Your', titleAccent: 'Craft.',
     titleLine2: 'Professional Tailoring Tools',
     sub: 'Premium tools engineered for craftsmen who demand the best. Every stitch, perfected.',
-    grad: 'linear-gradient(160deg,#1A0533 0%,#3D0F6B 50%,#1A0533 100%)',
-    accentColor: '#C084FC',
-    illustration: 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=800&auto=format&fit=crop&q=80',
-    illustrationAlt: 'Professional sewing machine',
+    grad: 'linear-gradient(180deg, #9C80AA 0%, #D1B6D5 18%, #D1B6D5 100%)',
+    accentColor: '#6B4F8A',
+    illustration: '/images/tailoring_hero.jpg',
+    illustrationAlt: 'Luxury professional tailoring tools atelier',
     collections: [
-      { id:'machines',  label:'Sewing Machines',  emoji:'🪡', desc:'Professional grade' },
+      { id:'machines',  label:'Tailoring Kit',    emoji:'🧰', desc:'Complete atelier set' },
       { id:'scissors',  label:'Scissors & Blades', emoji:'✂️', desc:'Precision cut'      },
       { id:'threads',   label:'Threads & Yarn',   emoji:'🧵', desc:'Premium quality'    },
       { id:'measuring', label:'Measuring Tools',  emoji:'📏', desc:'Accurate tools'     },
     ],
     subs: [
       {id:'all',icon:'◈',label:'All'},
-      {id:'machines',icon:'⚙',label:'Machines'},
+      {id:'machines',icon:'⚙',label:'Tailoring Kit'},
       {id:'scissors',icon:'✂',label:'Scissors'},
       {id:'threads',icon:'〇',label:'Threads'},
       {id:'needles',icon:'↑',label:'Needles'},
@@ -185,7 +185,7 @@ function MiniCard({ product }) {
         whileHover={{
           y: -10,
           scale: 1.02,
-          boxShadow: '0 20px 48px -8px rgba(0, 0, 0, 0.16), 0 0 20px rgba(233, 69, 96, 0.15)',
+          boxShadow: '0 20px 48px -8px rgba(0, 0, 0, 0.16), 0 0 20px rgba(255, 255, 255, 0.3)',
           borderColor: 'rgba(255, 255, 255, 0.95)'
         }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -299,12 +299,12 @@ function CollectionCard({ cls='', label, title, count, img, onClick, dark=false 
     <Reveal style={{ display:'contents' }}>
       <motion.div className={`col-card ${cls}`}
         whileHover={{
-          y: -12,
+          y: -8,
           scale: 1.01,
-          boxShadow: '0 28px 60px -10px rgba(0,0,0,.25), 0 0 24px rgba(233, 69, 96, 0.2)',
-          borderColor: 'rgba(255, 255, 255, 0.4)'
+          boxShadow: '0 24px 50px -10px rgba(0,0,0,.35), 0 0 20px rgba(255,255,255,.2)',
+          borderColor: 'rgba(255, 255, 255, 0.45)'
         }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         onClick={onClick}
         style={{ position:'relative', overflow:'hidden', borderRadius:'28px',
           cursor:'pointer', background:'#1A1A2E',
@@ -318,33 +318,37 @@ function CollectionCard({ cls='', label, title, count, img, onClick, dark=false 
             onError={e => { e.target.style.display='none'; }}/>
         </motion.div>
 
-        <div style={{ position:'absolute', inset:0,
-          background: dark
-            ? 'linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.85) 100%)'
-            : 'linear-gradient(180deg,rgba(0,0,0,.0) 25%,rgba(0,0,0,.8) 100%)' }}/>
+        {/* Overlay removed per user request */}
 
         <div className="col-card-padding" style={{ position:'absolute', inset:0, padding:'18px 20px',
           display:'flex', flexDirection:'column', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'6px' }}>
             {label && (
-              <span className="col-card-label" style={{ fontSize:'10px', fontWeight:800, letterSpacing:'0.5px',
-                textTransform:'uppercase', color:'rgba(255,255,255,.95)',
-                background:'rgba(255,255,255,.22)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)',
-                padding:'4px 10px', borderRadius:'9999px',
-                border:'1px solid rgba(255,255,255,.35)', boxShadow:'0 4px 12px rgba(0,0,0,.1)',
+              <span className="col-card-label" style={{ fontSize:'10px', fontWeight:800, letterSpacing:'0.6px',
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                textTransform:'uppercase', color:'rgba(255, 255, 255, 0.95)',
+                background:'rgba(255, 255, 255, 0.22)',
+                backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
+                padding:'5px 12px', borderRadius:'9999px',
+                border:'1px solid rgba(255, 255, 255, 0.45)',
+                boxShadow:'0 4px 16px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.6)',
                 whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:'70%' }}>{label}</span>
             )}
-            {count && <span className="col-card-count" style={{ fontSize:'11px', fontWeight:700, color:'rgba(255,255,255,.8)', whiteSpace:'nowrap' }}>{count}</span>}
+            {count && <span className="col-card-count" style={{ fontSize:'11px', fontWeight:800, fontFamily: "'Plus Jakarta Sans', sans-serif", color:'rgba(255, 255, 255, 0.95)', whiteSpace:'nowrap' }}>{count}</span>}
           </div>
           <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', gap:'8px' }}>
-            <h3 className="col-card-title" style={{ fontSize:'clamp(14px,1.8vw,20px)', fontWeight:900, color:'white',
-              letterSpacing:'-.3px', lineHeight:1.15, margin:0, overflow:'hidden', textOverflow:'ellipsis', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }}>{title}</h3>
+            <h3 className="col-card-title" style={{ fontSize:'clamp(15px,1.9vw,22px)', fontWeight:700,
+              fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+              color: '#FFFFFF',
+              letterSpacing:'-.025em', lineHeight:1.15, margin:0, overflow:'hidden', textOverflow:'ellipsis', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }}>{title}</h3>
             <motion.div whileHover={{ x:4, scale:1.1 }}
-              style={{ width:'34px', height:'34px', borderRadius:'9999px', flexShrink:0,
-                background:'rgba(255,255,255,.22)', backdropFilter:'blur(12px)',
+              style={{ width:'36px', height:'36px', borderRadius:'9999px', flexShrink:0,
+                background: 'rgba(255, 255, 255, 0.22)',
+                backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
                 display:'flex', alignItems:'center', justifyContent:'center',
-                border:'1px solid rgba(255,255,255,.35)', boxShadow:'0 4px 14px rgba(0,0,0,.15)' }}>
-              <ArrowRight size={14} color="white"/>
+                border: '1px solid rgba(255, 255, 255, 0.45)',
+                boxShadow:'0 4px 16px rgba(0,0,0,0.12)' }}>
+              <ArrowRight size={15} color="#FFFFFF"/>
             </motion.div>
           </div>
         </div>
@@ -374,7 +378,9 @@ export default function Home() {
   const productsRef = useRef(null);
   const filterRef   = useRef(null);
 
-  // Dynamic CMS resolution with static fallbacks
+  // Dynamic CMS resolution — grad & accentColor are ALWAYS taken from CONTENT
+  // (never CMS/localStorage) so each tab has its fixed identity:
+  //   tailoring = lavender  |  fashion = dark navy
   const cmsHero = activeCms?.hero?.[activeCategory] || CONTENT[activeCategory];
   const c = {
     ...CONTENT[activeCategory],
@@ -382,14 +388,17 @@ export default function Home() {
     titleAccent: cmsHero.titleAccent || CONTENT[activeCategory].titleAccent,
     titleLine2: cmsHero.titleLine2 || CONTENT[activeCategory].titleLine2,
     sub: cmsHero.sub || CONTENT[activeCategory].sub,
-    grad: cmsHero.grad || CONTENT[activeCategory].grad,
-    accentColor: cmsHero.accentColor || CONTENT[activeCategory].accentColor,
+    // grad and accentColor are LOCKED to CONTENT — CMS cannot change them
+    grad: CONTENT[activeCategory].grad,
+    accentColor: CONTENT[activeCategory].accentColor,
     illustration: cmsHero.illustration || CONTENT[activeCategory].illustration,
     badgeText: cmsHero.badgeText || 'New Collection 2026',
     btn1Text: cmsHero.btn1Text || 'Shop Now',
     btn2Text: cmsHero.btn2Text || 'Explore',
     collections: activeCms?.collections?.[activeCategory] || CONTENT[activeCategory].collections,
   };
+  // true when hero background is dark (fashion = dark navy)
+  const isDark = activeCategory === 'fashion';
 
   // SEO Update
   useEffect(() => {
@@ -447,32 +456,24 @@ export default function Home() {
 
       {/* ══ HERO ═════════════════════════════════════════════════ */}
       <div className="hero-container-wrap hero-compact" style={{ background:c.grad, position:'relative', overflow:'hidden',
-        display:'flex', flexDirection:'column', justifyContent:'center', transition:'background .6s ease' }}>
+        display:'flex', flexDirection:'column', justifyContent:'center', transition:'background .6s ease',
+        marginTop: '-1px', borderTop: 'none' }}>
 
-        {/* Glows */}
-        <motion.div animate={{scale:[1,1.2,1],opacity:[.3,.55,.3]}}
-          transition={{duration:10,repeat:Infinity,ease:'easeInOut'}}
-          style={{position:'absolute',width:'600px',height:'600px',borderRadius:'50%',
-            background:`radial-gradient(circle,${c.accentColor}28 0%,transparent 65%)`,
-            top:'-200px',right:'-150px',pointerEvents:'none'}}/>
-        <motion.div animate={{scale:[1,1.15,1],opacity:[.15,.35,.15]}}
-          transition={{duration:13,repeat:Infinity,ease:'easeInOut',delay:4}}
-          style={{position:'absolute',width:'400px',height:'400px',borderRadius:'50%',
-            background:`radial-gradient(circle,${c.accentColor}20 0%,transparent 65%)`,
-            bottom:'-120px',left:'-100px',pointerEvents:'none'}}/>
-        {/* Floating dots */}
-        {[{top:'20%',left:'6%',s:4,d:0},{top:'65%',left:'4%',s:3,d:1.2},
-          {top:'35%',right:'10%',s:5,d:2},{top:'75%',right:'6%',s:3,d:.5}].map((dot,i)=>(
-          <motion.div key={i} animate={{y:[-6,6,-6],opacity:[.35,.7,.35]}}
-            transition={{duration:3+i,repeat:Infinity,delay:dot.d}}
-            style={{position:'absolute',top:dot.top,left:dot.left,right:dot.right,
-              width:`${dot.s}px`,height:`${dot.s}px`,borderRadius:'50%',
-              background:`${c.accentColor}80`,pointerEvents:'none'}}/>
-        ))}
+        {/* ── Tailoring: 100% full-bleed hero image (desktop) ── */}
+        {!isDark && (
+          <div className="sh-desktop-bg" style={{position:'absolute',inset:0,zIndex:0,overflow:'hidden',pointerEvents:'none'}}>
+            <img src={`${c.illustration}?v=2560`} alt={c.illustrationAlt}
+              style={{width:'100%',height:'100%',objectFit:'cover',
+                objectPosition:'right center',display:'block',userSelect:'none',
+                imageRendering:'-webkit-optimize-contrast'}}
+              onError={e=>{e.target.src='/images/tailoring_hero.jpg';}}
+            />
+          </div>
+        )}
 
         <div className="sh-container hero-inner-wrap" style={{paddingTop:'56px',paddingBottom:'80px',position:'relative',zIndex:1}}>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'48px',alignItems:'center'}}
-            className="hero-grid">
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'36px',alignItems:'center',maxWidth:'100%'}}
+            className="hero-grid hero-grid-tailoring">
 
             {/* LEFT */}
             <motion.div className="hero-content-box" initial="hidden" animate="visible" variants={sg}>
@@ -483,12 +484,16 @@ export default function Home() {
                     initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}}
                     exit={{opacity:0,y:10}} transition={{duration:.3}}
                     style={{display:'inline-flex',alignItems:'center',gap:'7px',
-                      padding:'6px 16px',borderRadius:'99px',
-                      background:'rgba(255,255,255,.13)',backdropFilter:'blur(12px)',
-                      border:'1px solid rgba(255,255,255,.2)',
-                      fontSize:'11px',fontWeight:700,color:'rgba(255,255,255,.9)',
+                      padding:'7px 18px',borderRadius:'99px',
+                      background: isDark ? 'rgba(255,255,255,.13)' : 'rgba(255,255,255,.75)',
+                      backdropFilter:'blur(12px)',
+                      WebkitBackdropFilter:'blur(12px)',
+                      border: isDark ? '1px solid rgba(255,255,255,.2)' : '1px solid rgba(139,115,168,.25)',
+                      boxShadow: isDark ? '0 4px 16px rgba(0,0,0,.12)' : '0 4px 16px rgba(107,79,138,.08)',
+                      fontSize:'11px',fontWeight:800,
+                      color: isDark ? 'rgba(255,255,255,.9)' : '#4A3563',
                       letterSpacing:'1.2px',textTransform:'uppercase'}}>
-                    <Sparkles size={12} strokeWidth={2.5}/> New Collection 2026
+                    <Sparkles size={13} strokeWidth={2.5} color={isDark ? 'rgba(255,255,255,.8)' : '#6B4F8A'}/> New Collection 2026
                   </motion.span>
                 </AnimatePresence>
               </motion.div>
@@ -498,17 +503,27 @@ export default function Home() {
                 <motion.div key={`h-${activeCategory}`}
                   initial={{opacity:0,y:24}} animate={{opacity:1,y:0}}
                   exit={{opacity:0,y:-24}} transition={{duration:.45,ease:[.22,1,.36,1]}}>
-                  <h1 style={{fontSize:'clamp(36px,6vw,64px)',fontWeight:900,color:'white',
-                    lineHeight:1.02,letterSpacing:'-2.5px',margin:0}}>
+                  <h1 style={{fontSize:'clamp(38px,6vw,68px)',
+                    fontWeight: isDark ? 900 : 700,
+                    fontFamily: isDark ? 'inherit' : "'Playfair Display', Georgia, serif",
+                    color: isDark ? 'rgba(255,255,255,.95)' : '#252329',
+                    lineHeight:1.05,
+                    letterSpacing: isDark ? '-2.5px' : '-0.8px',
+                    margin:0}}>
                     {c.title}
                   </h1>
-                  <h1 style={{fontSize:'clamp(36px,6vw,64px)',fontWeight:900,
-                    color:c.accentColor,lineHeight:1.02,letterSpacing:'-2.5px',
+                  <h1 style={{fontSize:'clamp(38px,6vw,68px)',
+                    fontWeight: isDark ? 900 : 700,
+                    fontFamily: isDark ? 'inherit' : "'Playfair Display', Georgia, serif",
+                    color: isDark ? c.accentColor : '#634780',
+                    lineHeight:1.05,
+                    letterSpacing: isDark ? '-2.5px' : '-0.8px',
                     marginBottom:'8px',transition:'color .6s'}}>
                     {c.titleAccent}
                   </h1>
-                  <p style={{fontSize:'clamp(14px,1.8vw,17px)',fontWeight:400,
-                    color:'rgba(255,255,255,.5)',letterSpacing:'-.2px',marginBottom:'16px'}}>
+                  <p style={{fontSize:'clamp(15px,1.9vw,18px)',fontWeight:700,
+                    color: isDark ? 'rgba(255,255,255,.55)' : '#3E3846',
+                    letterSpacing:'-.2px',marginBottom:'16px'}}>
                     {c.titleLine2}
                   </p>
                 </motion.div>
@@ -518,8 +533,9 @@ export default function Home() {
                 <motion.p key={`sub-${activeCategory}`}
                   initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
                   transition={{duration:.4,delay:.1}}
-                  style={{fontSize:'clamp(13px,1.5vw,15px)',color:'rgba(255,255,255,.6)',
-                    maxWidth:'420px',lineHeight:1.8,marginBottom:'32px'}}>
+                  style={{fontSize:'clamp(13px,1.5vw,15px)',
+                    color: isDark ? 'rgba(255,255,255,.6)' : '#554E60',
+                    maxWidth:'440px',lineHeight:1.75,marginBottom:'32px',fontWeight:400}}>
                   {c.sub}
                 </motion.p>
               </AnimatePresence>
@@ -527,38 +543,45 @@ export default function Home() {
               {/* CTAs */}
               <motion.div variants={fu} style={{display:'flex',gap:'12px',flexWrap:'wrap',marginBottom:'36px'}}>
                 <motion.button onClick={() => scrollTo(productsRef)}
-                  whileHover={{scale:1.04,boxShadow:'0 12px 36px rgba(0,0,0,.35)'}}
+                  whileHover={{scale:1.04,boxShadow:'0 12px 32px rgba(37,35,41,.28)'}}
                   whileTap={{scale:.97}}
                   style={{display:'inline-flex',alignItems:'center',gap:'9px',padding:'14px 30px',
-                    borderRadius:'14px',background:'white',color:'#0A0A0A',
+                    borderRadius:'14px',
+                    background: isDark ? 'white' : '#252329',
+                    color: isDark ? '#0A2540' : '#FAF8F4',
                     fontSize:'14px',fontWeight:800,border:'none',cursor:'pointer',
-                    boxShadow:'0 4px 24px rgba(0,0,0,.28)'}}>
-                  <Package size={16} strokeWidth={2.5}/> Shop Now
+                    boxShadow:'0 8px 24px rgba(37,35,41,.22)'}}>
+                  <Package size={16} strokeWidth={2.5} color={isDark ? '#0A2540' : '#FAF8F4'}/> Shop Now
                 </motion.button>
                 <motion.button onClick={() => scrollTo(filterRef)}
-                  whileHover={{scale:1.04,background:'rgba(255,255,255,.2)'}}
+                  whileHover={{scale:1.04}}
                   whileTap={{scale:.97}}
                   style={{display:'inline-flex',alignItems:'center',gap:'9px',padding:'14px 24px',
-                    borderRadius:'14px',background:'rgba(255,255,255,.12)',backdropFilter:'blur(12px)',
-                    border:'1.5px solid rgba(255,255,255,.25)',color:'white',
-                    fontSize:'14px',fontWeight:700,cursor:'pointer'}}>
+                    borderRadius:'14px',
+                    background: isDark ? 'rgba(255,255,255,.12)' : 'rgba(255,255,255,.75)',
+                    backdropFilter:'blur(12px)',
+                    WebkitBackdropFilter:'blur(12px)',
+                    border: isDark ? '1.5px solid rgba(255,255,255,.25)' : '1.5px solid #8C789F',
+                    color: isDark ? 'white' : '#252329',
+                    fontSize:'14px',fontWeight:800,cursor:'pointer',
+                    boxShadow:'0 4px 16px rgba(107,79,138,.08)'}}>
                   Explore
                   <motion.span animate={{x:[0,4,0]}} transition={{duration:1.5,repeat:Infinity}}>
-                    <ArrowRight size={16} strokeWidth={2.5}/>
+                    <ArrowRight size={16} strokeWidth={2.5} color={isDark ? 'white' : '#252329'}/>
                   </motion.span>
                 </motion.button>
               </motion.div>
 
               {/* Trust badges */}
-              <motion.div variants={fu} style={{display:'flex',gap:'16px',flexWrap:'wrap'}}>
+              <motion.div variants={fu} style={{display:'flex',gap:'18px',flexWrap:'wrap'}}>
                 {[
-                  {icon:Truck,   text:'Free Delivery'},
-                  {icon:Shield,  text:'Secure Pay'},
+                  {icon:Truck,     text:'Fast Delivery'},
+                  {icon:Shield,    text:'Secure Pay'},
                   {icon:BadgeCheck,text:'100% Genuine'},
                 ].map(({icon:Icon,text})=>(
-                  <div key={text} style={{display:'flex',alignItems:'center',gap:'5px'}}>
-                    <Icon size={13} strokeWidth={2} color={c.accentColor}/>
-                    <span style={{fontSize:'11px',fontWeight:600,color:'rgba(255,255,255,.55)'}}>{text}</span>
+                  <div key={text} style={{display:'flex',alignItems:'center',gap:'6px'}}>
+                    <Icon size={14} strokeWidth={2.2} color={c.accentColor}/>
+                    <span style={{fontSize:'12px',fontWeight:700,color: isDark ? 'rgba(255,255,255,.7)' : '#4A4354'}}>{text}</span>
                   </div>
                 ))}
               </motion.div>
@@ -569,69 +592,79 @@ export default function Home() {
               justifyContent:'center',position:'relative'}}>
               <AnimatePresence mode="wait">
                 <motion.div key={`illus-${activeCategory}`}
-                  initial={{opacity:0,scale:.88,y:24}} animate={{opacity:1,scale:1,y:0}}
-                  exit={{opacity:0,scale:.88,y:-24}} transition={{duration:.65,ease:[.22,1,.36,1]}}
-                  style={{position:'relative',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                  {/* Glow halo behind photo */}
-                  <div style={{position:'absolute',width:'340px',height:'340px',borderRadius:'50%',
-                    background:`radial-gradient(circle,${c.accentColor}30 0%,transparent 70%)`,
-                    filter:'blur(40px)',transform:'translateY(16px)',zIndex:0}}/>
-                  {/* Spinning ring */}
-                  <motion.div animate={{rotate:360}} transition={{duration:28,repeat:Infinity,ease:'linear'}}
-                    style={{position:'absolute',width:'380px',height:'380px',borderRadius:'50%',
-                      border:`1.5px dashed ${c.accentColor}30`,pointerEvents:'none',zIndex:0}}/>
-                  {/* Photo card */}
-                  <motion.div
-                    className="hero-photo-card"
-                    animate={{y:[-8,8,-8]}}
-                    transition={{duration:5,repeat:Infinity,ease:'easeInOut'}}
-                    style={{
-                      position:'relative',zIndex:1,
-                      width:'clamp(240px,28vw,340px)',
-                      height:'clamp(300px,34vw,420px)',
-                      borderRadius:'28px',
+                  initial={{opacity:0,scale:.95,y:12}} animate={{opacity:1,scale:1,y:0}}
+                  exit={{opacity:0,scale:.95,y:-12}} transition={{duration:.5,ease:[.22,1,.36,1]}}
+                  style={{position:'relative',width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                  {isDark ? (
+                    /* Fashion Card */
+                    <motion.div
+                      className="hero-photo-card"
+                      animate={{y:[-8,8,-8]}}
+                      transition={{duration:5,repeat:Infinity,ease:'easeInOut'}}
+                      style={{
+                        position:'relative',zIndex:1,
+                        width:'clamp(260px,30vw,360px)',
+                        height:'clamp(310px,35vw,430px)',
+                        borderRadius:'28px',
+                        overflow:'hidden',
+                        border:'1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow:'0 28px 70px -12px rgba(0,37,64,0.45), 0 0 0 1px rgba(255,255,255,0.2)',
+                      }}>
+                      <img src={c.illustration} alt={c.illustrationAlt}
+                        style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center center',
+                          userSelect:'none',pointerEvents:'none'}}
+                        onError={e=>{e.target.src='/images/tailoring_hero.png';}}
+                      />
+                    </motion.div>
+                  ) : (
+                    /* Mobile Tailoring Photo Card — Crisp 4K photo block for mobile screens */
+                    <div className="sh-mobile-only" style={{
+                      width:'100%',
+                      marginTop:'20px',
+                      borderRadius:'24px',
                       overflow:'hidden',
-                      border:`1.5px solid ${c.accentColor}40`,
-                      boxShadow:`0 32px 80px -12px ${c.accentColor}50, 0 0 0 1px rgba(255,255,255,0.08)`,
+                      boxShadow:'0 16px 40px -8px rgba(107,79,138,0.22)',
+                      border:'1.5px solid rgba(255,255,255,0.6)'
                     }}>
-                    <img src={c.illustration} alt={c.illustrationAlt}
-                      style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top',
-                        userSelect:'none',pointerEvents:'none'}}
-                      onError={e=>{e.target.src='https://images.unsplash.com/photo-1617606002806-94e279c22567?w=800';}}
-                    />
-                    {/* Glass overlay shimmer at bottom */}
-                    <div style={{position:'absolute',bottom:0,left:0,right:0,height:'80px',
-                      background:`linear-gradient(to top, ${c.accentColor}25, transparent)`,
-                      backdropFilter:'blur(2px)'}}/>
-                  </motion.div>
+                      <img src={c.illustration} alt={c.illustrationAlt}
+                        style={{width:'100%',height:'auto',display:'block',userSelect:'none'}}
+                        onError={e=>{e.target.src='/images/tailoring_hero.png';}}
+                      />
+                    </div>
+                  )}
                 </motion.div>
               </AnimatePresence>
             </div>
-
 
           </div>
         </div>
 
         {/* Stats bar */}
-        <div className="hero-stats-bar" style={{background:'rgba(0,0,0,.25)',backdropFilter:'blur(12px)',
-          borderTop:`1px solid rgba(255,255,255,.08)`}}>
-          <div className="sh-container" style={{padding:'12px 0'}}>
+        <div className="hero-stats-bar" style={{
+          background: isDark ? 'rgba(0,0,0,.28)' : 'rgba(255,255,255,.65)',
+          backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',
+          borderTop: isDark ? '1px solid rgba(255,255,255,.08)' : '1px solid rgba(255,255,255,.8)',
+          borderBottom: isDark ? '1px solid rgba(255,255,255,.06)' : '1px solid rgba(139,115,168,.15)'}}>
+          <div className="sh-container" style={{padding:'14px 0'}}>
             <div className="hero-stats-inner" style={{display:'flex',justifyContent:'space-around',flexWrap:'wrap',gap:'10px 16px'}}>
               {[
                 {icon:Star,   val:'4.9', suf:' ★', label:'Rating',   isStatic:true},
                 {icon:Package,val:500,   suf:'+',  label:'Products',  isStatic:false},
-                {icon:Users,  val:2000,  suf:'+',  label:'Customers', isStatic:false},
+                {icon:Users,  val:2400,  suf:'+',  label:'Customers', isStatic:false},
                 {icon:Truck,  val:null,  suf:'',   label:'Pan India Delivery', isStatic:true},
               ].map(({icon:Icon,val,suf,label,isStatic})=>(
-                <div key={label} style={{display:'flex',alignItems:'center',gap:'6px',flexShrink:0}}>
-                  <Icon size={13} strokeWidth={2} color={c.accentColor}/>
-                  <span style={{fontSize:'13px',fontWeight:900,color:'white',whiteSpace:'nowrap'}}>
+                <div key={label} style={{display:'flex',alignItems:'center',gap:'7px',flexShrink:0}}>
+                  <Icon size={14} strokeWidth={2.2} color={c.accentColor}/>
+                  <span style={{fontSize:'14px',fontWeight:900,
+                    color: isDark ? 'white' : '#252329',whiteSpace:'nowrap'}}>
                     {isStatic
                       ? (val === null ? null : val + suf)
                       : <><Counter value={val} suffix={suf}/></>}
                   </span>
-                  {val !== null && <span style={{fontSize:'11px',color:'rgba(255,255,255,.45)',whiteSpace:'nowrap'}}>{label}</span>}
-                  {val === null && <span style={{fontSize:'13px',fontWeight:900,color:'white',whiteSpace:'nowrap'}}>{label}</span>}
+                  {val !== null && <span style={{fontSize:'12px',fontWeight:600,
+                    color: isDark ? 'rgba(255,255,255,.45)' : '#635B70',whiteSpace:'nowrap'}}>{label}</span>}
+                  {val === null && <span style={{fontSize:'14px',fontWeight:900,
+                    color: isDark ? 'white' : '#252329',whiteSpace:'nowrap'}}>{label}</span>}
                 </div>
               ))}
             </div>
@@ -641,12 +674,13 @@ export default function Home() {
         {/* Scroll hint */}
         <motion.div animate={{y:[0,7,0]}} transition={{duration:2,repeat:Infinity}}
           onClick={() => scrollTo(filterRef)}
-          style={{position:'absolute',bottom:'60px',left:'50%',transform:'translateX(-50%)',
-            cursor:'pointer',color:'rgba(255,255,255,.3)',zIndex:1,
+          style={{position:'absolute',bottom:'64px',left:'50%',transform:'translateX(-50%)',
+            cursor:'pointer',zIndex:1,opacity:0.6,
             display:'flex',flexDirection:'column',alignItems:'center',gap:'3px'}}>
           <span style={{fontSize:'9px',fontWeight:700,letterSpacing:'1.5px',
-            textTransform:'uppercase',color:'rgba(255,255,255,.3)'}}>scroll</span>
-          <ChevronDown size={18} strokeWidth={1.5}/>
+            textTransform:'uppercase',
+            color: isDark ? 'rgba(255,255,255,.5)' : '#6B4F8A'}}>scroll</span>
+          <ChevronDown size={18} strokeWidth={2} color={isDark ? 'rgba(255,255,255,.5)' : '#6B4F8A'}/>
         </motion.div>
       </div>
 
@@ -700,12 +734,12 @@ export default function Home() {
 
           {activeCategory==='tailoring' ? (
             <div className="collections-grid">
-              <CollectionCard cls="cg-featured" label="Featured"  title="Sewing Machines"  count="12 items"  img="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&auto=format&fit=crop&q=80" onClick={()=>{setSub('machines');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-med"      label="Precision" title="Scissors"         count="8 items"   img="https://images.unsplash.com/photo-1584466977773-e625c37cdd50?w=500&auto=format&fit=crop&q=80" onClick={()=>{setSub('scissors');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-small"    label="Accuracy"  title="Measuring"        count="6 items"   img="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=400&auto=format&fit=crop&q=80" onClick={()=>{setSub('measuring');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-wide"     label="Premium"   title="Threads & Yarn"   count="20+ items" img="https://images.unsplash.com/photo-1617606002806-94e279c22567?w=700&auto=format&fit=crop&q=80" onClick={()=>{setSub('threads');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-small"    label="Essential" title="Needles"          count="15+ types" img="https://images.unsplash.com/photo-1594498258009-2e2bde84459e?w=400&auto=format&fit=crop&q=80" onClick={()=>{setSub('needles');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-small"    label="Shop All"  title="All Tools"        count=""          img="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=400&auto=format&fit=crop&q=80" onClick={()=>{setSub('all');scrollTo(productsRef);}} dark/>
+              <CollectionCard cls="cg-featured" label="Featured"  title="Tailoring Kit"    count="12 items"  img="/images/collections/sewing_machines.png" onClick={()=>{setSub('machines');scrollTo(productsRef);}}/>
+              <CollectionCard cls="cg-med"      label="Precision" title="Scissors"         count="8 items"   img="/images/collections/scissors.png" onClick={()=>{setSub('scissors');scrollTo(productsRef);}}/>
+              <CollectionCard cls="cg-small"    label="Accuracy"  title="Measuring"        count="6 items"   img="/images/collections/measuring.png" onClick={()=>{setSub('measuring');scrollTo(productsRef);}}/>
+              <CollectionCard cls="cg-wide"     label="Premium"   title="Presser Feet"     count="20+ items" img="/images/collections/all_tools.png" onClick={()=>{setSub('all');scrollTo(productsRef);}}/>
+              <CollectionCard cls="cg-small"    label="Essential" title="Needles"          count="15+ types" img="/images/collections/needles.png" onClick={()=>{setSub('needles');scrollTo(productsRef);}}/>
+              <CollectionCard cls="cg-small"    label="Shop All"  title="Threads & Yarn"   count=""          img="/images/collections/threads.png" onClick={()=>{setSub('threads');scrollTo(productsRef);}} dark/>
             </div>
           ) : (
             <div className="collections-grid">
