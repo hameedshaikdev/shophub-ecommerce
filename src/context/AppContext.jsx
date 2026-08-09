@@ -105,19 +105,35 @@ export function AppProvider({ children }) {
   const getSanitizedCms = (data) => {
     if (!data) return DEFAULT_CMS_DATA;
     const cols = data.collections?.tailoring || [];
-    const isStale = cols.some(c => c.label === 'Sewing Machines' || (c.image && c.image.includes('unsplash.com/photo-1617606002806')));
-    if (isStale || !cols.length) {
-      const updated = {
-        ...data,
-        collections: DEFAULT_CMS_DATA.collections,
+    const heroImg = data.hero?.tailoring?.illustration || '';
+    const isStaleCols = cols.some(c => c.label === 'Sewing Machines' || (c.image && c.image.includes('unsplash.com/photo-1617606002806')));
+    const isStaleHero = heroImg.includes('unsplash.com/photo-1617606002806');
+
+    let updated = { ...data };
+    let changed = false;
+
+    if (isStaleCols || !cols.length) {
+      updated.collections = DEFAULT_CMS_DATA.collections;
+      changed = true;
+    }
+    if (isStaleHero || !heroImg) {
+      updated.hero = {
+        ...updated.hero,
+        tailoring: {
+          ...(updated.hero?.tailoring || DEFAULT_CMS_DATA.hero.tailoring),
+          illustration: '/images/tailoring_hero.jpg'
+        }
       };
+      changed = true;
+    }
+
+    if (changed) {
       try {
         localStorage.setItem('ashub_homepage_cms', JSON.stringify(updated));
         localStorage.setItem('ashub_homepage_cms_draft', JSON.stringify(updated));
       } catch { /* ignore */ }
-      return updated;
     }
-    return data;
+    return updated;
   };
 
   const [cmsData, setCmsData]   = useState(() => {

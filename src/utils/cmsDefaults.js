@@ -9,7 +9,7 @@ export const DEFAULT_CMS_DATA = {
       sub: 'Premium tools engineered for craftsmen who demand the best. Every stitch, perfected.',
       grad: 'linear-gradient(135deg, #F3EEFA 0%, #E5D9F4 50%, #D4C3ED 100%)',
       accentColor: '#6B4F8A',
-      illustration: '/images/tailoring_hero.png',
+      illustration: '/images/tailoring_hero.jpg',
       illustrationAlt: 'Luxury professional tailoring tools atelier',
       badgeText: 'New Collection 2026',
       btn1Text: 'Shop Now',
