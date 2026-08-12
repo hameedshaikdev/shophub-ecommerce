@@ -586,12 +586,13 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* RIGHT — Photo Column (image-column) */}
+            {/* RIGHT — Photo Column (hero-image-column) */}
             <AnimatePresence mode="wait">
               <motion.div key={`illus-${activeCategory}`}
+                className="hero-image-column"
                 initial={{opacity:0,scale:.95,y:12}} animate={{opacity:1,scale:1,y:0}}
                 exit={{opacity:0,scale:.95,y:-12}} transition={{duration:.5,ease:[.22,1,.36,1]}}
-                style={{position:'relative',flex:'0 0 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                style={{position:'relative',flex:'1 1 auto',minWidth:0,display:'flex',alignItems:'center',justifyContent:'flex-end',paddingRight:'48px',boxSizing:'border-box'}}>
                 {isDark ? (
                   <div className="hero-image-collage" style={{
                     position: 'relative',
@@ -600,9 +601,8 @@ export default function Home() {
                     boxSizing: 'border-box',
                     userSelect: 'none',
                     overflow: 'visible',
-                    margin: '0 auto',
+                    margin: '0',
                     flex: 'none',
-                    transformOrigin: 'center center',
                   }}>
 
                     {/* ① CARD 1 — NAVY FLORAL DRESS (255px × 355px) */}
@@ -1034,6 +1034,7 @@ export default function Home() {
         @media (max-width: 768px) {
           .hero-combined-wrapper { flex-direction: column !important; gap: 24px !important; }
           .hero-content-box { flex: 1 1 100% !important; max-width: 100% !important; text-align: center !important; }
+          .hero-image-column { padding-right: 0 !important; justify-content: center !important; }
           .hero-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
           .hero-illustration { display: none !important; }
         }
@@ -1041,16 +1042,16 @@ export default function Home() {
 
         /* Desktop collage uniform scaling */
         @media (min-width: 769px) and (max-width: 1199px) {
-          .hero-image-collage { transform: scale(0.72) !important; }
+          .hero-image-collage { transform: scale(0.72) !important; transform-origin: right center !important; }
         }
         @media (min-width: 1200px) and (max-width: 1399px) {
-          .hero-image-collage { transform: scale(0.82) !important; }
+          .hero-image-collage { transform: scale(0.82) !important; transform-origin: right center !important; }
         }
         @media (min-width: 1400px) and (max-width: 1599px) {
-          .hero-image-collage { transform: scale(0.95) !important; }
+          .hero-image-collage { transform: scale(0.95) !important; transform-origin: right center !important; }
         }
         @media (min-width: 1600px) {
-          .hero-image-collage { transform: scale(1) !important; }
+          .hero-image-collage { transform: scale(1) !important; transform-origin: right center !important; }
         }
 
         /* ── Carousel: arrows inside, no overflow ── */
