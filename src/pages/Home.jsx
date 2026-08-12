@@ -643,7 +643,7 @@ export default function Home() {
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </motion.div>
 
-                    {/* ③ CARD 3 — BEIGE BLAZER + JEANS (Preserved 22px gap from Lavender + 30px right margin) */}
+                    {/* ③ CARD 3 — BEIGE BLAZER + JEANS (Top-right position, 12px gap from Lavender, 40px right margin) */}
                     <motion.div
                       initial={{ opacity: 0, x: 60 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -651,7 +651,7 @@ export default function Home() {
                       whileHover={{ scale: 1.02, zIndex: 20 }}
                       style={{
                         position: 'absolute', zIndex: 1,
-                        left: '565px', top: '40px',
+                        left: '555px', top: '40px',
                         width: '200px', height: '360px',
                         borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
                         border: '1.5px solid rgba(255,255,255,0.35)',
