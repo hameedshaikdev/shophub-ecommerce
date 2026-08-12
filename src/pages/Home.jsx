@@ -591,18 +591,17 @@ export default function Home() {
               <motion.div key={`illus-${activeCategory}`}
                 initial={{opacity:0,scale:.95,y:12}} animate={{opacity:1,scale:1,y:0}}
                 exit={{opacity:0,scale:.95,y:-12}} transition={{duration:.5,ease:[.22,1,.36,1]}}
-                style={{position:'relative',flex:'0 0 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                style={{position:'relative',flex:'1 1 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'flex-end',paddingRight:'20px',boxSizing:'border-box'}}>
                 {isDark ? (
                   <div className="hero-image-collage" style={{
                     position: 'relative',
-                    width: '795px',
+                    width: '760px',
                     height: '500px',
                     boxSizing: 'border-box',
                     userSelect: 'none',
                     overflow: 'visible',
-                    margin: '0 auto',
+                    margin: '0 0 0 auto',
                     flex: 'none',
-                    transformOrigin: 'center center',
                   }}>
 
                     {/* ① CARD 1 — NAVY FLORAL DRESS (255px × 355px) */}
@@ -624,7 +623,7 @@ export default function Home() {
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </motion.div>
 
-                    {/* ② CARD 2 — LAVENDER/PINK OUTFIT (278px × 225px - Preserved Gap) */}
+                    {/* ② CARD 2 — LAVENDER/PINK OUTFIT (278px × 225px) */}
                     <motion.div
                       initial={{ opacity: 0, y: -60 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -643,7 +642,7 @@ export default function Home() {
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </motion.div>
 
-                    {/* ③ CARD 3 — BEIGE BLAZER + JEANS (Top-right position, 12px gap from Lavender, 40px right margin) */}
+                    {/* ③ CARD 3 — BEIGE BLAZER (185px × 360px at left 555px for 12px Lavender gap + 40px right margin) */}
                     <motion.div
                       initial={{ opacity: 0, x: 60 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -652,7 +651,7 @@ export default function Home() {
                       style={{
                         position: 'absolute', zIndex: 1,
                         left: '555px', top: '40px',
-                        width: '200px', height: '360px',
+                        width: '185px', height: '360px',
                         borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
                         border: '1.5px solid rgba(255,255,255,0.35)',
                         boxShadow: '0 14px 38px rgba(0,0,0,0.22)',
@@ -662,7 +661,7 @@ export default function Home() {
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </motion.div>
 
-                    {/* ④ CARD 4 — CREAM/WHITE DRESS (Width increased slightly to 215px) */}
+                    {/* ④ CARD 4 — CREAM/WHITE DRESS (Slightly wider at 210px × 242px) */}
                     <motion.div
                       initial={{ opacity: 0, y: 60 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -670,8 +669,8 @@ export default function Home() {
                       whileHover={{ scale: 1.02, zIndex: 20 }}
                       style={{
                         position: 'absolute', zIndex: 2,
-                        left: '215px', top: '235px',
-                        width: '215px', height: '248px',
+                        left: '228px', top: '240px',
+                        width: '210px', height: '242px',
                         borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
                         border: '1.5px solid rgba(255,255,255,0.35)',
                         boxShadow: '0 16px 42px rgba(0,0,0,0.22)',
@@ -686,7 +685,7 @@ export default function Home() {
                       initial={{ opacity: 0, x: -40, y: 40 }}
                       animate={{ opacity: 1, x: 0, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      whileHover={{ scale: 1.02, zIndex: 30 }}
                       style={{
                         position: 'absolute', zIndex: 3,
                         left: '43px', top: '345px',
@@ -700,16 +699,16 @@ export default function Home() {
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </motion.div>
 
-                    {/* ⑥ CARD 6 — PINK DRESS (Size reduced slightly to 145px × 165px) */}
+                    {/* ⑥ CARD 6 — PINK DRESS (Slightly smaller at 148px × 168px) */}
                     <motion.div
                       initial={{ opacity: 0, x: 40, y: 40 }}
                       animate={{ opacity: 1, x: 0, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      whileHover={{ scale: 1.02, zIndex: 30 }}
                       style={{
                         position: 'absolute', zIndex: 3,
-                        left: '415px', top: '305px',
-                        width: '145px', height: '165px',
+                        left: '425px', top: '300px',
+                        width: '148px', height: '168px',
                         borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
                         border: '1.5px solid rgba(255,255,255,0.35)',
                         boxShadow: '0 12px 30px rgba(0,0,0,0.22)',
