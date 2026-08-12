@@ -116,12 +116,26 @@ export function AppProvider({ children }) {
       updated.collections = DEFAULT_CMS_DATA.collections;
       changed = true;
     }
+    const fashionImg = data.hero?.fashion?.illustration || '';
+    const isStaleFashion = !fashionImg || fashionImg.includes('unsplash.com/photo-1515886657613');
+
     if (isStaleHero || !heroImg) {
       updated.hero = {
         ...updated.hero,
         tailoring: {
           ...(updated.hero?.tailoring || DEFAULT_CMS_DATA.hero.tailoring),
           illustration: '/images/tailoring_hero.jpg'
+        }
+      };
+      changed = true;
+    }
+
+    if (isStaleFashion) {
+      updated.hero = {
+        ...updated.hero,
+        fashion: {
+          ...(updated.hero?.fashion || DEFAULT_CMS_DATA.hero.fashion),
+          illustration: '/images/women_fashion_hero_collage.jpg'
         }
       };
       changed = true;

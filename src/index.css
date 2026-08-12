@@ -282,7 +282,7 @@ div[style*="overflow"]::-webkit-scrollbar {
 
 /* Hero desktop: min-height for visual impact */
 .hero-compact {
-  min-height: 520px;
+  min-height: 560px;
 }
 /* Hero inner padding accounts for absolute stats bar (≈48px) */
 .hero-inner-wrap {

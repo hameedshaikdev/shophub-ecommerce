@@ -43,7 +43,7 @@ const CONTENT = {
     title: 'Define Your', titleAccent: 'Style.',
     titleLine2: "Women's Fashion Collection",
     sub: 'Curated fashion for the modern woman. Elegance meets everyday comfort.',
-    grad: 'linear-gradient(160deg,#0A2540 0%,#1A4A7A 50%,#0A2540 100%)',
+    grad: 'linear-gradient(135deg, #134676 0%, #17548C 45%, #1E66AA 80%, #2574BD 100%)',
     accentColor: '#60A5FA',
     illustration: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=640&auto=format&fit=crop&q=80',
     illustrationAlt: 'Women fashion',
@@ -471,12 +471,11 @@ export default function Home() {
           </div>
         )}
 
-        <div className="sh-container hero-inner-wrap" style={{paddingTop:'56px',paddingBottom:'80px',position:'relative',zIndex:1}}>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'36px',alignItems:'center',maxWidth:'100%'}}
-            className="hero-grid hero-grid-tailoring">
+        <div className="sh-container hero-inner-wrap" style={{paddingTop:'28px',paddingBottom:'30px',position:'relative',zIndex:1}}>
+          <div className="hero-combined-wrapper" style={{position:'relative',width:'100%',display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:'32px',maxWidth:'100%'}}>
 
-            {/* LEFT */}
-            <motion.div className="hero-content-box" initial="hidden" animate="visible" variants={sg}>
+            {/* LEFT — Hero Text Content */}
+            <motion.div className="hero-content-box" style={{maxWidth:'440px',minWidth:'300px',zIndex:2,flex:'0 0 42%'}} initial="hidden" animate="visible" variants={sg}>
               {/* Badge */}
               <motion.div variants={fu} style={{marginBottom:'20px'}}>
                 <AnimatePresence mode="wait">
@@ -587,35 +586,140 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* RIGHT — Hero Photo */}
-            <div className="hero-illustration" style={{display:'flex',alignItems:'center',
-              justifyContent:'center',position:'relative'}}>
-              <AnimatePresence mode="wait">
-                <motion.div key={`illus-${activeCategory}`}
-                  initial={{opacity:0,scale:.95,y:12}} animate={{opacity:1,scale:1,y:0}}
-                  exit={{opacity:0,scale:.95,y:-12}} transition={{duration:.5,ease:[.22,1,.36,1]}}
-                  style={{position:'relative',width:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                  {isDark ? (
-                    /* Fashion Card */
+            {/* RIGHT — Photo Column (image-column) */}
+            <AnimatePresence mode="wait">
+              <motion.div key={`illus-${activeCategory}`}
+                initial={{opacity:0,scale:.95,y:12}} animate={{opacity:1,scale:1,y:0}}
+                exit={{opacity:0,scale:.95,y:-12}} transition={{duration:.5,ease:[.22,1,.36,1]}}
+                style={{position:'relative',flex:'0 0 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                {isDark ? (
+                  <div className="hero-image-collage" style={{
+                    position: 'relative',
+                    width: '760px',
+                    height: '500px',
+                    boxSizing: 'border-box',
+                    userSelect: 'none',
+                    overflow: 'visible',
+                    margin: '0 auto',
+                    flex: 'none',
+                    transformOrigin: 'center center',
+                  }}>
+
+                    {/* ① CARD 1 — NAVY FLORAL DRESS (255px × 355px) */}
                     <motion.div
-                      className="hero-photo-card"
-                      animate={{y:[-8,8,-8]}}
-                      transition={{duration:5,repeat:Infinity,ease:'easeInOut'}}
+                      initial={{ opacity: 0, x: -60 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 0.0, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
                       style={{
-                        position:'relative',zIndex:1,
-                        width:'clamp(260px,30vw,360px)',
-                        height:'clamp(310px,35vw,430px)',
-                        borderRadius:'28px',
-                        overflow:'hidden',
-                        border:'1.5px solid rgba(255,255,255,0.35)',
-                        boxShadow:'0 28px 70px -12px rgba(0,37,64,0.45), 0 0 0 1px rgba(255,255,255,0.2)',
-                      }}>
-                      <img src={c.illustration} alt={c.illustrationAlt}
-                        style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center center',
-                          userSelect:'none',pointerEvents:'none'}}
-                        onError={e=>{e.target.src='/images/tailoring_hero.png';}}
-                      />
+                        position: 'absolute', zIndex: 1,
+                        left: '0px', top: '0px',
+                        width: '255px', height: '355px',
+                        borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 16px 40px rgba(0,0,0,0.22)',
+                      }}
+                    >
+                      <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </motion.div>
+
+                    {/* ② CARD 2 — LAVENDER/PINK OUTFIT (278px × 225px) */}
+                    <motion.div
+                      initial={{ opacity: 0, y: -60 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 1,
+                        left: '265px', top: '0px',
+                        width: '278px', height: '225px',
+                        borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 14px 32px rgba(0,0,0,0.18)',
+                      }}
+                    >
+                      <img src="/images/fashion_photo_2.jpg" alt="Lavender Outfit"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
+
+                    {/* ③ CARD 3 — BEIGE BLAZER + JEANS (200px × 360px) */}
+                    <motion.div
+                      initial={{ opacity: 0, x: 60 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 1,
+                        left: '555px', top: '40px',
+                        width: '200px', height: '360px',
+                        borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 14px 38px rgba(0,0,0,0.22)',
+                      }}
+                    >
+                      <img src="/images/fashion_photo_3.jpg" alt="Beige Blazer"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
+
+                    {/* ④ CARD 4 — CREAM/WHITE DRESS (195px × 242px) */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 60 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 2,
+                        left: '228px', top: '240px',
+                        width: '195px', height: '242px',
+                        borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 16px 42px rgba(0,0,0,0.22)',
+                      }}
+                    >
+                      <img src="/images/fashion_photo_4.jpg" alt="Cream Dress"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
+
+                    {/* ⑤ CARD 5 — LIGHT GREEN DRESS (175px × 137px) */}
+                    <motion.div
+                      initial={{ opacity: 0, x: -40, y: 40 }}
+                      animate={{ opacity: 1, x: 0, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 3,
+                        left: '43px', top: '345px',
+                        width: '175px', height: '137px',
+                        borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 12px 30px rgba(0,0,0,0.22)',
+                      }}
+                    >
+                      <img src="/images/fashion_photo_5.jpg" alt="Green Dress"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
+
+                    {/* ⑥ CARD 6 — PINK DRESS (160px × 180px) */}
+                    <motion.div
+                      initial={{ opacity: 0, x: 40, y: 40 }}
+                      animate={{ opacity: 1, x: 0, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 3,
+                        left: '425px', top: '300px',
+                        width: '160px', height: '180px',
+                        borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 12px 30px rgba(0,0,0,0.22)',
+                      }}
+                    >
+                      <img src="/images/fashion_photo_6.jpg" alt="Pink Dress"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
+
+                  </div>
                   ) : (
                     /* Mobile Tailoring Photo Card — Crisp 4K photo block for mobile screens */
                     <div className="sh-mobile-only" style={{
@@ -635,9 +739,7 @@ export default function Home() {
                 </motion.div>
               </AnimatePresence>
             </div>
-
           </div>
-        </div>
 
         {/* Stats bar */}
         <div className="hero-stats-bar" style={{
@@ -930,10 +1032,26 @@ export default function Home() {
 
         /* Hero responsive */
         @media (max-width: 768px) {
+          .hero-combined-wrapper { flex-direction: column !important; gap: 24px !important; }
+          .hero-content-box { flex: 1 1 100% !important; max-width: 100% !important; text-align: center !important; }
           .hero-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
           .hero-illustration { display: none !important; }
         }
         @media (min-width: 769px) { .hero-illustration { display: flex !important; } }
+
+        /* Desktop collage uniform scaling */
+        @media (min-width: 769px) and (max-width: 1199px) {
+          .hero-image-collage { transform: scale(0.72) !important; }
+        }
+        @media (min-width: 1200px) and (max-width: 1399px) {
+          .hero-image-collage { transform: scale(0.82) !important; }
+        }
+        @media (min-width: 1400px) and (max-width: 1599px) {
+          .hero-image-collage { transform: scale(0.95) !important; }
+        }
+        @media (min-width: 1600px) {
+          .hero-image-collage { transform: scale(1) !important; }
+        }
 
         /* ── Carousel: arrows inside, no overflow ── */
         .carousel-outer { overflow: hidden !important; }
