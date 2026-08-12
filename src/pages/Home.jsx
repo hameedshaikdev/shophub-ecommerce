@@ -1039,20 +1039,6 @@ export default function Home() {
         }
         @media (min-width: 769px) { .hero-illustration { display: flex !important; } }
 
-        /* Desktop collage uniform scaling */
-        @media (min-width: 769px) and (max-width: 1199px) {
-          .hero-image-collage { transform: scale(0.72) !important; }
-        }
-        @media (min-width: 1200px) and (max-width: 1399px) {
-          .hero-image-collage { transform: scale(0.82) !important; }
-        }
-        @media (min-width: 1400px) and (max-width: 1599px) {
-          .hero-image-collage { transform: scale(0.95) !important; }
-        }
-        @media (min-width: 1600px) {
-          .hero-image-collage { transform: scale(1) !important; }
-        }
-
         /* ── Carousel: arrows inside, no overflow ── */
         .carousel-outer { overflow: hidden !important; }
         @media (max-width: 767px) {
