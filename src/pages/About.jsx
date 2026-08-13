@@ -392,15 +392,15 @@ export default function About() {
                 }}>
 
                 {/* Left: Brand Icon Box with vibrant gradient */}
-                <div style={{ width:'56px', height:'56px', borderRadius:'18px',
+                <div className="social-card-icon-box" style={{ width:'56px', height:'56px', borderRadius:'18px',
                   background: s.iconGrad, display:'flex', alignItems:'center',
                   justifyContent:'center', flexShrink:0, boxShadow:`0 8px 20px ${s.glow}` }}>
                   {s.icon}
                 </div>
 
                 {/* Middle: Title, Handle, Description */}
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'4px', flexWrap:'wrap' }}>
+                <div className="social-card-content" style={{ flex:1, minWidth:0 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'4px', flexWrap:'wrap', justifyContent:'inherit' }}>
                     <span style={{ fontSize:'16px', fontWeight:800, color:'#0F172A', whiteSpace:'nowrap' }}>{s.platform}</span>
                     <span style={{ fontSize:'11px', fontWeight:800, color: s.badgeColor,
                       background: s.badgeBg, padding:'4px 10px', borderRadius:'99px',
@@ -408,18 +408,18 @@ export default function About() {
                   </div>
                   <p style={{ fontSize:'13px', fontWeight:700, color: s.handleColor, margin:'0 0 4px',
                     overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.handle}</p>
-                  <p style={{ fontSize:'12px', color:'#64748B', margin:0, lineHeight:1.5,
+                  <p className="social-card-desc" style={{ fontSize:'12px', color:'#64748B', margin:0, lineHeight:1.5,
                     wordBreak:'break-word', display:'-webkit-box', WebkitLineClamp:2,
                     WebkitBoxOrient:'vertical', overflow:'hidden' }}>{s.desc}</p>
                 </div>
 
                 {/* Right: Stat count + Brand Button */}
-                <div style={{ textAlign:'right', flexShrink:0, minWidth:'84px', display:'flex', flexDirection:'column', alignItems:'flex-end' }}>
-                  <p style={{ fontSize:'24px', fontWeight:900, color: s.color, margin:0, lineHeight:1.1, letterSpacing:'-0.5px' }}>
+                <div className="social-card-right" style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', alignItems:'center' }}>
+                  <p className="social-card-count" style={{ fontSize:'24px', fontWeight:900, color: s.color, margin:0, lineHeight:1.1, letterSpacing:'-0.5px' }}>
                     {loading ? '…' : fmtCount(s.count)}
                   </p>
                   <p style={{ fontSize:'11px', color:'#94A3B8', margin:'3px 0 8px', fontWeight:700, whiteSpace:'nowrap' }}>{s.statLabel}</p>
-                  <span style={{
+                  <span className="social-card-btn" style={{
                     fontSize: '12px', fontWeight: 800, color: '#FFFFFF',
                     background: s.btnGrad, padding: '7px 16px', borderRadius: '99px',
                     display: 'inline-flex', alignItems: 'center', gap: '4px',

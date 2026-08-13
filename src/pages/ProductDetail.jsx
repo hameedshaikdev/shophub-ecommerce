@@ -182,12 +182,12 @@ export default function ProductDetail() {
                 </button>
               )}
 
-              {/* Dot indicators */}
+              {/* Dot indicators — Sleek Glass Capsule Pill */}
               {allImages.length > 1 && (
-                <div style={{ position:'absolute', bottom:'44px', left:'50%', transform:'translateX(-50%)', display:'flex', gap:'5px', zIndex:3 }}>
+                <div style={{ position:'absolute', bottom:'16px', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:'6px', zIndex:3, background:'rgba(15,23,42,0.65)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', padding:'5px 12px', borderRadius:'9999px', boxShadow:'0 4px 16px rgba(0,0,0,0.2)' }}>
                   {allImages.map((_, i) => (
                     <button key={i} onClick={(e) => { e.stopPropagation(); setSelImg(i); }}
-                      style={{ width: selImg===i ? '18px' : '7px', height:'7px', borderRadius:'9999px', background: selImg===i ? '#111827' : 'rgba(17,24,39,0.25)', border:'none', padding:0, cursor:'pointer', transition:'all 300ms ease' }} />
+                      style={{ width: selImg===i ? '16px' : '6px', height:'6px', borderRadius:'9999px', background: selImg===i ? '#FFFFFF' : 'rgba(255,255,255,0.45)', border:'none', padding:0, cursor:'pointer', transition:'all 300ms ease' }} />
                   ))}
                 </div>
               )}

@@ -1355,7 +1355,6 @@ buildPages(4);
               {[
                 { key:'orders',    label:'Orders',    icon:ShoppingBag },
                 { key:'products',  label:'Products',  icon:Package },
-                { key:'social',    label:'Social',    icon:Users },
                 { key:'cms',       label:'CMS',       icon:Sparkles },
                 { key:'more',      label:'More',      icon:Settings },
               ].map(({ key, label, icon:Icon }) => (
