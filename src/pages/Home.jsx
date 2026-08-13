@@ -642,11 +642,11 @@ export default function Home() {
                       </motion.div>
                     </div>
 
-                    {/* MOBILE MARQUEE — Staggered card entrance animations first, followed by continuous infinite Right-to-Left loop */}
-                    <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '315px', position: 'relative' }}>
+                    {/* MOBILE MARQUEE — All 6 cards animate in full view on page load/tab switch, then continuous gapless loop */}
+                    <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '260px', position: 'relative' }}>
                       <motion.div
                         key={`mobile-marquee-${activeCategory}`}
-                        animate={{ x: ['0px', '0px', '-475px'] }}
+                        animate={{ x: ['0px', '0px', '-380px'] }}
                         transition={{
                           duration: 17,
                           ease: 'linear',
@@ -655,11 +655,11 @@ export default function Home() {
                         }}
                         style={{ width: 'max-content', display: 'flex', gap: '0px', alignItems: 'center' }}
                       >
-                        {/* Collage Block 1 — Staggered entrance animation on page load/tab switch */}
-                        <div style={{ width: '475px', height: '310px', position: 'relative', flexShrink: 0 }}>
+                        {/* Collage Block 1 — Scaled to 380px so ALL 6 cards animate 100% in full view */}
+                        <div style={{ width: '380px', height: '250px', position: 'relative', flexShrink: 0 }}>
                           <div className="hero-image-collage" style={{
                             position: 'absolute', top: 0, left: 0, width: '760px', height: '500px',
-                            transform: 'scale(0.62)', transformOrigin: 'top left', flexShrink: 0
+                            transform: 'scale(0.50)', transformOrigin: 'top left', flexShrink: 0
                           }}>
                             {/* ① CARD 1 — NAVY FLORAL DRESS */}
                             <motion.div initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.0, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
@@ -688,11 +688,11 @@ export default function Home() {
                           </div>
                         </div>
 
-                        {/* Collage Block 2 — Static fully loaded duplicate for gapless infinite loop */}
-                        <div style={{ width: '475px', height: '310px', position: 'relative', flexShrink: 0 }}>
+                        {/* Collage Block 2 — Static fully loaded duplicate for 100% gapless infinite loop */}
+                        <div style={{ width: '380px', height: '250px', position: 'relative', flexShrink: 0 }}>
                           <div className="hero-image-collage" style={{
                             position: 'absolute', top: 0, left: 0, width: '760px', height: '500px',
-                            transform: 'scale(0.62)', transformOrigin: 'top left', flexShrink: 0
+                            transform: 'scale(0.50)', transformOrigin: 'top left', flexShrink: 0
                           }}>
                             {/* ① CARD 1 — NAVY FLORAL DRESS */}
                             <div style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
