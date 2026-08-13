@@ -22,7 +22,8 @@ export default function BottomNav() {
   return (
     <nav style={{
       position:'fixed', bottom:0, left:0, right:0,
-      height:'64px',
+      height:'calc(60px + env(safe-area-inset-bottom, 0px))',
+      minHeight:'60px',
       background:'#FFFFFF',
       borderTop:'1px solid #E2E8F0',
       boxShadow:'0 -4px 20px rgba(0,0,0,.08)',
@@ -31,6 +32,7 @@ export default function BottomNav() {
       justifyContent:'space-around',
       zIndex:998,
       paddingBottom:'env(safe-area-inset-bottom, 0px)',
+      boxSizing:'border-box',
     }}>
       {items.map(({ to, icon:Icon, label, badge }) => {
         const active = location.pathname === to ||
@@ -38,7 +40,8 @@ export default function BottomNav() {
         return (
           <Link key={to} to={to} style={{
             display:'flex', flexDirection:'column', alignItems:'center',
-            gap:'3px', padding:'6px 16px', borderRadius:'16px',
+            justifyContent:'center',
+            gap:'2px', padding:'4px 12px', borderRadius:'16px',
             textDecoration:'none', position:'relative',
             transition:'all .2s',
             color: active ? 'var(--primary)' : '#94A3B8',
