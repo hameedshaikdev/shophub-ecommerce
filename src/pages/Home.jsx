@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
@@ -379,20 +379,7 @@ export default function Home() {
   const productsRef = useRef(null);
   const filterRef   = useRef(null);
 
-  const [isMarqueeActive, setIsMarqueeActive] = useState(false);
 
-  // useLayoutEffect fires BEFORE paint — guarantees track is static (no scroll) on first render
-  useLayoutEffect(() => {
-    setIsMarqueeActive(false);
-  }, [activeCategory]);
-
-  // useEffect fires after paint — starts the loop after 2s
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsMarqueeActive(true);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [activeCategory]);
 
   // Dynamic CMS resolution — grad & accentColor are ALWAYS taken from CONTENT
   // (never CMS/localStorage) so each tab has its fixed identity:
@@ -621,115 +608,136 @@ export default function Home() {
                 exit={{opacity:0,scale:.95,y:-12}} transition={{duration:.5,ease:[.22,1,.36,1]}}
                 style={{position:'relative',flex:'0 0 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
                 {isDark ? (
-                  <>
-                    {/* DESKTOP COLLAGE — 100% Untouched original layout */}
-                    <div className="hero-image-collage sh-desktop-only" style={{
-                      position: 'relative',
-                      width: '760px',
-                      height: '500px',
-                      boxSizing: 'border-box',
-                      userSelect: 'none',
-                      overflow: 'visible',
-                      margin: '0 auto',
-                      flex: 'none',
-                      transformOrigin: 'center center',
-                    }}>
-                      {/* ① CARD 1 — NAVY FLORAL DRESS */}
-                      <motion.div initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.0, ease: [0.22, 1, 0.36, 1] }} whileHover={{ scale: 1.02, zIndex: 20 }} style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
-                        <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      </motion.div>
-                      {/* ② CARD 2 — LAVENDER OUTFIT */}
-                      <motion.div initial={{ opacity: 0, y: -60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }} whileHover={{ scale: 1.02, zIndex: 20 }} style={{ position: 'absolute', zIndex: 1, left: '265px', top: '0px', width: '278px', height: '225px', borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 32px rgba(0,0,0,0.18)' }}>
-                        <img src="/images/fashion_photo_2.jpg" alt="Lavender Outfit" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      </motion.div>
-                      {/* ③ CARD 3 — BEIGE BLAZER */}
-                      <motion.div initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} whileHover={{ scale: 1.02, zIndex: 20 }} style={{ position: 'absolute', zIndex: 1, left: '555px', top: '40px', width: '200px', height: '360px', borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 38px rgba(0,0,0,0.22)' }}>
-                        <img src="/images/fashion_photo_3.jpg" alt="Beige Blazer" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      </motion.div>
-                      {/* ④ CARD 4 — CREAM DRESS */}
-                      <motion.div initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }} whileHover={{ scale: 1.02, zIndex: 20 }} style={{ position: 'absolute', zIndex: 2, left: '228px', top: '240px', width: '195px', height: '242px', borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 42px rgba(0,0,0,0.22)' }}>
-                        <img src="/images/fashion_photo_4.jpg" alt="Cream Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      </motion.div>
-                      {/* ⑤ CARD 5 — GREEN DRESS */}
-                      <motion.div initial={{ opacity: 0, x: -40, y: 40 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }} whileHover={{ scale: 1.02, zIndex: 20 }} style={{ position: 'absolute', zIndex: 3, left: '43px', top: '345px', width: '175px', height: '137px', borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
-                        <img src="/images/fashion_photo_5.jpg" alt="Green Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      </motion.div>
-                      {/* ⑥ CARD 6 — PINK DRESS */}
-                      <motion.div initial={{ opacity: 0, x: 40, y: 40 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }} whileHover={{ scale: 1.02, zIndex: 20 }} style={{ position: 'absolute', zIndex: 3, left: '425px', top: '300px', width: '160px', height: '180px', borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
-                        <img src="/images/fashion_photo_6.jpg" alt="Pink Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      </motion.div>
-                    </div>
+                  /* RESPONSIVE FASHION COLLAGE — 6 cards with original directional entrance animations, zero scrolling loop */
+                  <div className="hero-image-collage" style={{
+                    position: 'relative',
+                    width: '100%',
+                    maxWidth: '760px',
+                    aspectRatio: '760 / 500',
+                    boxSizing: 'border-box',
+                    userSelect: 'none',
+                    margin: '0 auto',
+                  }}>
+                    {/* ① CARD 1 — NAVY FLORAL DRESS (Slides in from Left) */}
+                    <motion.div
+                      key={`c1-${activeCategory}`}
+                      initial={{ opacity: 0, x: -60 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 0.0, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 1,
+                        left: '0%', top: '0%',
+                        width: '33.55%', height: '71%',
+                        borderRadius: 'clamp(10px, 3.4vw, 26px)',
+                        overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 16px 40px rgba(0,0,0,0.22)'
+                      }}
+                    >
+                      <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
 
-                    {/* ─── MOBILE MARQUEE ───
-                         Block 1 (native px, no scale, FM animations) → 2s hold → CSS loop → Block 2 (static duplicate)
-                    */}
-                    <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '256px', position: 'relative' }}>
-                      <div style={{
-                        display: 'flex',
-                        width: 'max-content',
-                        animation: isMarqueeActive ? 'mobileMarqueeScroll 16s linear infinite' : 'none',
-                      }}>
+                    {/* ② CARD 2 — LAVENDER OUTFIT (Slides down from Top) */}
+                    <motion.div
+                      key={`c2-${activeCategory}`}
+                      initial={{ opacity: 0, y: -60 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 1,
+                        left: '34.87%', top: '0%',
+                        width: '36.58%', height: '45%',
+                        borderRadius: 'clamp(10px, 3.4vw, 26px)',
+                        overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 14px 32px rgba(0,0,0,0.18)'
+                      }}
+                    >
+                      <img src="/images/fashion_photo_2.jpg" alt="Lavender Outfit" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
 
-                        {/* ── BLOCK 1 — FM entrance animations, appears first ── */}
-                        <div style={{ position: 'relative', width: '380px', height: '256px', flexShrink: 0, overflow: 'hidden' }}>
-                          {/* Card 1 — Navy Floral Dress — leftmost, first to appear */}
-                          <motion.div key={`mc1-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45, delay: 0.0, ease: 'easeOut' }}
-                            style={{ position: 'absolute', left: 0, top: 0, width: 128, height: 178, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 10px 28px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </motion.div>
-                          {/* Card 2 — Lavender Outfit */}
-                          <motion.div key={`mc2-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45, delay: 0.18, ease: 'easeOut' }}
-                            style={{ position: 'absolute', left: 134, top: 0, width: 140, height: 113, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 8px 20px rgba(0,0,0,0.18)' }}>
-                            <img src="/images/fashion_photo_2.jpg" alt="Lavender Outfit" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </motion.div>
-                          {/* Card 3 — Beige Coat */}
-                          <motion.div key={`mc3-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45, delay: 0.36, ease: 'easeOut' }}
-                            style={{ position: 'absolute', left: 280, top: 10, width: 98, height: 180, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 8px 22px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_3.jpg" alt="Beige Coat" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </motion.div>
-                          {/* Card 4 — Cream Dress */}
-                          <motion.div key={`mc4-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45, delay: 0.54, ease: 'easeOut' }}
-                            style={{ position: 'absolute', left: 134, top: 119, width: 98, height: 121, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 10px 24px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_4.jpg" alt="Cream Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </motion.div>
-                          {/* Card 5 — Green Dress */}
-                          <motion.div key={`mc5-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45, delay: 0.72, ease: 'easeOut' }}
-                            style={{ position: 'absolute', left: 22, top: 184, width: 88, height: 68, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 8px 20px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_5.jpg" alt="Green Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </motion.div>
-                          {/* Card 6 — Pink Dress */}
-                          <motion.div key={`mc6-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.45, delay: 0.90, ease: 'easeOut' }}
-                            style={{ position: 'absolute', left: 238, top: 196, width: 140, height: 56, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 8px 20px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_6.jpg" alt="Pink Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </motion.div>
-                        </div>
+                    {/* ③ CARD 3 — BEIGE BLAZER (Slides in from Right) */}
+                    <motion.div
+                      key={`c3-${activeCategory}`}
+                      initial={{ opacity: 0, x: 60 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 1,
+                        left: '73.03%', top: '8%',
+                        width: '26.32%', height: '72%',
+                        borderRadius: 'clamp(10px, 3.4vw, 26px)',
+                        overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 14px 38px rgba(0,0,0,0.22)'
+                      }}
+                    >
+                      <img src="/images/fashion_photo_3.jpg" alt="Beige Blazer" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
 
-                        {/* ── BLOCK 2 — static duplicate, creates seamless gapless loop ── */}
-                        <div style={{ position: 'relative', width: '380px', height: '256px', flexShrink: 0, overflow: 'hidden' }}>
-                          <div style={{ position: 'absolute', left: 0, top: 0, width: 128, height: 178, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 10px 28px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
-                          <div style={{ position: 'absolute', left: 134, top: 0, width: 140, height: 113, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 8px 20px rgba(0,0,0,0.18)' }}>
-                            <img src="/images/fashion_photo_2.jpg" alt="Lavender Outfit" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
-                          <div style={{ position: 'absolute', left: 280, top: 10, width: 98, height: 180, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 8px 22px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_3.jpg" alt="Beige Coat" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
-                          <div style={{ position: 'absolute', left: 134, top: 119, width: 98, height: 121, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 10px 24px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_4.jpg" alt="Cream Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
-                          <div style={{ position: 'absolute', left: 22, top: 184, width: 88, height: 68, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 8px 20px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_5.jpg" alt="Green Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
-                          <div style={{ position: 'absolute', left: 238, top: 196, width: 140, height: 56, borderRadius: 13, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 8px 20px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_6.jpg" alt="Pink Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
-                        </div>
+                    {/* ④ CARD 4 — CREAM DRESS (Slides up from Bottom) */}
+                    <motion.div
+                      key={`c4-${activeCategory}`}
+                      initial={{ opacity: 0, y: 60 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 2,
+                        left: '30%', top: '48%',
+                        width: '25.66%', height: '48.4%',
+                        borderRadius: 'clamp(10px, 3.4vw, 26px)',
+                        overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 16px 42px rgba(0,0,0,0.22)'
+                      }}
+                    >
+                      <img src="/images/fashion_photo_4.jpg" alt="Cream Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
 
-                      </div>
-                    </div>
+                    {/* ⑤ CARD 5 — GREEN DRESS (Slides up-right from Bottom-Left) */}
+                    <motion.div
+                      key={`c5-${activeCategory}`}
+                      initial={{ opacity: 0, x: -40, y: 40 }}
+                      animate={{ opacity: 1, x: 0, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 3,
+                        left: '5.66%', top: '69%',
+                        width: '23.03%', height: '27.4%',
+                        borderRadius: 'clamp(10px, 3.4vw, 26px)',
+                        overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 12px 30px rgba(0,0,0,0.22)'
+                      }}
+                    >
+                      <img src="/images/fashion_photo_5.jpg" alt="Green Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
 
-                  </>
+                    {/* ⑥ CARD 6 — PINK DRESS (Slides up-left from Bottom-Right) */}
+                    <motion.div
+                      key={`c6-${activeCategory}`}
+                      initial={{ opacity: 0, x: 40, y: 40 }}
+                      animate={{ opacity: 1, x: 0, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
+                      style={{
+                        position: 'absolute', zIndex: 3,
+                        left: '55.92%', top: '60%',
+                        width: '21.05%', height: '36%',
+                        borderRadius: 'clamp(10px, 3.4vw, 26px)',
+                        overflow: 'hidden', boxSizing: 'border-box',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        boxShadow: '0 12px 30px rgba(0,0,0,0.22)'
+                      }}
+                    >
+                      <img src="/images/fashion_photo_6.jpg" alt="Pink Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </motion.div>
+                  </div>
                 ) : (
                   /* Mobile Tailoring Photo Card */
                   <div className="sh-mobile-only" style={{

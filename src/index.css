@@ -754,22 +754,7 @@ div[style*="overflow"]::-webkit-scrollbar {
   100% { transform: scale(0.95); opacity: 0.8; }
 }
 
-/* Mobile Collage Marquee */
-@keyframes mobileMarqueeScroll {
-  0%   { transform: translateX(0px); }
-  100% { transform: translateX(-380px); }
-}
-.mobile-marquee-track {
-  display: flex;
-  gap: 0px;
-  align-items: center;
-  width: max-content;
-  /* NO animation here — JS state controls when scroll starts */
-}
-.mobile-marquee-track.is-scrolling {
-  /* Starts immediately from translateX(0) — no delay, no fill-mode */
-  animation: mobileMarqueeScroll 16s linear infinite;
-}
+
 
 /* Description Card */
 .pd-description-card {
