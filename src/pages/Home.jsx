@@ -642,37 +642,44 @@ export default function Home() {
                       </motion.div>
                     </div>
 
-                    {/* MOBILE MARQUEE — cards animate first (FM), then CSS scroll starts after 1.2s */}
+                    {/* MOBILE MARQUEE — opacity+scale entrance, then CSS loop after 2s */}
                     <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '260px', position: 'relative' }}>
                       <div className={`mobile-marquee-track${isMarqueeActive ? ' is-scrolling' : ''}`}>
-                        {/* ── BLOCK 1 — staggered entrance animations on each card ── */}
+
+                        {/* ── BLOCK 1 — staggered fade+scale in place (no off-screen offset) ── */}
                         <div style={{ width: '380px', height: '250px', position: 'relative', flexShrink: 0 }}>
                           <div className="hero-image-collage" style={{
                             position: 'absolute', top: 0, left: 0, width: '760px', height: '500px',
                             transform: 'scale(0.50)', transformOrigin: 'top left'
                           }}>
-                            <motion.div key="b1c1" initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.0, ease: [0.22,1,0.36,1] }} style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
+                            {/* Card 1 — Navy Floral Dress — appears FIRST */}
+                            <motion.div key={`b1c1-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.0, ease: 'easeOut' }} style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                             </motion.div>
-                            <motion.div key="b1c2" initial={{ opacity: 0, y: -60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1, ease: [0.22,1,0.36,1] }} style={{ position: 'absolute', zIndex: 1, left: '265px', top: '0px', width: '278px', height: '225px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 32px rgba(0,0,0,0.18)' }}>
+                            {/* Card 2 — Lavender Outfit */}
+                            <motion.div key={`b1c2-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.18, ease: 'easeOut' }} style={{ position: 'absolute', zIndex: 1, left: '265px', top: '0px', width: '278px', height: '225px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 32px rgba(0,0,0,0.18)' }}>
                               <img src="/images/fashion_photo_2.jpg" alt="Lavender Outfit" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                             </motion.div>
-                            <motion.div key="b1c3" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22,1,0.36,1] }} style={{ position: 'absolute', zIndex: 1, left: '555px', top: '40px', width: '200px', height: '360px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 38px rgba(0,0,0,0.22)' }}>
+                            {/* Card 3 — Beige Blazer */}
+                            <motion.div key={`b1c3-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.36, ease: 'easeOut' }} style={{ position: 'absolute', zIndex: 1, left: '555px', top: '40px', width: '200px', height: '360px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 38px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_3.jpg" alt="Beige Blazer" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                             </motion.div>
-                            <motion.div key="b1c4" initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.22,1,0.36,1] }} style={{ position: 'absolute', zIndex: 2, left: '228px', top: '240px', width: '195px', height: '242px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 42px rgba(0,0,0,0.22)' }}>
+                            {/* Card 4 — Cream Dress */}
+                            <motion.div key={`b1c4-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.54, ease: 'easeOut' }} style={{ position: 'absolute', zIndex: 2, left: '228px', top: '240px', width: '195px', height: '242px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 42px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_4.jpg" alt="Cream Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                             </motion.div>
-                            <motion.div key="b1c5" initial={{ opacity: 0, x: -40, y: 40 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 0.4, ease: [0.22,1,0.36,1] }} style={{ position: 'absolute', zIndex: 3, left: '43px', top: '345px', width: '175px', height: '137px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
+                            {/* Card 5 — Green Dress */}
+                            <motion.div key={`b1c5-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.72, ease: 'easeOut' }} style={{ position: 'absolute', zIndex: 3, left: '43px', top: '345px', width: '175px', height: '137px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_5.jpg" alt="Green Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                             </motion.div>
-                            <motion.div key="b1c6" initial={{ opacity: 0, x: 40, y: 40 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 0.5, ease: [0.22,1,0.36,1] }} style={{ position: 'absolute', zIndex: 3, left: '425px', top: '300px', width: '160px', height: '180px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
+                            {/* Card 6 — Pink Dress */}
+                            <motion.div key={`b1c6-${activeCategory}`} initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.90, ease: 'easeOut' }} style={{ position: 'absolute', zIndex: 3, left: '425px', top: '300px', width: '160px', height: '180px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_6.jpg" alt="Pink Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                             </motion.div>
                           </div>
                         </div>
 
-                        {/* ── BLOCK 2 — static duplicate for gapless loop ── */}
+                        {/* ── BLOCK 2 — static duplicate for 100% gapless infinite loop ── */}
                         <div style={{ width: '380px', height: '250px', position: 'relative', flexShrink: 0 }}>
                           <div className="hero-image-collage" style={{
                             position: 'absolute', top: 0, left: 0, width: '760px', height: '500px',
@@ -698,6 +705,7 @@ export default function Home() {
                             </div>
                           </div>
                         </div>
+
                       </div>
                     </div>
                   </>
