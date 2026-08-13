@@ -1151,26 +1151,79 @@ export default function Home() {
       )}
 
       {/* ══ BRAND OVERVIEW / SEO CONTENT ══════════════════ */}
-      <div className="sh-container" style={{ margin: '40px auto 32px', padding: '0 16px' }}>
+      <div className="sh-container" style={{ margin: '48px auto 36px', padding: '0 16px' }}>
         <div style={{
-          background: 'linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)',
+          background: '#FFFBEB',
           borderRadius: '24px',
-          border: '1px solid #E2E8F0',
-          padding: '36px 24px',
+          border: '1.5px solid #FDE68A',
+          padding: '38px 28px',
           textAlign: 'center',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.03)'
+          boxShadow: '0 12px 32px rgba(217, 119, 6, 0.06)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <h2 style={{ fontSize: 'clamp(18px,3vw,22px)', fontWeight: 800, color: '#0F172A', marginBottom: '12px', letterSpacing: '-0.3px' }}>
-            Asmalabel — Premium Tailoring Tools &amp; Women's Fashion in Nellore
+          {/* Decorative subtle ambient glows */}
+          <div style={{
+            position: 'absolute', top: '-40px', right: '-40px',
+            width: '140px', height: '140px', borderRadius: '50%',
+            background: 'rgba(253, 230, 138, 0.35)', filter: 'blur(30px)', pointerEvents: 'none'
+          }} />
+          <div style={{
+            position: 'absolute', bottom: '-40px', left: '-40px',
+            width: '140px', height: '140px', borderRadius: '50%',
+            background: 'rgba(254, 243, 199, 0.6)', filter: 'blur(30px)', pointerEvents: 'none'
+          }} />
+
+          {/* Top Pill Badge */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            padding: '5px 14px', borderRadius: '99px',
+            background: '#FEF3C7', border: '1px solid #FCD34D',
+            color: '#B45309', fontSize: '11px', fontWeight: 800,
+            textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '16px'
+          }}>
+            <Sparkles size={13} color="#D97706" />
+            <span>Official Storefront · Nellore, AP</span>
+          </div>
+
+          {/* Heading */}
+          <h2 style={{
+            fontSize: 'clamp(20px,3.5vw,25px)', fontWeight: 900,
+            color: '#78350F', marginBottom: '14px', letterSpacing: '-0.4px',
+            lineHeight: 1.3
+          }}>
+            Asmalabel — Premium Tailoring Tools &amp; Women's Fashion
           </h2>
-          <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: 1.7, maxWidth: '800px', margin: '0 auto 20px', fontWeight: 450 }}>
+
+          {/* Text Description */}
+          <p style={{
+            fontSize: '14px', color: '#92400E', lineHeight: 1.8,
+            maxWidth: '820px', margin: '0 auto 24px', fontWeight: 500
+          }}>
             Welcome to <strong>Asmalabel</strong> (Asma Label), your trusted online destination for professional tailoring tools, sewing supplies, textiles, and modern women's fashion. Based in Nellore, Andhra Pradesh, we provide high-precision scissors, durable threads, universal needles, measuring tools, and curated clothing collections.
           </p>
-          <div style={{ display: 'flex', gap: '12px 24px', justifyContent: 'center', flexWrap: 'wrap', fontSize: '12.5px', fontWeight: 700, color: '#334155' }}>
-            <span>✓ 100% Genuine Tailoring Tools</span>
-            <span>✓ Curated Women's Fashion</span>
-            <span>✓ Fast Pan-India Delivery</span>
-            <span>✓ Based in Nellore, Andhra Pradesh</span>
+
+          {/* Feature Badges Grid */}
+          <div style={{
+            display: 'flex', gap: '10px 14px', justifyContent: 'center', flexWrap: 'wrap'
+          }}>
+            {[
+              { icon: Scissors, text: '100% Genuine Tailoring Tools' },
+              { icon: Sparkles, text: 'Curated Women\'s Fashion' },
+              { icon: Truck, text: 'Fast Pan-India Delivery' },
+              { icon: BadgeCheck, text: 'Based in Nellore, Andhra Pradesh' },
+            ].map(({ icon: Icon, text }) => (
+              <div key={text} style={{
+                display: 'inline-flex', alignItems: 'center', gap: '7px',
+                padding: '7px 16px', borderRadius: '99px',
+                background: '#FFFFFF', border: '1px solid #FDE68A',
+                boxShadow: '0 2px 8px rgba(180, 83, 9, 0.05)',
+                color: '#78350F', fontSize: '12.5px', fontWeight: 800
+              }}>
+                <Icon size={14} color="#D97706" />
+                <span>{text}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
