@@ -754,6 +754,16 @@ div[style*="overflow"]::-webkit-scrollbar {
   100% { transform: scale(0.95); opacity: 0.8; }
 }
 
+/* Mobile Collage Seamless Infinite Marquee Loop */
+@keyframes mobileCollageMarqueeLoop {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 
 
 /* Description Card */
