@@ -632,11 +632,18 @@ export default function Home() {
                       </motion.div>
                     </div>
 
-                    {/* MOBILE MARQUEE — Staggered card entrance animations first, followed by continuous infinite Right-to-Left loop */}
+                    {/* MOBILE MARQUEE — Staggered card entrance animations first on mount/tab switch, followed by continuous infinite Right-to-Left loop */}
                     <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '315px', position: 'relative' }}>
                       <motion.div
-                        animate={{ x: ['0px', '-475px'] }}
-                        transition={{ delay: 1.1, repeat: Infinity, repeatDelay: 0, duration: 16, ease: 'linear' }}
+                        key={`mobile-marquee-${activeCategory}`}
+                        initial={{ x: '0px' }}
+                        animate={{ x: ['0px', '0px', '-475px'] }}
+                        transition={{
+                          duration: 17,
+                          ease: 'linear',
+                          repeat: Infinity,
+                          times: [0, 0.06, 1]
+                        }}
                         style={{ width: 'max-content', display: 'flex', gap: '0px', alignItems: 'center' }}
                       >
                         {/* Collage Block 1 */}
