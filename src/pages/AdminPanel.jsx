@@ -1056,6 +1056,31 @@ td { padding: 2px 3px; border-bottom: 1px solid #e0e0e0; }
 .density-8 .lbl { font-size: 5px; }
 .density-8 .cname { font-size: 8px; }
 
+.density-10 .label-card { padding: 2px; }
+.density-10 { font-size: 6px; }
+.density-10 .brand { font-size: 8px; }
+.density-10 .oid { font-size: 6px; }
+.density-10 .lbl { font-size: 4.5px; }
+.density-10 .cname { font-size: 7.5px; }
+.density-10 .ph { font-size: 6.5px; }
+.density-10 .addr { font-size: 6px; }
+.density-10 .pin { font-size: 7.5px; }
+
+.back-btn {
+  background: #334155;
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.back-btn:hover { background: #475569; }
+
 /* ── Print Overrides ── */
 @media print {
   html, body {
@@ -1095,7 +1120,10 @@ td { padding: 2px 3px; border-bottom: 1px solid #e0e0e0; }
 </style></head>
 <body>
 <div class="np">
-  <span class="np-title">&#128230; ${toPrint.length} Labels Ready</span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="back-btn" onclick="window.close()">&larr; Back</button>
+    <span class="np-title">&#128230; ${toPrint.length} Labels Ready</span>
+  </div>
   <div class="np-controls">
     <label for="perPage">Labels per A4 page:</label>
     <select id="perPage" onchange="buildPages(this.value)">
@@ -1104,6 +1132,7 @@ td { padding: 2px 3px; border-bottom: 1px solid #e0e0e0; }
       <option value="4" selected>4 per page (2&times;2)</option>
       <option value="6">6 per page (2&times;3)</option>
       <option value="8">8 per page (2&times;4)</option>
+      <option value="10">10 per page (2&times;5)</option>
     </select>
     <button class="print-btn" onclick="window.print()">&#128438; Print All Labels</button>
   </div>
@@ -1115,7 +1144,8 @@ var LAYOUT = {
   '2': { cols: 1, rows: 2 },
   '4': { cols: 2, rows: 2 },
   '6': { cols: 2, rows: 3 },
-  '8': { cols: 2, rows: 4 }
+  '8': { cols: 2, rows: 4 },
+  '10': { cols: 2, rows: 5 }
 };
 var LABELS = ${labelsJson};
 

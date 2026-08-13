@@ -1251,19 +1251,21 @@ div[style*="overflow"]::-webkit-scrollbar {
 @media(max-width: 767px) {
   .about-horizontal-row .about-card-item,
   .about-horizontal-row > div {
-    min-width: 250px !important;
-    max-width: 270px !important;
+    min-width: 270px !important;
+    max-width: 85vw !important;
     flex-shrink: 0 !important;
   }
   .about-dark-features-row {
     display: flex !important;
-    gap: 12px !important;
+    flex-direction: row !important;
+    gap: 14px !important;
     overflow-x: auto !important;
     padding-bottom: 8px !important;
     scrollbar-width: none !important;
   }
   .about-dark-features-row > div {
-    min-width: 210px !important;
+    min-width: 250px !important;
+    max-width: 80vw !important;
     flex-shrink: 0 !important;
     margin-bottom: 0 !important;
   }
@@ -2281,6 +2283,18 @@ img, video, svg {
     height: auto !important;
     gap: 6px !important;
     align-items: center !important;
+  }
+
+  .cms-sidebar-nav > button,
+  .cms-sidebar-inner > button {
+    flex-shrink: 0 !important;
+    width: auto !important;
+    white-space: nowrap !important;
+  }
+
+  .cms-sidebar-nav > button span,
+  .cms-sidebar-inner > button span {
+    white-space: nowrap !important;
   }
 
   .cms-sidebar-nav::-webkit-scrollbar {
