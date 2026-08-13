@@ -796,46 +796,48 @@ export default function Home() {
                           </motion.div>
                         </div>
 
-                        {/* ── COMPLETE COLLAGE COPY B (Identical layout for gapless seamless marquee loop) ── */}
-                        <div style={{
-                          position: 'relative',
-                          width: '85vw',
-                          maxWidth: '380px',
-                          aspectRatio: '760 / 500',
-                          flexShrink: 0,
-                          boxSizing: 'border-box',
-                          userSelect: 'none',
-                        }}>
-                          {/* ① CARD 1 — NAVY FLORAL DRESS */}
-                          <div style={{ position: 'absolute', zIndex: 1, left: '0%', top: '0%', width: '33.55%', height: '71%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
+                        {/* ── COMPLETE COLLAGE COPY B — Only active/mounted during loop phase so it NEVER peeks in during entrance! ── */}
+                        {isMobileMarqueeActive && (
+                          <div style={{
+                            position: 'relative',
+                            width: 'calc(100vw - 32px)',
+                            maxWidth: '380px',
+                            aspectRatio: '760 / 500',
+                            flexShrink: 0,
+                            boxSizing: 'border-box',
+                            userSelect: 'none',
+                          }}>
+                            {/* ① CARD 1 — NAVY FLORAL DRESS */}
+                            <div style={{ position: 'absolute', zIndex: 1, left: '0%', top: '0%', width: '33.55%', height: '71%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
+                              <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                            </div>
 
-                          {/* ② CARD 2 — LAVENDER OUTFIT */}
-                          <div style={{ position: 'absolute', zIndex: 1, left: '34.87%', top: '0%', width: '36.58%', height: '45%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 32px rgba(0,0,0,0.18)' }}>
-                            <img src="/images/fashion_photo_2.jpg" alt="Lavender Outfit" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
+                            {/* ② CARD 2 — LAVENDER OUTFIT */}
+                            <div style={{ position: 'absolute', zIndex: 1, left: '34.87%', top: '0%', width: '36.58%', height: '45%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 32px rgba(0,0,0,0.18)' }}>
+                              <img src="/images/fashion_photo_2.jpg" alt="Lavender Outfit" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                            </div>
 
-                          {/* ③ CARD 3 — BEIGE BLAZER */}
-                          <div style={{ position: 'absolute', zIndex: 1, left: '73.03%', top: '8%', width: '26.32%', height: '72%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 38px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_3.jpg" alt="Beige Blazer" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
+                            {/* ③ CARD 3 — BEIGE BLAZER */}
+                            <div style={{ position: 'absolute', zIndex: 1, left: '73.03%', top: '8%', width: '26.32%', height: '72%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 38px rgba(0,0,0,0.22)' }}>
+                              <img src="/images/fashion_photo_3.jpg" alt="Beige Blazer" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                            </div>
 
-                          {/* ④ CARD 4 — CREAM DRESS */}
-                          <div style={{ position: 'absolute', zIndex: 2, left: '30%', top: '48%', width: '25.66%', height: '48.4%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 42px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_4.jpg" alt="Cream Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
+                            {/* ④ CARD 4 — CREAM DRESS */}
+                            <div style={{ position: 'absolute', zIndex: 2, left: '30%', top: '48%', width: '25.66%', height: '48.4%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 42px rgba(0,0,0,0.22)' }}>
+                              <img src="/images/fashion_photo_4.jpg" alt="Cream Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                            </div>
 
-                          {/* ⑤ CARD 5 — GREEN DRESS */}
-                          <div style={{ position: 'absolute', zIndex: 3, left: '5.66%', top: '69%', width: '23.03%', height: '27.4%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_5.jpg" alt="Green Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                          </div>
+                            {/* ⑤ CARD 5 — GREEN DRESS */}
+                            <div style={{ position: 'absolute', zIndex: 3, left: '5.66%', top: '69%', width: '23.03%', height: '27.4%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
+                              <img src="/images/fashion_photo_5.jpg" alt="Green Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                            </div>
 
-                          {/* ⑥ CARD 6 — PINK DRESS */}
-                          <div style={{ position: 'absolute', zIndex: 3, left: '55.92%', top: '60%', width: '21.05%', height: '36%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
-                            <img src="/images/fashion_photo_6.jpg" alt="Pink Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                            {/* ⑥ CARD 6 — PINK DRESS */}
+                            <div style={{ position: 'absolute', zIndex: 3, left: '55.92%', top: '60%', width: '21.05%', height: '36%', borderRadius: 'clamp(10px, 3.4vw, 26px)', overflow: 'hidden', boxSizing: 'border-box', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
+                              <img src="/images/fashion_photo_6.jpg" alt="Pink Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                            </div>
                           </div>
-                        </div>
+                        )}
 
                       </div>
                     </div>
