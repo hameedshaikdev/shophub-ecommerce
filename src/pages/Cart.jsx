@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Minus, ArrowRight, Tag, ShoppingCart, ShieldCheck } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { getProductImage } from '../utils/productImages';
+import SEO from '../components/common/SEO';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -41,6 +42,7 @@ export default function Cart() {
 
   return (
     <div style={{ background:'radial-gradient(circle at 50% 0%, #F1F5F9 0%, #F8FAFC 60%, #EEF2F6 100%)', minHeight:'100vh', padding:'40px 0 64px' }}>
+      <SEO title="Shopping Cart | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/cart" />
       <div className="sh-container">
 
         {/* Header */}

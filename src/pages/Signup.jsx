@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Phone, Lock, Eye, EyeOff, ArrowRight, CheckCircle } from 'lucide-react';
 import { supabase } from '../config/supabase';
+import SEO from '../components/common/SEO';
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -98,6 +99,7 @@ export default function Signup() {
   // ── Main Signup Screen ────────────────────────────────────────────────────
   return (
     <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'24px' }}>
+      <SEO title="Create Account | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/signup" />
       <div style={{ width:'100%', maxWidth:'420px' }}>
 
         {/* Logo */}

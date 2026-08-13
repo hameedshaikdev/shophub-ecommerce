@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Package, MessageCircle, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
+import SEO from '../components/common/SEO';
 
 const SHOP_WA = '917013942909';
 
@@ -303,6 +304,7 @@ export default function Orders() {
 
   return (
     <div style={{ minHeight:'100vh', background:'var(--bg)', paddingBottom:'80px' }}>
+      <SEO title="My Orders | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/orders" />
       <div className="container-center" style={{ padding:'20px 16px', maxWidth:'680px' }}>
 
         {/* Header */}

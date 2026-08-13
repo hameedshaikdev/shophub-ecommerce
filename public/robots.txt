@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
 
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /profile
+Disallow: /orders
+Disallow: /login
+Disallow: /signup
+Disallow: /reset-password
+Disallow: /auth/
+Disallow: /order-status/
+
 Sitemap: https://asmalabel.in/sitemap.xml

@@ -21,6 +21,7 @@ import {
 } from '../components/admin/AdminUtils';
 import HomepageManager from '../components/admin/cms/HomepageManager';
 import SocialMediaManager from '../components/admin/SocialMediaManager';
+import SEO from '../components/common/SEO';
 
 const ADMIN_EMAIL = 'as.businezzz@gmail.com';
 
@@ -1214,6 +1215,7 @@ buildPages(4);
 
   return (
     <div className="admin-panel" style={{ minHeight:'100vh', background:'#F8FAFC', display:'flex', flexDirection:'column', fontFamily:"'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif", overflowX:'hidden' }}>
+      <SEO title="Admin Panel | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/admin" />
       <ToastContainer />
       <ConfirmDialog />
       {cmdOpen && <CommandPalette orders={allOrders} products={products} onClose={()=>setCmdOpen(false)} />}

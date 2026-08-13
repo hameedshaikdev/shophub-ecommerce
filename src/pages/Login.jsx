@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { supabase } from '../config/supabase';
 import { useApp } from '../context/AppContext';
+import SEO from '../components/common/SEO';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -152,6 +153,7 @@ export default function Login() {
   // ── Main Login Screen ────────────────────────────────────────────────────
   return (
     <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'24px' }}>
+      <SEO title="Sign In | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/login" />
       <div style={{ width:'100%', maxWidth:'420px' }}>
 
         {/* Logo */}

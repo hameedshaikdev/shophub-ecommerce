@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
+import SEO from '../components/common/SEO';
 
 /* ─── Shop config ───────────────────────────────────────────── */
 const SHOP = {
@@ -268,6 +269,7 @@ export default function Checkout() {
 
   return (
     <div style={{ minHeight:'100vh', background:'var(--bg)' }}>
+      <SEO title="Checkout | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/checkout" />
 
       {/* ── Header bar ── */}
       <div style={{ background:'white', borderBottom:'1px solid var(--border)',

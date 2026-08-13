@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { supabase } from '../config/supabase';
+import SEO from '../components/common/SEO';
 
 export default function ResetPassword() {
   const navigate  = useNavigate();
@@ -52,6 +53,7 @@ export default function ResetPassword() {
 
   return (
     <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'24px' }}>
+      <SEO title="Reset Password | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/reset-password" />
       <div style={{ width:'100%', maxWidth:'400px' }}>
         <div style={{ textAlign:'center', marginBottom:'24px' }}>
           <div style={{ fontSize:'40px', marginBottom:'8px' }}>🔐</div>

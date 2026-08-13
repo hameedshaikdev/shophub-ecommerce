@@ -13,6 +13,7 @@ import ProductCard from '../components/products/ProductCard';
 import CategoryFilter from '../components/products/CategoryFilter';
 import QuickViewModal from '../components/products/QuickViewModal';
 import { getProductImage, parseProductTags } from '../utils/productImages';
+import SEO from '../components/common/SEO';
 
 /* ─── Content ─────────────────────────────────────────────── */
 const CONTENT = {
@@ -468,6 +469,18 @@ export default function Home() {
 
   return (
     <div style={{ background:'#FAFAFA', minHeight:'100vh' }}>
+      <SEO
+        title="Asmalabel | Premium Tailoring Tools & Women's Fashion"
+        description="Shop premium tailoring tools, sewing accessories, textiles and women's fashion at Asmalabel. Based in Nellore, Andhra Pradesh."
+        canonical="https://asmalabel.in/"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Asmalabel",
+          "alternateName": "Asma Label",
+          "url": "https://asmalabel.in/"
+        }}
+      />
 
       {/* ══ HERO ═════════════════════════════════════════════════ */}
       <div className="hero-container-wrap hero-compact" style={{ background:c.grad, position:'relative', overflow:'hidden',
@@ -1016,6 +1029,24 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* ══ BRAND OVERVIEW / SEO CONTENT ══════════════════ */}
+      <div style={{ background: '#FFFFFF', borderTop: '1px solid #E2E8F0', borderBottom: '1px solid #E2E8F0', padding: '40px 20px', margin: '40px 0 0 0' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0F172A', marginBottom: '12px', letterSpacing: '-0.3px' }}>
+            Asmalabel — Premium Tailoring Tools &amp; Women's Fashion in Nellore
+          </h2>
+          <p style={{ fontSize: '14px', color: '#475569', lineHeight: 1.7, maxWidth: '840px', margin: '0 auto 16px' }}>
+            Welcome to <strong>Asmalabel</strong> (Asma Label), your trusted online destination for professional tailoring tools, sewing supplies, textiles, and modern women's fashion. Based in Nellore, Andhra Pradesh, we provide high-precision scissors, durable threads, universal needles, measuring tools, and curated clothing collections.
+          </p>
+          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap', fontSize: '13px', fontWeight: 600, color: '#64748B' }}>
+            <span>✓ 100% Genuine Tailoring Tools</span>
+            <span>✓ Curated Women's Fashion</span>
+            <span>✓ Fast Pan-India Delivery</span>
+            <span>✓ Based in Nellore, Andhra Pradesh</span>
+          </div>
+        </div>
+      </div>
 
       {/* ══ BOTTOM PADDING FOR MOBILE NAV ══════════════════ */}
       <div style={{height:'32px'}}/>

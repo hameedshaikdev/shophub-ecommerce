@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Heart, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import ProductCard from '../components/products/ProductCard';
+import SEO from '../components/common/SEO';
 
 export default function Wishlist() {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ export default function Wishlist() {
 
   return (
     <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 0%, #F1F5F9 0%, #F8FAFC 60%, #EEF2F6 100%)', paddingBottom:'80px' }}>
+      <SEO title="My Wishlist | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/wishlist" />
       <div className="sh-container" style={{ padding:'40px 0 0' }}>
         <div style={{ marginBottom:'32px' }}>
           <span style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'1.5px', color:'#E94560', background:'rgba(233,69,96,0.1)', padding:'4px 12px', borderRadius:'9999px' }}>

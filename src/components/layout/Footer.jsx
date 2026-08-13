@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 
 export default function Footer() {
@@ -54,6 +54,17 @@ export default function Footer() {
           lineHeight:1.75, maxWidth:'340px' }}>
           {f.aboutText || "Premium tailoring tools & women's fashion. Quality you can trust, delivered to your door."}
         </p>
+
+        {/* Navigation Links for SEO & Crawlability */}
+        <div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap', justifyContent: 'center', fontSize: '13px', fontWeight: 600 }}>
+          <Link to="/" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none' }}>Home</Link>
+          <span style={{ color: 'rgba(255,255,255,.3)' }}>·</span>
+          <Link to="/about" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none' }}>About Us</Link>
+          <span style={{ color: 'rgba(255,255,255,.3)' }}>·</span>
+          <Link to="/?category=tailoring" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none' }}>Tailoring Tools</Link>
+          <span style={{ color: 'rgba(255,255,255,.3)' }}>·</span>
+          <Link to="/?category=fashion" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none' }}>Women's Fashion</Link>
+        </div>
 
         {/* Social icons */}
         <div style={{ display:'flex', gap:'10px', alignItems: 'center' }}>

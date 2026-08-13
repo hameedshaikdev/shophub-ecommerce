@@ -6,6 +6,7 @@ import {
   Users, ChevronDown, Zap, RefreshCcw, ArrowRight,
 } from 'lucide-react';
 import { supabase } from '../config/supabase';
+import SEO from '../components/common/SEO';
 
 /* ── Fallback counts shown while loading or if DB not yet set up ── */
 const FALLBACK = {
@@ -198,6 +199,23 @@ export default function About() {
 
   return (
     <div style={{ background:'#FAFAFA', minHeight:'100vh', paddingBottom:'88px' }}>
+      <SEO
+        title="About Us | Asmalabel - Premium Tailoring Tools & Women's Fashion"
+        description="Learn about Asmalabel, Nellore's trusted online store for professional tailoring tools, sewing supplies, textiles, and women's fashion."
+        canonical="https://asmalabel.in/about"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "name": "About Asmalabel",
+          "url": "https://asmalabel.in/about",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "Asmalabel",
+            "url": "https://asmalabel.in/",
+            "logo": "https://asmalabel.in/logo.png"
+          }
+        }}
+      />
 
       {/* HERO */}
       <div style={{ background:'linear-gradient(160deg,#1A1A2E 0%,#0F3460 100%)',

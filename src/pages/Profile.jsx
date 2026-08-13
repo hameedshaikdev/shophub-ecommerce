@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Package, Heart, LogOut, ChevronRight, Shield, Sparkles } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
+import SEO from '../components/common/SEO';
 
 const ADMIN_EMAIL = 'as.businezzz@gmail.com';
 
@@ -38,7 +39,8 @@ export default function Profile() {
   ];
 
   return (
-    <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 0%, #F1F5F9 0%, #F8FAFC 60%, #EEF2F6 100%)', paddingBottom:'80px' }}>
+    <div style={{ background:'radial-gradient(circle at 50% 0%, #F1F5F9 0%, #F8FAFC 60%, #EEF2F6 100%)', minHeight:'100vh', padding:'40px 0 80px' }}>
+      <SEO title="My Account | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/profile" />
 
       {/* Glass Header */}
       <div style={{ background:'linear-gradient(135deg, #1A1A2E 0%, #0F3460 100%)', padding:'48px 24px 40px', position:'relative', overflow:'hidden' }}>

@@ -10,6 +10,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
 import { getProductImage, parseProductTags } from '../utils/productImages';
+import SEO from '../components/common/SEO';
 
 export default function ProductDetail() {
   const { id }       = useParams();
@@ -118,6 +119,36 @@ export default function ProductDetail() {
 
   return (
     <div className="pd-page-wrapper">
+      <SEO
+        title={`${product.name} | Asmalabel`}
+        description={cleanDesc ? cleanDesc.slice(0, 160) : `Buy ${product.name} at Asmalabel. Premium quality tailoring tools and women fashion in Nellore, Andhra Pradesh.`}
+        canonical={`https://asmalabel.in/product/${product.id}`}
+        ogType="product"
+        ogImage={getProductImage(product)}
+        schema={{
+          "@context": "https://schema.org/",
+          "@type": "Product",
+          "name": product.name,
+          "image": [getProductImage(product)],
+          "description": cleanDesc || product.name,
+          "sku": product.id,
+          "brand": {
+            "@type": "Brand",
+            "name": "Asmalabel"
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": `https://asmalabel.in/product/${product.id}`,
+            "priceCurrency": "INR",
+            "price": Number(product.price || 0),
+            "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "seller": {
+              "@type": "Organization",
+              "name": "Asmalabel"
+            }
+          }
+        }}
+      />
 
       {/* Glass Back Nav */}
       <div className="pd-sticky-header">
