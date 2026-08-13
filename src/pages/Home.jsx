@@ -642,9 +642,9 @@ export default function Home() {
                       </motion.div>
                     </div>
 
-                    {/* MOBILE MARQUEE — CSS scroll (no FM conflict), child motion.div cards animate freely */}
+                    {/* MOBILE MARQUEE — cards animate first (FM), then CSS scroll starts after 1.2s */}
                     <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '260px', position: 'relative' }}>
-                      <div className="mobile-marquee-track">
+                      <div className={`mobile-marquee-track${isMarqueeActive ? ' is-scrolling' : ''}`}>
                         {/* ── BLOCK 1 — staggered entrance animations on each card ── */}
                         <div style={{ width: '380px', height: '250px', position: 'relative', flexShrink: 0 }}>
                           <div className="hero-image-collage" style={{
