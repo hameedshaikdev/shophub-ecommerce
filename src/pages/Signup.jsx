@@ -192,7 +192,7 @@ export default function Signup() {
                   onFocus={e => e.target.style.borderColor='var(--primary)'}
                   onBlur={e => e.target.style.borderColor='#e5e7eb'} />
                 <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  style={{ position:'absolute', right:'14px', top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', display:'flex' }}>
+                  style={{ position:'absolute', right:'14px', top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', padding:0, margin:0 }}>
                   {showPwd ? <EyeOff size={16} color="var(--text-3)"/> : <Eye size={16} color="var(--text-3)"/>}
                 </button>
               </div>

@@ -157,13 +157,8 @@ export const DEFAULT_CMS_DATA = {
     ogDescription: 'Discover top quality sewing machines, tailoring accessories & designer women wear.',
     ogImage: 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=1200',
     keywords: 'tailoring tools, sewing machine, scissors, fashion, dresses, Asmalabel, Nellore',
-    canonicalUrl: 'https://ashub.com',
+    canonicalUrl: 'https://asmalabel.in/',
   },
 
-  mediaLibrary: [
-    { id: 'm-1', url: 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=800', name: 'Sewing Machine Hero', category: 'tailoring' },
-    { id: 'm-2', url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=640', name: 'Women Fashion Model', category: 'fashion' },
-    { id: 'm-3', url: 'https://images.unsplash.com/photo-1589256469067-ea99122bbdc4?w=800', name: 'Precision Scissors', category: 'scissors' },
-    { id: 'm-4', url: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=800', name: 'Rainbow Threads', category: 'threads' },
-  ],
+  mediaLibrary: [],
 };

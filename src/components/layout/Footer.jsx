@@ -13,6 +13,7 @@ export default function Footer() {
 
   const fbUrl = s.facebook || 'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr';
   const igUrl = s.instagram || 'https://www.instagram.com/as_tailoring_tools_textiles';
+  const ytUrl = s.youtube || 'https://youtube.com/@astailoringtoolstextiles';
   const waNum = s.whatsapp || '917013942909';
   const phone = f.phone || '7013942909';
   const email = f.email || 'as.businezzz@gmail.com';
@@ -104,17 +105,19 @@ export default function Footer() {
           )}
 
           {/* YouTube */}
-          <a href="https://youtube.com/@astailoringtoolstextiles"
-            target="_blank" rel="noopener noreferrer" title="YouTube"
-            style={{ width:'36px', height:'36px', borderRadius:'10px',
-              background:'#FF0000', display:'flex', alignItems:'center',
-              justifyContent:'center', transition:'transform .2s' }}
-            onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
-            onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-2.47 12.35 12.35 0 0 0-7.64 0A4.83 4.83 0 0 1 4.41 6.69 49.68 49.68 0 0 0 4 12a49.68 49.68 0 0 0 .41 5.31 4.83 4.83 0 0 1 3.77 2.47 12.35 12.35 0 0 0 7.64 0 4.83 4.83 0 0 1 3.77-2.47A49.68 49.68 0 0 0 20 12a49.68 49.68 0 0 0-.41-5.31zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/>
-            </svg>
-          </a>
+          {ytUrl && (
+            <a href={ytUrl}
+              target="_blank" rel="noopener noreferrer" title="YouTube"
+              style={{ width:'36px', height:'36px', borderRadius:'10px',
+                background:'#FF0000', display:'flex', alignItems:'center',
+                justifyContent:'center', transition:'transform .2s' }}
+              onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
+              onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-2.47 12.35 12.35 0 0 0-7.64 0A4.83 4.83 0 0 1 4.41 6.69 49.68 49.68 0 0 0 4 12a49.68 49.68 0 0 0 .41 5.31 4.83 4.83 0 0 1 3.77 2.47 12.35 12.35 0 0 0 7.64 0 4.83 4.83 0 0 1 3.77-2.47A49.68 49.68 0 0 0 20 12a49.68 49.68 0 0 0-.41-5.31zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/>
+              </svg>
+            </a>
+          )}
 
           {/* WhatsApp */}
           {waNum && (

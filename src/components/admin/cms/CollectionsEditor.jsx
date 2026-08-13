@@ -6,7 +6,7 @@ export default function CollectionsEditor({ collectionsData = {}, onChange }) {
   const [activeTab, setActiveTab] = useState('tailoring');
   const [showResetWarning, setShowResetWarning] = useState(false);
   const collections = collectionsData || {};
-  const currentList = collections[activeTab] || [];
+  const currentList = Array.isArray(collections[activeTab]) ? collections[activeTab] : [];
 
   const updateList = (newList) => {
     onChange?.({

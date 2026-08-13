@@ -435,21 +435,43 @@ export default function Home() {
     })();
   }, [activeCategory, sub, searchQuery]);
 
-  // Fetch featured sections
+  // Fetch featured sections according to CMS configuration
   useEffect(() => {
     (async () => {
       try {
-        const [n, b, f] = await Promise.all([
-          supabase.from('products').select('*').eq('category', activeCategory).eq('active', true).order('created_at',{ascending:false}).limit(8),
-          supabase.from('products').select('*').eq('category', activeCategory).eq('active', true).order('price',{ascending:false}).limit(8),
-          supabase.from('products').select('*').eq('category', activeCategory).eq('active', true).not('original_price', 'is', null).order('created_at',{ascending:false}).limit(12),
-        ]);
+        const cmsFlash = activeCms?.flashDeals || {};
+        const cmsNew = activeCms?.newArrivals || {};
+        const cmsPicks = activeCms?.topPicks || {};
+
+        let flashQuery = supabase.from('products').select('*').eq('category', activeCategory).eq('active', true);
+        if (cmsFlash.selectedProductIds?.length > 0) {
+          flashQuery = flashQuery.in('id', cmsFlash.selectedProductIds);
+        } else {
+          flashQuery = flashQuery.not('original_price', 'is', null).order('created_at', { ascending: false }).limit(cmsFlash.maxDisplay || 12);
+        }
+
+        let newQuery = supabase.from('products').select('*').eq('category', activeCategory).eq('active', true);
+        if (cmsNew.selectedProductIds?.length > 0 && cmsNew.mode === 'manual') {
+          newQuery = newQuery.in('id', cmsNew.selectedProductIds);
+        } else {
+          newQuery = newQuery.order('created_at', { ascending: false }).limit(cmsNew.maxDisplay || 8);
+        }
+
+        let picksQuery = supabase.from('products').select('*').eq('category', activeCategory).eq('active', true);
+        if (cmsPicks.selectedProductIds?.length > 0) {
+          picksQuery = picksQuery.in('id', cmsPicks.selectedProductIds);
+        } else {
+          picksQuery = picksQuery.order('price', { ascending: false }).limit(cmsPicks.maxDisplay || 8);
+        }
+
+        const [n, b, f] = await Promise.all([newQuery, picksQuery, flashQuery]);
+
         setNewArrivals(n.data || []);
         setBestSellers(b.data || []);
-        setFlashDeals((f.data || []).filter(p => Number(p.original_price) > Number(p.price)));
+        setFlashDeals((f.data || []).filter(p => cmsFlash.selectedProductIds?.length > 0 || Number(p.original_price) > Number(p.price)));
       } catch(err) { console.error('Featured fetch error:', err); }
     })();
-  }, [activeCategory]);
+  }, [activeCategory, activeCms]);
 
   // Track recently viewed
   useEffect(() => {
@@ -890,8 +912,8 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* ══ FLASH DEALS (if any discounted products) ═════════ */}
-      {flashDeals.length > 0 && (
+      {/* ══ FLASH DEALS (if enabled & has discounted/selected products) ═════════ */}
+      {activeCms?.flashDeals?.enabled !== false && flashDeals.length > 0 && (
         <div style={{background:'linear-gradient(135deg,#1A1A2E,#0F3460)',padding:'80px 0'}}>
           <div className="sh-container">
             <Reveal>
@@ -904,12 +926,12 @@ export default function Home() {
                     padding:'7px 16px',borderRadius:'9999px',display:'flex',alignItems:'center',
                     gap:'6px', letterSpacing:'1px', textTransform:'uppercase'
                   }}>
-                    <Zap size={14} fill="white" className="zap-flash-icon"/> FLASH DEALS
+                    <Zap size={14} fill="white" className="zap-flash-icon"/> {activeCms?.flashDeals?.badge || 'FLASH DEALS'}
                   </div>
                   <DealTimer/>
                 </div>
                 <span style={{fontSize:'12px',fontWeight:700,color:'rgba(255,255,255,.5)'}}>
-                  Limited time offers
+                  {activeCms?.flashDeals?.subtitle || 'Limited time offers'}
                 </span>
               </div>
             </Reveal>
@@ -925,44 +947,44 @@ export default function Home() {
 
 
       {/* ══ FEATURED COLLECTIONS ════════════════════════════ */}
-      <div className="collections-section" style={{padding:'48px 0 32px',background:'#FAFAFA'}}>
-        <div className="sh-container">
-          <Reveal>
-            <div style={{marginBottom:'20px'}}>
-              <p style={{fontSize:'11px',fontWeight:700,color:'#8E8E93',textTransform:'uppercase',letterSpacing:'2px',marginBottom:'4px'}}>
-                {activeCategory==='tailoring'?'Browse by category':'Shop by Style'}
-              </p>
-              <h2 style={{fontSize:'clamp(22px,4vw,32px)',fontWeight:900,color:'#0A0A0A',letterSpacing:'-1px'}}>
-                {activeCategory==='tailoring'?'Our Collections':'Find Your Look'}
-              </h2>
-            </div>
-          </Reveal>
+      {c.collections && c.collections.length > 0 && (
+        <div className="collections-section" style={{padding:'48px 0 32px',background:'#FAFAFA'}}>
+          <div className="sh-container">
+            <Reveal>
+              <div style={{marginBottom:'20px'}}>
+                <p style={{fontSize:'11px',fontWeight:700,color:'#8E8E93',textTransform:'uppercase',letterSpacing:'2px',marginBottom:'4px'}}>
+                  {activeCategory==='tailoring'?'Browse by category':'Shop by Style'}
+                </p>
+                <h2 style={{fontSize:'clamp(22px,4vw,32px)',fontWeight:900,color:'#0A0A0A',letterSpacing:'-1px'}}>
+                  {activeCategory==='tailoring'?'Our Collections':'Find Your Look'}
+                </h2>
+              </div>
+            </Reveal>
 
-          {activeCategory==='tailoring' ? (
             <div className="collections-grid">
-              <CollectionCard cls="cg-featured" label="Featured"  title="Tailoring Kit"    count="12 items"  img="/images/collections/sewing_machines.png" onClick={()=>{setSub('machines');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-med"      label="Precision" title="Scissors"         count="8 items"   img="/images/collections/scissors.png" onClick={()=>{setSub('scissors');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-small"    label="Accuracy"  title="Measuring"        count="6 items"   img="/images/collections/measuring.png" onClick={()=>{setSub('measuring');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-wide"     label="Premium"   title="Presser Feet"     count="20+ items" img="/images/collections/all_tools.png" onClick={()=>{setSub('all');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-small"    label="Essential" title="Needles"          count="15+ types" img="/images/collections/needles.png" onClick={()=>{setSub('needles');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-small"    label="Shop All"  title="Threads & Yarn"   count=""          img="/images/collections/threads.png" onClick={()=>{setSub('threads');scrollTo(productsRef);}} dark/>
+              {c.collections.filter(item => item.active !== false).map((item, idx) => {
+                const classes = ['cg-featured', 'cg-med', 'cg-small', 'cg-wide', 'cg-small', 'cg-small'];
+                const cls = classes[idx % classes.length];
+                return (
+                  <CollectionCard
+                    key={item.id || idx}
+                    cls={cls}
+                    label={item.emoji || 'Category'}
+                    title={item.label || item.title}
+                    count={item.desc || ''}
+                    img={item.image || item.img}
+                    onClick={() => { setSub(item.id); scrollTo(productsRef); }}
+                  />
+                );
+              })}
             </div>
-          ) : (
-            <div className="collections-grid">
-              <CollectionCard cls="cg-featured" label="New Season"  title="Dresses"          count="25+ items" img="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=700&auto=format&fit=crop&q=80"  onClick={()=>{setSub('dresses');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-med"      label="Trending"    title="Tops & Blouses"   count="18 items"  img="https://images.unsplash.com/photo-1562157873-818bc0726f68?w=500&auto=format&fit=crop&q=80"   onClick={()=>{setSub('tops');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-small"    label="Comfort"     title="Bottoms"          count="12 items"  img="https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400&auto=format&fit=crop&q=80"  onClick={()=>{setSub('bottoms');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-wide"     label="Heritage"    title="Ethnic Wear"      count="30+ items" img="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=700&auto=format&fit=crop&q=80"  onClick={()=>{setSub('ethnic');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-small"    label="Complete"    title="Accessories"      count="20+ items" img="https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=400&auto=format&fit=crop&q=80"  onClick={()=>{setSub('accessories');scrollTo(productsRef);}}/>
-              <CollectionCard cls="cg-small"    label="Shop All"    title="All Fashion"      count=""          img="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&auto=format&fit=crop&q=80"  onClick={()=>{setSub('all');scrollTo(productsRef);}} dark/>
-            </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
 
 
       {/* ══ NEW ARRIVALS ════════════════════════════════════ */}
-      {newArrivals.length > 0 && (
+      {activeCms?.newArrivals?.enabled !== false && newArrivals.length > 0 && (
         <div className="new-arrivals-section" style={{padding:'48px 0 24px',background:'#F8F9FA'}}>
           <div className="sh-container">
             <Reveal>
@@ -971,7 +993,7 @@ export default function Home() {
                   padding:'4px 10px',borderRadius:'6px',letterSpacing:'1px',
                   animation:'pulse 2s infinite'}}>NEW</div>
                 <h2 style={{fontSize:'clamp(20px,3vw,28px)',fontWeight:900,color:'#0A0A0A',
-                  letterSpacing:'-0.5px'}}>New Arrivals</h2>
+                  letterSpacing:'-0.5px'}}>{activeCms?.newArrivals?.title || 'New Arrivals'}</h2>
               </div>
             </Reveal>
             <Carousel>
@@ -1086,7 +1108,7 @@ export default function Home() {
       </div>
 
       {/* ══ BEST SELLERS / TOP PICKS ════════════════════════════════════ */}
-      {bestSellers.length > 0 && !searchQuery && (
+      {activeCms?.topPicks?.enabled !== false && bestSellers.length > 0 && !searchQuery && (
         <div className="top-picks-section" style={{padding:'48px 0 24px',background:'white',marginTop:'48px'}}>
           <div className="sh-container">
             <Reveal>
@@ -1097,7 +1119,7 @@ export default function Home() {
                   <TrendingUp size={11}/> BEST SELLERS
                 </div>
                 <h2 style={{fontSize:'clamp(20px,3vw,28px)',fontWeight:900,color:'#0A0A0A',
-                  letterSpacing:'-0.5px'}}>Top Picks</h2>
+                  letterSpacing:'-0.5px'}}>{activeCms?.topPicks?.title || 'Top Picks'}</h2>
               </div>
             </Reveal>
             <Carousel>

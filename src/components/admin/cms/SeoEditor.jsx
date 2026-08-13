@@ -21,7 +21,7 @@ export default function SeoEditor({ seoData = {}, onChange }) {
           <div style={{ fontSize: '16px', fontWeight: 700, color: '#1D4ED8', textDecoration: 'underline', marginBottom: '4px' }}>
             {seo.metaTitle || 'Asmalabel — Premium Tailoring Tools & Women Fashion'}
           </div>
-          <div style={{ fontSize: '12px', color: '#059669', marginBottom: '4px' }}>{seo.canonicalUrl || 'https://ashub.com'}</div>
+          <div style={{ fontSize: '12px', color: '#059669', marginBottom: '4px' }}>{seo.canonicalUrl || 'https://asmalabel.in/'}</div>
           <div style={{ fontSize: '13px', color: '#475569', lineHeight: 1.5 }}>
             {seo.metaDescription || 'Shop professional tailoring tools, sewing machines, scissors, threads & premium women fashion online at Asmalabel.'}
           </div>

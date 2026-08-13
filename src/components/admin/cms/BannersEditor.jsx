@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Plus, Trash2, Eye, EyeOff, Image as ImageIcon } from 'lucide-react';
 
 export default function BannersEditor({ bannersData = [], onChange }) {
-  const banners = bannersData || [];
+  const banners = Array.isArray(bannersData) ? bannersData : [];
 
   const handleAddBanner = () => {
     const newBanner = {

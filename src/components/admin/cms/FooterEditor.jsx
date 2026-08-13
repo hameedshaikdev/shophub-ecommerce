@@ -106,6 +106,16 @@ export default function FooterEditor({ footerData = {}, onChange }) {
               style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
             />
           </div>
+          <div>
+            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>YouTube URL</label>
+            <input
+              type="text"
+              placeholder="https://youtube.com/@..."
+              value={footer.socials?.youtube || ''}
+              onChange={e => updateSocials('youtube', e.target.value)}
+              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+            />
+          </div>
         </div>
       </div>
     </div>

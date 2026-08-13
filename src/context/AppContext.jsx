@@ -104,49 +104,39 @@ export function AppProvider({ children }) {
   // ── CMS State Management ──
   const getSanitizedCms = (data) => {
     if (!data) return DEFAULT_CMS_DATA;
-    const cols = data.collections?.tailoring || [];
-    const heroImg = data.hero?.tailoring?.illustration || '';
-    const isStaleCols = cols.some(c => c.label === 'Sewing Machines' || (c.image && c.image.includes('unsplash.com/photo-1617606002806')));
-    const isStaleHero = heroImg.includes('unsplash.com/photo-1617606002806');
-
-    let updated = { ...data };
-    let changed = false;
-
-    if (isStaleCols || !cols.length) {
-      updated.collections = DEFAULT_CMS_DATA.collections;
-      changed = true;
-    }
-    const fashionImg = data.hero?.fashion?.illustration || '';
-    const isStaleFashion = !fashionImg || fashionImg.includes('unsplash.com/photo-1515886657613');
-
-    if (isStaleHero || !heroImg) {
-      updated.hero = {
-        ...updated.hero,
-        tailoring: {
-          ...(updated.hero?.tailoring || DEFAULT_CMS_DATA.hero.tailoring),
-          illustration: '/images/tailoring_hero.jpg'
-        }
-      };
-      changed = true;
+    
+    const seoData = { ...DEFAULT_CMS_DATA.seo, ...(data.seo || {}) };
+    if (!seoData.canonicalUrl || seoData.canonicalUrl.includes('ashub.com')) {
+      seoData.canonicalUrl = 'https://asmalabel.in/';
     }
 
-    if (isStaleFashion) {
-      updated.hero = {
-        ...updated.hero,
-        fashion: {
-          ...(updated.hero?.fashion || DEFAULT_CMS_DATA.hero.fashion),
-          illustration: '/images/women_fashion_hero_collage.jpg'
-        }
-      };
-      changed = true;
+    const heroTailoring = { ...DEFAULT_CMS_DATA.hero.tailoring, ...(data.hero?.tailoring || {}) };
+    if (heroTailoring.illustration?.includes('tailoring_hero.png')) {
+      heroTailoring.illustration = '/images/tailoring_hero.jpg';
     }
 
-    if (changed) {
-      try {
-        localStorage.setItem('ashub_homepage_cms', JSON.stringify(updated));
-        localStorage.setItem('ashub_homepage_cms_draft', JSON.stringify(updated));
-      } catch { /* ignore */ }
-    }
+    let mediaLib = Array.isArray(data.mediaLibrary) ? data.mediaLibrary : [];
+    // Purge fake unsplash mock media items if present from old cache
+    mediaLib = mediaLib.filter(m => !m.url?.includes('images.unsplash.com/photo-1617606002806'));
+
+    const updated = {
+      hero: {
+        tailoring: heroTailoring,
+        fashion: { ...DEFAULT_CMS_DATA.hero.fashion, ...(data.hero?.fashion || {}) }
+      },
+      flashDeals: { ...DEFAULT_CMS_DATA.flashDeals, ...(data.flashDeals || {}) },
+      collections: {
+        tailoring: Array.isArray(data.collections?.tailoring) ? data.collections.tailoring : DEFAULT_CMS_DATA.collections.tailoring,
+        fashion: Array.isArray(data.collections?.fashion) ? data.collections.fashion : DEFAULT_CMS_DATA.collections.fashion
+      },
+      newArrivals: { ...DEFAULT_CMS_DATA.newArrivals, ...(data.newArrivals || {}) },
+      topPicks: { ...DEFAULT_CMS_DATA.topPicks, ...(data.topPicks || {}) },
+      banners: Array.isArray(data.banners) ? data.banners : DEFAULT_CMS_DATA.banners,
+      footer: { ...DEFAULT_CMS_DATA.footer, ...(data.footer || {}) },
+      seo: seoData,
+      mediaLibrary: mediaLib
+    };
+
     return updated;
   };
 
@@ -203,8 +193,10 @@ export function AppProvider({ children }) {
   };
 
   const resetCmsDraft = () => {
-    setCmsDraft(cmsData);
-    localStorage.setItem('ashub_homepage_cms_draft', JSON.stringify(cmsData));
+    setCmsData(DEFAULT_CMS_DATA);
+    setCmsDraft(DEFAULT_CMS_DATA);
+    localStorage.setItem('ashub_homepage_cms', JSON.stringify(DEFAULT_CMS_DATA));
+    localStorage.setItem('ashub_homepage_cms_draft', JSON.stringify(DEFAULT_CMS_DATA));
   };
 
   const undoCms = () => {

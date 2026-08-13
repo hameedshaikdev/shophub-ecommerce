@@ -12,12 +12,31 @@ export default function MediaLibrary({ mediaList = [], onSelect, onUpdateMedia }
 
   const categories = ['all', 'tailoring', 'fashion', 'scissors', 'threads', 'general'];
 
-  const filtered = mediaList.filter(m => {
+  const safeList = Array.isArray(mediaList) ? mediaList : [];
+  const filtered = safeList.filter(m => {
     const matchesSearch = (m.name || '').toLowerCase().includes(search.toLowerCase()) ||
                           (m.url || '').toLowerCase().includes(search.toLowerCase());
     const matchesCat = categoryFilter === 'all' || m.category === categoryFilter;
     return matchesSearch && matchesCat;
   });
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const item = {
+        id: 'm-' + Date.now(),
+        url: reader.result,
+        name: file.name.replace(/\.[^/.]+$/, '') || 'Uploaded Image',
+        category: newCat,
+        createdAt: new Date().toISOString()
+      };
+      onUpdateMedia?.([...mediaList, item]);
+      setShowAddForm(false);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleAddMedia = (e) => {
     e.preventDefault();
@@ -25,7 +44,7 @@ export default function MediaLibrary({ mediaList = [], onSelect, onUpdateMedia }
     const item = {
       id: 'm-' + Date.now(),
       url: newUrl,
-      name: newName || 'Uploaded Asset',
+      name: newName || 'Media Asset',
       category: newCat,
       createdAt: new Date().toISOString()
     };
@@ -61,13 +80,22 @@ export default function MediaLibrary({ mediaList = [], onSelect, onUpdateMedia }
 
       {showAddForm && (
         <form onSubmit={handleAddMedia} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '16px', marginBottom: '20px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ fontSize: '12px', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '6px' }}>Upload Image from Computer/Phone</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              style={{ fontSize: '13px', color: '#475569' }}
+            />
+          </div>
+          <div style={{ fontSize: '11px', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', margin: '8px 0' }}>Or Paste Image URL</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: '12px', marginBottom: '12px' }}>
             <input
               type="text"
               placeholder="Image URL (Unsplash, CDN, etc.)"
               value={newUrl}
               onChange={e => setNewUrl(e.target.value)}
-              required
               style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '13px', background: '#FFF' }}
             />
             <input
