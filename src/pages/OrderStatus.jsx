@@ -60,10 +60,10 @@ function ProgressTracker({ status }) {
                 display:'flex', alignItems:'center', justifyContent:'center',
                 fontSize:'14px', fontWeight:900, flexShrink:0,
                 background: done   ? '#16A34A'
-                          : active ? '#FC8019'
+                          : active ? '#0F172A'
                           : '#E2E8F0',
                 color: (done || active) ? 'white' : '#94A3B8',
-                boxShadow: active ? '0 0 0 4px rgba(252,128,25,.2)' : 'none',
+                boxShadow: active ? '0 0 0 4px rgba(15,23,42,.2)' : 'none',
                 transition:'all .4s',
               }}>
                 {done ? <CheckCircle size={16} /> : step.icon}
@@ -80,7 +80,7 @@ function ProgressTracker({ status }) {
             <div style={{ paddingTop:'6px', paddingBottom:'24px' }}>
               <p style={{
                 fontSize:'14px', fontWeight: active ? 900 : done ? 700 : 600,
-                color: done ? '#16A34A' : active ? '#FC8019' : '#94A3B8',
+                color: done ? '#16A34A' : active ? '#0F172A' : '#94A3B8',
               }}>
                 {step.label}
               </p>

@@ -44,9 +44,9 @@ function ProgressBar({ status }) {
                 width:'28px', height:'28px', borderRadius:'50%',
                 display:'flex', alignItems:'center', justifyContent:'center',
                 fontSize:'13px', fontWeight:900,
-                background: done ? '#16A34A' : active ? '#FC8019' : '#E2E8F0',
+                background: done ? '#16A34A' : active ? '#0F172A' : '#E2E8F0',
                 color: (done || active) ? 'white' : '#94A3B8',
-                boxShadow: active ? '0 0 0 3px rgba(252,128,25,.2)' : 'none',
+                boxShadow: active ? '0 0 0 3px rgba(15,23,42,.15)' : 'none',
               }}>
                 {done ? '✓' : step.emoji}
               </div>
@@ -59,7 +59,7 @@ function ProgressBar({ status }) {
               <p style={{
                 fontSize:'13px',
                 fontWeight: active ? 900 : done ? 700 : 500,
-                color: done ? '#16A34A' : active ? '#FC8019' : '#94A3B8',
+                color: done ? '#16A34A' : active ? '#0F172A' : '#94A3B8',
               }}>
                 {step.label}
               </p>
@@ -356,7 +356,7 @@ export default function Orders() {
                 background: filter === f.key ? 'var(--primary)' : 'white',
                 color:      filter === f.key ? 'white' : 'var(--text-2)',
                 boxShadow:  filter === f.key
-                  ? '0 4px 14px rgba(252,128,25,.35)' : 'var(--shadow-xs)' }}>
+                  ? '0 4px 14px rgba(15,23,42,.2)' : 'var(--shadow-xs)' }}>
               {f.label}
             </button>
           ))}

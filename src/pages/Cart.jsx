@@ -47,7 +47,7 @@ export default function Cart() {
 
         {/* Header */}
         <div style={{ marginBottom:'32px' }}>
-          <span style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'1.5px', color:'#E94560', background:'rgba(233,69,96,0.1)', padding:'4px 12px', borderRadius:'9999px' }}>
+          <span style={{ fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'1.5px', color:'#0F172A', background:'rgba(15,23,42,0.08)', padding:'4px 12px', borderRadius:'9999px' }}>
             Shopping Bag
           </span>
           <h1 style={{ fontSize:'32px', fontWeight:900, color:'#0F172A', letterSpacing:'-.8px', marginTop:'8px' }}>
@@ -115,46 +115,88 @@ export default function Cart() {
               })}
             </div>
 
-            {/* Order Summary Glass Card */}
-            <div className="cart-summary-card" style={{ background:'rgba(255, 255, 255, 0.85)', backdropFilter:'blur(28px)', WebkitBackdropFilter:'blur(28px)', borderRadius:'28px', padding:'24px', boxShadow:'0 20px 48px -8px rgba(15,23,42,0.12), 0 0 24px rgba(233,69,96,0.15)', border:'1px solid rgba(255, 255, 255, 0.95)', height:'fit-content' }}>
-              <h2 style={{ fontWeight:900, fontSize:'20px', color:'#0F172A', marginBottom:'20px', letterSpacing:'-0.4px' }}>Order Summary</h2>
+            {/* Order Summary & COD Notice Column */}
+            <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
 
-              {savings > 0 && (
-                <div style={{ display:'flex', alignItems:'center', gap:'8px', background:'rgba(48,209,88,0.12)', border:'1px solid rgba(48,209,88,0.3)', borderRadius:'9999px', padding:'10px 16px', marginBottom:'20px' }}>
-                  <Tag size={16} color="#16A34A" />
-                  <span style={{ fontSize:'13px', fontWeight:800, color:'#166534' }}>You save ₹{savings.toFixed(0)} on this order!</span>
-                </div>
-              )}
+              {/* Order Summary Glass Card */}
+              <div className="cart-summary-card" style={{ background:'rgba(255, 255, 255, 0.85)', backdropFilter:'blur(28px)', WebkitBackdropFilter:'blur(28px)', borderRadius:'28px', padding:'24px', boxShadow:'0 20px 48px -8px rgba(15,23,42,0.12)', border:'1px solid rgba(255, 255, 255, 0.95)', height:'fit-content' }}>
+                <h2 style={{ fontWeight:900, fontSize:'20px', color:'#0F172A', marginBottom:'20px', letterSpacing:'-0.4px' }}>Order Summary</h2>
 
-              <div style={{ display:'flex', flexDirection:'column', gap:'14px', marginBottom:'24px' }}>
-                {[
-                  ['Subtotal', `₹${cartTotal.toFixed(0)}`],
-                  ['Express Delivery', 'FREE', '#30D158'],
-                  ...(savings > 0 ? [['Discount Savings', `-₹${savings.toFixed(0)}`, '#30D158']] : []),
-                ].map(([label, value, color]) => (
-                  <div key={label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <span style={{ fontSize:'14px', color:'#64748B', fontWeight:600 }}>{label}</span>
-                    <span style={{ fontSize:'14px', fontWeight:800, color: color || '#0F172A' }}>{value}</span>
+                {savings > 0 && (
+                  <div style={{ display:'flex', alignItems:'center', gap:'8px', background:'rgba(48,209,88,0.12)', border:'1px solid rgba(48,209,88,0.3)', borderRadius:'9999px', padding:'10px 16px', marginBottom:'20px' }}>
+                    <Tag size={16} color="#16A34A" />
+                    <span style={{ fontSize:'13px', fontWeight:800, color:'#166534' }}>You save ₹{savings.toFixed(0)} on this order!</span>
                   </div>
-                ))}
-                <div style={{ borderTop:'1px solid rgba(226,232,240,0.8)', paddingTop:'14px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                  <span style={{ fontWeight:800, fontSize:'16px', color:'#0F172A' }}>Total Payable</span>
-                  <span style={{ fontWeight:900, fontSize:'24px', color:'#0F172A', letterSpacing:'-0.5px' }}>₹{cartTotal.toFixed(0)}</span>
+                )}
+
+                <div style={{ display:'flex', flexDirection:'column', gap:'14px', marginBottom:'24px' }}>
+                  {[
+                    ['Subtotal', `₹${cartTotal.toFixed(0)}`],
+                    ['Express Delivery', 'FREE', '#30D158'],
+                    ...(savings > 0 ? [['Discount Savings', `-₹${savings.toFixed(0)}`, '#30D158']] : []),
+                  ].map(([label, value, color]) => (
+                    <div key={label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                      <span style={{ fontSize:'14px', color:'#64748B', fontWeight:600 }}>{label}</span>
+                      <span style={{ fontSize:'14px', fontWeight:800, color: color || '#0F172A' }}>{value}</span>
+                    </div>
+                  ))}
+                  <div style={{ borderTop:'1px solid rgba(226,232,240,0.8)', paddingTop:'14px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                    <span style={{ fontWeight:800, fontSize:'16px', color:'#0F172A' }}>Total Payable</span>
+                    <span style={{ fontWeight:900, fontSize:'24px', color:'#0F172A', letterSpacing:'-0.5px' }}>₹{cartTotal.toFixed(0)}</span>
+                  </div>
+                </div>
+
+                <button className="sh-btn" style={{ width:'100%', justifyContent:'center', height:'52px' }} onClick={handleCheckout}>
+                  Proceed to Checkout <ArrowRight size={18} />
+                </button>
+
+                <button onClick={() => navigate('/')}
+                  style={{ width:'100%', marginTop:'12px', padding:'13px', borderRadius:'9999px', border:'1px solid rgba(226,232,240,0.8)', background:'rgba(255,255,255,0.8)', fontWeight:800, fontSize:'14px', color:'#475569', cursor:'pointer' }}>
+                  Continue Shopping
+                </button>
+
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'6px', marginTop:'20px', fontSize:'12px', color:'#64748B', fontWeight:600 }}>
+                  <ShieldCheck size={16} color="#30D158" /> Guaranteed 100% Encrypted Payment
                 </div>
               </div>
 
-              <button className="sh-btn" style={{ width:'100%', justifyContent:'center', height:'52px' }} onClick={handleCheckout}>
-                Proceed to Checkout <ArrowRight size={18} />
-              </button>
+              {/* COD Explanation Card (Champagne Sand Luxury Style matching Img 3) */}
+              <div style={{
+                background: 'linear-gradient(135deg, #FFFDF7 0%, #F7EFE3 100%)',
+                borderRadius: '24px',
+                border: '1.5px solid #EBDCCB',
+                padding: '22px 20px',
+                boxShadow: '0 8px 24px rgba(180, 130, 70, 0.06)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  marginBottom: '10px'
+                }}>
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '5px',
+                    padding: '4px 12px', borderRadius: '99px',
+                    background: '#FFFFFF', border: '1px solid #E2D3BF',
+                    color: '#8A6133', fontSize: '11px', fontWeight: 800,
+                    textTransform: 'uppercase', letterSpacing: '0.8px'
+                  }}>
+                    ✨ COMING SOON
+                  </span>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#A17038' }}>
+                    COD Policy Notice
+                  </span>
+                </div>
 
-              <button onClick={() => navigate('/')}
-                style={{ width:'100%', marginTop:'12px', padding:'13px', borderRadius:'9999px', border:'1px solid rgba(226,232,240,0.8)', background:'rgba(255,255,255,0.8)', fontWeight:800, fontSize:'14px', color:'#475569', cursor:'pointer' }}>
-                Continue Shopping
-              </button>
+                <h3 style={{ fontSize: '14.5px', fontWeight: 900, color: '#0F172A', marginBottom: '8px', letterSpacing: '-0.2px' }}>
+                  Why is Cash on Delivery (COD) Not Available?
+                </h3>
 
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'6px', marginTop:'20px', fontSize:'12px', color:'#64748B', fontWeight:600 }}>
-                <ShieldCheck size={16} color="#30D158" /> Guaranteed 100% Encrypted Payment
+                <p style={{ fontSize: '12.5px', color: '#475569', lineHeight: 1.7, fontWeight: 500, margin: 0 }}>
+                  To ensure <strong>100% genuine products</strong>, fast 24-hour dispatch without delivery delays, and prevent fraudulent returns on custom tailoring tools, we currently accept secure instant UPI/Online payments only. Cash on Delivery verification support is coming soon!
+                </p>
               </div>
+
             </div>
           </div>
         </div>

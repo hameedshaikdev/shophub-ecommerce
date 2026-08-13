@@ -59,7 +59,7 @@ export default function BottomNav() {
               {badge > 0 && (
                 <span style={{
                   position:'absolute', top:'-6px', right:'-8px',
-                  background:'#E94560', color:'white',
+                  background:'#0F172A', color:'white',
                   fontSize:'9px', fontWeight:800,
                   minWidth:'17px', height:'17px', borderRadius:'99px',
                   display:'flex', alignItems:'center', justifyContent:'center',
