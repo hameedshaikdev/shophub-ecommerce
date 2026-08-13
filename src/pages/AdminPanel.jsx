@@ -461,6 +461,13 @@ function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming,
           </p>
         </div>
 
+        <button onClick={(e) => { e.stopPropagation(); onDelete(order.id); }} title="Delete Order"
+          style={{ width:'30px', height:'30px', borderRadius:'8px', background:'#FEF2F2',
+            border:'1px solid #FECACA', cursor:'pointer', display:'flex', alignItems:'center',
+            justifyContent:'center', flexShrink:0 }}>
+          <Trash2 size={14} color="#DC2626" />
+        </button>
+
         <button onClick={() => setOpen(!open)}
           style={{ width:'30px', height:'30px', borderRadius:'8px', background:'#F1F5F9',
             border:'1px solid #E2E8F0', cursor:'pointer', display:'flex', alignItems:'center',
@@ -749,6 +756,9 @@ export default function AdminPanel() {
   async function fetchOrders() {
     setLoading(true);
     try {
+      const { data: allData } = await supabase.from('orders').select('*');
+      if (allData) setAllOrders(allData);
+
       let q = supabase.from('orders').select('*').order('created_at',{ascending:false});
       if (orderTab==='all_pending') q = q.in('status',['pending_payment','payment_submitted']);
       else if (orderTab==='payment_submitted') q = q.eq('payment_status','submitted');
@@ -769,6 +779,27 @@ export default function AdminPanel() {
       setOrders(filtered);
     } catch(err) { toast('Failed to load orders','error'); }
     finally { setLoading(false); }
+  }
+
+  async function handleDeleteAllOrders() {
+    const ok = await confirm({
+      title: '🚨 Delete ALL Test Orders?',
+      message: 'This will PERMANENTLY delete every single order from the database and reset Performance Analytics to ₹0. This action cannot be undone.',
+      confirm: 'Yes, Delete All Orders',
+      type: 'danger'
+    });
+    if (!ok) return;
+    try {
+      const { error } = await supabase.from('orders').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      if (error) throw error;
+      setAllOrders([]);
+      setOrders([]);
+      setSelected([]);
+      fetchCounts();
+      toast('All orders permanently deleted from database!', 'success');
+    } catch(err) {
+      toast('Error deleting orders: ' + err.message, 'error');
+    }
   }
 
   async function fetchCounts() {
@@ -1758,6 +1789,11 @@ buildPages(4);
                       title="Reset analytics metric values to ₹0 placeholders"
                       style={{ display:'flex', alignItems:'center', gap:'4px', padding:'6px 10px', borderRadius:'8px', background:'#FEF2F2', border:'1px solid #FECACA', color:'#DC2626', fontSize:'11px', fontWeight:800, cursor:'pointer' }}>
                       <RotateCcw size={12} /> Reset Values
+                    </button>
+                    <button onClick={handleDeleteAllOrders}
+                      title="Permanently delete all test orders from database"
+                      style={{ display:'flex', alignItems:'center', gap:'4px', padding:'6px 10px', borderRadius:'8px', background:'#DC2626', border:'none', color:'#FFFFFF', fontSize:'11px', fontWeight:800, cursor:'pointer' }}>
+                      <Trash2 size={12} /> Clear All Orders
                     </button>
                     {resetMetrics && (
                       <button onClick={() => { setResetMetrics(false); toast('Restored live performance metrics calculation!', 'info'); }}
