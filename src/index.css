@@ -1112,6 +1112,10 @@ div[style*="overflow"]::-webkit-scrollbar {
     padding-top: 28px !important;
     padding-bottom: 20px !important;
   }
+  .hero-combined-wrapper {
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
   .hero-grid {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
@@ -1128,6 +1132,14 @@ div[style*="overflow"]::-webkit-scrollbar {
     align-items: center !important;
     text-align: center !important;
     margin: 0 auto !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .hero-photo-column {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
   /* Shrink hero headings on mobile */
   .hero-content-box h1 {

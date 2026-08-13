@@ -603,7 +603,7 @@ export default function Home() {
 
             {/* RIGHT — Photo Column (image-column) */}
             <AnimatePresence mode="wait">
-              <motion.div key={`illus-${activeCategory}`}
+              <motion.div className="hero-photo-column" key={`illus-${activeCategory}`}
                 initial={{opacity:0,scale:.95,y:12}} animate={{opacity:1,scale:1,y:0}}
                 exit={{opacity:0,scale:.95,y:-12}} transition={{duration:.5,ease:[.22,1,.36,1]}}
                 style={{position:'relative',flex:'0 0 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
