@@ -754,7 +754,7 @@ div[style*="overflow"]::-webkit-scrollbar {
   100% { transform: scale(0.95); opacity: 0.8; }
 }
 
-/* Mobile Collage Marquee — 2s delay lets card entrance animations play first */
+/* Mobile Collage Marquee */
 @keyframes mobileMarqueeScroll {
   0%   { transform: translateX(0px); }
   100% { transform: translateX(-380px); }
@@ -764,10 +764,11 @@ div[style*="overflow"]::-webkit-scrollbar {
   gap: 0px;
   align-items: center;
   width: max-content;
-  animation: mobileMarqueeScroll 16s linear 2s infinite backwards;
+  /* NO animation here — JS state controls when scroll starts */
 }
 .mobile-marquee-track.is-scrolling {
-  animation: mobileMarqueeScroll 16s linear 2s infinite backwards;
+  /* Starts immediately from translateX(0) — no delay, no fill-mode */
+  animation: mobileMarqueeScroll 16s linear infinite;
 }
 
 /* Description Card */

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
@@ -380,8 +380,13 @@ export default function Home() {
 
   const [isMarqueeActive, setIsMarqueeActive] = useState(false);
 
-  useEffect(() => {
+  // useLayoutEffect fires BEFORE paint — guarantees track is static (no scroll) on first render
+  useLayoutEffect(() => {
     setIsMarqueeActive(false);
+  }, [activeCategory]);
+
+  // useEffect fires after paint — starts the loop after 2s
+  useEffect(() => {
     const timer = setTimeout(() => {
       setIsMarqueeActive(true);
     }, 2000);
@@ -642,9 +647,9 @@ export default function Home() {
                       </motion.div>
                     </div>
 
-                    {/* MOBILE MARQUEE — cards fade+scale in first, CSS starts loop after 2s delay */}
+                    {/* MOBILE MARQUEE: cards animate (opacity+scale) for 2s, then CSS loop starts */}
                     <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '260px', position: 'relative' }}>
-                      <div key={activeCategory} className="mobile-marquee-track">
+                      <div className={`mobile-marquee-track${isMarqueeActive ? ' is-scrolling' : ''}`}>
 
                         {/* ── BLOCK 1 — staggered fade+scale in place (no off-screen offset) ── */}
                         <div style={{ width: '380px', height: '250px', position: 'relative', flexShrink: 0 }}>
