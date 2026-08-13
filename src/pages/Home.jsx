@@ -500,72 +500,58 @@ export default function Home() {
           <div className="hero-combined-wrapper" style={{position:'relative',width:'100%',display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:'32px',maxWidth:'100%'}}>
 
             {/* LEFT — Hero Text Content */}
-            <motion.div className="hero-content-box" style={{maxWidth:'440px',minWidth:'300px',zIndex:2,flex:'0 0 42%'}} initial="hidden" animate="visible" variants={sg}>
+            <motion.div key={`text-${activeCategory}`} className="hero-content-box" style={{maxWidth:'440px',minWidth:'300px',zIndex:2,flex:'0 0 42%'}} initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.25}}>
               {/* Badge */}
-              <motion.div variants={fuNoY} style={{marginBottom:'20px'}}>
-                <AnimatePresence mode="wait">
-                  <motion.span key={activeCategory}
-                    initial={{opacity:0, y:0}} animate={{opacity:1, y:0}}
-                    exit={{opacity:0, y:0}} transition={{duration:.3}}
-                    style={{display:'inline-flex',alignItems:'center',gap:'7px',
-                      padding:'7px 18px',borderRadius:'99px',
-                      background: isDark ? 'rgba(255,255,255,.13)' : 'rgba(255,255,255,.75)',
-                      backdropFilter:'blur(12px)',
-                      WebkitBackdropFilter:'blur(12px)',
-                      border: isDark ? '1px solid rgba(255,255,255,.2)' : '1px solid rgba(139,115,168,.25)',
-                      boxShadow: isDark ? '0 4px 16px rgba(0,0,0,.12)' : '0 4px 16px rgba(107,79,138,.08)',
-                      fontSize:'11px',fontWeight:800,
-                      color: isDark ? 'rgba(255,255,255,.9)' : '#4A3563',
-                      letterSpacing:'1.2px',textTransform:'uppercase'}}>
-                    <Sparkles size={13} strokeWidth={2.5} color={isDark ? 'rgba(255,255,255,.8)' : '#6B4F8A'}/> New Collection 2026
-                  </motion.span>
-                </AnimatePresence>
-              </motion.div>
+              <div style={{marginBottom:'20px'}}>
+                <span style={{display:'inline-flex',alignItems:'center',gap:'7px',
+                  padding:'7px 18px',borderRadius:'99px',
+                  background: isDark ? 'rgba(255,255,255,.13)' : 'rgba(255,255,255,.75)',
+                  backdropFilter:'blur(12px)',
+                  WebkitBackdropFilter:'blur(12px)',
+                  border: isDark ? '1px solid rgba(255,255,255,.2)' : '1px solid rgba(139,115,168,.25)',
+                  boxShadow: isDark ? '0 4px 16px rgba(0,0,0,.12)' : '0 4px 16px rgba(107,79,138,.08)',
+                  fontSize:'11px',fontWeight:800,
+                  color: isDark ? 'rgba(255,255,255,.9)' : '#4A3563',
+                  letterSpacing:'1.2px',textTransform:'uppercase'}}>
+                  <Sparkles size={13} strokeWidth={2.5} color={isDark ? 'rgba(255,255,255,.8)' : '#6B4F8A'}/> New Collection 2026
+                </span>
+              </div>
 
               {/* Heading */}
-              <AnimatePresence mode="wait">
-                <motion.div key={`h-${activeCategory}`}
-                  initial={{opacity:0, y:0}} animate={{opacity:1, y:0}}
-                  exit={{opacity:0, y:0}} transition={{duration:.45,ease:[.22,1,.36,1]}}>
-                  <h1 style={{fontSize:'clamp(38px,6vw,68px)',
-                    fontWeight: isDark ? 900 : 700,
-                    fontFamily: isDark ? 'inherit' : "'Playfair Display', Georgia, serif",
-                    color: isDark ? 'rgba(255,255,255,.95)' : '#252329',
-                    lineHeight:1.05,
-                    letterSpacing: isDark ? '-2.5px' : '-0.8px',
-                    margin:0}}>
-                    {c.title}
-                  </h1>
-                  <h1 style={{fontSize:'clamp(38px,6vw,68px)',
-                    fontWeight: isDark ? 900 : 700,
-                    fontFamily: isDark ? 'inherit' : "'Playfair Display', Georgia, serif",
-                    color: isDark ? c.accentColor : '#634780',
-                    lineHeight:1.05,
-                    letterSpacing: isDark ? '-2.5px' : '-0.8px',
-                    marginBottom:'8px',transition:'color .6s'}}>
-                    {c.titleAccent}
-                  </h1>
-                  <p style={{fontSize:'clamp(15px,1.9vw,18px)',fontWeight:700,
-                    color: isDark ? 'rgba(255,255,255,.55)' : '#3E3846',
-                    letterSpacing:'-.2px',marginBottom:'16px'}}>
-                    {c.titleLine2}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
+              <div>
+                <h1 style={{fontSize:'clamp(38px,6vw,68px)',
+                  fontWeight: isDark ? 900 : 700,
+                  fontFamily: isDark ? 'inherit' : "'Playfair Display', Georgia, serif",
+                  color: isDark ? 'rgba(255,255,255,.95)' : '#252329',
+                  lineHeight:1.05,
+                  letterSpacing: isDark ? '-2.5px' : '-0.8px',
+                  margin:0}}>
+                  {c.title}
+                </h1>
+                <h1 style={{fontSize:'clamp(38px,6vw,68px)',
+                  fontWeight: isDark ? 900 : 700,
+                  fontFamily: isDark ? 'inherit' : "'Playfair Display', Georgia, serif",
+                  color: isDark ? c.accentColor : '#634780',
+                  lineHeight:1.05,
+                  letterSpacing: isDark ? '-2.5px' : '-0.8px',
+                  marginBottom:'8px',transition:'color .6s'}}>
+                  {c.titleAccent}
+                </h1>
+                <p style={{fontSize:'clamp(15px,1.9vw,18px)',fontWeight:700,
+                  color: isDark ? 'rgba(255,255,255,.55)' : '#3E3846',
+                  letterSpacing:'-.2px',marginBottom:'16px'}}>
+                  {c.titleLine2}
+                </p>
+              </div>
 
-              <AnimatePresence mode="wait">
-                <motion.p key={`sub-${activeCategory}`}
-                  initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
-                  transition={{duration:.4,delay:.1}}
-                  style={{fontSize:'clamp(13px,1.5vw,15px)',
-                    color: isDark ? 'rgba(255,255,255,.6)' : '#554E60',
-                    maxWidth:'440px',lineHeight:1.75,marginBottom:'32px',fontWeight:400}}>
-                  {c.sub}
-                </motion.p>
-              </AnimatePresence>
+              <p style={{fontSize:'clamp(13px,1.5vw,15px)',
+                color: isDark ? 'rgba(255,255,255,.6)' : '#554E60',
+                maxWidth:'440px',lineHeight:1.75,marginBottom:'32px',fontWeight:400}}>
+                {c.sub}
+              </p>
 
               {/* CTAs */}
-              <motion.div variants={fuNoY} style={{display:'flex',gap:'12px',flexWrap:'wrap',marginBottom:'36px'}}>
+              <div style={{display:'flex',gap:'12px',flexWrap:'wrap',marginBottom:'36px'}}>
                 <motion.button onClick={() => scrollTo(productsRef)}
                   whileHover={{scale:1.04,boxShadow:'0 12px 32px rgba(37,35,41,.28)'}}
                   whileTap={{scale:.97}}
@@ -594,10 +580,10 @@ export default function Home() {
                     <ArrowRight size={16} strokeWidth={2.5} color={isDark ? 'white' : '#252329'}/>
                   </motion.span>
                 </motion.button>
-              </motion.div>
+              </div>
 
               {/* Trust badges */}
-              <motion.div variants={fuNoY} style={{display:'flex',gap:'18px',flexWrap:'wrap'}}>
+              <div style={{display:'flex',gap:'18px',flexWrap:'wrap'}}>
                 {[
                   {icon:Truck,     text:'Fast Delivery'},
                   {icon:Shield,    text:'Secure Pay'},
@@ -608,15 +594,13 @@ export default function Home() {
                     <span style={{fontSize:'12px',fontWeight:700,color: isDark ? 'rgba(255,255,255,.7)' : '#4A4354'}}>{text}</span>
                   </div>
                 ))}
-              </motion.div>
+              </div>
             </motion.div>
 
             {/* RIGHT — Photo Column (image-column) */}
-            <AnimatePresence mode="wait">
-              <motion.div className="hero-photo-column" key={`illus-${activeCategory}`}
-                initial={{opacity:0,scale:.95,y:0}} animate={{opacity:1,scale:1,y:0}}
-                exit={{opacity:0,scale:.95,y:0}} transition={{duration:.5,ease:[.22,1,.36,1]}}
-                style={{position:'relative',flex:'0 0 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <motion.div className="hero-photo-column" key={`illus-${activeCategory}`}
+              initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.25}}
+              style={{position:'relative',flex:'0 0 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
                 {isDark ? (
                   <>
                     {/* ── DESKTOP COLLAGE — 100% Untouched original layout ── */}
@@ -858,7 +842,6 @@ export default function Home() {
                   </div>
                 )}
                 </motion.div>
-              </AnimatePresence>
             </div>
           </div>
 
