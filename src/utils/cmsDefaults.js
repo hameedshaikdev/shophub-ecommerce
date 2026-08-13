@@ -151,13 +151,13 @@ export const DEFAULT_CMS_DATA = {
   },
 
   seo: {
-    metaTitle: 'Asmalabel — Premium Tailoring Tools & Women Fashion',
-    metaDescription: 'Shop professional tailoring tools, sewing machines, scissors, threads & premium women fashion online at Asmalabel.',
-    ogTitle: 'Asmalabel — Quality Tailoring Equipment & Fashion',
-    ogDescription: 'Discover top quality sewing machines, tailoring accessories & designer women wear.',
-    ogImage: 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=1200',
-    keywords: 'tailoring tools, sewing machine, scissors, fashion, dresses, Asmalabel, Nellore',
-    canonicalUrl: 'https://asmalabel.in/',
+    metaTitle: "Asmalabel | Premium Tailoring Tools & Women's Fashion",
+    metaDescription: "Shop premium tailoring tools, sewing supplies, textiles and modern women's fashion at Asmalabel. Based in Nellore, Andhra Pradesh.",
+    ogTitle: "Asmalabel | Quality Tailoring Tools & Women's Fashion",
+    ogDescription: "Discover top quality sewing tools, tailoring accessories & modern women's fashion at Asmalabel.",
+    ogImage: "https://asmalabel.in/logo.png",
+    keywords: "tailoring tools, sewing machine, scissors, fashion, dresses, Asmalabel, Nellore",
+    canonicalUrl: "https://asmalabel.in/",
   },
 
   mediaLibrary: [],
