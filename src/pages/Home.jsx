@@ -1153,12 +1153,12 @@ export default function Home() {
       {/* ══ BRAND OVERVIEW / SEO CONTENT ══════════════════ */}
       <div className="sh-container" style={{ margin: '48px auto 36px', padding: '0 16px' }}>
         <div style={{
-          background: 'linear-gradient(135deg, #FEF3C7 0%, #FFEDD5 100%)',
+          background: 'linear-gradient(135deg, #FFFDF7 0%, #F7EFE3 100%)',
           borderRadius: '24px',
-          border: '1.5px solid #FCD34D',
+          border: '1.5px solid #EBDCCB',
           padding: '40px 30px',
           textAlign: 'center',
-          boxShadow: '0 12px 32px rgba(217, 119, 6, 0.12)',
+          boxShadow: '0 10px 28px rgba(180, 130, 70, 0.07)',
           position: 'relative',
           overflow: 'hidden'
         }}>
@@ -1166,31 +1166,31 @@ export default function Home() {
           <div style={{
             position: 'absolute', top: '-40px', right: '-40px',
             width: '150px', height: '150px', borderRadius: '50%',
-            background: 'rgba(253, 230, 138, 0.5)', filter: 'blur(35px)', pointerEvents: 'none'
+            background: 'rgba(235, 220, 203, 0.45)', filter: 'blur(35px)', pointerEvents: 'none'
           }} />
           <div style={{
             position: 'absolute', bottom: '-40px', left: '-40px',
             width: '150px', height: '150px', borderRadius: '50%',
-            background: 'rgba(254, 215, 170, 0.5)', filter: 'blur(35px)', pointerEvents: 'none'
+            background: 'rgba(247, 239, 227, 0.65)', filter: 'blur(35px)', pointerEvents: 'none'
           }} />
 
           {/* Top Pill Badge */}
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '6px',
             padding: '6px 16px', borderRadius: '99px',
-            background: '#FFFFFF', border: '1.5px solid #FCD34D',
-            color: '#92400E', fontSize: '11px', fontWeight: 800,
+            background: '#FFFFFF', border: '1px solid #E2D3BF',
+            color: '#8A6133', fontSize: '11px', fontWeight: 800,
             textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '16px',
-            boxShadow: '0 2px 8px rgba(180, 83, 9, 0.08)'
+            boxShadow: '0 2px 6px rgba(138, 97, 51, 0.05)'
           }}>
-            <Sparkles size={13} color="#D97706" />
+            <Sparkles size={13} color="#B88346" />
             <span>Official Storefront · Nellore, AP</span>
           </div>
 
           {/* Heading */}
           <h2 style={{
-            fontSize: 'clamp(20px,3.5vw,26px)', fontWeight: 900,
-            color: '#78350F', marginBottom: '14px', letterSpacing: '-0.4px',
+            fontSize: 'clamp(20px,3.5vw,25px)', fontWeight: 900,
+            color: '#0F172A', marginBottom: '14px', letterSpacing: '-0.4px',
             lineHeight: 1.3
           }}>
             Asmalabel — Crafting Quality Tailoring &amp; Women's Fashion
@@ -1198,10 +1198,10 @@ export default function Home() {
 
           {/* Text Description */}
           <p style={{
-            fontSize: '14px', color: '#92400E', lineHeight: 1.85,
-            maxWidth: '820px', margin: '0 auto 24px', fontWeight: 600
+            fontSize: '14px', color: '#475569', lineHeight: 1.85,
+            maxWidth: '820px', margin: '0 auto 24px', fontWeight: 500
           }}>
-            <strong style={{ color: '#78350F' }}>Asmalabel</strong> is a dedicated boutique small business based in Nellore, Andhra Pradesh. Built on trust, authenticity, and personal care, we bring you high-precision tailoring tools, premium sewing supplies, and curated women's fashion delivered directly to your doorstep across India.
+            <strong style={{ color: '#0F172A' }}>Asmalabel</strong> is a dedicated boutique small business based in Nellore, Andhra Pradesh. Built on trust, authenticity, and personal care, we bring you high-precision tailoring tools, premium sewing supplies, and curated women's fashion delivered directly to your doorstep across India.
           </p>
 
           {/* Feature Badges Grid */}
@@ -1217,11 +1217,11 @@ export default function Home() {
               <div key={text} style={{
                 display: 'inline-flex', alignItems: 'center', gap: '7px',
                 padding: '8px 18px', borderRadius: '99px',
-                background: '#FFFFFF', border: '1.5px solid #FCD34D',
-                boxShadow: '0 3px 10px rgba(180, 83, 9, 0.08)',
-                color: '#78350F', fontSize: '12.5px', fontWeight: 800
+                background: '#FFFFFF', border: '1px solid #E5D5C3',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.02)',
+                color: '#1E293B', fontSize: '12.5px', fontWeight: 750
               }}>
-                <Icon size={14} color="#D97706" />
+                <Icon size={14} color="#B88346" />
                 <span>{text}</span>
               </div>
             ))}
