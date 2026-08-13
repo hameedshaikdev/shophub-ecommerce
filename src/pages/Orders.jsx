@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Package, MessageCircle, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { Package, MessageCircle, RefreshCw, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
 import SEO from '../components/common/SEO';
@@ -76,7 +76,7 @@ function ProgressBar({ status }) {
   );
 }
 
-function OrderCard({ order }) {
+function OrderCard({ order, onDeleteOrder }) {
   const [expanded, setExpanded] = useState(false);
   const addr = order.shipping_address || {};
   const pCfg = PAYMENT_LABELS[order.payment_status] || PAYMENT_LABELS.pending;
@@ -146,9 +146,9 @@ function OrderCard({ order }) {
         )}
 
         {/* Action buttons */}
-        <div style={{ display:'flex', gap:'8px' }}>
+        <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
           <button onClick={() => setExpanded(!expanded)}
-            style={{ flex:1, padding:'10px', borderRadius:'12px',
+            style={{ flex:1, minWidth:'120px', padding:'10px', borderRadius:'12px',
               background:'#F8FAFC', color:'var(--text-2)', fontWeight:800,
               fontSize:'13px', border:'1px solid var(--border)', cursor:'pointer',
               display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
@@ -156,12 +156,22 @@ function OrderCard({ order }) {
             {expanded ? 'Hide Tracking' : 'Track Order'}
           </button>
           <button onClick={waContact}
-            style={{ flex:1, padding:'10px', borderRadius:'12px',
+            style={{ flex:1, minWidth:'120px', padding:'10px', borderRadius:'12px',
               background:'#F0FDF4', color:'#16A34A', fontWeight:800,
               fontSize:'13px', border:'1px solid #BBF7D0', cursor:'pointer',
               display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
             <MessageCircle size={15}/> WhatsApp
           </button>
+          {onDeleteOrder && (
+            <button onClick={() => onDeleteOrder(order.id)}
+              title="Cancel & Delete Order"
+              style={{ padding:'10px 14px', borderRadius:'12px',
+                background:'#FEF2F2', color:'#DC2626', fontWeight:800,
+                fontSize:'13px', border:'1px solid #FECACA', cursor:'pointer',
+                display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+              <Trash2 size={15}/> Delete
+            </button>
+          )}
         </div>
       </div>
 
@@ -287,6 +297,17 @@ export default function Orders() {
     finally { setLoading(false); }
   }
 
+  async function handleDeleteOrder(orderId) {
+    if (!window.confirm('Are you sure you want to delete/cancel this order?')) return;
+    try {
+      const { error } = await supabase.from('orders').delete().eq('id', orderId);
+      if (error) throw error;
+      setOrders(prev => prev.filter(o => o.id !== orderId));
+    } catch (err) {
+      alert('Failed to delete order: ' + err.message);
+    }
+  }
+
   const FILTERS = [
     { key:'all',      label:'All' },
     { key:'active',   label:'Active' },
@@ -371,7 +392,7 @@ export default function Orders() {
             )}
           </div>
         ) : (
-          filtered.map(order => <OrderCard key={order.id} order={order} />)
+          filtered.map(order => <OrderCard key={order.id} order={order} onDeleteOrder={handleDeleteOrder} />)
         )}
       </div>
       <style>{`
