@@ -754,6 +754,19 @@ div[style*="overflow"]::-webkit-scrollbar {
   100% { transform: scale(0.95); opacity: 0.8; }
 }
 
+/* Mobile Collage Marquee — pure CSS scroll, no Framer Motion conflict */
+@keyframes mobileMarqueeScroll {
+  0%   { transform: translateX(0px); }
+  100% { transform: translateX(-380px); }
+}
+.mobile-marquee-track {
+  display: flex;
+  gap: 0px;
+  align-items: center;
+  width: max-content;
+  animation: mobileMarqueeScroll 16s linear infinite;
+}
+
 /* Description Card */
 .pd-description-card {
   display: flex;
