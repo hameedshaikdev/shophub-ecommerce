@@ -384,7 +384,7 @@ export default function Home() {
     setIsMarqueeActive(false);
     const timer = setTimeout(() => {
       setIsMarqueeActive(true);
-    }, 1200);
+    }, 2000);
     return () => clearTimeout(timer);
   }, [activeCategory]);
 
