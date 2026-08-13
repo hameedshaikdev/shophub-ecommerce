@@ -642,9 +642,9 @@ export default function Home() {
                       </motion.div>
                     </div>
 
-                    {/* MOBILE MARQUEE — opacity+scale entrance, then CSS loop after 2s */}
+                    {/* MOBILE MARQUEE — cards fade+scale in first, CSS starts loop after 2s delay */}
                     <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '260px', position: 'relative' }}>
-                      <div className={`mobile-marquee-track${isMarqueeActive ? ' is-scrolling' : ''}`}>
+                      <div key={activeCategory} className="mobile-marquee-track">
 
                         {/* ── BLOCK 1 — staggered fade+scale in place (no off-screen offset) ── */}
                         <div style={{ width: '380px', height: '250px', position: 'relative', flexShrink: 0 }}>
