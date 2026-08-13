@@ -67,6 +67,7 @@ const CONTENT = {
 
 /* ─── Variants ────────────────────────────────────────────── */
 const fu = {hidden:{opacity:0,y:28},visible:{opacity:1,y:0,transition:{duration:.55,ease:[.22,1,.36,1]}}};
+const fuNoY = {hidden:{opacity:0,y:0},visible:{opacity:1,y:0,transition:{duration:.55,ease:[.22,1,.36,1]}}};
 const fl = {hidden:{opacity:0,x:-24},visible:{opacity:1,x:0,transition:{duration:.55,ease:[.22,1,.36,1]}}};
 const sg = {visible:{transition:{staggerChildren:.08}}};
 const sc = {hidden:{opacity:0,scale:.95},visible:{opacity:1,scale:1,transition:{duration:.5,ease:[.22,1,.36,1]}}};
@@ -501,11 +502,11 @@ export default function Home() {
             {/* LEFT — Hero Text Content */}
             <motion.div className="hero-content-box" style={{maxWidth:'440px',minWidth:'300px',zIndex:2,flex:'0 0 42%'}} initial="hidden" animate="visible" variants={sg}>
               {/* Badge */}
-              <motion.div variants={fu} style={{marginBottom:'20px'}}>
+              <motion.div variants={isDark ? fu : fuNoY} style={{marginBottom:'20px'}}>
                 <AnimatePresence mode="wait">
                   <motion.span key={activeCategory}
-                    initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}}
-                    exit={{opacity:0,y:10}} transition={{duration:.3}}
+                    initial={{opacity:0, y: isDark ? -10 : 0}} animate={{opacity:1,y:0}}
+                    exit={{opacity:0, y: isDark ? 10 : 0}} transition={{duration:.3}}
                     style={{display:'inline-flex',alignItems:'center',gap:'7px',
                       padding:'7px 18px',borderRadius:'99px',
                       background: isDark ? 'rgba(255,255,255,.13)' : 'rgba(255,255,255,.75)',
@@ -524,8 +525,8 @@ export default function Home() {
               {/* Heading */}
               <AnimatePresence mode="wait">
                 <motion.div key={`h-${activeCategory}`}
-                  initial={{opacity:0,y:24}} animate={{opacity:1,y:0}}
-                  exit={{opacity:0,y:-24}} transition={{duration:.45,ease:[.22,1,.36,1]}}>
+                  initial={{opacity:0, y: isDark ? 24 : 0}} animate={{opacity:1,y:0}}
+                  exit={{opacity:0, y: isDark ? -24 : 0}} transition={{duration:.45,ease:[.22,1,.36,1]}}>
                   <h1 style={{fontSize:'clamp(38px,6vw,68px)',
                     fontWeight: isDark ? 900 : 700,
                     fontFamily: isDark ? 'inherit' : "'Playfair Display', Georgia, serif",
@@ -564,7 +565,7 @@ export default function Home() {
               </AnimatePresence>
 
               {/* CTAs */}
-              <motion.div variants={fu} style={{display:'flex',gap:'12px',flexWrap:'wrap',marginBottom:'36px'}}>
+              <motion.div variants={isDark ? fu : fuNoY} style={{display:'flex',gap:'12px',flexWrap:'wrap',marginBottom:'36px'}}>
                 <motion.button onClick={() => scrollTo(productsRef)}
                   whileHover={{scale:1.04,boxShadow:'0 12px 32px rgba(37,35,41,.28)'}}
                   whileTap={{scale:.97}}
@@ -596,7 +597,7 @@ export default function Home() {
               </motion.div>
 
               {/* Trust badges */}
-              <motion.div variants={fu} style={{display:'flex',gap:'18px',flexWrap:'wrap'}}>
+              <motion.div variants={isDark ? fu : fuNoY} style={{display:'flex',gap:'18px',flexWrap:'wrap'}}>
                 {[
                   {icon:Truck,     text:'Fast Delivery'},
                   {icon:Shield,    text:'Secure Pay'},
@@ -613,8 +614,8 @@ export default function Home() {
             {/* RIGHT — Photo Column (image-column) */}
             <AnimatePresence mode="wait">
               <motion.div className="hero-photo-column" key={`illus-${activeCategory}`}
-                initial={{opacity:0,scale:.95,y:12}} animate={{opacity:1,scale:1,y:0}}
-                exit={{opacity:0,scale:.95,y:-12}} transition={{duration:.5,ease:[.22,1,.36,1]}}
+                initial={{opacity:0,scale:.95,y: isDark ? 12 : 0}} animate={{opacity:1,scale:1,y:0}}
+                exit={{opacity:0,scale:.95,y: isDark ? -12 : 0}} transition={{duration:.5,ease:[.22,1,.36,1]}}
                 style={{position:'relative',flex:'0 0 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
                 {isDark ? (
                   <>
