@@ -642,16 +642,15 @@ export default function Home() {
                       </motion.div>
                     </div>
 
-                    {/* MOBILE MARQUEE — All 6 cards animate in full view on page load/tab switch, then continuous gapless loop */}
+                    {/* MOBILE MARQUEE — Staggered card entrance animations on load, then 100% continuous infinite Right-to-Left marquee loop */}
                     <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '260px', position: 'relative' }}>
                       <motion.div
                         key={`mobile-marquee-${activeCategory}`}
-                        animate={{ x: ['0px', '0px', '-380px'] }}
+                        animate={{ x: ['0px', '-380px'] }}
                         transition={{
-                          duration: 17,
+                          duration: 16,
                           ease: 'linear',
-                          repeat: Infinity,
-                          times: [0, 0.07, 1]
+                          repeat: Infinity
                         }}
                         style={{ width: 'max-content', display: 'flex', gap: '0px', alignItems: 'center' }}
                       >
