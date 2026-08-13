@@ -1151,15 +1151,22 @@ export default function Home() {
       )}
 
       {/* ══ BRAND OVERVIEW / SEO CONTENT ══════════════════ */}
-      <div style={{ background: '#FFFFFF', borderTop: '1px solid #E2E8F0', borderBottom: '1px solid #E2E8F0', padding: '40px 20px', margin: '40px 0 0 0' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0F172A', marginBottom: '12px', letterSpacing: '-0.3px' }}>
+      <div className="sh-container" style={{ margin: '40px auto 32px', padding: '0 16px' }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)',
+          borderRadius: '24px',
+          border: '1px solid #E2E8F0',
+          padding: '36px 24px',
+          textAlign: 'center',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.03)'
+        }}>
+          <h2 style={{ fontSize: 'clamp(18px,3vw,22px)', fontWeight: 800, color: '#0F172A', marginBottom: '12px', letterSpacing: '-0.3px' }}>
             Asmalabel — Premium Tailoring Tools &amp; Women's Fashion in Nellore
           </h2>
-          <p style={{ fontSize: '14px', color: '#475569', lineHeight: 1.7, maxWidth: '840px', margin: '0 auto 16px' }}>
+          <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: 1.7, maxWidth: '800px', margin: '0 auto 20px', fontWeight: 450 }}>
             Welcome to <strong>Asmalabel</strong> (Asma Label), your trusted online destination for professional tailoring tools, sewing supplies, textiles, and modern women's fashion. Based in Nellore, Andhra Pradesh, we provide high-precision scissors, durable threads, universal needles, measuring tools, and curated clothing collections.
           </p>
-          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap', fontSize: '13px', fontWeight: 600, color: '#64748B' }}>
+          <div style={{ display: 'flex', gap: '12px 24px', justifyContent: 'center', flexWrap: 'wrap', fontSize: '12.5px', fontWeight: 700, color: '#334155' }}>
             <span>✓ 100% Genuine Tailoring Tools</span>
             <span>✓ Curated Women's Fashion</span>
             <span>✓ Fast Pan-India Delivery</span>
@@ -1167,9 +1174,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      {/* ══ BOTTOM PADDING FOR MOBILE NAV ══════════════════ */}
-      <div style={{height:'32px'}}/>
 
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }

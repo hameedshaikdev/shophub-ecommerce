@@ -20,7 +20,7 @@ export default function Footer() {
   const copyright = f.copyright || '© 2026 AS HUB · All Rights Reserved';
 
   return (
-    <footer style={{ background:'#0F172A', paddingBottom:'80px' }}>
+    <footer style={{ background:'#0F172A', paddingBottom:'calc(90px + env(safe-area-inset-bottom, 0px))' }}>
       <div style={{ maxWidth:'560px', margin:'0 auto',
         padding:'48px 24px 40px', textAlign:'center',
         display:'flex', flexDirection:'column', alignItems:'center', gap:'22px' }}>
@@ -57,14 +57,14 @@ export default function Footer() {
         </p>
 
         {/* Navigation Links for SEO & Crawlability */}
-        <div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap', justifyContent: 'center', fontSize: '13px', fontWeight: 600 }}>
-          <Link to="/" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none' }}>Home</Link>
+        <div style={{ display: 'flex', gap: '8px 14px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', fontSize: '13px', fontWeight: 600, maxWidth: '420px', margin: '0 auto' }}>
+          <Link to="/" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none', whiteSpace: 'nowrap' }}>Home</Link>
           <span style={{ color: 'rgba(255,255,255,.3)' }}>·</span>
-          <Link to="/about" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none' }}>About Us</Link>
+          <Link to="/about" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none', whiteSpace: 'nowrap' }}>About Us</Link>
           <span style={{ color: 'rgba(255,255,255,.3)' }}>·</span>
-          <Link to="/?category=tailoring" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none' }}>Tailoring Tools</Link>
+          <Link to="/?category=tailoring" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none', whiteSpace: 'nowrap' }}>Tailoring Tools</Link>
           <span style={{ color: 'rgba(255,255,255,.3)' }}>·</span>
-          <Link to="/?category=fashion" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none' }}>Women's Fashion</Link>
+          <Link to="/?category=fashion" style={{ color: 'rgba(255,255,255,.9)', textDecoration: 'none', whiteSpace: 'nowrap' }}>Women's Fashion</Link>
         </div>
 
         {/* Social icons */}
