@@ -591,7 +591,7 @@ export default function Home() {
               <motion.div key={`illus-${activeCategory}`}
                 initial={{opacity:0,scale:.95,y:12}} animate={{opacity:1,scale:1,y:0}}
                 exit={{opacity:0,scale:.95,y:-12}} transition={{duration:.5,ease:[.22,1,.36,1]}}
-                style={{position:'relative',flex:'1 1 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'flex-end',paddingRight:'20px',boxSizing:'border-box'}}>
+                style={{position:'relative',flex:'0 0 58%',minWidth:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
                 {isDark ? (
                   <div className="hero-image-collage" style={{
                     position: 'relative',
@@ -600,8 +600,9 @@ export default function Home() {
                     boxSizing: 'border-box',
                     userSelect: 'none',
                     overflow: 'visible',
-                    margin: '0 0 0 auto',
+                    margin: '0 auto',
                     flex: 'none',
+                    transformOrigin: 'center center',
                   }}>
 
                     {/* ① CARD 1 — NAVY FLORAL DRESS (255px × 355px) */}
@@ -642,7 +643,7 @@ export default function Home() {
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </motion.div>
 
-                    {/* ③ CARD 3 — BEIGE BLAZER (185px × 360px at left 555px for 12px Lavender gap + 40px right margin) */}
+                    {/* ③ CARD 3 — BEIGE BLAZER + JEANS (200px × 360px) */}
                     <motion.div
                       initial={{ opacity: 0, x: 60 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -651,7 +652,7 @@ export default function Home() {
                       style={{
                         position: 'absolute', zIndex: 1,
                         left: '555px', top: '40px',
-                        width: '185px', height: '360px',
+                        width: '200px', height: '360px',
                         borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
                         border: '1.5px solid rgba(255,255,255,0.35)',
                         boxShadow: '0 14px 38px rgba(0,0,0,0.22)',
@@ -661,7 +662,7 @@ export default function Home() {
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </motion.div>
 
-                    {/* ④ CARD 4 — CREAM/WHITE DRESS (Slightly wider at 210px × 242px) */}
+                    {/* ④ CARD 4 — CREAM/WHITE DRESS (195px × 242px) */}
                     <motion.div
                       initial={{ opacity: 0, y: 60 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -670,7 +671,7 @@ export default function Home() {
                       style={{
                         position: 'absolute', zIndex: 2,
                         left: '228px', top: '240px',
-                        width: '210px', height: '242px',
+                        width: '195px', height: '242px',
                         borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
                         border: '1.5px solid rgba(255,255,255,0.35)',
                         boxShadow: '0 16px 42px rgba(0,0,0,0.22)',
@@ -685,7 +686,7 @@ export default function Home() {
                       initial={{ opacity: 0, x: -40, y: 40 }}
                       animate={{ opacity: 1, x: 0, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                      whileHover={{ scale: 1.02, zIndex: 30 }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
                       style={{
                         position: 'absolute', zIndex: 3,
                         left: '43px', top: '345px',
@@ -699,16 +700,16 @@ export default function Home() {
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </motion.div>
 
-                    {/* ⑥ CARD 6 — PINK DRESS (Slightly smaller at 148px × 168px) */}
+                    {/* ⑥ CARD 6 — PINK DRESS (160px × 180px) */}
                     <motion.div
                       initial={{ opacity: 0, x: 40, y: 40 }}
                       animate={{ opacity: 1, x: 0, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                      whileHover={{ scale: 1.02, zIndex: 30 }}
+                      whileHover={{ scale: 1.02, zIndex: 20 }}
                       style={{
                         position: 'absolute', zIndex: 3,
                         left: '425px', top: '300px',
-                        width: '148px', height: '168px',
+                        width: '160px', height: '180px',
                         borderRadius: '26px', overflow: 'hidden', boxSizing: 'border-box',
                         border: '1.5px solid rgba(255,255,255,0.35)',
                         boxShadow: '0 12px 30px rgba(0,0,0,0.22)',
@@ -1037,6 +1038,20 @@ export default function Home() {
           .hero-illustration { display: none !important; }
         }
         @media (min-width: 769px) { .hero-illustration { display: flex !important; } }
+
+        /* Desktop collage uniform scaling */
+        @media (min-width: 769px) and (max-width: 1199px) {
+          .hero-image-collage { transform: scale(0.72) !important; }
+        }
+        @media (min-width: 1200px) and (max-width: 1399px) {
+          .hero-image-collage { transform: scale(0.82) !important; }
+        }
+        @media (min-width: 1400px) and (max-width: 1599px) {
+          .hero-image-collage { transform: scale(0.95) !important; }
+        }
+        @media (min-width: 1600px) {
+          .hero-image-collage { transform: scale(1) !important; }
+        }
 
         /* ── Carousel: arrows inside, no overflow ── */
         .carousel-outer { overflow: hidden !important; }

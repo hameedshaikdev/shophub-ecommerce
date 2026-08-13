@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { AppProvider, useApp } from './context/AppContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import Toast from './components/common/Toast';
@@ -82,6 +83,7 @@ function App() {
           <AppInner />
         </Router>
       </AppProvider>
+      <Analytics />
     </ErrorBoundary>
   );
 }
