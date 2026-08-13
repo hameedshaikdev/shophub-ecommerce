@@ -632,11 +632,11 @@ export default function Home() {
                       </motion.div>
                     </div>
 
-                    {/* MOBILE MARQUEE — Seamless continuous infinite Right-to-Left marquee loop */}
+                    {/* MOBILE MARQUEE — Staggered card entrance animations first, followed by continuous infinite Right-to-Left loop */}
                     <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '315px', position: 'relative' }}>
                       <motion.div
                         animate={{ x: ['0px', '-475px'] }}
-                        transition={{ repeat: Infinity, duration: 16, ease: 'linear' }}
+                        transition={{ delay: 1.1, repeat: Infinity, repeatDelay: 0, duration: 16, ease: 'linear' }}
                         style={{ width: 'max-content', display: 'flex', gap: '0px', alignItems: 'center' }}
                       >
                         {/* Collage Block 1 */}
@@ -645,24 +645,30 @@ export default function Home() {
                             position: 'absolute', top: 0, left: 0, width: '760px', height: '500px',
                             transform: 'scale(0.62)', transformOrigin: 'top left', flexShrink: 0
                           }}>
-                            <div style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
+                            {/* ① CARD 1 */}
+                            <motion.div initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.0, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
-                            <div style={{ position: 'absolute', zIndex: 1, left: '265px', top: '0px', width: '278px', height: '225px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 32px rgba(0,0,0,0.18)' }}>
+                            </motion.div>
+                            {/* ② CARD 2 */}
+                            <motion.div initial={{ opacity: 0, y: -60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 1, left: '265px', top: '0px', width: '278px', height: '225px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 32px rgba(0,0,0,0.18)' }}>
                               <img src="/images/fashion_photo_2.jpg" alt="Lavender Outfit" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
-                            <div style={{ position: 'absolute', zIndex: 1, left: '555px', top: '40px', width: '200px', height: '360px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 38px rgba(0,0,0,0.22)' }}>
+                            </motion.div>
+                            {/* ③ CARD 3 */}
+                            <motion.div initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 1, left: '555px', top: '40px', width: '200px', height: '360px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 38px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_3.jpg" alt="Beige Blazer" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
-                            <div style={{ position: 'absolute', zIndex: 2, left: '228px', top: '240px', width: '195px', height: '242px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 42px rgba(0,0,0,0.22)' }}>
+                            </motion.div>
+                            {/* ④ CARD 4 */}
+                            <motion.div initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 2, left: '228px', top: '240px', width: '195px', height: '242px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 42px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_4.jpg" alt="Cream Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
-                            <div style={{ position: 'absolute', zIndex: 3, left: '43px', top: '345px', width: '175px', height: '137px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
+                            </motion.div>
+                            {/* ⑤ CARD 5 */}
+                            <motion.div initial={{ opacity: 0, x: -40, y: 40 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 3, left: '43px', top: '345px', width: '175px', height: '137px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_5.jpg" alt="Green Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
-                            <div style={{ position: 'absolute', zIndex: 3, left: '425px', top: '300px', width: '160px', height: '180px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
+                            </motion.div>
+                            {/* ⑥ CARD 6 */}
+                            <motion.div initial={{ opacity: 0, x: 40, y: 40 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 3, left: '425px', top: '300px', width: '160px', height: '180px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_6.jpg" alt="Pink Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
+                            </motion.div>
                           </div>
                         </div>
 
@@ -672,24 +678,30 @@ export default function Home() {
                             position: 'absolute', top: 0, left: 0, width: '760px', height: '500px',
                             transform: 'scale(0.62)', transformOrigin: 'top left', flexShrink: 0
                           }}>
-                            <div style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
+                            {/* ① CARD 1 */}
+                            <motion.div initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.0, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
-                            <div style={{ position: 'absolute', zIndex: 1, left: '265px', top: '0px', width: '278px', height: '225px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 32px rgba(0,0,0,0.18)' }}>
+                            </motion.div>
+                            {/* ② CARD 2 */}
+                            <motion.div initial={{ opacity: 0, y: -60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 1, left: '265px', top: '0px', width: '278px', height: '225px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 32px rgba(0,0,0,0.18)' }}>
                               <img src="/images/fashion_photo_2.jpg" alt="Lavender Outfit" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
-                            <div style={{ position: 'absolute', zIndex: 1, left: '555px', top: '40px', width: '200px', height: '360px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 38px rgba(0,0,0,0.22)' }}>
+                            </motion.div>
+                            {/* ③ CARD 3 */}
+                            <motion.div initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 1, left: '555px', top: '40px', width: '200px', height: '360px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 14px 38px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_3.jpg" alt="Beige Blazer" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
-                            <div style={{ position: 'absolute', zIndex: 2, left: '228px', top: '240px', width: '195px', height: '242px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 42px rgba(0,0,0,0.22)' }}>
+                            </motion.div>
+                            {/* ④ CARD 4 */}
+                            <motion.div initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 2, left: '228px', top: '240px', width: '195px', height: '242px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 42px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_4.jpg" alt="Cream Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
-                            <div style={{ position: 'absolute', zIndex: 3, left: '43px', top: '345px', width: '175px', height: '137px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
+                            </motion.div>
+                            {/* ⑤ CARD 5 */}
+                            <motion.div initial={{ opacity: 0, x: -40, y: 40 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 3, left: '43px', top: '345px', width: '175px', height: '137px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_5.jpg" alt="Green Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
-                            <div style={{ position: 'absolute', zIndex: 3, left: '425px', top: '300px', width: '160px', height: '180px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
+                            </motion.div>
+                            {/* ⑥ CARD 6 */}
+                            <motion.div initial={{ opacity: 0, x: 40, y: 40 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 3, left: '425px', top: '300px', width: '160px', height: '180px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 12px 30px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_6.jpg" alt="Pink Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                            </div>
+                            </motion.div>
                           </div>
                         </div>
                       </motion.div>
