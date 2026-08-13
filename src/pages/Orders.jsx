@@ -164,7 +164,7 @@ function OrderCard({ order, onDeleteOrder }) {
           </button>
           {onDeleteOrder && (
             <button onClick={() => onDeleteOrder(order.id)}
-              title="Cancel & Delete Order"
+              title="Delete Order"
               style={{ padding:'10px 14px', borderRadius:'12px',
                 background:'#FEF2F2', color:'#DC2626', fontWeight:800,
                 fontSize:'13px', border:'1px solid #FECACA', cursor:'pointer',
@@ -298,7 +298,7 @@ export default function Orders() {
   }
 
   async function handleDeleteOrder(orderId) {
-    if (!window.confirm('Are you sure you want to delete/cancel this order?')) return;
+    if (!window.confirm('Are you sure you want to delete this order from your order history?')) return;
     try {
       const { error } = await supabase.from('orders').delete().eq('id', orderId);
       if (error) throw error;
