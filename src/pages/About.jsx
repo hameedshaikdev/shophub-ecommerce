@@ -406,7 +406,7 @@ export default function About() {
                       background: s.badgeBg, padding:'4px 10px', borderRadius:'99px',
                       whiteSpace:'nowrap', letterSpacing:'0.2px' }}>{s.sub}</span>
                   </div>
-                  <p style={{ fontSize:'13px', fontWeight:700, color: s.handleColor, margin:'0 0 4px',
+                  <p className="social-card-handle" style={{ fontSize:'13px', fontWeight:700, color: s.handleColor, margin:'0 0 4px',
                     overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.handle}</p>
                   <p className="social-card-desc" style={{ fontSize:'12px', color:'#64748B', margin:0, lineHeight:1.5,
                     wordBreak:'break-word', display:'-webkit-box', WebkitLineClamp:2,

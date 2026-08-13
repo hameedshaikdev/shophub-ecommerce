@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, ShoppingCart, Star, ShieldCheck, Truck, Sparkles, Plus, Minus, Play, Tv, ExternalLink } from 'lucide-react';
+import { X, Heart, ShoppingCart, Star, ShieldCheck, Truck, Sparkles, Plus, Minus, Play, Tv, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { getProductImage, parseProductTags } from '../../utils/productImages';
 
 export default function QuickViewModal({ product, onClose }) {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
   const [qty, setQty] = useState(1);
+  const [selImg, setSelImg] = useState(0);
   const [imgError, setImgError] = useState(false);
   const [added, setAdded] = useState(false);
 
@@ -17,6 +18,12 @@ export default function QuickViewModal({ product, onClose }) {
   const discount = product.original_price && product.original_price > product.price
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : null;
+
+  const mainImage = getProductImage(product);
+  const allImages = Array.isArray(product?.images) && product.images.length > 0
+    ? product.images
+    : [mainImage];
+  const currentImg = imgError ? 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80' : (allImages[selImg] || mainImage);
 
   const handleAddToCart = () => {
     setAdded(true);
@@ -30,8 +37,6 @@ export default function QuickViewModal({ product, onClose }) {
   const handleWishlistToggle = () => {
     inWL ? removeFromWishlist(product.id) : addToWishlist(product);
   };
-
-  const imageUrl = imgError ? 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80' : getProductImage(product);
 
   return (
     <AnimatePresence>
@@ -128,13 +133,13 @@ export default function QuickViewModal({ product, onClose }) {
                 borderRadius: '24px',
                 overflow: 'hidden',
                 boxShadow: '0 12px 32px rgba(0,0,0,0.08)',
-                background: 'white'
+                background: '#FAF8FC'
               }}>
                 <img
-                  src={imageUrl}
+                  src={currentImg}
                   alt={product.name}
                   onError={() => setImgError(true)}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                 />
 
                 {discount && (
@@ -153,7 +158,81 @@ export default function QuickViewModal({ product, onClose }) {
                     -{discount}% OFF
                   </div>
                 )}
+
+                {/* Prev Arrow */}
+                {allImages.length > 1 && selImg > 0 && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSelImg(prev => Math.max(0, prev - 1)); }}
+                    style={{
+                      position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)',
+                      width: '32px', height: '32px', borderRadius: '50%',
+                      background: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(255, 255, 255, 0.9)', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                    }}>
+                    <ChevronLeft size={18} color="#0F172A" />
+                  </button>
+                )}
+
+                {/* Next Arrow */}
+                {allImages.length > 1 && selImg < allImages.length - 1 && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSelImg(prev => Math.min(allImages.length - 1, prev + 1)); }}
+                    style={{
+                      position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)',
+                      width: '32px', height: '32px', borderRadius: '50%',
+                      background: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(255, 255, 255, 0.9)', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                    }}>
+                    <ChevronRight size={18} color="#0F172A" />
+                  </button>
+                )}
+
+                {/* Dot indicators */}
+                {allImages.length > 1 && (
+                  <div style={{ position:'absolute', bottom:'12px', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:'6px', zIndex:3, background:'rgba(15,23,42,0.7)', backdropFilter:'blur(12px)', padding:'4px 10px', borderRadius:'9999px' }}>
+                    {allImages.map((_, i) => (
+                      <span
+                        key={i}
+                        onClick={() => setSelImg(i)}
+                        style={{
+                          display: 'inline-block',
+                          width: selImg === i ? '14px' : '6px',
+                          height: '6px',
+                          minHeight: '6px',
+                          maxHeight: '6px',
+                          minWidth: selImg === i ? '14px' : '6px',
+                          maxWidth: selImg === i ? '14px' : '6px',
+                          borderRadius: '9999px',
+                          background: selImg === i ? '#FFFFFF' : 'rgba(255,255,255,0.45)',
+                          cursor: 'pointer',
+                          transition: 'all 250ms ease',
+                          flexShrink: 0
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
+
+              {/* Thumbnails strip */}
+              {allImages.length > 1 && (
+                <div className="sh-scroll-hide" style={{ display:'flex', gap:'8px', overflowX:'auto', marginTop:'12px', width:'100%', justifyContent:'center' }}>
+                  {allImages.map((img, i) => (
+                    <button key={i} onClick={() => setSelImg(i)}
+                      style={{
+                        width:'44px', height:'44px', borderRadius:'10px', overflow:'hidden',
+                        border: selImg === i ? '2px solid #2563EB' : '1px solid #E2E8F0',
+                        padding:0, cursor:'pointer', flexShrink:0, background:'#FAF8FC'
+                      }}>
+                      <img src={img} alt={`thumb-${i}`} style={{ width:'100%', height:'100%', objectFit:'contain' }} />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Right Details Section */}

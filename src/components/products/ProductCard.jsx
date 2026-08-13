@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, ShoppingCart, Star, Eye } from 'lucide-react';
+import { Heart, ShoppingCart, Star, Eye, Plus } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { getProductImage, parseProductTags } from '../../utils/productImages';
 
@@ -75,7 +75,7 @@ export default function ProductCard({ product, onQuickView }) {
             onError={() => setImgError(true)}
             whileHover={{ scale: 1.10 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#FAF8FC', display: 'block' }}
           />
 
           {/* Top-Left Badge (SALE, NEW, etc.) */}
@@ -109,12 +109,12 @@ export default function ProductCard({ product, onQuickView }) {
             whileTap={{ scale: 0.88 }}
             title={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
             style={{
-              position: 'absolute', top: '8px', right: '8px', zIndex: 3,
+              position: 'absolute', top: '16px', right: '8px', zIndex: 3,
               width: '34px', height: '34px', borderRadius: '50%',
-              background: inWishlist ? '#FEF2F2' : 'rgba(255, 255, 255, 0.92)',
+              background: 'rgba(255, 255, 255, 0.92)',
               backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: inWishlist ? '1px solid #FECDD3' : '1px solid rgba(255, 255, 255, 0.9)',
+              border: '1px solid rgba(255, 255, 255, 0.9)',
               cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.12)'
             }}>
             <Heart size={14} fill={inWishlist ? '#EF4444' : 'none'} color={inWishlist ? '#EF4444' : '#475569'} />
@@ -140,7 +140,7 @@ export default function ProductCard({ product, onQuickView }) {
             </motion.button>
           )}
 
-          {/* Add to Cart Button — Perfect Circle */}
+          {/* Add to Cart Button — Perfect Circle with Cart + Plus Symbol */}
           {product.stock !== 0 && (
             <motion.button
               onClick={handleAdd}
@@ -159,7 +159,14 @@ export default function ProductCard({ product, onQuickView }) {
                 boxShadow: `0 4px 14px ${added ? 'rgba(16,185,129,.45)' : 'rgba(15,23,42,.38)'}`,
                 transition: 'background .25s ease, box-shadow .25s ease'
               }}>
-              {added ? <span style={{ fontSize: '13px', fontWeight: 'bold' }}>✓</span> : <ShoppingCart size={14} />}
+              {added ? (
+                <span style={{ fontSize: '13px', fontWeight: 'bold' }}>✓</span>
+              ) : (
+                <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ShoppingCart size={13} />
+                  <Plus size={8} strokeWidth={3.5} style={{ position: 'absolute', top: '-4px', right: '-5px', color: '#FFFFFF' }} />
+                </div>
+              )}
             </motion.button>
           )}
         </div>

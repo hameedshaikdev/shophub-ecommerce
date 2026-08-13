@@ -182,12 +182,28 @@ export default function ProductDetail() {
                 </button>
               )}
 
-              {/* Dot indicators — Sleek Glass Capsule Pill */}
+              {/* Dot indicators — Small round dots */}
               {allImages.length > 1 && (
-                <div style={{ position:'absolute', bottom:'16px', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:'6px', zIndex:3, background:'rgba(15,23,42,0.65)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', padding:'5px 12px', borderRadius:'9999px', boxShadow:'0 4px 16px rgba(0,0,0,0.2)' }}>
+                <div style={{ position:'absolute', bottom:'14px', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:'6px', zIndex:3, background:'rgba(15,23,42,0.7)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', padding:'4px 10px', borderRadius:'9999px', boxShadow:'0 4px 16px rgba(0,0,0,0.2)' }}>
                   {allImages.map((_, i) => (
-                    <button key={i} onClick={(e) => { e.stopPropagation(); setSelImg(i); }}
-                      style={{ width: selImg===i ? '16px' : '6px', height:'6px', borderRadius:'9999px', background: selImg===i ? '#FFFFFF' : 'rgba(255,255,255,0.45)', border:'none', padding:0, cursor:'pointer', transition:'all 300ms ease' }} />
+                    <span
+                      key={i}
+                      onClick={(e) => { e.stopPropagation(); setSelImg(i); }}
+                      style={{
+                        display: 'inline-block',
+                        width: selImg === i ? '14px' : '6px',
+                        height: '6px',
+                        minHeight: '6px',
+                        maxHeight: '6px',
+                        minWidth: selImg === i ? '14px' : '6px',
+                        maxWidth: selImg === i ? '14px' : '6px',
+                        borderRadius: '9999px',
+                        background: selImg === i ? '#FFFFFF' : 'rgba(255,255,255,0.45)',
+                        cursor: 'pointer',
+                        transition: 'all 250ms ease',
+                        flexShrink: 0
+                      }}
+                    />
                   ))}
                 </div>
               )}
