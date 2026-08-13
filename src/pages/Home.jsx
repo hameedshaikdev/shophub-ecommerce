@@ -383,10 +383,10 @@ export default function Home() {
 
   useEffect(() => {
     setIsMobileMarqueeActive(false);
-    // Entrance animations (~1.3s) + 2s wait = 3.3s total delay before horizontal loop starts
+    // Entrance animations (~1.3s) + 1.5s wait = 2.8s total delay before horizontal loop starts
     const timer = setTimeout(() => {
       setIsMobileMarqueeActive(true);
-    }, 3300);
+    }, 2800);
     return () => clearTimeout(timer);
   }, [activeCategory]);
 
@@ -659,6 +659,7 @@ export default function Home() {
                     {/* ── MOBILE COLLAGE CAROUSEL — Active ONLY on Mobile ── */}
                     <div className="sh-mobile-only" style={{
                       width: '100%',
+                      maxWidth: '100vw',
                       overflow: 'hidden',
                       marginTop: '16px',
                       position: 'relative',
@@ -674,12 +675,13 @@ export default function Home() {
                         {/* ── COMPLETE COLLAGE COPY A (With 6 original card entrance animations) ── */}
                         <div style={{
                           position: 'relative',
-                          width: '85vw',
-                          maxWidth: '380px',
+                          width: 'calc(100vw - 32px)',
+                          maxWidth: '420px',
                           aspectRatio: '760 / 500',
                           flexShrink: 0,
                           boxSizing: 'border-box',
                           userSelect: 'none',
+                          margin: '0 auto',
                         }}>
                           {/* ① CARD 1 — NAVY FLORAL DRESS */}
                           <motion.div
@@ -796,12 +798,12 @@ export default function Home() {
                           </motion.div>
                         </div>
 
-                        {/* ── COMPLETE COLLAGE COPY B — Only active/mounted during loop phase so it NEVER peeks in during entrance! ── */}
+                        {/* ── COMPLETE COLLAGE COPY B — Mounted adjacent with 0px gap, unmounted/hidden during entrance ── */}
                         {isMobileMarqueeActive && (
                           <div style={{
                             position: 'relative',
                             width: 'calc(100vw - 32px)',
-                            maxWidth: '380px',
+                            maxWidth: '420px',
                             aspectRatio: '760 / 500',
                             flexShrink: 0,
                             boxSizing: 'border-box',
