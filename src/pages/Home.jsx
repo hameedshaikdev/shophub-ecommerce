@@ -1153,54 +1153,54 @@ export default function Home() {
       {/* ══ BRAND OVERVIEW / SEO CONTENT ══════════════════ */}
       <div className="sh-container" style={{ margin: '48px auto 36px', padding: '0 16px' }}>
         <div style={{
-          background: '#FFFBEB',
+          background: '#FAF7F2',
           borderRadius: '24px',
-          border: '1.5px solid #FDE68A',
-          padding: '38px 28px',
+          border: '1px solid #E6DFD3',
+          padding: '40px 30px',
           textAlign: 'center',
-          boxShadow: '0 12px 32px rgba(217, 119, 6, 0.06)',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.02)',
           position: 'relative',
           overflow: 'hidden'
         }}>
-          {/* Decorative subtle ambient glows */}
+          {/* Subtle ambient glows */}
           <div style={{
             position: 'absolute', top: '-40px', right: '-40px',
-            width: '140px', height: '140px', borderRadius: '50%',
-            background: 'rgba(253, 230, 138, 0.35)', filter: 'blur(30px)', pointerEvents: 'none'
+            width: '150px', height: '150px', borderRadius: '50%',
+            background: 'rgba(230, 223, 211, 0.4)', filter: 'blur(35px)', pointerEvents: 'none'
           }} />
           <div style={{
             position: 'absolute', bottom: '-40px', left: '-40px',
-            width: '140px', height: '140px', borderRadius: '50%',
-            background: 'rgba(254, 243, 199, 0.6)', filter: 'blur(30px)', pointerEvents: 'none'
+            width: '150px', height: '150px', borderRadius: '50%',
+            background: 'rgba(240, 235, 226, 0.6)', filter: 'blur(35px)', pointerEvents: 'none'
           }} />
 
           {/* Top Pill Badge */}
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '6px',
             padding: '5px 14px', borderRadius: '99px',
-            background: '#FEF3C7', border: '1px solid #FCD34D',
-            color: '#B45309', fontSize: '11px', fontWeight: 800,
+            background: '#F0EBE1', border: '1px solid #DDD4C5',
+            color: '#735836', fontSize: '11px', fontWeight: 800,
             textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '16px'
           }}>
-            <Sparkles size={13} color="#D97706" />
+            <Sparkles size={13} color="#9A7B4F" />
             <span>Official Storefront · Nellore, AP</span>
           </div>
 
           {/* Heading */}
           <h2 style={{
             fontSize: 'clamp(20px,3.5vw,25px)', fontWeight: 900,
-            color: '#78350F', marginBottom: '14px', letterSpacing: '-0.4px',
+            color: '#0F172A', marginBottom: '14px', letterSpacing: '-0.4px',
             lineHeight: 1.3
           }}>
-            Asmalabel — Premium Tailoring Tools &amp; Women's Fashion
+            Asmalabel — Crafting Quality Tailoring &amp; Women's Fashion
           </h2>
 
           {/* Text Description */}
           <p style={{
-            fontSize: '14px', color: '#92400E', lineHeight: 1.8,
-            maxWidth: '820px', margin: '0 auto 24px', fontWeight: 500
+            fontSize: '14px', color: '#475569', lineHeight: 1.85,
+            maxWidth: '820px', margin: '0 auto 24px', fontWeight: 480
           }}>
-            Welcome to <strong>Asmalabel</strong> (Asma Label), your trusted online destination for professional tailoring tools, sewing supplies, textiles, and modern women's fashion. Based in Nellore, Andhra Pradesh, we provide high-precision scissors, durable threads, universal needles, measuring tools, and curated clothing collections.
+            <strong style={{ color: '#0F172A' }}>Asmalabel</strong> is a dedicated boutique small business based in Nellore, Andhra Pradesh. Built on trust, authenticity, and personal care, we bring you high-precision tailoring tools, premium sewing supplies, and curated women's fashion delivered directly to your doorstep across India.
           </p>
 
           {/* Feature Badges Grid */}
@@ -1216,11 +1216,11 @@ export default function Home() {
               <div key={text} style={{
                 display: 'inline-flex', alignItems: 'center', gap: '7px',
                 padding: '7px 16px', borderRadius: '99px',
-                background: '#FFFFFF', border: '1px solid #FDE68A',
-                boxShadow: '0 2px 8px rgba(180, 83, 9, 0.05)',
-                color: '#78350F', fontSize: '12.5px', fontWeight: 800
+                background: '#FFFFFF', border: '1px solid #E6DFD3',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.02)',
+                color: '#334155', fontSize: '12.5px', fontWeight: 700
               }}>
-                <Icon size={14} color="#D97706" />
+                <Icon size={14} color="#9A7B4F" />
                 <span>{text}</span>
               </div>
             ))}
