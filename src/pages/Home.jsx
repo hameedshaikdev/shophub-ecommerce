@@ -642,19 +642,19 @@ export default function Home() {
                       </motion.div>
                     </div>
 
-                    {/* MOBILE MARQUEE — Original page load entrance animation first on mount/tab switch, then continuous right-to-left loop */}
-                    <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '315px', position: 'relative' }}>
+                    {/* MOBILE MARQUEE — All 6 cards 100% visible during entrance animation, then continuous loop */}
+                    <div className="sh-mobile-only" style={{ width: '100%', overflow: 'hidden', marginTop: '16px', height: '255px', position: 'relative' }}>
                       <motion.div
                         key={`mobile-marquee-${activeCategory}`}
-                        animate={isMarqueeActive ? { x: ['0px', '-475px'] } : { x: '0px' }}
+                        animate={isMarqueeActive ? { x: ['0px', '-365px'] } : { x: '0px' }}
                         transition={isMarqueeActive ? { repeat: Infinity, duration: 16, ease: 'linear' } : { duration: 0 }}
                         style={{ width: 'max-content', display: 'flex', gap: '0px', alignItems: 'center' }}
                       >
-                        {/* Collage Block 1 */}
-                        <div style={{ width: '475px', height: '310px', position: 'relative', flexShrink: 0 }}>
+                        {/* Collage Block 1 — Scaled so ALL 6 cards are 100% visible on mobile */}
+                        <div style={{ width: '365px', height: '250px', position: 'relative', flexShrink: 0 }}>
                           <div className="hero-image-collage" style={{
                             position: 'absolute', top: 0, left: 0, width: '760px', height: '500px',
-                            transform: 'scale(0.62)', transformOrigin: 'top left', flexShrink: 0
+                            transform: 'scale(0.48)', transformOrigin: 'top left', flexShrink: 0
                           }}>
                             {/* ① CARD 1 — NAVY FLORAL DRESS */}
                             <motion.div initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.0, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
@@ -684,10 +684,10 @@ export default function Home() {
                         </div>
 
                         {/* Collage Block 2 (Identical Duplicate) */}
-                        <div style={{ width: '475px', height: '310px', position: 'relative', flexShrink: 0 }}>
+                        <div style={{ width: '365px', height: '250px', position: 'relative', flexShrink: 0 }}>
                           <div className="hero-image-collage" style={{
                             position: 'absolute', top: 0, left: 0, width: '760px', height: '500px',
-                            transform: 'scale(0.62)', transformOrigin: 'top left', flexShrink: 0
+                            transform: 'scale(0.48)', transformOrigin: 'top left', flexShrink: 0
                           }}>
                             <div style={{ position: 'absolute', zIndex: 1, left: '0px', top: '0px', width: '255px', height: '355px', borderRadius: '26px', overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.35)', boxShadow: '0 16px 40px rgba(0,0,0,0.22)' }}>
                               <img src="/images/fashion_photo_1.jpg" alt="Navy Floral Dress" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
