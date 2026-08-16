@@ -119,21 +119,7 @@ export function AppProvider({ children }) {
     // Purge fake unsplash mock media items if present from old cache
     mediaLib = mediaLib.filter(m => !m.url?.includes('images.unsplash.com/photo-1617606002806'));
 
-    let tailoringCols = Array.isArray(data.collections?.tailoring) ? data.collections.tailoring : DEFAULT_CMS_DATA.collections.tailoring;
-    const pfItem = tailoringCols.find(c => c.id === 'presser_feet' || c.label?.toLowerCase().includes('presser'))
-                   || DEFAULT_CMS_DATA.collections.tailoring.find(c => c.id === 'presser_feet');
-    const otItem = tailoringCols.find(c => c.id === 'other_tools' || c.label?.toLowerCase().includes('other'))
-                   || DEFAULT_CMS_DATA.collections.tailoring.find(c => c.id === 'other_tools');
-    
-    let rest = tailoringCols.filter(c => c.id !== 'presser_feet' && c.id !== 'other_tools' && !c.label?.toLowerCase().includes('presser') && !c.label?.toLowerCase().includes('other'));
-    if (rest.length >= 3 && pfItem) {
-      tailoringCols = [...rest.slice(0, 3), pfItem, ...rest.slice(3)];
-    } else {
-      tailoringCols = DEFAULT_CMS_DATA.collections.tailoring;
-    }
-    if (otItem && !tailoringCols.some(c => c.id === 'other_tools')) {
-      tailoringCols.push(otItem);
-    }
+    let tailoringCols = DEFAULT_CMS_DATA.collections.tailoring;
 
     const updated = {
       hero: {

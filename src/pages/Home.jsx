@@ -29,10 +29,10 @@ const CONTENT = {
       { id:'machines',     label:'Tailoring Kit',     emoji:'🧰', desc:'Complete atelier set', image: '/images/collections/sewing_machines.png' },
       { id:'scissors',     label:'Scissors & Blades',  emoji:'✂️', desc:'Precision cut',      image: '/images/collections/scissors.png' },
       { id:'threads',      label:'Threads & Yarn',    emoji:'🧵', desc:'Premium quality',    image: '/images/collections/threads.png' },
-      { id:'presser_feet', label:'Presser Feet',      emoji:'🦶', desc:'Precision machine feet', image: '/images/collections/presser_feet.jpg' },
+      { id:'presser_feet', label:'Presser Feet',      emoji:'🦶', desc:'Precision machine feet', image: '/images/collections/all_tools.png' },
       { id:'needles',      label:'Needles',           emoji:'🪡', desc:'Sharp & durable',    image: '/images/collections/needles.png' },
       { id:'measuring',    label:'Measuring Tools',   emoji:'📏', desc:'Accurate tools',     image: '/images/collections/measuring.png' },
-      { id:'other_tools',  label:'Other Tools',       emoji:'🛠️', desc:'Crafting essentials', image: '/images/collections/all_tools.png' },
+      { id:'other_tools',  label:'Other Tools',       emoji:'🛠️', desc:'Crafting essentials', image: '/images/collections/kit_atelier_real.jpg' },
     ],
     subs: [
       {id:'all',icon:'◈',label:'All'},
@@ -329,18 +329,7 @@ function CollectionCard({ cls='', label, title, count, img, onClick, dark=false 
 
         <div className="col-card-padding" style={{ position:'absolute', inset:0, padding:'18px 20px',
           display:'flex', flexDirection:'column', justifyContent:'space-between' }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'6px' }}>
-            {label && (
-              <span className="col-card-label" style={{ fontSize:'10px', fontWeight:800, letterSpacing:'0.6px',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                textTransform:'uppercase', color:'rgba(255, 255, 255, 0.95)',
-                background:'rgba(255, 255, 255, 0.22)',
-                backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
-                padding:'5px 12px', borderRadius:'9999px',
-                border:'1px solid rgba(255, 255, 255, 0.45)',
-                boxShadow:'0 4px 16px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.6)',
-                whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:'70%' }}>{label}</span>
-            )}
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'flex-end', gap:'6px' }}>
             {count && <span className="col-card-count" style={{ fontSize:'11px', fontWeight:800, fontFamily: "'Plus Jakarta Sans', sans-serif", color:'rgba(255, 255, 255, 0.95)', whiteSpace:'nowrap' }}>{count}</span>}
           </div>
           <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', gap:'8px' }}>
@@ -968,8 +957,8 @@ export default function Home() {
 
             <div className="collections-grid">
               {c.collections.filter(item => item.active !== false).map((item, idx) => {
-                const classes = ['cg-featured', 'cg-med', 'cg-small', 'cg-wide', 'cg-small', 'cg-small'];
-                const cls = classes[idx % classes.length];
+                const classes = ['cg-featured', 'cg-med', 'cg-small', 'cg-wide', 'cg-row3', 'cg-row3', 'cg-row3'];
+                const cls = classes[idx] || 'cg-small';
                 return (
                   <CollectionCard
                     key={item.id || idx}
@@ -1295,6 +1284,7 @@ export default function Home() {
         .cg-med      { grid-column: span 4; grid-row: span 1; }
         .cg-small    { grid-column: span 3; grid-row: span 1; }
         .cg-wide     { grid-column: span 7; grid-row: span 1; }
+        .cg-row3     { grid-column: span 4; grid-row: span 1; }
 
         /* Tablet */
         @media (max-width: 900px) and (min-width: 561px) {
