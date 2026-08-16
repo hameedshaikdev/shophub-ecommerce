@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, ShoppingCart, Star, ShieldCheck, Truck, Sparkles, Plus, Minus, Play, Tv, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { getProductImage, parseProductTags } from '../../utils/productImages';
+import ProductVideoPlayer from './ProductVideoPlayer';
 
 export default function QuickViewModal({ product, onClose }) {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
@@ -368,67 +369,7 @@ export default function QuickViewModal({ product, onClose }) {
               </p>
 
               {/* ── PRODUCT VIDEOS & DEMOS ── */}
-              {(() => {
-                const rawV = product.video_links || product.videos || [];
-                let videoList = [];
-                try {
-                  if (Array.isArray(rawV)) videoList = [...rawV];
-                  else if (typeof rawV === 'string' && rawV.trim()) videoList = JSON.parse(rawV);
-                } catch (e) {
-                  if (typeof rawV === 'string' && rawV.startsWith('http')) videoList = [{ title: 'Product Demo', url: rawV }];
-                }
-
-                if (product.video_url && !videoList.some(v => (v.url || v) === product.video_url)) {
-                  videoList.push({ title: 'Product Overview', url: product.video_url });
-                }
-
-                if (videoList.length === 0) return null;
-
-                const getEmbedUrl = (urlStr) => {
-                  if (!urlStr || typeof urlStr !== 'string') return null;
-                  const m = urlStr.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-                  return m ? `https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3` : null;
-                };
-
-                return (
-                  <div style={{ background: '#F8FAFC', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '12px', marginBottom: '20px' }}>
-                    <p style={{ fontSize: '12px', fontWeight: 800, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px', margin: '0 0 10px 0' }}>
-                      <Tv size={15} color="#2563EB" /> Product Videos & Demos
-                    </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      {videoList.map((v, idx) => {
-                        const vUrl = typeof v === 'string' ? v : (v.url || v.link || '');
-                        const vTitle = typeof v === 'object' && v.title ? v.title : `Demo Video ${idx + 1}`;
-                        const embedUrl = getEmbedUrl(vUrl);
-
-                        return (
-                          <div key={idx} style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #E2E8F0', padding: '8px' }}>
-                            <p style={{ fontSize: '11px', fontWeight: 800, color: '#1E293B', display: 'flex', alignItems: 'center', gap: '4px', margin: '0 0 6px 0' }}>
-                              <Play size={12} color="#EF4444" fill="#EF4444" /> {vTitle}
-                            </p>
-                            {embedUrl ? (
-                              <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
-                                <iframe
-                                  src={embedUrl}
-                                  title={vTitle}
-                                  style={{ width: '100%', height: '100%', border: 'none' }}
-                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                  allowFullScreen
-                                />
-                              </div>
-                            ) : (
-                              <a href={vUrl} target="_blank" rel="noopener noreferrer"
-                                style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', fontWeight: 800, fontSize: '11px', textDecoration: 'none' }}>
-                                <ExternalLink size={12} /> Watch Video Demo
-                              </a>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })()}
+              <ProductVideoPlayer product={product} compact={true} />
 
               {/* Quantity Selector */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '28px' }}>

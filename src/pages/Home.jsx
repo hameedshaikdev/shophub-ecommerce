@@ -1587,13 +1587,40 @@ export default function Home() {
           .desktop-banner-arrow { display: none !important; }
         }
 
-        /* ── Carousel: arrows inside, no overflow ── */
-        .carousel-outer { overflow: hidden !important; }
+        /* ── Carousel: edge-to-edge scroller on mobile ── */
+        .carousel-outer { width: 100% !important; position: relative !important; }
         @media (max-width: 767px) {
-          .carousel-arrow { width: 30px !important; height: 30px !important; }
-          .carousel-outer > div { padding-left: 40px !important; padding-right: 40px !important; }
+          .carousel-outer {
+            margin-left: -12px !important;
+            margin-right: -12px !important;
+            width: calc(100% + 24px) !important;
+            overflow: visible !important;
+          }
+          .carousel-arrow {
+            display: none !important;
+          }
+          .carousel-outer > div {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+            scroll-padding-left: 12px !important;
+            scroll-padding-right: 12px !important;
+          }
+        }
+        @media (min-width: 641px) and (max-width: 767px) {
+          .carousel-outer {
+            margin-left: -20px !important;
+            margin-right: -20px !important;
+            width: calc(100% + 40px) !important;
+          }
+          .carousel-outer > div {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            scroll-padding-left: 20px !important;
+            scroll-padding-right: 20px !important;
+          }
         }
         @media (min-width: 768px) {
+          .carousel-outer { overflow: hidden !important; }
           .carousel-arrow-left  { left: -4px !important; }
           .carousel-arrow-right { right: -4px !important; }
         }

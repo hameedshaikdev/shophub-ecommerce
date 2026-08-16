@@ -60,7 +60,7 @@ export default function HomepageManager({ products = [] }) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '100%', overflowX: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '100%' }}>
       {/* CMS Master Top Controls Bar */}
       <div
         className="cms-top-bar"
@@ -141,7 +141,7 @@ export default function HomepageManager({ products = [] }) {
       </div>
 
       {/* Main CMS Layout (Sidebar Nav + Active Section View) */}
-      <div className="cms-main-grid" style={{ display: 'grid', gap: '16px', width: '100%', overflowX: 'hidden' }}>
+      <div className="cms-main-grid" style={{ display: 'grid', gap: '16px', width: '100%' }}>
         {/* Sidebar Nav — Desktop: vertical column / Mobile: horizontal scrollable pill row */}
         <div className="cms-sidebar-nav">
           {navItems.map(item => {

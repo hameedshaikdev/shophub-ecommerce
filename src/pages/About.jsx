@@ -13,7 +13,7 @@ const FALLBACK = {
   instagram_tailoring: { followers: 0, handle: '@as_tailoring_tools_textiles', description: 'Professional sewing machines, tailoring tools, daily tips & tutorials for craftsmen', url: 'https://www.instagram.com/as_tailoring_tools_textiles' },
   instagram_fashion:   { followers: 0, handle: '@asma_label.in',              description: "Women's fashion, ethnic wear collections, trending outfits & style inspiration",      url: 'https://www.instagram.com/asma_label.in' },
   youtube:             { followers: 0, handle: '@astailoringtoolstextiles',    description: 'Sewing tutorials, machine reviews, tailoring tips & DIY fashion projects',            url: 'https://youtube.com/@astailoringtoolstextiles' },
-  facebook:            { followers: 0, handle: 'As Textile & Tailoring',      description: 'Send your fabrics to us and get magic created just for you - online tailoring store', url: 'https://www.facebook.com/share/166X2VepUx/?mibextid=wwXIfr' },
+  facebook:            { followers: 0, handle: 'AS textile & tailoring',      description: 'Send your fabrics to us and get magic created just for you - online tailoring store', url: 'https://www.facebook.com/share/166X2VepUx/?mibextid=wwXIfr' },
 };
 
 const fu = { hidden:{opacity:0,y:32},  visible:{opacity:1,y:0, transition:{duration:.6,ease:[.22,1,.36,1]}} };
@@ -290,24 +290,31 @@ export default function About() {
                 key: 'instagram_tailoring',
                 platform: 'Instagram',
                 sub: 'Tailoring Tools',
-                color: '#E1306C',
-                badgeBg: '#FCE4EC',
-                badgeColor: '#C13584',
-                handleColor: '#C13584',
-                borderColor: 'rgba(225, 48, 108, 0.25)',
-                iconGrad: 'linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FD1D1D 100%)',
-                btnGrad: 'linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FD1D1D 100%)',
-                glow: 'rgba(225, 48, 108, 0.3)',
+                badgeBg: '#F1F5F9',
+                badgeColor: '#475569',
+                handleColor: '#64748B',
+                borderColor: '#E2E8F0',
                 statLabel: 'Followers',
+                actionText: 'Follow',
                 url: socialStats.instagram_tailoring.url || 'https://www.instagram.com/as_tailoring_tools_textiles',
                 handle: socialStats.instagram_tailoring.handle,
                 desc: socialStats.instagram_tailoring.description || 'Professional sewing tools, machines & tailoring tips for craftsmen',
                 count: socialStats.instagram_tailoring.followers,
                 icon: (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                  <svg width="52" height="52" viewBox="0 0 24 24">
+                    <defs>
+                      <linearGradient id="ig-fill-abt-1" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#f09433" />
+                        <stop offset="25%" stopColor="#e6683c" />
+                        <stop offset="50%" stopColor="#dc2743" />
+                        <stop offset="75%" stopColor="#cc2366" />
+                        <stop offset="100%" stopColor="#bc1888" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="0" y="0" width="24" height="24" rx="6.5" ry="6.5" fill="url(#ig-fill-abt-1)" />
+                    <rect x="5.2" y="5.2" width="13.6" height="13.6" rx="3.8" ry="3.8" fill="none" stroke="#FFFFFF" strokeWidth="1.6" />
+                    <circle cx="12" cy="12" r="3.3" fill="none" stroke="#FFFFFF" strokeWidth="1.6" />
+                    <circle cx="16.1" cy="7.9" r="0.9" fill="#FFFFFF" />
                   </svg>
                 ),
               },
@@ -315,24 +322,31 @@ export default function About() {
                 key: 'instagram_fashion',
                 platform: 'Instagram',
                 sub: 'Fashion Label',
-                color: '#E1306C',
-                badgeBg: '#FCE4EC',
-                badgeColor: '#C13584',
-                handleColor: '#C13584',
-                borderColor: 'rgba(225, 48, 108, 0.25)',
-                iconGrad: 'linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FD1D1D 100%)',
-                btnGrad: 'linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FD1D1D 100%)',
-                glow: 'rgba(225, 48, 108, 0.3)',
+                badgeBg: '#F1F5F9',
+                badgeColor: '#475569',
+                handleColor: '#64748B',
+                borderColor: '#E2E8F0',
                 statLabel: 'Followers',
+                actionText: 'Follow',
                 url: socialStats.instagram_fashion.url || 'https://www.instagram.com/asma_label.in',
                 handle: socialStats.instagram_fashion.handle,
                 desc: socialStats.instagram_fashion.description || "Women's fashion, ethnic wear & style inspiration",
                 count: socialStats.instagram_fashion.followers,
                 icon: (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                  <svg width="52" height="52" viewBox="0 0 24 24">
+                    <defs>
+                      <linearGradient id="ig-fill-abt-2" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#f09433" />
+                        <stop offset="25%" stopColor="#e6683c" />
+                        <stop offset="50%" stopColor="#dc2743" />
+                        <stop offset="75%" stopColor="#cc2366" />
+                        <stop offset="100%" stopColor="#bc1888" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="0" y="0" width="24" height="24" rx="6.5" ry="6.5" fill="url(#ig-fill-abt-2)" />
+                    <rect x="5.2" y="5.2" width="13.6" height="13.6" rx="3.8" ry="3.8" fill="none" stroke="#FFFFFF" strokeWidth="1.6" />
+                    <circle cx="12" cy="12" r="3.3" fill="none" stroke="#FFFFFF" strokeWidth="1.6" />
+                    <circle cx="16.1" cy="7.9" r="0.9" fill="#FFFFFF" />
                   </svg>
                 ),
               },
@@ -340,22 +354,20 @@ export default function About() {
                 key: 'youtube',
                 platform: 'YouTube',
                 sub: 'Video Channel',
-                color: '#DC2626',
-                badgeBg: '#FEE2E2',
-                badgeColor: '#DC2626',
-                handleColor: '#B91C1C',
-                borderColor: 'rgba(220, 38, 38, 0.2)',
-                iconGrad: 'linear-gradient(135deg, #EF4444 0%, #B91C1C 100%)',
-                btnGrad: 'linear-gradient(135deg, #EF4444 0%, #B91C1C 100%)',
-                glow: 'rgba(239, 68, 68, 0.25)',
+                badgeBg: '#F1F5F9',
+                badgeColor: '#475569',
+                handleColor: '#64748B',
+                borderColor: '#E2E8F0',
                 statLabel: 'Subscribers',
+                actionText: 'Subscribe',
                 url: socialStats.youtube.url || 'https://youtube.com/@astailoringtoolstextiles',
                 handle: socialStats.youtube.handle,
                 desc: socialStats.youtube.description || 'Sewing tutorials, machine reviews & DIY fashion projects',
                 count: socialStats.youtube.followers,
                 icon: (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  <svg width="54" height="38" viewBox="0 0 24 17" fill="none">
+                    <path fill="#FF0000" d="M23.498 2.686A3.016 3.016 0 0 0 21.376.55C19.505.045 12 .045 12 .045s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 2.686C0 4.57 0 8.5 0 8.5s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 12.43 24 8.5 24 8.5s0-3.93-.502-5.814z"/>
+                    <path fill="#FFFFFF" d="M9.545 12.068V4.932L15.818 8.5l-6.273 3.568z"/>
                   </svg>
                 ),
               },
@@ -363,22 +375,20 @@ export default function About() {
                 key: 'facebook',
                 platform: 'Facebook',
                 sub: 'Business Page',
-                color: '#2563EB',
-                badgeBg: '#DBEAFE',
-                badgeColor: '#2563EB',
-                handleColor: '#1D4ED8',
-                borderColor: 'rgba(37, 99, 235, 0.2)',
-                iconGrad: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
-                btnGrad: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
-                glow: 'rgba(59, 130, 246, 0.25)',
+                badgeBg: '#F1F5F9',
+                badgeColor: '#475569',
+                handleColor: '#64748B',
+                borderColor: '#E2E8F0',
                 statLabel: 'Followers',
+                actionText: 'Follow',
                 url: socialStats.facebook.url || 'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr',
                 handle: socialStats.facebook.handle,
                 desc: socialStats.facebook.description || 'Latest products, customer reviews & special offers',
                 count: socialStats.facebook.followers,
                 icon: (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                  <svg width="52" height="52" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="12" fill="#1877F2"/>
+                    <path d="M13.67 19.5V12.65H16.02L16.37 9.94H13.67V8.21C13.67 7.42 13.89 6.89 15.02 6.89L16.46 6.89V4.46C15.82 4.37 15.18 4.33 14.54 4.33C12.64 4.33 11.34 5.49 11.34 7.62V9.94H9V12.65H11.34V19.5H13.67Z" fill="#FFFFFF"/>
                   </svg>
                 ),
               },
@@ -392,14 +402,14 @@ export default function About() {
                 whileInView={{ opacity:1, y:0 }}
                 viewport={{ once:true }}
                 transition={{ delay: i * 0.08, duration: 0.4 }}
-                whileHover={{ y:-4, boxShadow:`0 20px 40px ${s.glow}`, borderColor: s.color }}
+                whileHover={{ y:-4, boxShadow:'0 14px 32px rgba(15, 23, 42, 0.08)', borderColor:'#94A3B8' }}
                 className="social-card"
                 style={{
                   background: '#FFFFFF',
                   borderRadius: '22px',
                   padding: '24px',
                   border: `1.5px solid ${s.borderColor}`,
-                  boxShadow: '0 6px 24px rgba(15, 23, 42, 0.04)',
+                  boxShadow: '0 4px 20px rgba(15, 23, 42, 0.03)',
                   position: 'relative',
                   overflow: 'hidden',
                   textDecoration: 'none',
@@ -409,10 +419,8 @@ export default function About() {
                   fontFamily: "'Plus Jakarta Sans', sans-serif"
                 }}>
 
-                {/* Left: Brand Icon Box with vibrant gradient */}
-                <div className="social-card-icon-box" style={{ width:'56px', height:'56px', borderRadius:'18px',
-                  background: s.iconGrad, display:'flex', alignItems:'center',
-                  justifyContent:'center', flexShrink:0, boxShadow:`0 8px 20px ${s.glow}` }}>
+                {/* Left: Pure Brand Icon Image (Zoomed) */}
+                <div style={{ width:'54px', height:'54px', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                   {s.icon}
                 </div>
 
@@ -431,19 +439,22 @@ export default function About() {
                     WebkitBoxOrient:'vertical', overflow:'hidden' }}>{s.desc}</p>
                 </div>
 
-                {/* Right: Stat count + Brand Button */}
+                {/* Right: Stat count + Slight Blue Button */}
                 <div className="social-card-right" style={{ textAlign:'right', flexShrink:0, display:'flex', flexDirection:'column', alignItems:'center' }}>
-                  <p className="social-card-count" style={{ fontSize:'24px', fontWeight:900, color: s.color, margin:0, lineHeight:1.1, letterSpacing:'-0.5px' }}>
+                  <p className="social-card-count" style={{ fontSize:'24px', fontWeight:900, color: '#0F172A', margin:0, lineHeight:1.1, letterSpacing:'-0.5px' }}>
                     {loading ? '…' : fmtCount(s.count)}
                   </p>
                   <p style={{ fontSize:'11px', color:'#94A3B8', margin:'3px 0 8px', fontWeight:700, whiteSpace:'nowrap' }}>{s.statLabel}</p>
                   <span className="social-card-btn" style={{
-                    fontSize: '12px', fontWeight: 800, color: '#FFFFFF',
-                    background: s.btnGrad, padding: '7px 16px', borderRadius: '99px',
-                    display: 'inline-flex', alignItems: 'center', gap: '4px',
-                    boxShadow: `0 4px 14px ${s.glow}`
+                    fontSize: '12.5px', fontWeight: 800, color: '#FFFFFF',
+                    background: 'linear-gradient(135deg, #1E3A8A 0%, #0F2347 50%, #0B1528 100%)',
+                    padding: '8px 18px', borderRadius: '99px',
+                    display: 'inline-flex', alignItems: 'center', gap: '5px',
+                    boxShadow: '0 4px 12px rgba(15, 35, 71, 0.25)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    transition: 'all .2s'
                   }}>
-                    Follow <ArrowRight size={12} strokeWidth={2.5} />
+                    {s.actionText} <ArrowRight size={12} strokeWidth={2.5} />
                   </span>
                 </div>
 
@@ -626,15 +637,32 @@ export default function About() {
             <R v={fr}>
               <div style={{ background:'#FFFBEB', borderRadius:'20px', padding:'24px',
                 border:'1px solid #FDE68A' }}>
-                <p style={{ fontSize:'13px', fontWeight:800, color:'#92400E', marginBottom:'8px',
+                <p style={{ fontSize:'13.5px', fontWeight:800, color:'#92400E', marginBottom:'10px',
                   display:'flex', alignItems:'center', gap:'6px' }}>
                   <Zap size={15} color='#D97706' /> Accepted UPI Apps
                 </p>
-                <div className="sh-scroll-hide" style={{ display:'flex', gap:'8px', overflowX:'auto', paddingBottom:'4px', marginBottom:'12px' }}>
-                  {['GPay','PhonePe','Paytm','BHIM','Amazon Pay'].map(app => (
-                    <span key={app} style={{ padding:'5px 12px', borderRadius:'8px',
-                      background:'white', border:'1px solid #FDE68A',
-                      fontSize:'12px', fontWeight:700, color:'#92400E', flexShrink:0 }}>{app}</span>
+                <div className="sh-scroll-hide" style={{ display:'flex', gap:'8px', overflowX:'auto', paddingBottom:'4px', marginBottom:'14px', alignItems:'center' }}>
+                  {[
+                    { name: 'Google Pay', icon: '/icons/gpay.jpg', isSquare: true },
+                    { name: 'PhonePe', icon: '/icons/phonepe.png', isRound: true },
+                    { name: 'Paytm', icon: '/icons/paytm.png', isContain: true },
+                    { name: 'CRED', icon: '/icons/cred.png', isContain: true }
+                  ].map(app => (
+                    <div key={app.name} style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '7px',
+                      padding: '6px 12px', borderRadius: '10px',
+                      background: '#FFFFFF', border: '1px solid #FDE68A',
+                      boxShadow: '0 2px 6px rgba(180, 83, 9, 0.04)',
+                      flexShrink: 0
+                    }}>
+                      <img src={app.icon} alt={app.name} style={{
+                        width: '18px', height: '18px',
+                        objectFit: 'contain',
+                        borderRadius: app.isRound ? '50%' : (app.isSquare ? '4px' : '2px'),
+                        display: 'block'
+                      }} />
+                      <span style={{ fontSize: '12px', fontWeight: 800, color: '#92400E' }}>{app.name}</span>
+                    </div>
                   ))}
                 </div>
                 <p style={{ fontSize:'12px', color:'#B45309', lineHeight:1.6 }}>
@@ -701,7 +729,7 @@ export default function About() {
                   {icon:Mail,    label:'Email',    value:'as.businezzz@gmail.com', href:'mailto:as.businezzz@gmail.com', ic:'#2563EB', ib:'#EFF6FF'},
                   {icon:Phone,   label:'Phone',    value:'+91 70139 42909',         href:'tel:+917013942909',             ic:'#16A34A', ib:'#F0FDF4'},
                   {icon:MessageCircle,label:'WhatsApp',value:'Chat with us',        href:'https://wa.me/917013942909',    ic:'#16A34A', ib:'#F0FDF4'},
-                  {icon:Clock,   label:'Hours',    value:'9 AM – 9 PM, Mon–Sat',    href:null,                            ic:'#D97706', ib:'#FFFBEB'},
+                  {icon:Clock,   label:'Hours',    value:'Sun–Sat: 8 AM to 12 PM',                       href:null,                            ic:'#D97706', ib:'#FFFBEB'},
                 ].map(({ icon:Icon, label, value, href, ic, ib }) => (
                   <a key={label} href={href || undefined}
                     target={href?.startsWith('http') ? '_blank' : undefined}
@@ -748,7 +776,7 @@ export default function About() {
                     style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
                       padding:'12px 20px', borderRadius:'12px', background:'#25D366',
                       color:'white', fontSize:'13px', fontWeight:800, textDecoration:'none' }}>
-                    <MessageCircle size={15} /> Chat on WhatsApp
+                    <img src="/icons/whatsapp.png" alt="WhatsApp" style={{ width:'18px', height:'18px', objectFit:'cover', borderRadius:'5px' }} /> Chat on WhatsApp
                   </a>
                   <a href="mailto:as.businezzz@gmail.com"
                     style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',

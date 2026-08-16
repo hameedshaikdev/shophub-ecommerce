@@ -64,7 +64,7 @@ export default function BottomNav() {
                   minWidth:'17px', height:'17px', borderRadius:'99px',
                   display:'flex', alignItems:'center', justifyContent:'center',
                   padding:'0 3px', border:'2px solid white',
-                  boxShadow:'0 2px 6px rgba(233,69,96,0.3)'
+                  boxShadow:'0 1px 3px rgba(0,0,0,0.15)'
                 }}>
                   {badge > 9 ? '9+' : badge}
                 </span>

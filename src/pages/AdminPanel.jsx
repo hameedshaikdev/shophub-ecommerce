@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, ShoppingBag, Package, Users, BarChart2,
-  LogOut, Search, Bell, RefreshCw, ChevronLeft, ChevronRight,
+  LogOut, Search, Bell, RefreshCw, ChevronLeft, ChevronRight, ChevronDown, ChevronUp,
   CheckCircle, XCircle, MessageCircle, Phone, Truck,
   Plus, Edit2, Trash2, Eye, X, Save, Upload,
   AlertTriangle, AlertCircle, Download, Printer,
   Menu, Settings, TrendingUp, ShieldCheck, Home, Sparkles,
-  RotateCcw, Calendar
+  RotateCcw, Calendar, Copy, Check
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { supabase } from '../config/supabase';
@@ -98,6 +98,11 @@ function ProductModal({ product, onClose, onSave }) {
     original_price: product?.original_price||'',
     badge: parsed.badge||'',
     discount_tag: parsed.discount_tag||'',
+    colors: parsed.colors || product?.colors || [],
+    bundle_enabled: parsed.bundle?.enabled ?? true,
+    bundle_companions: parsed.bundle?.companionIds?.length ? parsed.bundle.companionIds : (parsed.bundle?.companionId ? [parsed.bundle.companionId] : []),
+    bundle_discount: parsed.bundle?.discountPct ?? 5,
+    bundle_subtitle: parsed.bundle?.subtitle || '',
     category: product?.category||'tailoring',
     sub_category: product?.sub_category||'',
     unit: product?.unit||'',
@@ -110,10 +115,23 @@ function ProductModal({ product, onClose, onSave }) {
   const [customSubCat, setCustomSubCat] = useState(() => {
     return !!(product?.sub_category && !['machines','scissors','threads','needles','measuring','presser_feet','dresses','tops','bottoms','ethnic','accessories'].includes(product.sub_category));
   });
+  const [catalogProducts, setCatalogProducts] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [newVT, setNewVT] = useState(''); const [newVU, setNewVU] = useState('');
   const [newImgUrl, setNewImgUrl] = useState('');
+  const [newColorHex, setNewColorHex] = useState('#0F172A');
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await supabase.from('products').select('id, name, price, category, image_url').eq('active', true);
+        setCatalogProducts(data || []);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
 
   async function upload(file) {
     const ext = file.name.split('.').pop();
@@ -146,11 +164,20 @@ function ProductModal({ product, onClose, onSave }) {
     e.preventDefault(); if (!form.name||!form.price){alert('Name and price required');return;}
     setSaving(true);
     try {
-      let finalDesc = (form.description || '').replace(/\s*\[TAG:[^\]]*\]/g, '').trim();
-      const tagStr = [form.badge || '', form.discount_tag || ''].join('|');
-      if (tagStr !== '|') {
+      let finalDesc = (form.description || '').replace(/\s*\[TAG:[^\]]*\]/g, '').replace(/\s*\[BUNDLE:[^\]]*\]/g, '').trim();
+      const colorsStr = (form.colors || []).join(',');
+      const tagStr = [form.badge || '', form.discount_tag || '', colorsStr].join('|');
+      if (tagStr !== '||') {
         finalDesc = finalDesc ? `${finalDesc} [TAG:${tagStr}]` : `[TAG:${tagStr}]`;
       }
+
+      const bundleStr = [
+        form.bundle_enabled ? 'true' : 'false',
+        (form.bundle_companions || []).join(','),
+        form.bundle_discount || 5,
+        form.bundle_subtitle || ''
+      ].join('|');
+      finalDesc = finalDesc ? `${finalDesc} [BUNDLE:${bundleStr}]` : `[BUNDLE:${bundleStr}]`;
 
       const rawPayload = {
         name: form.name.trim(),
@@ -359,6 +386,135 @@ function ProductModal({ product, onClose, onSave }) {
             <input placeholder="Unit (e.g. 1 piece)" value={form.unit} onChange={e=>setForm(p=>({...p,unit:e.target.value}))} style={S}/>
             <input type="number" placeholder="Stock" value={form.stock} onChange={e=>setForm(p=>({...p,stock:e.target.value}))} style={S}/>
           </div>
+
+          {/* Color Swatches Option */}
+          <div style={{ background:'#F8FAFC', padding:'12px', borderRadius:'14px', border:'1px solid #E2E8F0' }}>
+            <label style={{ fontSize:'11px', fontWeight:800, color:'#1A1A2E', textTransform:'uppercase', display:'block', marginBottom:'6px', letterSpacing:'.5px' }}>
+              🎨 Color Swatches / Options (Optional)
+            </label>
+            {form.colors?.length > 0 && (
+              <div style={{ display:'flex', gap:'6px', flexWrap:'wrap', marginBottom:'8px' }}>
+                {form.colors.map((c, i) => (
+                  <span key={i} style={{ display:'inline-flex', alignItems:'center', gap:'5px', padding:'3px 8px', borderRadius:'8px', background:'white', border:'1px solid #CBD5E1', fontSize:'11px', fontWeight:700, color:'#0F172A' }}>
+                    <span style={{ width:'12px', height:'12px', borderRadius:'50%', background: c, border:'1px solid rgba(0,0,0,0.2)' }} />
+                    {c}
+                    <button type="button" onClick={() => setForm(p => ({ ...p, colors: p.colors.filter((_, idx) => idx !== i) }))} style={{ background:'none', border:'none', cursor:'pointer', color:'#EF4444', padding:0, display:'flex', alignItems:'center' }}>
+                      <X size={10} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            <div style={{ display:'flex', gap:'6px' }}>
+              <input type="color" value={newColorHex} onChange={e => setNewColorHex(e.target.value)} style={{ width:'38px', height:'38px', border:'1px solid #CBD5E1', borderRadius:'8px', cursor:'pointer', padding:'2px', background:'white' }} />
+              <input placeholder="Color hex (e.g. #0F172A)" value={newColorHex} onChange={e => setNewColorHex(e.target.value)} style={{ ...S, flex:1 }} />
+              <button type="button" onClick={() => { if(!newColorHex) return; setForm(p => ({ ...p, colors: [...(p.colors||[]), newColorHex] })); }}
+                style={{ padding:'8px 14px', borderRadius:'10px', background:'#1A1A2E', color:'white', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer', whiteSpace:'nowrap' }}>
+                + Add Color
+              </button>
+            </div>
+          </div>
+
+          {/* Buy More, Save More (Bundle Deal) Configuration */}
+          <div style={{ background:'linear-gradient(135deg, #FFFDFB 0%, #FAF5EE 100%)', padding:'14px', borderRadius:'16px', border:'1.5px solid #F1E5D6', display:'flex', flexDirection:'column', gap:'10px' }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <label style={{ fontSize:'12px', fontWeight:900, color:'#8A6133', display:'flex', alignItems:'center', gap:'6px', margin:0 }}>
+                <span>💎 Buy More, Save More (Bundle Deal)</span>
+              </label>
+              <label style={{ display:'flex', alignItems:'center', gap:'6px', cursor:'pointer', fontSize:'12px', fontWeight:800, color: form.bundle_enabled ? '#16A34A' : '#64748B' }}>
+                <input
+                  type="checkbox"
+                  checked={form.bundle_enabled}
+                  onChange={e => setForm(p => ({ ...p, bundle_enabled: e.target.checked }))}
+                  style={{ width:'16px', height:'16px', cursor:'pointer' }}
+                />
+                {form.bundle_enabled ? 'ON' : 'OFF'}
+              </label>
+            </div>
+
+            {form.bundle_enabled && (
+              <div style={{ display:'flex', flexDirection:'column', gap:'10px', paddingTop:'8px', borderTop:'1px solid #EBDCCB' }}>
+                {/* Multi-Companion Product Picker */}
+                <div>
+                  <label style={{ fontSize:'11px', fontWeight:700, color:'#64748B', display:'block', marginBottom:'4px' }}>
+                    Bundled Products ({form.bundle_companions?.length || 0} selected):
+                  </label>
+                  
+                  {/* Selected product chips */}
+                  {form.bundle_companions?.length > 0 && (
+                    <div style={{ display:'flex', gap:'6px', flexWrap:'wrap', marginBottom:'8px' }}>
+                      {form.bundle_companions.map(cid => {
+                        const comp = catalogProducts.find(p => p.id === cid);
+                        return (
+                          <span key={cid} style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'4px 10px', borderRadius:'8px', background:'#FFFFFF', border:'1px solid #CBD5E1', fontSize:'11.5px', fontWeight:700, color:'#0F172A', boxShadow:'0 1px 4px rgba(0,0,0,0.03)' }}>
+                            <span>{comp?.name || cid.slice(0, 8)} (₹{comp?.price || '0'})</span>
+                            <button
+                              type="button"
+                              onClick={() => setForm(p => ({ ...p, bundle_companions: p.bundle_companions.filter(id => id !== cid) }))}
+                              style={{ background:'none', border:'none', cursor:'pointer', color:'#EF4444', padding:0, display:'flex', alignItems:'center' }}
+                            >
+                              <X size={12} />
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Add Companion Dropdown */}
+                  <select
+                    value=""
+                    onChange={e => {
+                      const val = e.target.value;
+                      if (val && !form.bundle_companions?.includes(val)) {
+                        setForm(p => ({ ...p, bundle_companions: [...(p.bundle_companions || []), val] }));
+                      }
+                    }}
+                    style={{ ...S, background:'#FFFFFF' }}
+                  >
+                    <option value="">+ Add Product to Bundle...</option>
+                    {catalogProducts.filter(cp => cp.id !== product?.id && !form.bundle_companions?.includes(cp.id)).map(cp => (
+                      <option key={cp.id} value={cp.id}>
+                        {cp.name} (₹{cp.price})
+                      </option>
+                    ))}
+                  </select>
+                  <span style={{ fontSize:'10.5px', color:'#94A3B8', marginTop:'3px', display:'block' }}>
+                    You can bundle 1, 2, 3, or more companion products together. If none selected, the first related accessory is used automatically.
+                  </span>
+                </div>
+
+                {/* Bundle Discount % & Custom Subtitle */}
+                <div style={{ display:'grid', gridTemplateColumns:'120px 1fr', gap:'8px' }}>
+                  <div>
+                    <label style={{ fontSize:'11px', fontWeight:700, color:'#64748B', display:'block', marginBottom:'4px' }}>
+                      Bundle Discount %:
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="90"
+                      placeholder="e.g. 5"
+                      value={form.bundle_discount}
+                      onChange={e => setForm(p => ({ ...p, bundle_discount: e.target.value }))}
+                      style={{ ...S, background:'#FFFFFF' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize:'11px', fontWeight:700, color:'#64748B', display:'block', marginBottom:'4px' }}>
+                      Bundle Subtitle / Hook:
+                    </label>
+                    <input
+                      placeholder="e.g. Collect both Asmalabel signatures and enjoy an exclusive discount ✨"
+                      value={form.bundle_subtitle}
+                      onChange={e => setForm(p => ({ ...p, bundle_subtitle: e.target.value }))}
+                      style={{ ...S, background:'#FFFFFF' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
           {/* Video links */}
           <div>
             <p style={{fontSize:'11px',fontWeight:700,color:'#8E8E93',marginBottom:'6px',textTransform:'uppercase',letterSpacing:'.5px'}}>Video Links</p>
@@ -393,219 +549,540 @@ function ProductModal({ product, onClose, onSave }) {
   );
 }
 
-/* ── Clean Neutral Order Card ──────────────────────────────── */
+/* ── Modern Expandable Order Card (Matching Orders.jsx / Images 2-5) ── */
 function OrderCard({ order, onConfirm, onReject, onStatus, onDelete, confirming, selected, onSelect }) {
   const [open, setOpen] = useState(false);
+  const [showTimeline, setShowTimeline] = useState(false);
   const [rejectBox, setRejectBox] = useState(false);
   const [reason, setReason] = useState('');
+  const [copied, setCopied] = useState(false);
+
   const addr = order.shipping_address || {};
-  const isPending = order.payment_status === 'submitted';
+  const isVerified = order.payment_status === 'verified';
+  const isSubmitted = order.payment_status === 'submitted' || order.status === 'payment_submitted';
+  const isRejected = order.payment_status === 'rejected' || order.status === 'payment_rejected';
+  const isPending = !isVerified && !isRejected && !isSubmitted;
 
-  /* Clean monochrome status color mapping */
-  const STATUS_BG = {
-    pending_payment: '#F1F5F9',
-    payment_submitted: '#EFF6FF',
-    confirmed: '#F8FAFC',
-    preparing: '#F1F5F9',
-    shipped: '#F8FAFC',
-    delivered: '#ECFDF5',
-    payment_rejected: '#FEF2F2'
-  };
-  const STATUS_TEXT = {
-    pending_payment: '#475569',
-    payment_submitted: '#2563EB',
-    confirmed: '#0F172A',
-    preparing: '#334155',
-    shipped: '#1E293B',
-    delivered: '#059669',
-    payment_rejected: '#DC2626'
+  const items = Array.isArray(order.items) ? order.items : [];
+  const firstItem = items[0] || {};
+  const totalAmount = Number(order.total_amount || 0);
+
+  const STATUS_CONFIG = {
+    pending_payment:   { label:'Pending Payment',   color:'#475569', bg:'#F1F5F9' },
+    payment_submitted: { label:'Pending Payment',   color:'#475569', bg:'#F1F5F9' },
+    confirmed:         { label:'Confirmed',         color:'#0F172A', bg:'#F8FAFC' },
+    preparing:         { label:'Preparing Order',   color:'#334155', bg:'#F1F5F9' },
+    shipped:           { label:'Shipped',           color:'#0284C7', bg:'#F0F9FF' },
+    delivered:         { label:'Delivered',         color:'#16A34A', bg:'#DCFCE7' },
+    payment_rejected:  { label:'Payment Rejected',  color:'#DC2626', bg:'#FEF2F2' },
+    cancelled:         { label:'Cancelled',         color:'#94A3B8', bg:'#F1F5F9' }
   };
 
-  const statusBg = STATUS_BG[order.status] || '#F1F5F9';
-  const statusColor = STATUS_TEXT[order.status] || '#334155';
+  const currentStatus = STATUS_CONFIG[order.status] || { label: 'Pending Payment', color: '#475569', bg: '#F1F5F9' };
 
-  function waMsg(msg) { window.open(`https://wa.me/91${addr.phone}?text=${encodeURIComponent(msg)}`, '_blank'); }
+  const orderDateStr = order.created_at
+    ? new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    : 'Recent';
+
+  function waMsg(msg) {
+    const phone = addr.phone || '';
+    window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+
+  function handleCopyId(e) {
+    if (e) e.stopPropagation();
+    navigator.clipboard.writeText(order.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   return (
-    <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', boxShadow:'0 1px 4px rgba(0,0,0,.03)', marginBottom:'10px', overflow:'hidden', transition:'box-shadow .2s' }}
-      onMouseEnter={e => e.currentTarget.style.boxShadow='0 4px 14px rgba(0,0,0,.06)'}
-      onMouseLeave={e => e.currentTarget.style.boxShadow='0 1px 4px rgba(0,0,0,.03)'}>
+    <div style={{
+      background: '#FFFFFF',
+      borderRadius: '18px',
+      border: selected ? '2px solid #0F172A' : '1px solid #E2E8F0',
+      marginBottom: '12px',
+      boxShadow: '0 2px 8px rgba(15,23,42,0.03)',
+      overflow: 'hidden',
+      transition: 'all .2s ease',
+      boxSizing: 'border-box'
+    }}>
 
-      {/* Card header row */}
-      <div className="admin-order-header-row" style={{ display:'flex', alignItems:'center', gap:'10px', padding:'12px 14px' }}>
-        <input type="checkbox" checked={selected} onChange={onSelect}
-          style={{ width:'16px', height:'16px', cursor:'pointer', accentColor:'#0F172A', flexShrink:0 }} />
+      {/* ── Compact Rectangle Header (Clickable View) ── */}
+      <div
+        onClick={() => setOpen(!open)}
+        style={{
+          padding: '14px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+          cursor: 'pointer',
+          background: open ? '#F8FAFC' : '#FFFFFF',
+          borderBottom: open ? '1px solid #E2E8F0' : 'none',
+          userSelect: 'none'
+        }}
+      >
+        {/* Left: Checkbox + Thumbnail with count + Summary */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={(e) => { e.stopPropagation(); onSelect(); }}
+            onClick={(e) => e.stopPropagation()}
+            style={{ width: '17px', height: '17px', cursor: 'pointer', accentColor: '#0F172A', flexShrink: 0 }}
+          />
 
-        <div style={{ flex:1, minWidth:0 }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px', flexWrap:'wrap' }}>
-            <span style={{ fontSize:'13px', fontWeight:800, color:'#0F172A', fontFamily:'monospace' }}>
-              #{order.id.slice(0,8).toUpperCase()}
-            </span>
-            <span style={{ fontSize:'10px', fontWeight:800, padding:'3px 9px', borderRadius:'99px',
-              background:statusBg, color:statusColor, border:'1px solid #CBD5E1' }}>
-              {order.status?.replace(/_/g,' ').toUpperCase()}
-            </span>
-          </div>
-          <p style={{ fontSize:'12px', color:'#334155', fontWeight:700, margin:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-            {addr.fullName || 'Customer'} · +91 {addr.phone || 'N/A'}
-          </p>
-          <p style={{ fontSize:'11px', color:'#64748B', marginTop:'2px', margin:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-            {order.items?.map(i=>`${i.name} ×${i.quantity}`).join(', ')}
-          </p>
-        </div>
-
-        <div style={{ textAlign:'right', flexShrink:0 }}>
-          <p style={{ fontSize:'15px', fontWeight:900, color:'#0F172A', margin:0 }}>₹{order.total_amount?.toFixed(0)}</p>
-          <p style={{ fontSize:'10px', color:'#64748B', marginTop:'2px', margin:0 }}>
-            {new Date(order.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}
-          </p>
-        </div>
-
-        <button onClick={(e) => { e.stopPropagation(); onDelete(order.id); }} title="Delete Order"
-          style={{ width:'30px', height:'30px', borderRadius:'8px', background:'#FEF2F2',
-            border:'1px solid #FECACA', cursor:'pointer', display:'flex', alignItems:'center',
-            justifyContent:'center', flexShrink:0 }}>
-          <Trash2 size={14} color="#DC2626" />
-        </button>
-
-        <button onClick={() => setOpen(!open)}
-          style={{ width:'30px', height:'30px', borderRadius:'8px', background:'#F1F5F9',
-            border:'1px solid #E2E8F0', cursor:'pointer', display:'flex', alignItems:'center',
-            justifyContent:'center', flexShrink:0, transition:'background .15s' }}>
-          <ChevronRight size={15} color="#475569" style={{ transform: open ? 'rotate(90deg)' : 'none', transition:'transform .2s' }} />
-        </button>
-      </div>
-
-      {/* Expanded details */}
-      {open && (
-        <div style={{ borderTop:'1px solid #F1F5F9', padding:'14px', display:'flex', flexDirection:'column', gap:'12px', background:'#F8FAFC' }}>
-
-          {/* Order timeline */}
-          <div style={{ background:'#FFFFFF', borderRadius:'12px', padding:'12px 14px', border:'1px solid #E2E8F0' }}>
-            <p style={{ fontSize:'10px', fontWeight:800, color:'#64748B', textTransform:'uppercase', letterSpacing:'.5px', marginBottom:'10px', margin:0 }}>Order Timeline</p>
-            {(() => {
-              const STAGES = [
-                { key:'pending_payment',   label:'Order Placed' },
-                { key:'payment_submitted', label:'Payment Submitted' },
-                { key:'confirmed',         label:'Payment Verified' },
-                { key:'preparing',         label:'Preparing Order' },
-                { key:'shipped',           label:'Shipped' },
-                { key:'delivered',         label:'Delivered' },
-              ];
-              const currentIdx = STAGES.findIndex(s => s.key === order.status);
-              return STAGES.map((stage, i) => {
-                const done   = i <= currentIdx;
-                const active = i === currentIdx;
-                return (
-                  <div key={stage.key} style={{ display:'flex', alignItems:'flex-start', gap:'10px', marginBottom: i<STAGES.length-1?'8px':'0', marginTop:'6px' }}>
-                    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', flexShrink:0 }}>
-                      <div style={{ width:'16px', height:'16px', borderRadius:'50%', flexShrink:0,
-                        background: done ? '#0F172A' : '#E2E8F0',
-                        border: active ? '3px solid #2563EB' : 'none',
-                        display:'flex', alignItems:'center', justifyContent:'center' }}>
-                        {done && !active && <div style={{ width:'5px', height:'5px', borderRadius:'50%', background:'white' }}/>}
-                      </div>
-                      {i < STAGES.length-1 && <div style={{ width:'2px', height:'16px', background: i<currentIdx?'#0F172A':'#E2E8F0', marginTop:'2px' }}/>}
-                    </div>
-                    <div style={{ paddingTop:'1px' }}>
-                      <p style={{ fontSize:'12px', fontWeight: active?800:600, color: done?'#0F172A':'#94A3B8', margin:0 }}>{stage.label}</p>
-                      {active && <p style={{ fontSize:'10px', color:'#2563EB', marginTop:'2px', fontWeight:800, margin:0 }}>Current Stage</p>}
-                    </div>
-                  </div>
-                );
-              });
-            })()}
-          </div>
-
-          {/* Address */}
-          <div style={{ background:'#FFFFFF', borderRadius:'12px', padding:'12px 14px', border:'1px solid #E2E8F0' }}>
-            <p style={{ fontSize:'10px', fontWeight:800, color:'#64748B', textTransform:'uppercase', letterSpacing:'.5px', margin:0 }}>Delivery Address</p>
-            <p style={{ fontSize:'13px', fontWeight:800, color:'#0F172A', marginTop:'4px', margin:0 }}>{addr.fullName}</p>
-            <p style={{ fontSize:'12px', color:'#475569', lineHeight:1.5, marginTop:'4px', margin:0 }}>
-              {addr.houseNo}, {addr.streetArea}<br/>Near {addr.landmark}<br/>
-              {addr.city}, {addr.state} — {addr.pincode}
-            </p>
-          </div>
-
-          {/* Items */}
-          <div style={{ background:'#FFFFFF', borderRadius:'12px', padding:'12px 14px', border:'1px solid #E2E8F0' }}>
-            <p style={{ fontSize:'10px', fontWeight:800, color:'#64748B', textTransform:'uppercase', letterSpacing:'.5px', margin:0 }}>Items Ordered</p>
-            {order.items?.map((item,i) => (
-              <div key={i} style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', marginTop:'6px' }}>
-                <span style={{ color:'#334155', fontWeight:600 }}>{item.name} ×{item.quantity}</span>
-                <span style={{ fontWeight:800, color:'#0F172A' }}>₹{(item.price*item.quantity).toFixed(0)}</span>
-              </div>
-            ))}
-            {order.utr && <p style={{ fontSize:'11px', color:'#059669', fontWeight:800, marginTop:'8px', margin:0 }}>UTR: {order.utr}</p>}
-            {order.screenshot_url && (
-              <a href={order.screenshot_url} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize:'11px', color:'#2563EB', fontWeight:800, display:'inline-flex', alignItems:'center', gap:'4px', marginTop:'6px', textDecoration:'none' }}>
-                <Eye size={12}/> View Payment Screenshot
-              </a>
+          <div style={{ position: 'relative', width: '46px', height: '46px', flexShrink: 0 }}>
+            <img
+              src={firstItem.image_url || 'https://placehold.co/60x60?text=Product'}
+              alt={firstItem.name || 'Product'}
+              style={{ width: '100%', height: '100%', borderRadius: '10px', objectFit: 'cover', background: '#F1F5F9', border: '1px solid #E2E8F0' }}
+            />
+            {items.length > 1 && (
+              <span style={{
+                position: 'absolute', top: '-5px', right: '-5px',
+                width: '18px', height: '18px', borderRadius: '50%',
+                background: '#0F172A', color: '#FFFFFF',
+                fontSize: '10px', fontWeight: 900,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: '1.5px solid #FFFFFF'
+              }}>
+                +{items.length - 1}
+              </span>
             )}
           </div>
 
-          {/* Confirm / Reject */}
-          {isPending && !rejectBox && (
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
-              <button onClick={() => onConfirm(order)} disabled={confirming}
-                style={{ padding:'10px', borderRadius:'10px', background:confirming?'#CBD5E1':'#059669', color:'white', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
-                <CheckCircle size={14}/>{confirming?'Verifying...':'Verify Payment'}
-              </button>
-              <button onClick={() => setRejectBox(true)}
-                style={{ padding:'10px', borderRadius:'10px', background:'#FEF2F2', color:'#DC2626', fontWeight:800, fontSize:'12px', border:'1px solid #FECACA', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
-                <XCircle size={14}/>Reject
-              </button>
-            </div>
-          )}
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <p style={{
+              fontSize: '13.5px',
+              fontWeight: 800,
+              color: '#0F172A',
+              margin: '0 0 2px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              lineHeight: 1.3,
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif'
+            }}>
+              {firstItem.name || 'Order Item'}
+            </p>
+            <p style={{
+              fontSize: '12px',
+              fontWeight: 700,
+              color: '#475569',
+              margin: 0,
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif',
+              letterSpacing: '0'
+            }}>
+              Order #{order.id.slice(0,8).toUpperCase()}
+            </p>
+            <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0', fontWeight: 500, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif' }}>
+              {orderDateStr} · <span style={{ color: currentStatus.color, fontWeight: 700 }}>{currentStatus.label}</span>
+            </p>
+          </div>
+        </div>
 
-          {rejectBox && (
-            <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
-              <input value={reason} onChange={e=>setReason(e.target.value)} placeholder="Rejection reason..."
-                style={{ width:'100%', padding:'9px 12px', borderRadius:'10px', border:'1px solid #FECACA', fontSize:'12px', outline:'none', background:'#FEF2F2', boxSizing:'border-box' }} />
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
-                <button onClick={() => { onReject(order, reason); setRejectBox(false); }}
-                  style={{ padding:'10px', borderRadius:'10px', background:'#DC2626', color:'white', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer' }}>
-                  Confirm Reject
-                </button>
-                <button onClick={() => { setRejectBox(false); setReason(''); }}
-                  style={{ padding:'10px', borderRadius:'10px', background:'#F1F5F9', color:'#475569', fontWeight:700, fontSize:'12px', border:'none', cursor:'pointer' }}>
-                  Cancel
-                </button>
+        {/* Right: Total + Details Chevron Toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+          <div style={{ textAlign: 'right' }}>
+            <p style={{ fontSize: '15px', fontWeight: 900, color: '#0F172A', margin: 0 }}>
+              ₹{totalAmount.toFixed(0)}
+            </p>
+            <span style={{ fontSize: '11px', color: open ? '#0F172A' : '#64748B', fontWeight: 700 }}>
+              {open ? 'Collapse' : 'Details'}
+            </span>
+          </div>
+
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(order.id); }}
+            title="Delete Order"
+            style={{
+              width: '28px', height: '28px', borderRadius: '8px',
+              background: '#FEF2F2', border: '1px solid #FECACA',
+              cursor: 'pointer', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', flexShrink: 0
+            }}
+          >
+            <Trash2 size={13} color="#DC2626" />
+          </button>
+
+          <div style={{
+            width: '28px', height: '28px', borderRadius: '50%',
+            background: '#FFFFFF', border: '1px solid #E2E8F0',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+          }}>
+            {open ? <ChevronUp size={15} color="#0F172A" /> : <ChevronDown size={15} color="#0F172A" />}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Expanded Materialism / Shopify Content ── */}
+      {open && (
+        <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px', background: '#FFFFFF' }}>
+
+          {/* 1. Fulfillment Status Box with 7-Stage Timeline */}
+          <div style={{ background: '#F8FAFC', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#0F172A', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 900 }}>✓</span>
+                <span style={{ fontSize: '14.5px', fontWeight: 900, color: '#0F172A' }}>{currentStatus.label}</span>
+              </div>
+              <span style={{ fontSize: '12px', color: '#94A3B8', fontWeight: 600 }}>{orderDateStr}</span>
+            </div>
+
+            <p style={{ fontSize: '12.5px', color: '#475569', margin: 0, fontWeight: 500 }}>
+              {order.status === 'delivered'
+                ? 'Package has been delivered to the customer.'
+                : order.status === 'shipped'
+                ? 'Package is in transit with delivery courier.'
+                : order.status === 'preparing'
+                ? "Items are being prepared for shipping."
+                : isVerified
+                ? 'Order confirmed and ready for processing.'
+                : 'Awaiting payment confirmation.'}
+            </p>
+
+            <button
+              onClick={() => setShowTimeline(!showTimeline)}
+              style={{ background: 'none', border: 'none', padding: '6px 0 0', color: '#0F172A', fontSize: '12px', fontWeight: 800, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+            >
+              <span>{showTimeline ? 'Hide Tracking Steps' : 'View Full Tracking Timeline'}</span>
+              {showTimeline ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+            </button>
+
+            {/* 7-Stage Timeline */}
+            {showTimeline && (
+              <div style={{ borderTop: '1px solid #E2E8F0', marginTop: '8px', paddingTop: '12px' }}>
+                {(() => {
+                  const STAGES = [
+                    { key: 'pending_payment',   label: 'Order Placed',        desc: 'Your order has been placed in our system.', icon: '📋' },
+                    { key: 'payment_submitted', label: 'Payment Submitted',   desc: 'UPI / payment screenshot received.',         icon: '💸' },
+                    { key: 'confirmed',         label: 'Payment Verified',    desc: 'Admin has verified the transaction.',        icon: '✅' },
+                    { key: 'confirmed',         label: 'Confirmed',           desc: 'Order confirmed for processing.',            icon: '🎉' },
+                    { key: 'preparing',         label: 'Preparing Order',     desc: 'Items packed at our Nellore facility.',       icon: '📦' },
+                    { key: 'shipped',           label: 'Shipped',             desc: 'Dispatched with express delivery partner.', icon: '🚚' },
+                    { key: 'delivered',         label: 'Delivered',           desc: 'Handed over to the customer.',              icon: '🏠' },
+                  ];
+                  const stageKeys = ['pending_payment', 'payment_submitted', 'confirmed', 'confirmed', 'preparing', 'shipped', 'delivered'];
+                  const orderStageIdx = ['pending_payment', 'payment_submitted', 'confirmed', 'confirmed', 'preparing', 'shipped', 'delivered'].indexOf(order.status);
+                  const activeIdx = orderStageIdx >= 0 ? orderStageIdx : (order.status === 'delivered' ? 6 : (isVerified ? 2 : 0));
+
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '4px 0' }}>
+                      {STAGES.map((s, idx) => {
+                        const isDone = idx <= activeIdx;
+                        const isCurrent = idx === activeIdx;
+
+                        return (
+                          <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', position: 'relative' }}>
+                            {idx < STAGES.length - 1 && (
+                              <div style={{
+                                position: 'absolute', left: '16px', top: '32px', bottom: '-14px', width: '2px',
+                                background: isDone ? '#0F172A' : '#E2E8F0', zIndex: 0
+                              }} />
+                            )}
+                            <div style={{
+                              width: '32px', height: '32px', borderRadius: '50%',
+                              background: isDone ? (isCurrent ? '#0F172A' : '#F1F5F9') : '#F8FAFC',
+                              border: isDone ? '2px solid #0F172A' : '2px solid #E2E8F0',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: '14px', flexShrink: 0, zIndex: 1, boxShadow: isCurrent ? '0 2px 8px rgba(15,23,42,0.2)' : 'none'
+                            }}>
+                              {s.icon}
+                            </div>
+                            <div style={{ flex: 1, paddingTop: '4px' }}>
+                              <p style={{ fontSize: '13.5px', fontWeight: 800, color: isDone ? '#0F172A' : '#94A3B8', margin: '0 0 2px' }}>
+                                {s.label}
+                              </p>
+                              <p style={{ fontSize: '11.5px', color: isDone ? '#64748B' : '#CBD5E1', margin: 0, lineHeight: 1.4 }}>
+                                {s.desc}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+
+          {/* 3. Ordered Items Breakdown */}
+          <div style={{ background: '#F8FAFC', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {items.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                  <div style={{ position: 'relative', width: '48px', height: '48px', flexShrink: 0 }}>
+                    <img
+                      src={item.image_url || 'https://placehold.co/60x60?text=Product'}
+                      alt={item.name}
+                      style={{ width: '100%', height: '100%', borderRadius: '10px', objectFit: 'cover', background: '#FFFFFF', border: '1px solid #E2E8F0' }}
+                    />
+                    <span style={{
+                      position: 'absolute', top: '-5px', right: '-5px',
+                      width: '18px', height: '18px', borderRadius: '50%',
+                      background: '#000000', color: '#FFFFFF',
+                      fontSize: '10.5px', fontWeight: 900,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      border: '1.5px solid #FFFFFF'
+                    }}>
+                      {item.quantity || 1}
+                    </span>
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ fontSize: '13px', fontWeight: 800, color: '#0F172A', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {item.name}
+                    </p>
+                    {item.unit && (
+                      <p style={{ fontSize: '11px', color: '#64748B', margin: '2px 0 0', fontWeight: 500 }}>
+                        {item.unit}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <span style={{ fontSize: '13.5px', fontWeight: 900, color: '#0F172A', flexShrink: 0 }}>
+                  ₹{(Number(item.price || 0) * Number(item.quantity || 1)).toFixed(2)}
+                </span>
+              </div>
+            ))}
+
+            {/* Price breakdown */}
+            <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: '#64748B', fontWeight: 600 }}>
+                <span>Subtotal</span>
+                <span style={{ color: '#0F172A', fontWeight: 700 }}>₹{totalAmount.toFixed(2)}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: '#64748B', fontWeight: 600 }}>
+                <span>Shipping</span>
+                <span style={{ color: '#16A34A', fontWeight: 800 }}>Free</span>
+              </div>
+              {order.discount_amount > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: '#16A34A', fontWeight: 700 }}>
+                  <span>Coupon Discount ({order.coupon || 'PROMO'})</span>
+                  <span>-₹{Number(order.discount_amount).toFixed(2)}</span>
+                </div>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '2px', paddingTop: '6px', borderTop: '1px dashed #E2E8F0' }}>
+                <span style={{ fontSize: '14px', fontWeight: 900, color: '#0F172A' }}>Total</span>
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ fontSize: '11px', color: '#64748B', fontWeight: 700, marginRight: '4px' }}>INR</span>
+                  <span style={{ fontSize: '16.5px', fontWeight: 900, color: '#0F172A' }}>₹{totalAmount.toFixed(2)}</span>
+                </div>
               </div>
             </div>
-          )}
-
-          {/* Status changer */}
-          {['confirmed','preparing','shipped'].includes(order.status) && (
-            <select value={order.status} onChange={e => onStatus(order.id, e.target.value)}
-              style={{ width:'100%', padding:'10px 12px', borderRadius:'10px', border:'1px solid #CBD5E1', fontSize:'12px', background:'white', fontWeight:800, color:'#0F172A' }}>
-              <option value="confirmed">Confirmed</option>
-              <option value="preparing">Preparing</option>
-              <option value="shipped">Shipped</option>
-              <option value="delivered">Delivered</option>
-            </select>
-          )}
-
-          {/* Actions row */}
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
-            <button onClick={() => waMsg(`Hello ${addr.fullName}, your order #${order.id.slice(0,8).toUpperCase()} status: ${order.status}. Thank you for shopping with Asmalabel!`)}
-              style={{ padding:'9px', borderRadius:'10px', background:'#ECFDF5', color:'#059669', fontWeight:800, fontSize:'12px', border:'1px solid #A7F3D0', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
-              <MessageCircle size={14}/> WhatsApp
-            </button>
-            <a href={`tel:+91${addr.phone}`}
-              style={{ padding:'9px', borderRadius:'10px', background:'#EFF6FF', color:'#2563EB', fontWeight:800, fontSize:'12px', border:'1px solid #BFDBFE', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px', textDecoration:'none' }}>
-              <Phone size={14}/> Call Customer
-            </a>
-            <button onClick={() => printShippingLabel(order)}
-              style={{ padding:'9px', borderRadius:'10px', background:'#0F172A', color:'white', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
-              <Printer size={14}/> Print Label
-            </button>
-            <button onClick={() => onDelete(order.id)}
-              style={{ padding:'9px', borderRadius:'10px', background:'#FEF2F2', color:'#DC2626', fontWeight:800, fontSize:'12px', border:'1px solid #FECACA', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
-              <Trash2 size={14}/> Delete
-            </button>
           </div>
+
+          {/* 4. Customer Information Card */}
+          <div style={{ background: '#F8FAFC', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {/* Contact */}
+            <div style={{ display: 'grid', gridTemplateColumns: '70px 1fr', gap: '6px', fontSize: '12.5px' }}>
+              <span style={{ color: '#64748B', fontWeight: 600 }}>Contact</span>
+              <a href={`tel:+91${addr.phone || ''}`} style={{ color: '#0F172A', fontWeight: 700, textDecoration: 'underline' }}>
+                {addr.phone ? `+91 ${addr.phone}` : 'Customer Contact'}
+              </a>
+            </div>
+
+            <div style={{ height: '1px', background: '#E2E8F0' }} />
+
+            {/* Ship to */}
+            <div style={{ display: 'grid', gridTemplateColumns: '70px 1fr', gap: '6px', fontSize: '12.5px', alignItems: 'flex-start' }}>
+              <span style={{ color: '#64748B', fontWeight: 600 }}>Ship to</span>
+              <div style={{ color: '#0F172A', lineHeight: 1.45, fontWeight: 600 }}>
+                <p style={{ fontWeight: 800, margin: 0 }}>{addr.fullName || 'Valued Customer'}</p>
+                <p style={{ margin: 0, color: '#475569' }}>{addr.houseNo ? `${addr.houseNo}, ` : ''}{addr.streetArea || ''}</p>
+                {addr.landmark && <p style={{ margin: 0, color: '#475569' }}>Near {addr.landmark}</p>}
+                <p style={{ margin: 0, color: '#475569' }}>
+                  {[addr.city, addr.state, addr.pincode, 'India'].filter(Boolean).join(' ')}
+                </p>
+                {addr.phone && <p style={{ margin: '2px 0 0', textDecoration: 'underline', fontWeight: 700 }}>+91 {addr.phone}</p>}
+              </div>
+            </div>
+
+            <div style={{ height: '1px', background: '#E2E8F0' }} />
+
+            {/* Payment & Screenshot */}
+            <div style={{ display: 'grid', gridTemplateColumns: '70px 1fr', gap: '6px', fontSize: '12.5px', alignItems: 'flex-start' }}>
+              <span style={{ color: '#64748B', fontWeight: 600 }}>Payment</span>
+              <div>
+                <p style={{ fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                  {order.payment_method === 'cod' ? 'Cash on Delivery (COD)' : 'UPI / Online Payment'}
+                </p>
+                <p style={{ fontSize: '11.5px', color: '#64748B', margin: '2px 0 0', fontWeight: 500 }}>
+                  ₹{totalAmount.toFixed(2)} INR · {orderDateStr}
+                </p>
+                {order.utr && (
+                  <p style={{ fontSize: '11.5px', color: '#059669', fontWeight: 800, margin: '3px 0 0' }}>
+                    UTR Ref: {order.utr}
+                  </p>
+                )}
+                {(order.screenshot_url || order.payment_screenshot_url) && (
+                  <a
+                    href={order.screenshot_url || order.payment_screenshot_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '4px',
+                      marginTop: '6px', padding: '4px 10px', borderRadius: '6px',
+                      background: '#EFF6FF', color: '#2563EB', fontSize: '11.5px',
+                      fontWeight: 800, textDecoration: 'none', border: '1px solid #BFDBFE'
+                    }}
+                  >
+                    <Eye size={12} /> View Payment Screenshot
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 5. ── ADMIN CONTROLS & ACTION BUTTONS AT THE BOTTOM (Matching Image 2) ── */}
+          <div style={{ background: '#F8FAFC', borderRadius: '12px', border: '1px solid #E2E8F0', padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
+              <span style={{ fontSize: '10.5px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.6px', color: '#64748B' }}>
+                Admin Controls &amp; Status
+              </span>
+              <button
+                onClick={handleCopyId}
+                style={{ background: 'none', border: 'none', color: '#2563EB', fontSize: '11.5px', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '3px' }}
+              >
+                {copied ? <Check size={11} color="#16A34A" /> : <Copy size={11} />}
+                <span>{copied ? 'Copied ID' : 'Copy Full UUID'}</span>
+              </button>
+            </div>
+
+            {/* Quick verification buttons for unverified / pending payments */}
+            {!isVerified && !rejectBox && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                <button
+                  onClick={() => onConfirm(order)}
+                  disabled={confirming}
+                  style={{
+                    padding: '7px 10px', borderRadius: '8px',
+                    background: confirming ? '#CBD5E1' : '#059669', color: '#FFFFFF',
+                    fontWeight: 800, fontSize: '11.5px', border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'
+                  }}
+                >
+                  <CheckCircle size={13} /> {confirming ? 'Verifying...' : 'Verify Payment'}
+                </button>
+                <button
+                  onClick={() => setRejectBox(true)}
+                  style={{
+                    padding: '7px 10px', borderRadius: '8px',
+                    background: '#FEF2F2', color: '#DC2626',
+                    fontWeight: 800, fontSize: '11.5px', border: '1px solid #FECACA', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'
+                  }}
+                >
+                  <XCircle size={13} /> Reject
+                </button>
+              </div>
+            )}
+
+            {/* Rejection input box */}
+            {rejectBox && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <input
+                  value={reason} onChange={e => setReason(e.target.value)}
+                  placeholder="Rejection reason for customer..."
+                  style={{ width: '100%', padding: '7px 10px', borderRadius: '8px', border: '1px solid #FECACA', fontSize: '11.5px', background: '#FEF2F2', boxSizing: 'border-box' }}
+                />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                  <button
+                    onClick={() => { onReject(order, reason); setRejectBox(false); }}
+                    style={{ padding: '7px', borderRadius: '8px', background: '#DC2626', color: '#FFFFFF', fontWeight: 800, fontSize: '11.5px', border: 'none', cursor: 'pointer' }}
+                  >
+                    Confirm Reject
+                  </button>
+                  <button
+                    onClick={() => { setRejectBox(false); setReason(''); }}
+                    style={{ padding: '7px', borderRadius: '8px', background: '#F1F5F9', color: '#475569', fontWeight: 700, fontSize: '11.5px', border: 'none', cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Status Change Selector */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#475569', flexShrink: 0 }}>Update Status:</span>
+              <select
+                value={order.status}
+                onChange={(e) => onStatus(order.id, e.target.value)}
+                style={{
+                  flex: 1, padding: '5px 8px', borderRadius: '8px',
+                  border: '1px solid #CBD5E1', fontSize: '11.5px',
+                  background: '#FFFFFF', fontWeight: 700, color: '#0F172A', cursor: 'pointer',
+                  height: '30px'
+                }}
+              >
+                <option value="pending_payment">Pending Payment</option>
+                <option value="confirmed">Confirmed / Verified</option>
+                <option value="preparing">Preparing Order</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="payment_rejected">Payment Rejected</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            {/* 4 Action Buttons Grid (Sleek, De-congested) */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginTop: '2px' }}>
+              <button
+                onClick={() => waMsg(`Hello ${addr.fullName || 'Customer'}, regarding your order #${order.id.slice(0,8).toUpperCase()} from Asmalabel:\nStatus: ${currentStatus.label}. Total: ₹${totalAmount.toFixed(0)}.`)}
+                style={{
+                  padding: '7px 10px', borderRadius: '8px',
+                  background: '#ECFDF5', color: '#059669', fontWeight: 750,
+                  fontSize: '11.5px', border: '1px solid #A7F3D0', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'
+                }}
+              >
+                <MessageCircle size={13} /> WhatsApp
+              </button>
+
+              <a
+                href={`tel:+91${addr.phone || ''}`}
+                style={{
+                  padding: '7px 10px', borderRadius: '8px',
+                  background: '#EFF6FF', color: '#2563EB', fontWeight: 750,
+                  fontSize: '11.5px', border: '1px solid #BFDBFE', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
+                  textDecoration: 'none'
+                }}
+              >
+                <Phone size={13} /> Call Customer
+              </a>
+
+              <button
+                onClick={() => printShippingLabel(order)}
+                style={{
+                  padding: '7px 10px', borderRadius: '8px',
+                  background: '#0F172A', color: '#FFFFFF', fontWeight: 750,
+                  fontSize: '11.5px', border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'
+                }}
+              >
+                <Printer size={13} /> Print Label
+              </button>
+
+              <button
+                onClick={(e) => { e.stopPropagation(); onDelete(order.id); }}
+                style={{
+                  padding: '7px 10px', borderRadius: '8px',
+                  background: '#FEF2F2', color: '#DC2626', fontWeight: 750,
+                  fontSize: '11.5px', border: '1px solid #FECACA', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'
+                }}
+              >
+                <Trash2 size={13} /> Delete
+              </button>
+            </div>
+
+          </div>
+
         </div>
       )}
     </div>
@@ -1382,9 +1859,9 @@ buildPages(4);
       <div style={{ flex:1, minHeight:0 }}>
 
         {/* Tab switcher — full width & scrollable on mobile */}
-        <div style={{ background:'#FFFFFF', borderBottom:'1px solid #E5E7EB', padding:'8px 16px', position:'sticky', top:'58px', zIndex:90, boxSizing:'border-box', width:'100%' }}>
+        <div className="admin-tab-bar-outer" style={{ background:'#FFFFFF', borderBottom:'1px solid #E5E7EB', padding:'8px 16px', position:'sticky', top:'58px', zIndex:90, boxSizing:'border-box', width:'100%' }}>
           <div style={{ maxWidth:'1360px', margin:'0 auto' }}>
-            <div style={{ display:'flex', gap:'4px', background:'#F1F5F9', padding:'3px', borderRadius:'12px', border:'1px solid #E2E8F0', overflowX:'auto', scrollbarWidth:'none', WebkitOverflowScrolling:'touch' }}>
+            <div className="admin-tab-bar-inner" style={{ display:'flex', gap:'4px', background:'#F1F5F9', padding:'3px', borderRadius:'12px', border:'1px solid #E2E8F0', overflowX:'auto', scrollbarWidth:'none', WebkitOverflowScrolling:'touch' }}>
               {[
                 { key:'orders',    label:'Orders',    icon:ShoppingBag },
                 { key:'products',  label:'Products',  icon:Package },

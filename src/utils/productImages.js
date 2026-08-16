@@ -1,62 +1,55 @@
-const IMAGE_MAP = {
-  // Tailoring
-  'sewing machine': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80',
-  'overlock machine': 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=800&auto=format&fit=crop&q=80',
-  'scissors': 'https://images.unsplash.com/photo-1584466977773-e625c37cdd50?w=800&auto=format&fit=crop&q=80',
-  'pinking shears': 'https://images.unsplash.com/photo-1594498258009-2e2bde84459e?w=800&auto=format&fit=crop&q=80',
-  'polyester thread': 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=800&auto=format&fit=crop&q=80',
-  'cotton thread': 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=800&auto=format&fit=crop&q=80',
-  'needle': 'https://images.unsplash.com/photo-1594498258009-2e2bde84459e?w=800&auto=format&fit=crop&q=80',
-  'leather needle': 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=800&auto=format&fit=crop&q=80',
-  'measuring tape': 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=800&auto=format&fit=crop&q=80',
-  'quilting ruler': 'https://images.unsplash.com/photo-1584466977773-e625c37cdd50?w=800&auto=format&fit=crop&q=80',
+import { supabase } from '../config/supabase';
 
-  // Fashion
-  'floral maxi': 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80',
-  'little black dress': 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&auto=format&fit=crop&q=80',
-  'casual a-line dress': 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=800&auto=format&fit=crop&q=80',
-  'dress': 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80',
-  'silk blouse': 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=800&auto=format&fit=crop&q=80',
-  'cotton crop top': 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&auto=format&fit=crop&q=80',
-  'blazer': 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&auto=format&fit=crop&q=80',
-  'jeans': 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&auto=format&fit=crop&q=80',
-  'palazzo': 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800&auto=format&fit=crop&q=80',
-  'kurti': 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&auto=format&fit=crop&q=80',
-  'anarkali': 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&auto=format&fit=crop&q=80',
-  'handbag': 'https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=800&auto=format&fit=crop&q=80',
-  'presser foot': '/images/collections/presser_feet.jpg',
-  'presser feet': '/images/collections/presser_feet.jpg',
-  'zipper foot': '/images/collections/presser_feet.jpg',
-  'buttonhole foot': '/images/collections/presser_feet.jpg',
+// Map of categories and subcategories to reliable Unsplash fallback images
+const FALLBACK_IMAGES = {
+  tailoring: {
+    scissors: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=800&auto=format&fit=crop&q=80',
+    threads: 'https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?w=800&auto=format&fit=crop&q=80',
+    needles: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=800&auto=format&fit=crop&q=80',
+    measuring: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?w=800&auto=format&fit=crop&q=80',
+    machines: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&auto=format&fit=crop&q=80',
+    presser_feet: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80',
+    default: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80'
+  },
+  fashion: {
+    dresses: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80',
+    tops: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&auto=format&fit=crop&q=80',
+    bottoms: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&auto=format&fit=crop&q=80',
+    ethnic: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&auto=format&fit=crop&q=80',
+    accessories: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&auto=format&fit=crop&q=80',
+    default: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80'
+  }
 };
 
-const CATEGORY_FALLBACKS = {
-  machines: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80',
-  scissors: 'https://images.unsplash.com/photo-1584466977773-e625c37cdd50?w=800&auto=format&fit=crop&q=80',
-  threads: 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=800&auto=format&fit=crop&q=80',
-  needles: 'https://images.unsplash.com/photo-1594498258009-2e2bde84459e?w=800&auto=format&fit=crop&q=80',
-  measuring: 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=800&auto=format&fit=crop&q=80',
-  presser_feet: '/images/collections/presser_feet.jpg',
-  dresses: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80',
-  tops: 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=800&auto=format&fit=crop&q=80',
-  bottoms: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&auto=format&fit=crop&q=80',
-  ethnic: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&auto=format&fit=crop&q=80',
-  accessories: 'https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=800&auto=format&fit=crop&q=80'
-};
-
+/**
+ * Returns a guaranteed valid image URL for a product.
+ * Checks:
+ * 1. product.image_url
+ * 2. product.images array (first element)
+ * 3. Fallback based on category/subcategory
+ */
 export function getProductImage(product) {
-  if (product && product.image_url && product.image_url.startsWith('http') && !product.image_url.includes('placehold.co')) {
-    return product.image_url;
-  }
-  if (!product) return 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80';
+  if (!product) return 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80';
 
-  const name = (product.name || '').toLowerCase();
-  for (const key in IMAGE_MAP) {
-    if (name.includes(key)) return IMAGE_MAP[key];
+  if (product.image_url && typeof product.image_url === 'string' && product.image_url.trim() !== '') {
+    return product.image_url.trim();
   }
 
-  if (product.sub_category && CATEGORY_FALLBACKS[product.sub_category]) {
-    return CATEGORY_FALLBACKS[product.sub_category];
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    const firstImg = product.images[0];
+    if (firstImg && typeof firstImg === 'string' && firstImg.trim() !== '') {
+      return firstImg.trim();
+    }
+  }
+
+  const category = (product.category || 'tailoring').toLowerCase();
+  const subCategory = (product.sub_category || '').toLowerCase();
+
+  if (FALLBACK_IMAGES[category]) {
+    if (FALLBACK_IMAGES[category][subCategory]) {
+      return FALLBACK_IMAGES[category][subCategory];
+    }
+    return FALLBACK_IMAGES[category].default;
   }
 
   return product.category === 'tailoring'
@@ -65,23 +58,45 @@ export function getProductImage(product) {
 }
 
 export function parseProductTags(product) {
-  if (!product) return { cleanDesc: '', badge: '', discount_tag: '' };
+  if (!product) return {
+    cleanDesc: '', badge: '', discount_tag: '', colors: [],
+    bundle: { enabled: true, companionIds: [], companionId: '', discountPct: 5, subtitle: '' }
+  };
 
   let desc = product.description || '';
   let badge = product.badge || product.tag || '';
   let discount_tag = product.discount_tag || '';
+  let colors = product.colors || [];
+  let bundle = { enabled: true, companionIds: [], companionId: '', discountPct: 5, subtitle: '' };
+
+  const bundleMatch = desc.match(/\[BUNDLE:([^\]]*)\]/);
+  if (bundleMatch) {
+    const bParts = bundleMatch[1].split('|');
+    const compStr = bParts[1] || '';
+    const companionIds = compStr ? compStr.split(',').filter(Boolean) : [];
+    bundle = {
+      enabled: bParts[0] !== 'false',
+      companionIds,
+      companionId: companionIds[0] || '',
+      discountPct: bParts[2] ? Number(bParts[2]) : 5,
+      subtitle: bParts[3] || ''
+    };
+    desc = desc.replace(/\s*\[BUNDLE:[^\]]*\]/g, '').trim();
+  }
 
   const tagMatch = desc.match(/\[TAG:([^\]]*)\]/);
   if (tagMatch) {
     const parts = tagMatch[1].split('|');
     if (parts[0]) badge = parts[0];
     if (parts[1]) discount_tag = parts[1];
+    if (parts[2]) colors = parts[2].split(',').filter(Boolean);
     desc = desc.replace(/\s*\[TAG:[^\]]*\]/g, '').trim();
   } else if (badge.includes('|')) {
     const parts = badge.split('|');
     badge = parts[0] || '';
     discount_tag = parts[1] || '';
+    if (parts[2]) colors = parts[2].split(',').filter(Boolean);
   }
 
-  return { cleanDesc: desc, badge, discount_tag };
+  return { cleanDesc: desc, badge, discount_tag, colors, bundle };
 }

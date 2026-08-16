@@ -11,13 +11,22 @@ const PLATFORMS = [
     sub: '@as_tailoring_tools_textiles',
     url: 'https://www.instagram.com/as_tailoring_tools_textiles',
     countLabel: 'Followers',
-    ic: '#7C3AED', ib: 'linear-gradient(135deg,#F5F3FF,#EDE9FE)',
+    ic: '#E1306C',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-        stroke="#7C3AED" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+      <svg width="40" height="40" viewBox="0 0 24 24" style={{ borderRadius: '10px' }}>
+        <defs>
+          <linearGradient id="ig-fill-mgr-1" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#f09433" />
+            <stop offset="25%" stopColor="#e6683c" />
+            <stop offset="50%" stopColor="#dc2743" />
+            <stop offset="75%" stopColor="#cc2366" />
+            <stop offset="100%" stopColor="#bc1888" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="24" height="24" rx="6.5" ry="6.5" fill="url(#ig-fill-mgr-1)" />
+        <rect x="5.2" y="5.2" width="13.6" height="13.6" rx="3.8" ry="3.8" fill="none" stroke="#FFFFFF" strokeWidth="1.6" />
+        <circle cx="12" cy="12" r="3.3" fill="none" stroke="#FFFFFF" strokeWidth="1.6" />
+        <circle cx="16.1" cy="7.9" r="0.9" fill="#FFFFFF" />
       </svg>
     ),
   },
@@ -27,13 +36,22 @@ const PLATFORMS = [
     sub: '@asma_label.in',
     url: 'https://www.instagram.com/asma_label.in',
     countLabel: 'Followers',
-    ic: '#DB2777', ib: 'linear-gradient(135deg,#FFF1F2,#FFE4E6)',
+    ic: '#E1306C',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-        stroke="#DB2777" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+      <svg width="40" height="40" viewBox="0 0 24 24" style={{ borderRadius: '10px' }}>
+        <defs>
+          <linearGradient id="ig-fill-mgr-2" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#f09433" />
+            <stop offset="25%" stopColor="#e6683c" />
+            <stop offset="50%" stopColor="#dc2743" />
+            <stop offset="75%" stopColor="#cc2366" />
+            <stop offset="100%" stopColor="#bc1888" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="24" height="24" rx="6.5" ry="6.5" fill="url(#ig-fill-mgr-2)" />
+        <rect x="5.2" y="5.2" width="13.6" height="13.6" rx="3.8" ry="3.8" fill="none" stroke="#FFFFFF" strokeWidth="1.6" />
+        <circle cx="12" cy="12" r="3.3" fill="none" stroke="#FFFFFF" strokeWidth="1.6" />
+        <circle cx="16.1" cy="7.9" r="0.9" fill="#FFFFFF" />
       </svg>
     ),
   },
@@ -43,24 +61,25 @@ const PLATFORMS = [
     sub: '@astailoringtoolstextiles',
     url: 'https://youtube.com/@astailoringtoolstextiles',
     countLabel: 'Subscribers',
-    ic: '#DC2626', ib: 'linear-gradient(135deg,#FEF2F2,#FEE2E2)',
+    ic: '#DC2626',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="#DC2626">
-        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      <svg width="40" height="40" viewBox="0 0 24 24" style={{ borderRadius: '10px' }}>
+        <rect width="24" height="24" rx="6.5" fill="#FF0000" />
+        <path fill="#FFFFFF" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
       </svg>
     ),
   },
   {
     key: 'facebook',
     label: 'Facebook',
-    sub: 'Asmalabel',
+    sub: 'AS textile & tailoring',
     url: 'https://facebook.com/share/166X2VepUx/?mibextid=wwXIfr',
     countLabel: 'Followers',
-    ic: '#2563EB', ib: 'linear-gradient(135deg,#EFF6FF,#DBEAFE)',
+    ic: '#1877F2',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-        stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+      <svg width="40" height="40" viewBox="0 0 24 24" style={{ borderRadius: '10px' }}>
+        <circle cx="12" cy="12" r="12" fill="#1877F2"/>
+        <path d="M13.67 19.5V12.65H16.02L16.37 9.94H13.67V8.21C13.67 7.42 13.89 6.89 15.02 6.89L16.46 6.89V4.46C15.82 4.37 15.18 4.33 14.54 4.33C12.64 4.33 11.34 5.49 11.34 7.62V9.94H9V12.65H11.34V19.5H13.67Z" fill="#FFFFFF"/>
       </svg>
     ),
   },
@@ -184,7 +203,7 @@ export default function SocialMediaManager() {
 
             {/* Platform header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: p.ib, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {p.icon}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>

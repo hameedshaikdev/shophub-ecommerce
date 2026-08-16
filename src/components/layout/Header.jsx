@@ -373,8 +373,8 @@ export default function Header() {
               <a href="https://wa.me/917013942909?text=Hi!%20I%20need%20help%20with%20Asmalabel"
                 target="_blank" rel="noopener noreferrer" onClick={() => setDrawer(false)}
                 className="sh-drawer-card-item">
-                <div className="sh-drawer-icon-box" style={{ background:'rgba(34, 197, 94, 0.12)', color:'#16A34A' }}>
-                  <MessageCircle size={18} />
+                <div className="sh-drawer-icon-box" style={{ background:'rgba(34, 197, 94, 0.12)' }}>
+                  <img src="/icons/whatsapp.png" alt="WhatsApp" style={{ width:'20px', height:'20px', objectFit:'cover', borderRadius:'6px' }} />
                 </div>
                 <div style={{ flex:1 }}>
                   <p style={{ fontSize:'14px', fontWeight:700, color:'#111827', margin:0 }}>WhatsApp Support</p>

@@ -52,55 +52,50 @@ export default function CollectionsEditor({ collectionsData = {}, onChange }) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', overflow: 'hidden', minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
-      {/* Tab Switcher */}
-      <div className="cms-horizontal-options" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '14px 16px', borderRadius: '16px', border: '1px solid #E2E8F0', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
-        <div style={{ display: 'flex', gap: '8px', flex: '1 1 auto', minWidth: 0, overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
-          <button
-            onClick={() => setActiveTab('tailoring')}
-            style={{
-              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
-              background: activeTab === 'tailoring' ? 'linear-gradient(135deg, #6B4F8A, #9C80AA)' : '#F1F5F9',
-              color: activeTab === 'tailoring' ? '#FFFFFF' : '#475569',
-            }}
-          >
-            🪡 Tailoring Collections
-          </button>
-          <button
-            onClick={() => setActiveTab('fashion')}
-            style={{
-              padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
-              background: activeTab === 'fashion' ? 'linear-gradient(135deg, #0A2540, #1A4A7A)' : '#F1F5F9',
-              color: activeTab === 'fashion' ? '#FFFFFF' : '#475569',
-            }}
-          >
-            👗 Women Fashion Collections
-          </button>
-        </div>
-
-        <div style={{ display:'flex', gap:'8px', alignItems:'center', flexShrink: 0 }}>
-          <button
-            onClick={() => setShowResetWarning(true)}
-            title="Reset to Website Live Collections"
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '6px',
-              padding: '8px 14px', borderRadius: '10px', background: '#FEF2F2', color: '#DC2626',
-              fontSize: '12px', fontWeight: 800, border: '1px solid #FECACA', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap'
-            }}
-          >
-            <RotateCcw size={13} /> Reset Placeholders
-          </button>
-          <button
-            onClick={handleAddCollection}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '6px',
-              padding: '8px 14px', borderRadius: '10px', background: '#0F172A', color: '#FFF',
-              fontSize: '12px', fontWeight: 700, border: 'none', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap'
-            }}
-          >
-            <Plus size={14} /> Add Card
-          </button>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', minWidth: 0, width: '100%', boxSizing: 'border-box' }}>
+      {/* Tab Switcher & Actions */}
+      <div className="cms-horizontal-options" style={{ display: 'flex', alignItems: 'center', background: '#FFFFFF', padding: '10px 14px', borderRadius: '16px', border: '1px solid #E2E8F0', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', width: '100%', boxSizing: 'border-box' }}>
+        <button
+          onClick={() => setActiveTab('tailoring')}
+          style={{
+            padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+            background: activeTab === 'tailoring' ? 'linear-gradient(135deg, #6B4F8A, #9C80AA)' : '#F1F5F9',
+            color: activeTab === 'tailoring' ? '#FFFFFF' : '#475569',
+          }}
+        >
+          🪡 Tailoring Collections
+        </button>
+        <button
+          onClick={() => setActiveTab('fashion')}
+          style={{
+            padding: '8px 14px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+            background: activeTab === 'fashion' ? 'linear-gradient(135deg, #0A2540, #1A4A7A)' : '#F1F5F9',
+            color: activeTab === 'fashion' ? '#FFFFFF' : '#475569',
+          }}
+        >
+          👗 Women Fashion Collections
+        </button>
+        <button
+          onClick={() => setShowResetWarning(true)}
+          title="Reset to Website Live Collections"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            padding: '8px 14px', borderRadius: '10px', background: '#FEF2F2', color: '#DC2626',
+            fontSize: '12px', fontWeight: 800, border: '1px solid #FECACA', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap', marginLeft: 'auto'
+          }}
+        >
+          <RotateCcw size={13} /> Reset Placeholders
+        </button>
+        <button
+          onClick={handleAddCollection}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            padding: '8px 14px', borderRadius: '10px', background: '#0F172A', color: '#FFF',
+            fontSize: '12px', fontWeight: 700, border: 'none', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap'
+          }}
+        >
+          <Plus size={14} /> Add Card
+        </button>
       </div>
 
       {/* Grid of Collection Cards */}

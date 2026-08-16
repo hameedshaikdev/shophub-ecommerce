@@ -1,28 +1,46 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Heart, Minus, Plus, ShoppingCart, ArrowLeft,
-  Truck, RefreshCw, Star, Package,
-  ChevronRight, MessageCircle, Sparkles, ShieldCheck,
-  Maximize2, X, Play, Tv, ExternalLink
+  Truck, Star, Package, Scissors, Sparkles,
+  ChevronRight, ChevronUp, ChevronDown, MessageCircle,
+  Maximize2, X, Play, Tv, ExternalLink,
+  ArrowDown, Zap, Clock, Calendar, CheckCircle2,
+  Home, BadgeCheck, ShieldCheck, ArrowRight, ThumbsUp, ThumbsDown, Check, Send
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
 import { getProductImage, parseProductTags } from '../utils/productImages';
 import SEO from '../components/common/SEO';
+import ProductVideoPlayer from '../components/products/ProductVideoPlayer';
 
 export default function ProductDetail() {
   const { id }       = useParams();
   const navigate     = useNavigate();
-  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist, showToast } = useApp();
 
-  const [product,      setProduct]      = useState(null);
-  const [related,      setRelated]      = useState([]);
-  const [loading,      setLoading]      = useState(true);
-  const [quantity,     setQuantity]     = useState(1);
-  const [added,        setAdded]        = useState(false);
-  const [selImg,       setSelImg]       = useState(0);
+  const [product,        setProduct]        = useState(null);
+  const [related,        setRelated]        = useState([]);
+  const [addons,         setAddons]         = useState([]);
+  const [fbtAdded,       setFbtAdded]       = useState(false);
+  const [cardAddedId,    setCardAddedId]    = useState(null);
+  const [shared,         setShared]         = useState(false);
+  const [loading,        setLoading]        = useState(true);
+  const [quantity,       setQuantity]       = useState(1);
+  const [added,          setAdded]          = useState(false);
+  const [selImg,         setSelImg]         = useState(0);
+  const [descOpen,       setDescOpen]       = useState(true);
+  const [peaceOpen,      setPeaceOpen]      = useState(true);
+  const [reviewsOpen,    setReviewsOpen]    = useState(true);
+  const [showAllReviews, setShowAllReviews] = useState(false);
+  const [writeReviewOpen, setWriteReviewOpen] = useState(false);
+  const [newReview,      setNewReview]      = useState({ name: '', rating: 5, comment: '', title: '' });
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewLikes,    setReviewLikes]    = useState({ 0: 2, 1: 5, 2: 3 });
+
+  // Dynamic color selection if product has colors configured in DB
+  const [selectedColor,  setSelectedColor]  = useState(null);
 
   // Touch & Mouse Drag Gesture Tracking
   const touchStartX = useRef(0);
@@ -34,8 +52,75 @@ export default function ProductDetail() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [zoomScale,    setZoomScale]    = useState(1);
 
+  // Live Dispatch Countdown Timer
+  const [timeLeft, setTimeLeft] = useState({ hours: '00', minutes: '23', seconds: '46' });
+
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = new Date();
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+      const diff = Math.max(0, endOfDay - now);
+
+      const hours = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+      const minutes = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+      const seconds = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+
+      setTimeLeft({ hours, minutes, seconds });
+    };
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Delivery Dates formatted
+  const deliveryDates = useMemo(() => {
+    const now = new Date();
+    const orderTodayStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    const readyDate1 = new Date(now);
+    readyDate1.setDate(readyDate1.getDate() + 1);
+    const readyDate2 = new Date(now);
+    readyDate2.setDate(readyDate2.getDate() + 2);
+    const readyStr = `${readyDate1.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${readyDate2.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
+    const deliverDate = new Date(now);
+    deliverDate.setDate(deliverDate.getDate() + 4);
+    const deliverStr = deliverDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    return { orderTodayStr, readyStr, deliverStr };
+  }, []);
+
   const inWishlist = product ? isInWishlist(product.id) : false;
-  const { cleanDesc, badge, discount_tag } = parseProductTags(product);
+  const { cleanDesc, discount_tag, colors: parsedColors, bundle } = parseProductTags(product);
+
+  const [bundleCompanions, setBundleCompanions] = useState([]);
+
+  useEffect(() => {
+    if (!bundle?.enabled) {
+      setBundleCompanions([]);
+      return;
+    }
+    const cIds = bundle?.companionIds?.length
+      ? bundle.companionIds
+      : (bundle?.companionId ? [bundle.companionId] : []);
+
+    if (cIds.length > 0) {
+      (async () => {
+        try {
+          const { data } = await supabase.from('products').select('*').in('id', cIds);
+          if (data && data.length > 0) {
+            setBundleCompanions(data);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      })();
+    } else {
+      setBundleCompanions([]);
+    }
+  }, [bundle?.companionIds, bundle?.companionId, bundle?.enabled]);
 
   useEffect(() => {
     (async () => {
@@ -44,11 +129,21 @@ export default function ProductDetail() {
         const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
         if (error) throw error;
         setProduct(data);
+        const availableColors = (data?.colors && Array.isArray(data.colors) && data.colors.length > 0)
+          ? data.colors
+          : (parsedColors || []);
+        if (availableColors.length > 0) {
+          setSelectedColor(availableColors[0]);
+        }
         if (data) {
           const { data: rel } = await supabase.from('products').select('*')
             .eq('category', data.category).eq('active', true)
-            .neq('id', id).limit(8);
+            .neq('id', id).limit(10);
           setRelated(rel || []);
+
+          const { data: adds } = await supabase.from('products').select('*')
+            .eq('active', true).neq('id', id).limit(2);
+          setAddons(adds || []);
         }
       } catch(err) { console.error(err); }
       finally { setLoading(false); }
@@ -60,6 +155,63 @@ export default function ProductDetail() {
     addToCart(product, quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+  };
+
+  const handleBuyNow = () => {
+    if (!product) return;
+    addToCart(product, quantity);
+    navigate('/cart');
+  };
+
+  const handleWish = (e) => {
+    if (e) e.stopPropagation();
+    if (!product) return;
+    inWishlist ? removeFromWishlist(product.id) : addToWishlist(product);
+  };
+
+  const handleShareProduct = async (e) => {
+    if (e) e.stopPropagation();
+    const shareData = {
+      title: product?.name || 'Asmalabel Product',
+      text: `Check out ${product?.name} at Asmalabel!`,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          copyProductLink();
+        }
+      }
+    } else {
+      copyProductLink();
+    }
+  };
+
+  const copyProductLink = () => {
+    try {
+      navigator.clipboard.writeText(window.location.href);
+      setShared(true);
+      if (showToast) {
+        showToast('Link Copied to Clipboard!', product, 'wishlist');
+      }
+      setTimeout(() => setShared(false), 2200);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSubmitReview = (e) => {
+    e.preventDefault();
+    if (!newReview.name || !newReview.comment) return;
+    setReviewSubmitted(true);
+    setTimeout(() => {
+      setReviewSubmitted(false);
+      setWriteReviewOpen(false);
+      setNewReview({ name: '', rating: 5, comment: '', title: '' });
+    }, 2000);
   };
 
   // Touch Handlers
@@ -89,17 +241,6 @@ export default function ProductDetail() {
   const handlePrev = () => setSelImg(i => Math.max(i - 1, 0));
   const handleNext = (total) => setSelImg(i => Math.min(i + 1, total - 1));
 
-  const handleBuyNow = () => {
-    if (!product) return;
-    addToCart(product, quantity);
-    navigate('/cart');
-  };
-
-  const handleWish = () => {
-    if (!product) return;
-    inWishlist ? removeFromWishlist(product.id) : addToWishlist(product);
-  };
-
   const priceNum = Number(product?.price || 0);
   const origPriceNum = Number(product?.original_price || 0);
 
@@ -107,12 +248,17 @@ export default function ProductDetail() {
     ? Math.round(((origPriceNum - priceNum) / origPriceNum) * 100)
     : null;
 
-  // All images: fallback to realistic Unsplash photo if missing
+  // Single clean list of unique images
   const mainImage = getProductImage(product);
-  const allImages = product ? [
-    mainImage,
-    ...(product.images || []),
-  ] : [];
+  const allImages = useMemo(() => {
+    if (!product) return [];
+    const set = new Set();
+    if (mainImage) set.add(mainImage);
+    if (Array.isArray(product.images)) {
+      product.images.forEach(img => { if (img && typeof img === 'string') set.add(img); });
+    }
+    return Array.from(set);
+  }, [product, mainImage]);
 
   useEffect(() => {
     const handleGlobalMouseMove = (e) => {
@@ -161,6 +307,53 @@ export default function ProductDetail() {
   }
 
   const currentImg = allImages[selImg] || mainImage;
+  const productColors = (product.colors && Array.isArray(product.colors) && product.colors.length > 0)
+    ? product.colors
+    : (parsedColors || []);
+
+  const companionProduct = addons[0] || related[0] || null;
+
+  // Curated list of verified buyer reviews matching Image 2
+  const reviewsList = [
+    {
+      id: 0,
+      rating: 5,
+      title: 'Worth the money',
+      date: '3 months ago',
+      comment: 'Super sharp scissors and premium finish! Cuts through multiple layers of fabric very easily without any hand fatigue.',
+      author: 'Pandu Kondru',
+      verified: true
+    },
+    {
+      id: 1,
+      rating: 5,
+      title: 'Very useful & pretty',
+      date: '1 month ago',
+      comment: 'Just 24 hours express delivery in Nellore AP and wonderful build quality according to description. Highly recommended!',
+      author: 'Shariq P.',
+      verified: true
+    },
+    {
+      id: 2,
+      rating: 4,
+      title: 'A good investment',
+      date: '2 months ago',
+      comment: 'One of my favourite purchases from Asmalabel! Heavy duty, sharp blade and smooth action. Totally worth the price.',
+      author: 'Deepika B.',
+      verified: true
+    },
+    {
+      id: 3,
+      rating: 5,
+      title: 'Flawless tailoring tools',
+      date: '3 weeks ago',
+      comment: 'I run a boutique tailoring shop and have ordered multiple tools from Asmalabel. All are 100% genuine and top notch.',
+      author: 'Priya Sharma',
+      verified: true
+    }
+  ];
+
+  const displayedReviews = showAllReviews ? reviewsList : reviewsList.slice(0, 2);
 
   return (
     <div className="pd-page-wrapper">
@@ -170,58 +363,26 @@ export default function ProductDetail() {
         canonical={`https://asmalabel.in/product/${product.id}`}
         ogType="product"
         ogImage={getProductImage(product)}
-        schema={{
-          "@context": "https://schema.org/",
-          "@type": "Product",
-          "name": product.name,
-          "image": [getProductImage(product)],
-          "description": cleanDesc || product.name,
-          "sku": product.id,
-          "brand": {
-            "@type": "Brand",
-            "name": "Asmalabel"
-          },
-          "offers": {
-            "@type": "Offer",
-            "url": `https://asmalabel.in/product/${product.id}`,
-            "priceCurrency": "INR",
-            "price": Number(product.price || 0),
-            "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-            "seller": {
-              "@type": "Organization",
-              "name": "Asmalabel"
-            }
-          }
-        }}
       />
-
-      {/* Glass Back Nav */}
-      <div className="pd-sticky-header">
-        <div className="pd-sticky-header-inner">
-          <button onClick={() => navigate(-1)} className="pd-back-pill">
-            <ArrowLeft size={15} /> Back
-          </button>
-          {/* Breadcrumb */}
-          <div className="pd-breadcrumbs">
-            <span style={{ cursor:'pointer' }} onClick={() => navigate('/')}>Home</span>
-            <ChevronRight size={11} />
-            <span style={{ cursor:'pointer', textTransform:'capitalize' }} onClick={() => navigate('/')}>{product.category}</span>
-            {product.sub_category && <>
-              <ChevronRight size={11} />
-              <span style={{ textTransform:'capitalize', color:'#111827', fontWeight:800 }}>{product.sub_category}</span>
-            </>}
-          </div>
-        </div>
-      </div>
 
       <div className="pd-content-container">
 
-        {/* ── UNIFIED SINGLE PRODUCT CARD ── */}
+        {/* ── TOP BREADCRUMB / BACK LINK ── */}
+        <div className="pd-top-breadcrumb-bar">
+          <button onClick={() => navigate(-1)} className="pd-back-link">
+            <ArrowLeft size={15} /> Back to Products
+          </button>
+          <span className="pd-breadcrumb-cat">
+            {product.category === 'tailoring' ? '🪡 Tailoring Collection' : '👗 Fashion Collection'}
+          </span>
+        </div>
+
+        {/* ── UNIFIED PRODUCT OVERVIEW CARD ── */}
         <div className="product-main-card">
 
-          {/* ── IMAGE SECTION ── */}
+          {/* ── GALLERY SECTION ── */}
           <div className="pd-gallery-section">
-            {/* Main Image — swipeable */}
+            {/* Main Image Frame with swipe and rating tag */}
             <div
               className="pd-image-frame"
               onTouchStart={handleTouchStart}
@@ -235,6 +396,20 @@ export default function ProductDetail() {
                   setZoomScale(1);
                 }
               }}>
+
+              {/* Top-Left Rating Pill [ 4.3 ★ | 82 ] */}
+              <div className="pd-flipkart-rating-tag">
+                <span className="pd-rating-num">4.3</span>
+                <Star size={11} fill="#10B981" color="#10B981" />
+                <span className="pd-rating-divider">|</span>
+                <span className="pd-rating-count">82</span>
+              </div>
+
+              {/* Free Shipping Tag */}
+              <div className="pd-free-shipping-tag">
+                <Truck size={12} color="#059669" />
+                <span>Free Shipping</span>
+              </div>
 
               <motion.img
                 key={selImg}
@@ -269,27 +444,14 @@ export default function ProductDetail() {
                 </button>
               )}
 
-              {/* Dot indicators — Small round dots */}
+              {/* Dot indicators */}
               {allImages.length > 1 && (
-                <div style={{ position:'absolute', bottom:'14px', left:'50%', transform:'translateX(-50%)', display:'flex', alignItems:'center', gap:'6px', zIndex:3, background:'rgba(15,23,42,0.7)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', padding:'4px 10px', borderRadius:'9999px', boxShadow:'0 4px 16px rgba(0,0,0,0.2)' }}>
+                <div className="pd-image-dots-container">
                   {allImages.map((_, i) => (
                     <span
                       key={i}
                       onClick={(e) => { e.stopPropagation(); setSelImg(i); }}
-                      style={{
-                        display: 'inline-block',
-                        width: selImg === i ? '14px' : '6px',
-                        height: '6px',
-                        minHeight: '6px',
-                        maxHeight: '6px',
-                        minWidth: selImg === i ? '14px' : '6px',
-                        maxWidth: selImg === i ? '14px' : '6px',
-                        borderRadius: '9999px',
-                        background: selImg === i ? '#FFFFFF' : 'rgba(255,255,255,0.45)',
-                        cursor: 'pointer',
-                        transition: 'all 250ms ease',
-                        flexShrink: 0
-                      }}
+                      className={`pd-image-dot ${selImg === i ? 'active' : ''}`}
                     />
                   ))}
                 </div>
@@ -302,15 +464,28 @@ export default function ProductDetail() {
                 <Maximize2 size={12} /> Full Photo
               </button>
 
-              {/* Wishlist */}
+              {/* Neutral Border Wishlist Button */}
               <motion.button onClick={(e) => { e.stopPropagation(); handleWish(e); }}
-                whileHover={{ scale: 1.1, y: -1 }} whileTap={{ scale: .92 }}
-                className="pd-wishlist-circle">
-                <Heart size={18} fill={inWishlist ? '#E94560' : 'none'} color={inWishlist ? '#E94560' : '#4B5563'} />
+                whileHover={{ scale: 1.1 }} whileTap={{ scale: .92 }}
+                className="pd-wishlist-circle"
+                title={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}>
+                <Heart size={18} fill={inWishlist ? '#EF4444' : 'none'} color={inWishlist ? '#EF4444' : '#475569'} />
+              </motion.button>
+
+              {/* Share Product Button (Flipkart Style) */}
+              <motion.button onClick={(e) => { e.stopPropagation(); handleShareProduct(e); }}
+                whileHover={{ scale: 1.1 }} whileTap={{ scale: .92 }}
+                className="pd-share-circle"
+                title="Share this product">
+                {shared ? (
+                  <Check size={16} color="#16A34A" />
+                ) : (
+                  <Send size={16} color="#475569" style={{ transform: 'rotate(-20deg)', marginLeft: '-2px' }} />
+                )}
               </motion.button>
             </div>
 
-            {/* Thumbnail strip */}
+            {/* Compact Thumbnail strip (Only shown if multiple images exist) */}
             {allImages.length > 1 && (
               <div className="pd-thumbnails-strip sh-scroll-hide">
                 {allImages.map((img, i) => (
@@ -326,258 +501,728 @@ export default function ProductDetail() {
           {/* ── DETAILS SECTION ── */}
           <div className="pd-details-section">
 
-            {/* Category Tag */}
-            <div className="pd-category-pill">
-              <Sparkles size={11} style={{ verticalAlign:'middle', marginRight:'4px' }} />
-              {product.category}
-              {product.sub_category && <span>• {product.sub_category}</span>}
-            </div>
-
-            {/* Name */}
-            <h1 className="pd-product-title">
+            {/* Product Title */}
+            <h1 className="pd-title-heading">
               {product.name}
             </h1>
 
-            {/* Rating */}
-            <div className="pd-rating-block">
-              {[...Array(5)].map((_,i) => (
-                <Star key={i} size={14} fill={i<4?'#F59E0B':'none'} color={i<4?'#F59E0B':'#D1D5DB'} />
-              ))}
-              <span className="pd-rating-label">
-                4.8 / 5.0 Rating • Certified Quality
-              </span>
-            </div>
-
-            {/* Price block */}
-            <div className="pd-price-card">
-              <div className="pd-price-row-wrap">
-                <span className="pd-current-price-num">
-                  ₹{priceNum.toFixed(0)}
-                </span>
+            {/* Price Presentation */}
+            <div className="pd-price-overview-box">
+              <div className="pd-price-headline-row">
+                {discount && (
+                  <span className="pd-discount-badge-green">
+                    <ArrowDown size={14} strokeWidth={3} /> {discount}%
+                  </span>
+                )}
                 {origPriceNum > priceNum && (
-                  <span className="pd-original-price-num">
+                  <span className="pd-mrp-strikethrough">
                     ₹{origPriceNum.toFixed(0)}
                   </span>
                 )}
+                <span className="pd-main-price-highlight">
+                  ₹{priceNum.toFixed(0)}
+                </span>
                 {(discount_tag || discount) && (
-                  <span className="pd-discount-pill-tag">
-                    {discount_tag || `-${discount}% OFF`}
-                  </span>
-                )}
-                {discount && (
-                  <span className="pd-savings-pill-tag">
-                    Save ₹{(origPriceNum - priceNum).toFixed(0)}
+                  <span className="pd-red-off-pill">
+                    {discount_tag || `${discount}% OFF`}
                   </span>
                 )}
               </div>
-              {product.unit && (
-                <p className="pd-unit-label-text">Unit: {product.unit}</p>
-              )}
 
-              {/* Stock status */}
+              <div className="pd-promise-fee-row">
+                <span>Taxes included • Free delivery in Andhra Pradesh</span>
+                <ChevronRight size={12} />
+              </div>
+
+              {/* Stock Status Indicator */}
               {product.stock !== null && (
                 <div className="pd-stock-pill-box" style={{ background: product.stock === 0 ? 'rgba(239,68,68,0.08)' : product.stock < 10 ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)' }}>
                   <div className="pd-live-pulse-dot" style={{ background: product.stock === 0 ? '#EF4444' : product.stock < 10 ? '#F59E0B' : '#10B981' }} />
-                  <span style={{ fontSize:'11px', fontWeight:800, color: product.stock === 0 ? '#EF4444' : product.stock < 10 ? '#D97706' : '#059669' }}>
+                  <span style={{ fontSize:'11.5px', fontWeight:800, color: product.stock === 0 ? '#EF4444' : product.stock < 10 ? '#D97706' : '#059669' }}>
                     {product.stock === 0 ? 'Out of Stock' : product.stock < 10 ? `Only ${product.stock} left in stock!` : `In Stock (${product.stock} units)`}
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Description */}
-            {cleanDesc && (
-              <div className="pd-description-card">
-                <p className="pd-section-subheading">
-                  Description & Specifications
-                </p>
-                <p className="pd-description-text">
-                  {cleanDesc}
-                </p>
+            {/* Dynamic Product Colors if configured from Admin */}
+            {productColors.length > 0 && (
+              <div className="pd-variants-box">
+                <span className="pd-variant-label">
+                  Color: <strong>{selectedColor || productColors[0]}</strong>
+                </span>
+                <div className="pd-swatches-row">
+                  {productColors.map((c, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedColor(c)}
+                      className={`pd-swatch-circle ${selectedColor === c ? 'active' : ''}`}
+                      title={c}
+                      style={{ backgroundColor: c }}
+                    />
+                  ))}
+                </div>
               </div>
             )}
 
-            {/* ── PRODUCT VIDEOS & DEMOS ── */}
-            {(() => {
-              const rawV = product.video_links || product.videos || [];
-              let videoList = [];
-              try {
-                if (Array.isArray(rawV)) videoList = [...rawV];
-                else if (typeof rawV === 'string' && rawV.trim()) videoList = JSON.parse(rawV);
-              } catch (e) {
-                if (typeof rawV === 'string' && rawV.startsWith('http')) videoList = [{ title: 'Product Demo', url: rawV }];
-              }
-
-              if (product.video_url && !videoList.some(v => (v.url || v) === product.video_url)) {
-                videoList.push({ title: 'Product Overview', url: product.video_url });
-              }
-
-              if (videoList.length === 0) return null;
-
-              const getEmbedUrl = (urlStr) => {
-                if (!urlStr || typeof urlStr !== 'string') return null;
-                const m = urlStr.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-                return m ? `https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3` : null;
-              };
-
-              return (
-                <div className="pd-description-card" style={{ background: '#F8FAFC', border: '1.5px solid #E2E8F0', marginTop: '16px' }}>
-                  <p className="pd-section-subheading" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#0F172A', margin: 0 }}>
-                    <Tv size={16} color="#2563EB" /> Product Videos & Demos
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '12px' }}>
-                    {videoList.map((v, idx) => {
-                      const vUrl = typeof v === 'string' ? v : (v.url || v.link || '');
-                      const vTitle = typeof v === 'object' && v.title ? v.title : `Product Demo ${idx + 1}`;
-                      const embedUrl = getEmbedUrl(vUrl);
-
-                      return (
-                        <div key={idx} style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', border: '1px solid #E2E8F0', padding: '12px', boxShadow: '0 4px 12px rgba(15,23,42,0.03)' }}>
-                          <p style={{ fontSize: '13px', fontWeight: 800, color: '#1E293B', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px', margin: '0 0 10px 0' }}>
-                            <Play size={14} color="#EF4444" fill="#EF4444" /> {vTitle}
-                          </p>
-                          {embedUrl ? (
-                            <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', borderRadius: '12px', overflow: 'hidden', background: '#000' }}>
-                              <iframe
-                                src={embedUrl}
-                                title={vTitle}
-                                style={{ width: '100%', height: '100%', border: 'none' }}
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                              />
-                            </div>
-                          ) : (
-                            <a href={vUrl} target="_blank" rel="noopener noreferrer"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '10px 16px', borderRadius: '10px', background: '#EFF6FF', color: '#2563EB', fontWeight: 800, fontSize: '12px', textDecoration: 'none', border: '1px solid #BFDBFE' }}>
-                              <ExternalLink size={14} /> Watch Video Demo
-                            </a>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Quantity selector */}
+            {/* Quantity Selector & Quick Action Row */}
             {product.stock !== 0 && (
-              <div style={{ display:'flex', flexDirection:'column', gap:'6px' }}>
-                <p className="pd-section-subheading">
-                  Select Quantity
-                </p>
-                <div className="pd-quantity-container">
-                  <button onClick={() => setQuantity(q => Math.max(1, q-1))} className="pd-qty-circle">
-                    <Minus size={13} color="#111827" />
+              <div className="pd-qty-wish-row">
+                <div className="pd-quantity-box">
+                  <button onClick={() => setQuantity(q => Math.max(1, q-1))} className="pd-qty-btn" title="Decrease">
+                    <Minus size={13} color="#0F172A" />
                   </button>
-                  <span className="pd-quantity-count">{quantity}</span>
-                  <button onClick={() => setQuantity(q => product.stock ? Math.min(product.stock, q+1) : q+1)} className="pd-qty-circle">
-                    <Plus size={13} color="#111827" />
+                  <span className="pd-qty-val">{quantity}</span>
+                  <button onClick={() => setQuantity(q => product.stock ? Math.min(product.stock, q+1) : q+1)} className="pd-qty-btn" title="Increase">
+                    <Plus size={13} color="#0F172A" />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="pd-action-buttons-wrap">
+            {/* High-Impact Action Buttons */}
+            <div className="pd-cta-buttons-container">
               {product.stock !== 0 ? (
                 <>
                   <motion.button onClick={handleAddToCart}
-                    whileHover={{ scale: 1.015, y: -1 }} whileTap={{ scale: .985 }}
-                    className="pd-add-to-cart-button"
-                    style={{ background: added ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #1E293B, #0F172A)' }}>
-                    <ShoppingCart size={17} />
-                    {added ? '✓ Added to Cart!' : 'Add to Cart'}
+                    whileHover={{ scale: 1.01 }} whileTap={{ scale: .99 }}
+                    className="pd-cart-btn-primary"
+                    style={{ background: added ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #1A1A2E, #0F3460)' }}>
+                    <ShoppingCart size={16} strokeWidth={2.5} />
+                    {added ? '✓ Added to Cart!' : 'Add to cart'}
                   </motion.button>
+
                   <motion.button onClick={handleBuyNow}
-                    whileHover={{ scale: 1.015, y: -1 }} whileTap={{ scale: .985 }}
-                    className="pd-buy-now-button">
-                    Buy Now Immediately
+                    whileHover={{ scale: 1.01 }} whileTap={{ scale: .99 }}
+                    className="pd-buy-btn-accent">
+                    <Zap size={16} fill="#FFFFFF" />
+                    <span>Buy it now</span>
+                    <ChevronRight size={15} />
                   </motion.button>
                 </>
               ) : (
-                <div style={{ padding:'14px', borderRadius:'12px', background:'#F1F5F9', textAlign:'center', fontSize:'14px', fontWeight:800, color:'#9CA3AF' }}>
+                <div className="pd-out-of-stock-box">
                   Currently Out of Stock
                 </div>
               )}
             </div>
 
-            {/* Trust Badges Strip */}
-            <div className="pd-trust-features-grid">
-              {[
-                { icon:Truck, text:'Free Shipping', color:'#3B82F6' },
-                { icon:ShieldCheck, text:'Secure Checkout', color:'#10B981' },
-                { icon:RefreshCw, text:'Easy Replacement', color:'#EF4444' },
-              ].map(({ icon:Icon, text, color }) => (
-                <div key={text} className="pd-trust-feature-card">
-                  <Icon size={16} color={color} />
-                  <span className="pd-trust-feature-text">{text}</span>
+            {/* ── DELIVERY DETAILS & PINCODE / SELLER BLOCK ── */}
+            <div className="pd-delivery-details-card">
+              <span className="pd-card-heading-title">Delivery details</span>
+              
+              <div className="pd-delivery-address-pill">
+                <div style={{ display:'flex', alignItems:'center', gap:'8px', minWidth: 0, overflow:'hidden' }}>
+                  <Home size={16} color="#0F172A" style={{ flexShrink: 0 }} />
+                  <span className="pd-address-line">
+                    <strong>HOME</strong> 25-2-1709, Pragathi nagar, Podalkur Road, Nellore
+                  </span>
                 </div>
-              ))}
+                <ChevronRight size={15} color="#94A3B8" style={{ flexShrink: 0 }} />
+              </div>
+
+              <div className="pd-seller-row">
+                <div style={{ display:'flex', alignItems:'center', gap:'6px', minWidth: 0 }}>
+                  <Package size={14} color="#64748B" style={{ flexShrink: 0 }} />
+                  <span style={{ fontSize:'12px', color:'#334155', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+                    Seller: <strong>Asmalabel Official Store</strong>
+                  </span>
+                  <span className="pd-seller-rating" style={{ flexShrink: 0 }}>4.8 ★</span>
+                </div>
+                <span className="pd-seller-badge" style={{ flexShrink: 0 }}>Verified</span>
+              </div>
             </div>
 
-            {/* WhatsApp Enquiry */}
-            <div>
-              <a href={`https://wa.me/917013942909?text=${encodeURIComponent(`Hi! I'm interested in: ${product.name} (₹${product.price}) — ${window.location.href}`)}`}
-                target="_blank" rel="noopener noreferrer"
-                className="pd-whatsapp-cta-button">
-                <MessageCircle size={16} /> Direct WhatsApp Inquiry
-              </a>
+            {/* ── SHOP WITH PEACE OF MIND / 100% GENUINE & QUALITY ── */}
+            <div className="pd-peace-mind-card">
+              <div className="pd-peace-mind-header" onClick={() => setPeaceOpen(!peaceOpen)}>
+                <span className="pd-card-heading-title" style={{ margin: 0 }}>Shop with peace of mind</span>
+                <button className="pd-fbt-toggle-btn" type="button">
+                  {peaceOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </button>
+              </div>
+
+              {peaceOpen && (
+                <div className="pd-peace-mind-body">
+                  <div className="pd-warranty-box">
+                    <ShieldCheck size={18} color="#15803D" style={{ flexShrink: 0 }} />
+                    <span style={{ fontSize:'12px' }}>✨ 100% Genuine and Quality Product</span>
+                  </div>
+
+                  <div className="pd-peace-badges-row">
+                    <div className="pd-peace-badge-item">
+                      <div className="pd-peace-icon-wrap">
+                        <MessageCircle size={16} color="#25D366" />
+                      </div>
+                      <span>24x7 WhatsApp Support</span>
+                    </div>
+
+                    <div className="pd-peace-badge-item">
+                      <div className="pd-peace-icon-wrap">
+                        <Zap size={16} color="#16A34A" />
+                      </div>
+                      <span>UPI</span>
+                    </div>
+
+                    <div className="pd-peace-badge-item">
+                      <div className="pd-peace-icon-wrap">
+                        <BadgeCheck size={16} color="#0F172A" />
+                      </div>
+                      <span>Asma label verified</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* ── LIVE DISPATCH COUNTDOWN & 3-STEP TIMELINE ── */}
+            <div className="pd-dispatch-timeline-card">
+              <div className="pd-dispatch-countdown-header">
+                <div className="pd-countdown-title">
+                  <Clock size={14} color="#FFFFFF" />
+                  <span>Order within</span>
+                </div>
+                <div className="pd-timer-digits-wrap">
+                  <span className="pd-digit-block">{timeLeft.hours}</span> :
+                  <span className="pd-digit-block">{timeLeft.minutes}</span> :
+                  <span className="pd-digit-block">{timeLeft.seconds}</span>
+                </div>
+                <span className="pd-same-day-text">for same-day dispatch</span>
+                <span className="pd-live-red-dot" />
+              </div>
+
+              <div className="pd-timeline-steps-grid">
+                <div className="pd-timeline-step active">
+                  <div className="pd-step-icon-circle">
+                    <Calendar size={14} color="#0F172A" />
+                  </div>
+                  <strong className="pd-step-date">{deliveryDates.orderTodayStr}</strong>
+                  <span className="pd-step-name">Order Today</span>
+                </div>
+
+                <div className="pd-timeline-connector active" />
+
+                <div className="pd-timeline-step">
+                  <div className="pd-step-icon-circle">
+                    <Package size={14} color="#0F172A" />
+                  </div>
+                  <strong className="pd-step-date">{deliveryDates.readyStr}</strong>
+                  <span className="pd-step-name">Order Ready</span>
+                </div>
+
+                <div className="pd-timeline-connector" />
+
+                <div className="pd-timeline-step">
+                  <div className="pd-step-icon-circle">
+                    <Truck size={14} color="#0F172A" />
+                  </div>
+                  <strong className="pd-step-date">{deliveryDates.deliverStr}</strong>
+                  <span className="pd-step-name">Delivered</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ── COLLAPSIBLE DESCRIPTION ACCORDION ── */}
+            {cleanDesc && (
+              <div className="pd-accordion-card">
+                <div className="pd-accordion-header" onClick={() => setDescOpen(!descOpen)}>
+                  <span className="pd-accordion-title">Description & Specifications</span>
+                  <span className="pd-accordion-icon">{descOpen ? '−' : '+'}</span>
+                </div>
+                {descOpen && (
+                  <div className="pd-accordion-body">
+                    <p className="pd-description-text">{cleanDesc}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── PRODUCT VIDEOS & DEMOS ── */}
+            <ProductVideoPlayer product={product} />
 
           </div>
         </div>
 
-        {/* ── HORIZONTAL SCROLL CAROUSEL FOR RELATED PRODUCTS ── */}
-        {related.length > 0 && (
-          <div style={{ marginTop:'40px' }}>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px' }}>
-              <div>
-                <p style={{ fontSize:'10px', fontWeight:800, color:'#94A3B8', textTransform:'uppercase', letterSpacing:'1.5px', marginBottom:'2px' }}>
-                  Handpicked For You
-                </p>
-                <h2 style={{ fontSize:'20px', fontWeight:900, color:'#0F172A', letterSpacing:'-0.5px' }}>
-                  Similar Products
-                </h2>
+        {/* ── BUY MORE, SAVE MORE 💎 (Configurable from Admin Panel) ── */}
+        {/* ── BUY MORE, SAVE MORE 💎 (Multi-Product Configurable from Admin Panel) ── */}
+        {(bundle?.enabled !== false) && (() => {
+          const discPct = bundle?.discountPct ? Number(bundle.discountPct) : 5;
+          const bundleSubtitle = bundle?.subtitle || 'Collect both Asmalabel signatures and enjoy an exclusive discount ✨';
+
+          const companions = bundleCompanions.length > 0
+            ? bundleCompanions
+            : (addons.slice(0, 1).length > 0 ? addons.slice(0, 1) : (related.slice(0, 1)));
+
+          if (!companions || companions.length === 0) return null;
+
+          const allItems = [product, ...companions];
+          const totalOrig = allItems.reduce((acc, it) => {
+            const price = Number(it.price || 0);
+            const orig = Number(it.original_price || Math.round(price * 1.12));
+            return acc + (orig > price ? orig : Math.round(price * 1.12));
+          }, 0);
+          const totalPrice = allItems.reduce((acc, it) => acc + Number(it.price || 0), 0);
+          const totalBundle = totalPrice * ((100 - discPct) / 100);
+
+          return (
+            <div className="pd-materialism-bundle-section">
+              <h3 className="pd-bundle-headline">Buy More, Save More 💎</h3>
+              <p className="pd-bundle-subtitle">
+                {bundleSubtitle}
+              </p>
+
+              {/* Products Bundle Row with connecting + badges */}
+              <div className={`pd-bundle-pair-row ${allItems.length > 2 ? 'pd-bundle-scroller sh-scroll-hide' : ''}`}>
+                {allItems.map((item, idx) => {
+                  const isMain = idx === 0;
+                  const itemPrice = Number(item.price || 0);
+                  const itemOrig = Number(item.original_price || Math.round(itemPrice * 1.12));
+                  const itemImg = isMain ? mainImage : getProductImage(item);
+
+                  return (
+                    <div key={item.id || idx} className="pd-bundle-item-wrapper">
+                      {idx > 0 && (
+                        <div className="pd-bundle-plus-badge">
+                          +
+                        </div>
+                      )}
+                      <div className="pd-bundle-card">
+                        <div className="pd-bundle-img-wrap">
+                          <img src={itemImg} alt={item.name} />
+                        </div>
+                        <p className="pd-bundle-prod-title">{item.name}</p>
+                        <div className="pd-bundle-price-wrap">
+                          <span className="pd-bundle-old-price">₹{itemOrig.toFixed(0)}</span>
+                          <span className="pd-bundle-curr-price">₹{itemPrice.toFixed(0)}</span>
+                          <span className="pd-bundle-discount-badge">
+                            {itemOrig > itemPrice ? `${Math.round((1 - itemPrice / itemOrig) * 100)}% OFF` : `${discPct}% OFF`}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-              <button onClick={() => navigate('/')}
-                style={{ display:'flex', alignItems:'center', gap:'4px', background:'rgba(255,255,255,0.8)', border:'1px solid rgba(226,232,240,0.8)', borderRadius:'9999px', padding:'6px 14px', cursor:'pointer', fontSize:'12px', fontWeight:800, color:'#0F172A', boxShadow:'0 2px 8px rgba(0,0,0,0.04)' }}>
-                View All <ChevronRight size={14} />
+
+              {/* Total Calculation Row */}
+              <div className="pd-bundle-total-row">
+                <span className="pd-bundle-total-label">Total:</span>
+                <span className="pd-bundle-total-strikethrough">₹{totalOrig.toFixed(2)}</span>
+                <span className="pd-bundle-total-highlight">₹{totalBundle.toFixed(2)}</span>
+              </div>
+
+              {/* Theme-Matched Add to Cart CTA */}
+              <button
+                type="button"
+                onClick={() => {
+                  allItems.forEach(it => addToCart(it, 1));
+                  setFbtAdded(true);
+                  setTimeout(() => setFbtAdded(false), 2200);
+                }}
+                className="pd-bundle-submit-pill-btn"
+              >
+                {fbtAdded ? '✓ Added to Cart!' : 'Add to cart'}
+              </button>
+
+              <p className="pd-bundle-disclaimer-text">
+                Discount will be auto-applied at checkout.
+              </p>
+            </div>
+          );
+        })()}
+
+        {/* ── SIMILAR PRODUCTS HORIZONTAL SCROLLER (Placed ABOVE Reviews as requested) ── */}
+        {related.length > 0 && (
+          <div className="pd-scroller-section" style={{ marginTop: '32px' }}>
+            <div className="pd-scroller-header">
+              <div>
+                <span className="pd-scroller-kicker">Recommended For You</span>
+                <h2 className="pd-scroller-title">Similar Products</h2>
+              </div>
+              <button onClick={() => navigate('/')} className="pd-scroller-arrow-btn" title="View All">
+                <ArrowRight size={16} />
               </button>
             </div>
 
-            {/* Horizontal Scroll Strip */}
-            <div className="related-products-row sh-scroll-hide">
+            <div className="pd-horizontal-card-strip sh-scroll-hide">
               {related.map(p => {
                 const pPrice = Number(p.price || 0);
                 const pOrig = Number(p.original_price || 0);
+                const pDisc = pOrig > pPrice ? Math.round(((pOrig - pPrice) / pOrig) * 100) : null;
+                const pInWish = isInWishlist(p.id);
+
                 return (
-                  <motion.div key={p.id}
-                    whileHover={{ y:-4, scale:1.02 }}
-                    onClick={() => navigate(`/product/${p.id}`)}
-                    className="related-product-card">
-                    <div className="related-card-img-wrap">
+                  <div key={p.id} className="pd-swipe-product-card" onClick={() => navigate(`/product/${p.id}`)}>
+                    <div className="pd-swipe-img-box">
+                      <span className="pd-swipe-rating-tag">4.3 ★</span>
                       <img src={getProductImage(p)} alt={p.name} />
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          pInWish ? removeFromWishlist(p.id) : addToWishlist(p);
+                        }}
+                        className="pd-swipe-wish-btn"
+                        title={pInWish ? "Remove from Wishlist" : "Add to Wishlist"}
+                      >
+                        <Heart size={12} fill={pInWish ? '#EF4444' : 'none'} color={pInWish ? '#EF4444' : '#475569'} />
+                      </button>
                     </div>
-                    <div className="related-card-body">
-                      <p className="related-card-title">{p.name}</p>
-                      <div className="related-card-price-row">
-                        <span className="related-card-price">₹{pPrice.toFixed(0)}</span>
+
+                    <div className="pd-swipe-body">
+                      <p className="pd-swipe-title">{p.name}</p>
+                      
+                      {pDisc && (
+                        <span className="pd-swipe-disc-text">{pDisc}% OFF</span>
+                      )}
+
+                      <div className="pd-swipe-price-row">
                         {pOrig > pPrice && (
-                          <span className="related-card-old-price">₹{pOrig.toFixed(0)}</span>
+                          <span className="pd-swipe-old-price">₹{pOrig.toFixed(0)}</span>
                         )}
+                        <span className="pd-swipe-price">₹{pPrice.toFixed(0)}</span>
                       </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(p, 1);
+                        }}
+                        className="pd-swipe-add-btn"
+                      >
+                        <ShoppingCart size={12} /> Add to Cart
+                      </button>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
           </div>
         )}
 
+        {/* ── RATINGS AND REVIEWS (Exact Flipkart / Myntra Image 2 Layout without photos) ── */}
+        <div className="pd-fk-reviews-card" style={{ marginTop: '28px' }}>
+          
+          {/* Header Row */}
+          <div className="pd-fk-reviews-header" onClick={() => setReviewsOpen(!reviewsOpen)}>
+            <div>
+              <h2 className="pd-fk-reviews-title">Ratings and reviews</h2>
+              <div className="pd-fk-score-row">
+                <span className="pd-fk-score-badge">
+                  4.3 <Star size={12} fill="#FFFFFF" color="#FFFFFF" />
+                </span>
+                <span className="pd-fk-verdict-text">Very Good</span>
+              </div>
+              <p className="pd-fk-verified-subtext">
+                based on 375 ratings by <span className="pd-fk-verified-check">✓ Verified Buyers</span>
+              </p>
+            </div>
+
+            <button className="pd-fbt-toggle-btn" type="button">
+              {reviewsOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </button>
+          </div>
+
+          {reviewsOpen && (
+            <div className="pd-fk-reviews-content">
+
+              {/* Review Cards Grid / List */}
+              <div className="pd-fk-reviews-grid">
+                {displayedReviews.map((rev, index) => (
+                  <div key={rev.id} className="pd-fk-review-card">
+                    {/* Top Row: Rating Badge + Title + Date */}
+                    <div className="pd-fk-card-top-row">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                        <span className="pd-fk-green-tag">
+                          {rev.rating} <Star size={10} fill="#FFFFFF" color="#FFFFFF" />
+                        </span>
+                        <strong className="pd-fk-card-title">{rev.title}</strong>
+                      </div>
+                      <span className="pd-fk-card-date">{rev.date}</span>
+                    </div>
+
+                    {/* Review Body Comment */}
+                    <p className="pd-fk-card-comment">{rev.comment}</p>
+
+                    {/* Bottom Row: User Info & Helpful Thumb Actions */}
+                    <div className="pd-fk-card-bottom-row">
+                      <div className="pd-fk-author-wrap">
+                        <span className="pd-fk-author-name">{rev.author}</span>
+                        <span className="pd-fk-author-verified">
+                          <CheckCircle2 size={12} color="#16A34A" /> Verified Buyer
+                        </span>
+                      </div>
+
+                      <div className="pd-fk-helpful-actions">
+                        <button
+                          type="button"
+                          className="pd-fk-thumb-btn"
+                          onClick={() => setReviewLikes(p => ({ ...p, [index]: (p[index] || 0) + 1 }))}
+                        >
+                          <ThumbsUp size={13} />
+                          <span>{reviewLikes[index] || 0}</span>
+                        </button>
+                        <button type="button" className="pd-fk-thumb-btn">
+                          <ThumbsDown size={13} />
+                          <span>0</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* "Show all reviews >" Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setShowAllReviews(!showAllReviews)}
+                className="pd-fk-show-all-btn"
+              >
+                <span>{showAllReviews ? 'Show fewer reviews ⌃' : 'Show all reviews >'}</span>
+              </button>
+
+              {/* "Write a review" Button (Previous Style) */}
+              <button
+                type="button"
+                onClick={() => setWriteReviewOpen(true)}
+                className="pd-write-review-cta"
+              >
+                Write a review
+              </button>
+
+            </div>
+          )}
+        </div>
+
+        {/* ── YOU MAY ALSO LIKE SCROLLER ── */}
+        {related.length > 3 && (
+          <div className="pd-scroller-section" style={{ marginTop: '28px' }}>
+            <div className="pd-scroller-header">
+              <div>
+                <span className="pd-scroller-kicker">Frequently Explored</span>
+                <h2 className="pd-scroller-title">You may also like</h2>
+              </div>
+              <button onClick={() => navigate('/')} className="pd-scroller-arrow-btn" title="View All">
+                <ArrowRight size={16} />
+              </button>
+            </div>
+
+            <div className="pd-horizontal-card-strip sh-scroll-hide">
+              {related.slice().reverse().map(p => {
+                const pPrice = Number(p.price || 0);
+                const pOrig = Number(p.original_price || 0);
+                const pDisc = pOrig > pPrice ? Math.round(((pOrig - pPrice) / pOrig) * 100) : null;
+                const pInWish = isInWishlist(p.id);
+
+                return (
+                  <div key={p.id} className="pd-swipe-product-card" onClick={() => navigate(`/product/${p.id}`)}>
+                    <div className="pd-swipe-img-box">
+                      <span className="pd-swipe-rating-tag">4.2 ★</span>
+                      <span className="pd-trending-tag">Trending</span>
+                      <img src={getProductImage(p)} alt={p.name} />
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          pInWish ? removeFromWishlist(p.id) : addToWishlist(p);
+                        }}
+                        className="pd-swipe-wish-btn"
+                        title={pInWish ? "Remove from Wishlist" : "Add to Wishlist"}
+                      >
+                        <Heart size={12} fill={pInWish ? '#EF4444' : 'none'} color={pInWish ? '#EF4444' : '#475569'} />
+                      </button>
+                    </div>
+
+                    <div className="pd-swipe-body">
+                      <p className="pd-swipe-title">{p.name}</p>
+                      
+                      {pDisc && (
+                        <span className="pd-swipe-disc-text">{pDisc}% OFF</span>
+                      )}
+
+                      <div className="pd-swipe-price-row">
+                        {pOrig > pPrice && (
+                          <span className="pd-swipe-old-price">₹{pOrig.toFixed(0)}</span>
+                        )}
+                        <span className="pd-swipe-price">₹{pPrice.toFixed(0)}</span>
+                      </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(p, 1);
+                        }}
+                        className="pd-swipe-add-btn"
+                      >
+                        <ShoppingCart size={12} /> Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+        {/* ══ COMPACT BRAND STORY CARD (Champagne Gold Luxury Card) ══ */}
+        <div style={{
+          marginTop: '20px',
+          background: 'linear-gradient(135deg, #FFFDF7 0%, #FAF2E6 50%, #F5E8D3 100%)',
+          borderRadius: '20px',
+          border: '1.5px solid #EBDCCB',
+          padding: '22px 18px',
+          textAlign: 'center',
+          boxShadow: '0 8px 24px rgba(180, 130, 70, 0.06)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            position: 'absolute', top: '-30px', right: '-30px',
+            width: '100px', height: '100px', borderRadius: '50%',
+            background: 'rgba(235, 214, 187, 0.5)', filter: 'blur(25px)', pointerEvents: 'none'
+          }} />
+
+          {/* Official Storefront Tag */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '5px',
+            padding: '5px 12px', borderRadius: '99px',
+            background: '#FFFFFF', border: '1px solid #E2D3BF',
+            color: '#8A6133', fontSize: '10.5px', fontWeight: 800,
+            textTransform: 'uppercase', letterSpacing: '0.7px', marginBottom: '10px',
+            boxShadow: '0 2px 6px rgba(138, 97, 51, 0.05)'
+          }}>
+            <Sparkles size={12} color="#B88346" />
+            <span>Official Storefront · Nellore, AP</span>
+          </div>
+
+          <h3 style={{
+            fontSize: 'clamp(16px, 2.5vw, 19px)', fontWeight: 900,
+            color: '#0F172A', marginBottom: '8px', letterSpacing: '-0.3px',
+            lineHeight: 1.3
+          }}>
+            Asmalabel — Crafting Quality Tailoring &amp; Women's Fashion
+          </h3>
+
+          <p style={{
+            fontSize: '12.5px', color: '#475569', lineHeight: 1.65,
+            maxWidth: '680px', margin: '0 auto 16px', fontWeight: 500
+          }}>
+            <strong style={{ color: '#0F172A' }}>Asmalabel</strong> is a dedicated boutique small business based in Nellore, Andhra Pradesh. Built on trust, authenticity, and personal care, we bring you high-precision tailoring tools, premium sewing supplies, and curated women's fashion delivered directly to your doorstep across India.
+          </p>
+
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            {[
+              { icon: Scissors, text: '100% Genuine Tailoring Tools' },
+              { icon: Sparkles, text: 'Curated Women\'s Fashion' },
+              { icon: Truck, text: 'Fast Pan-India Delivery' },
+              { icon: BadgeCheck, text: 'Based in Nellore, Andhra Pradesh' },
+            ].map(({ icon: Icon, text }) => (
+              <div key={text} style={{
+                display: 'inline-flex', alignItems: 'center', gap: '5px',
+                padding: '6px 14px', borderRadius: '99px',
+                background: '#FFFFFF', border: '1px solid #E5D5C3',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02)',
+                color: '#1E293B', fontSize: '11.5px', fontWeight: 700
+              }}>
+                <Icon size={12} color="#B88346" />
+                <span>{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
 
-      {/* ── MOBILE STICKY BOTTOM BAR (Image 2 & Image 3 Reference) ── */}
+      {/* ── WRITE A REVIEW MODAL ── */}
+      <AnimatePresence>
+        {writeReviewOpen && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="pd-review-modal-backdrop"
+            onClick={() => setWriteReviewOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
+              className="pd-review-modal-card"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="pd-modal-head">
+                <h3>Write a Review</h3>
+                <button type="button" onClick={() => setWriteReviewOpen(false)} className="pd-modal-close-btn">
+                  <X size={18} />
+                </button>
+              </div>
+
+              {reviewSubmitted ? (
+                <div className="pd-modal-success">
+                  <CheckCircle2 size={42} color="#10B981" />
+                  <h4>Thank you for your review!</h4>
+                  <p>Your feedback helps other buyers make informed decisions.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmitReview} className="pd-review-form">
+                  <div className="pd-form-group">
+                    <label>Rating</label>
+                    <div className="pd-star-select-row">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          size={24}
+                          fill={star <= newReview.rating ? '#10B981' : '#E2E8F0'}
+                          color={star <= newReview.rating ? '#10B981' : '#E2E8F0'}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setNewReview({ ...newReview, rating: star })}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pd-form-group">
+                    <label>Your Name</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Priya Sharma"
+                      value={newReview.name}
+                      onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                      className="pd-form-input"
+                    />
+                  </div>
+
+                  <div className="pd-form-group">
+                    <label>Review Title</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Excellent quality and smooth cuts!"
+                      value={newReview.title}
+                      onChange={(e) => setNewReview({ ...newReview, title: e.target.value })}
+                      className="pd-form-input"
+                    />
+                  </div>
+
+                  <div className="pd-form-group">
+                    <label>Your Review</label>
+                    <textarea
+                      required
+                      rows={4}
+                      placeholder="Share details about durability, sharpness, comfort, and performance..."
+                      value={newReview.comment}
+                      onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                      className="pd-form-textarea"
+                    />
+                  </div>
+
+                  <button type="submit" className="pd-submit-review-btn">
+                    Submit Review
+                  </button>
+                </form>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── MOBILE STICKY BOTTOM BAR ── */}
       <div className="pd-mobile-sticky-bar">
         <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
@@ -637,7 +1282,6 @@ export default function ProductDetail() {
             style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.94)', backdropFilter:'blur(12px)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'16px' }}
             onClick={() => setLightboxOpen(false)}>
 
-            {/* Top Bar Controls */}
             <div style={{ position:'absolute', top:'16px', left:'20px', right:'20px', display:'flex', justifyContent:'space-between', alignItems:'center', zIndex:10000 }} onClick={e=>e.stopPropagation()}>
               <span style={{ color:'white', fontSize:'14px', fontWeight:800, background:'rgba(255,255,255,0.15)', padding:'4px 12px', borderRadius:'9999px' }}>
                 📷 {selImg + 1} / {allImages.length} Photo
@@ -658,7 +1302,6 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Main Lightbox Image with Zoom & Touch Pan */}
             <motion.div style={{ position:'relative', maxWidth:'92vw', maxHeight:'75vh', overflow:'hidden', cursor:'zoom-in', display:'flex', alignItems:'center', justifyContent:'center' }}
               onClick={e => e.stopPropagation()}>
               <motion.img src={currentImg} alt="Full screen view"
@@ -667,7 +1310,6 @@ export default function ProductDetail() {
                 style={{ maxWidth:'100%', maxHeight:'75vh', objectFit:'contain', borderRadius:'14px', boxShadow:'0 20px 50px rgba(0,0,0,0.5)' }} />
             </motion.div>
 
-            {/* Bottom thumbnail strip inside Lightbox */}
             {allImages.length > 1 && (
               <div style={{ position:'absolute', bottom:'20px', display:'flex', gap:'8px', overflowX:'auto', maxWidth:'90vw', padding:'6px', background:'rgba(0,0,0,0.5)', borderRadius:'16px', backdropFilter:'blur(8px)' }}
                 onClick={e => e.stopPropagation()} className="sh-scroll-hide">
@@ -682,6 +1324,685 @@ export default function ProductDetail() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <style>{`
+        .pd-page-wrapper {
+          min-height: 100vh;
+          background: #F8FAFC;
+          padding-bottom: 0px;
+          width: 100%;
+          max-width: 100vw;
+          overflow-x: hidden;
+          box-sizing: border-box;
+        }
+        .pd-content-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 12px 14px 16px;
+          box-sizing: border-box;
+          width: 100%;
+        }
+        .product-main-card {
+          background: #FFFFFF;
+          border-radius: 20px;
+          border: 1px solid #E2E8F0;
+          box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+          padding: 24px;
+          display: grid;
+          grid-template-columns: 46% 1fr;
+          gap: 32px;
+          align-items: start;
+          box-sizing: border-box;
+          width: 100%;
+        }
+        .pd-gallery-section {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          width: 100%;
+          box-sizing: border-box;
+          position: sticky;
+          top: 68px;
+        }
+        .pd-image-frame {
+          border-radius: 18px;
+          overflow: hidden;
+          background: #F8FAFC;
+          aspect-ratio: 1 / 1;
+          width: 100%;
+          position: relative;
+          border: 1px solid #E2E8F0;
+          cursor: grab;
+          user-select: none;
+          box-sizing: border-box;
+        }
+        .pd-image-frame img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain !important;
+          display: block;
+        }
+        .pd-details-section {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          width: 100%;
+          box-sizing: border-box;
+          min-width: 0;
+        }
+        .pd-peace-badges-row {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 6px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .pd-peace-badge-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          gap: 4px;
+          font-size: 10px;
+          font-weight: 700;
+          color: #334155;
+          min-width: 0;
+          word-break: break-word;
+          line-height: 1.2;
+        }
+        .pd-peace-icon-wrap {
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background: #F1F5F9;
+          border: 1px solid #E2E8F0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .pd-dispatch-timeline-card {
+          border: 1px solid #0F172A;
+          border-radius: 14px;
+          overflow: hidden;
+          background: #FFFFFF;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .pd-dispatch-countdown-header {
+          background: #0F172A;
+          color: #FFFFFF;
+          padding: 8px 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          flex-wrap: wrap;
+          font-size: 11px;
+          text-align: center;
+          box-sizing: border-box;
+          width: 100%;
+        }
+        .pd-timeline-steps-grid {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 6px;
+          background: #FFFFFF;
+          gap: 2px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .pd-timeline-step {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          gap: 2px;
+          flex: 1;
+          min-width: 0;
+        }
+        .pd-step-icon-circle {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: #F1F5F9;
+          border: 1px solid #0F172A;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .pd-step-date {
+          font-size: 9.5px;
+          color: #DC2626;
+          font-weight: 800;
+          white-space: nowrap;
+        }
+        .pd-step-name {
+          font-size: 9px;
+          color: #64748B;
+          font-weight: 700;
+          white-space: nowrap;
+        }
+        .pd-timeline-connector {
+          flex: 0.4;
+          height: 2px;
+          background: #E2E8F0;
+          margin-top: -16px;
+        }
+        .pd-delivery-details-card {
+          background: #FFFFFF;
+          border: 1px solid #E2E8F0;
+          border-radius: 14px;
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .pd-delivery-address-pill {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          background: #EFF6FF;
+          border: 1px solid #BFDBFE;
+          border-radius: 10px;
+          padding: 8px 10px;
+          cursor: pointer;
+          width: 100%;
+          box-sizing: border-box;
+          min-width: 0;
+        }
+        .pd-address-line {
+          font-size: 11.5px;
+          color: #1E293B;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          min-width: 0;
+          display: block;
+        }
+
+        /* ── MATERIALISM BUY MORE SAVE MORE STYLES ── */
+        .pd-materialism-bundle-section {
+          margin: 32px 0 16px;
+          text-align: center;
+          width: 100%;
+          box-sizing: border-box;
+          background: #FFFFFF;
+          border-radius: 20px;
+          border: 1px solid #E2E8F0;
+          box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+          padding: 24px 16px;
+        }
+        .pd-bundle-headline {
+          font-size: clamp(18px, 3vw, 22px);
+          font-weight: 900;
+          color: #0F172A;
+          margin: 0 0 6px;
+          letter-spacing: -0.4px;
+        }
+        .pd-bundle-subtitle {
+          font-size: 13px;
+          color: #64748B;
+          margin: 0 0 20px;
+          font-weight: 500;
+          line-height: 1.4;
+        }
+        .pd-bundle-pair-row {
+          display: flex;
+          gap: 10px;
+          align-items: stretch;
+          justify-content: center;
+          position: relative;
+          width: 100%;
+          max-width: 540px;
+          margin: 0 auto 16px;
+        }
+        .pd-bundle-pair-row.pd-bundle-scroller {
+          overflow-x: auto !important;
+          scroll-snap-type: x mandatory !important;
+          justify-content: flex-start !important;
+          padding: 4px 6px 14px !important;
+          scrollbar-width: none !important;
+          -webkit-overflow-scrolling: touch !important;
+          max-width: 100% !important;
+          box-sizing: border-box !important;
+        }
+        .pd-bundle-item-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex: 1;
+          min-width: 0;
+        }
+        .pd-bundle-scroller .pd-bundle-item-wrapper {
+          flex: 0 0 155px !important;
+          min-width: 155px !important;
+          scroll-snap-align: start !important;
+        }
+        @media (max-width: 640px) {
+          .pd-bundle-scroller .pd-bundle-item-wrapper {
+            flex: 0 0 140px !important;
+            min-width: 140px !important;
+          }
+        }
+        .pd-bundle-card {
+          flex: 1;
+          min-width: 0;
+          background: #FFFFFF;
+          border-radius: 16px;
+          border: 1.5px solid #E2E8F0;
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          text-align: left;
+          box-shadow: 0 2px 10px rgba(15,23,42,0.02);
+          box-sizing: border-box;
+        }
+        .pd-bundle-img-wrap {
+          width: 100%;
+          aspect-ratio: 1 / 1;
+          border-radius: 12px;
+          overflow: hidden;
+          background: #F8FAFC;
+          margin-bottom: 10px;
+          border: 1px solid #F1F5F9;
+        }
+        .pd-bundle-img-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+        .pd-bundle-plus-badge {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          background: #0F172A;
+          color: #FFFFFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          font-weight: 900;
+          flex-shrink: 0;
+          box-shadow: 0 4px 10px rgba(15,23,42,0.25);
+          border: 2px solid #FFFFFF;
+          margin-left: -5px;
+          margin-right: -5px;
+          z-index: 5;
+        }
+        .pd-bundle-prod-title {
+          font-size: 13px;
+          font-weight: 800;
+          color: #0F172A;
+          margin: 0 0 6px;
+          line-height: 1.3;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
+        .pd-bundle-price-wrap {
+          display: flex;
+          align-items: baseline;
+          gap: 6px;
+          margin-top: auto;
+          flex-wrap: wrap;
+        }
+        .pd-bundle-old-price {
+          font-size: 12px;
+          color: #94A3B8;
+          text-decoration: line-through;
+          font-weight: 600;
+        }
+        .pd-bundle-curr-price {
+          font-size: 14px;
+          font-weight: 900;
+          color: #0F172A;
+        }
+        .pd-bundle-discount-badge {
+          font-size: 10.5px;
+          font-weight: 800;
+          color: #16A34A;
+          background: #DCFCE7;
+          padding: 2px 6px;
+          border-radius: 6px;
+          margin-left: auto;
+          letter-spacing: -0.2px;
+        }
+        .pd-bundle-total-row {
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+          gap: 8px;
+          margin-bottom: 14px;
+        }
+        .pd-bundle-total-label {
+          font-size: 14px;
+          font-weight: 800;
+          color: #475569;
+        }
+        .pd-bundle-total-strikethrough {
+          font-size: 14px;
+          color: #94A3B8;
+          text-decoration: line-through;
+          font-weight: 700;
+        }
+        .pd-bundle-total-highlight {
+          font-size: 18px;
+          font-weight: 900;
+          color: #0F172A;
+        }
+        .pd-bundle-submit-pill-btn {
+          width: 100%;
+          max-width: 480px;
+          margin: 0 auto;
+          display: block;
+          padding: 14px 20px;
+          border-radius: 14px;
+          background: linear-gradient(135deg, #1A1A2E 0%, #0F3460 100%);
+          color: #FFFFFF;
+          border: none;
+          font-size: 14.5px;
+          font-weight: 800;
+          cursor: pointer;
+          transition: all .2s;
+          box-shadow: 0 4px 16px rgba(15,23,42,0.2);
+        }
+        .pd-bundle-submit-pill-btn:hover {
+          background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px rgba(15,23,42,0.28);
+        }
+        .pd-bundle-disclaimer-text {
+          font-size: 11.5px;
+          color: #64748B;
+          margin-top: 8px;
+          font-weight: 500;
+        }
+
+        /* ── FLIPKART / MYNTRA RATINGS & REVIEWS STYLES (IMAGE 2) ── */
+        .pd-fk-reviews-card {
+          background: #FFFFFF;
+          border-radius: 16px;
+          border: 1px solid #E2E8F0;
+          box-shadow: 0 4px 20px rgba(15,23,42,0.03);
+          padding: 20px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .pd-fk-reviews-header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          cursor: pointer;
+          padding-bottom: 12px;
+          border-bottom: 1px solid #F1F5F9;
+        }
+        .pd-fk-reviews-title {
+          font-size: 17px;
+          font-weight: 900;
+          color: #0F172A;
+          margin: 0 0 8px;
+          letter-spacing: -0.3px;
+        }
+        .pd-fk-score-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 4px;
+        }
+        .pd-fk-score-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          background: #16A34A;
+          color: #FFFFFF;
+          font-size: 12.5px;
+          font-weight: 800;
+          padding: 2px 8px;
+          border-radius: 6px;
+        }
+        .pd-fk-verdict-text {
+          font-size: 12.5px;
+          font-weight: 800;
+          color: #0F766E;
+          background: #CCFBF1;
+          padding: 2px 8px;
+          border-radius: 6px;
+        }
+        .pd-fk-verified-subtext {
+          font-size: 12px;
+          color: #64748B;
+          margin: 0;
+          font-weight: 500;
+        }
+        .pd-fk-verified-check {
+          color: #334155;
+          font-weight: 700;
+        }
+        .pd-fk-reviews-content {
+          padding-top: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+        .pd-fk-reviews-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 12px;
+        }
+        .pd-fk-review-card {
+          background: #F8FAFC;
+          border-radius: 14px;
+          border: 1px solid #E2E8F0;
+          padding: 14px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .pd-fk-card-top-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+        }
+        .pd-fk-green-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 3px;
+          background: #16A34A;
+          color: #FFFFFF;
+          font-size: 11px;
+          font-weight: 800;
+          padding: 2px 6px;
+          border-radius: 4px;
+          flex-shrink: 0;
+        }
+        .pd-fk-card-title {
+          font-size: 13.5px;
+          font-weight: 800;
+          color: #0F172A;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .pd-fk-card-date {
+          font-size: 11px;
+          color: #94A3B8;
+          font-weight: 500;
+          flex-shrink: 0;
+        }
+        .pd-fk-card-comment {
+          font-size: 12.5px;
+          color: #334155;
+          line-height: 1.55;
+          margin: 0;
+          font-weight: 500;
+        }
+        .pd-fk-card-bottom-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: auto;
+          padding-top: 6px;
+          border-top: 1px solid #EDEFEF;
+        }
+        .pd-fk-author-wrap {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+        .pd-fk-author-name {
+          font-size: 12px;
+          font-weight: 800;
+          color: #0F172A;
+        }
+        .pd-fk-author-verified {
+          font-size: 10.5px;
+          color: #64748B;
+          display: inline-flex;
+          align-items: center;
+          gap: 3px;
+          font-weight: 600;
+        }
+        .pd-fk-helpful-actions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .pd-fk-thumb-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          background: #FFFFFF;
+          border: 1px solid #E2E8F0;
+          border-radius: 6px;
+          padding: 4px 8px;
+          font-size: 11px;
+          color: #64748B;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all .2s;
+        }
+        .pd-fk-thumb-btn:hover {
+          color: #0F172A;
+          border-color: #CBD5E1;
+        }
+        .pd-fk-show-all-btn {
+          width: 100%;
+          padding: 13px;
+          border-radius: 12px;
+          border: 1.5px solid #CBD5E1;
+          background: #FFFFFF;
+          color: #0F172A;
+          font-size: 13.5px;
+          font-weight: 800;
+          cursor: pointer;
+          text-align: center;
+          transition: all .2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+        }
+        .pd-fk-show-all-btn:hover {
+          background: #F8FAFC;
+          border-color: #94A3B8;
+        }
+        .pd-fk-write-action-wrap {
+          display: flex;
+          justify-content: center;
+          margin-top: 4px;
+        }
+        .pd-fk-write-review-btn {
+          padding: 12px 24px;
+          border-radius: 99px;
+          background: #0F172A;
+          color: #FFFFFF;
+          font-size: 13px;
+          font-weight: 800;
+          border: none;
+          cursor: pointer;
+          box-shadow: 0 4px 14px rgba(15,23,42,0.15);
+          transition: all .2s;
+        }
+        .pd-fk-write-review-btn:hover {
+          background: #1E293B;
+          transform: translateY(-1px);
+        }
+
+        @media (max-width: 991px) {
+          .pd-content-container {
+            padding: 8px 8px 16px 8px !important;
+            width: 100% !important;
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
+          }
+          .product-main-card {
+            grid-template-columns: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 14px !important;
+            padding: 12px !important;
+            border-radius: 16px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+          }
+          .pd-gallery-section {
+            position: static !important;
+            width: 100% !important;
+          }
+          .pd-image-frame {
+            aspect-ratio: 1 / 1 !important;
+            width: 100% !important;
+            max-height: 350px !important;
+          }
+          .pd-details-section {
+            width: 100% !important;
+            box-sizing: border-box !important;
+          }
+          .pd-price-overview-box {
+            padding: 10px 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+          }
+          .pd-main-price-highlight {
+            font-size: 22px !important;
+          }
+          .pd-peace-badges-row {
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 4px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+          }
+          .pd-peace-badge-item {
+            font-size: 9.5px !important;
+            line-height: 1.15 !important;
+          }
+          .pd-peace-icon-wrap {
+            width: 32px !important;
+            height: 32px !important;
+          }
+          .pd-fk-reviews-card {
+            border-radius: 14px !important;
+            margin-top: 14px !important;
+            padding: 14px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+          }
+          .pd-fk-reviews-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

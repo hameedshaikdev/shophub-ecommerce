@@ -1,97 +1,67 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { RefreshCw, MessageCircle, Phone, CheckCircle,
-         Clock, XCircle, Package, Truck, Home } from 'lucide-react';
+import { RefreshCw, MessageCircle, Phone, CheckCircle2,
+         Clock, XCircle, Package, Truck, Home, ArrowLeft, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
 import { supabase } from '../config/supabase';
 import { useApp } from '../context/AppContext';
+import { getProductImage } from '../utils/productImages';
+import SEO from '../components/common/SEO';
 
 const SHOP_WA = '917013942909';
 
-/* ── Status config ─────────────────────────────────────────── */
-const STATUS_STEPS = [
-  { key:'pending_payment',    label:'Order Placed',          icon:'📋' },
-  { key:'payment_submitted',  label:'Payment Submitted',     icon:'💸' },
-  { key:'payment_verified',   label:'Payment Verified',      icon:'✅' },
-  { key:'confirmed',          label:'Order Confirmed',       icon:'🎉' },
-  { key:'preparing',          label:'Preparing Order',       icon:'📦' },
-  { key:'shipped',            label:'Shipped',               icon:'🚚' },
-  { key:'delivered',          label:'Delivered',             icon:'🏠' },
+const STEPS = [
+  { key:'pending_payment',    label:'Order Placed',          icon:'📋', desc:'Order placed in our system.' },
+  { key:'payment_submitted',  label:'Payment Submitted',     icon:'💸', desc:'We are verifying your payment.' },
+  { key:'payment_verified',   label:'Payment Verified',      icon:'✅', desc:'Payment has been verified.' },
+  { key:'confirmed',          label:'Confirmed',             icon:'🎉', desc:"We're preparing these items for shipping." },
+  { key:'preparing',          label:'Preparing Order',       icon:'📦', desc:'Packed at Nellore boutique center.' },
+  { key:'shipped',            label:'Shipped',               icon:'🚚', desc:'In transit with express courier.' },
+  { key:'delivered',          label:'Delivered',             icon:'🏠', desc:'Delivered to your address.' },
 ];
-
-const PAYMENT_STATUS_CONFIG = {
-  pending: {
-    color:'#F59E0B', bg:'#FFFBEB', border:'#FDE68A',
-    label:'Awaiting Payment', icon:'⏳',
-  },
-  submitted: {
-    color:'#3B82F6', bg:'#EFF6FF', border:'#BFDBFE',
-    label:'Payment Submitted — Verification in Progress', icon:'🔍',
-  },
-  verified: {
-    color:'#16A34A', bg:'#F0FDF4', border:'#BBF7D0',
-    label:'Payment Verified ✅', icon:'✅',
-  },
-  rejected: {
-    color:'#EF4444', bg:'#FEF2F2', border:'#FECACA',
-    label:'Payment Rejected', icon:'❌',
-  },
-};
 
 function stepIndex(status) {
   const idx = STATUS_STEPS.findIndex(s => s.key === status);
   return idx === -1 ? 0 : idx;
 }
 
-/* ── Progress Tracker component ────────────────────────────── */
 function ProgressTracker({ status }) {
   const current = stepIndex(status);
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap:'0' }}>
+    <div style={{ display:'flex', flexDirection:'column', gap:'0', padding:'8px 0' }}>
       {STATUS_STEPS.map((step, i) => {
         const done    = i < current;
         const active  = i === current;
-        const pending = i > current;
         return (
           <div key={step.key} style={{ display:'flex', alignItems:'flex-start', gap:'12px' }}>
-            {/* Left: dot + line */}
-            <div style={{ display:'flex', flexDirection:'column', alignItems:'center', width:'32px', flexShrink:0 }}>
+            <div style={{ display:'flex', flexDirection:'column', alignItems:'center', width:'28px', flexShrink:0 }}>
               <div style={{
-                width:'32px', height:'32px', borderRadius:'50%',
+                width:'28px', height:'28px', borderRadius:'50%',
                 display:'flex', alignItems:'center', justifyContent:'center',
-                fontSize:'14px', fontWeight:900, flexShrink:0,
-                background: done   ? '#16A34A'
-                          : active ? '#0F172A'
-                          : '#E2E8F0',
+                fontSize:'12px', fontWeight:900,
+                background: done ? '#16A34A' : active ? '#0F172A' : '#F1F5F9',
                 color: (done || active) ? 'white' : '#94A3B8',
-                boxShadow: active ? '0 0 0 4px rgba(15,23,42,.2)' : 'none',
-                transition:'all .4s',
+                boxShadow: active ? '0 0 0 3px rgba(15,23,42,.15)' : 'none',
               }}>
-                {done ? <CheckCircle size={16} /> : step.icon}
+                {done ? '✓' : step.icon}
               </div>
               {i < STATUS_STEPS.length - 1 && (
                 <div style={{
-                  width:'2px', height:'32px',
+                  width:'2px', height:'26px',
                   background: done ? '#16A34A' : '#E2E8F0',
-                  transition:'background .4s',
                 }} />
               )}
             </div>
-            {/* Right: label */}
-            <div style={{ paddingTop:'6px', paddingBottom:'24px' }}>
+            <div style={{ paddingTop:'4px', paddingBottom:'18px' }}>
               <p style={{
-                fontSize:'14px', fontWeight: active ? 900 : done ? 700 : 600,
+                fontSize:'13px', fontWeight: active ? 900 : done ? 700 : 500,
                 color: done ? '#16A34A' : active ? '#0F172A' : '#94A3B8',
+                margin:0
               }}>
                 {step.label}
               </p>
-              {active && status === 'payment_submitted' && (
-                <p style={{ fontSize:'12px', color:'#3B82F6', marginTop:'2px', fontWeight:600 }}>
-                  ⏱ Usually verified in under 2 minutes
-                </p>
-              )}
-              {active && status === 'payment_rejected' && (
-                <p style={{ fontSize:'12px', color:'#EF4444', marginTop:'2px', fontWeight:600 }}>
-                  Contact us to resolve this
+              {active && (
+                <p style={{ fontSize:'11.5px', color:'#64748B', marginTop:'2px', margin:0 }}>
+                  {step.desc}
                 </p>
               )}
             </div>
@@ -102,14 +72,15 @@ function ProgressTracker({ status }) {
   );
 }
 
-/* ── Main Component ─────────────────────────────────────────── */
 export default function OrderStatus() {
   const { id }     = useParams();
   const navigate   = useNavigate();
-  const { user }   = useApp();
+  const { addToCart } = useApp();
   const [order,    setOrder]    = useState(null);
   const [loading,  setLoading]  = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [showTimeline, setShowTimeline] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const fetchOrder = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
@@ -129,7 +100,6 @@ export default function OrderStatus() {
 
   useEffect(() => { fetchOrder(); }, [fetchOrder]);
 
-  // Auto-refresh every 30 seconds when payment is submitted
   useEffect(() => {
     if (!order) return;
     if (order.payment_status !== 'submitted') return;
@@ -137,7 +107,6 @@ export default function OrderStatus() {
     return () => clearInterval(t);
   }, [order, fetchOrder]);
 
-  // Realtime subscription — updates instantly when admin confirms
   useEffect(() => {
     const channel = supabase
       .channel(`order-${id}`)
@@ -153,15 +122,10 @@ export default function OrderStatus() {
 
   if (loading) {
     return (
-      <div style={{ minHeight:'100vh', display:'flex', alignItems:'center',
-        justifyContent:'center', background:'var(--bg)' }}>
-        <div style={{ textAlign:'center', display:'flex', flexDirection:'column',
-          alignItems:'center', gap:'16px' }}>
-          <div style={{ width:'40px', height:'40px', border:'3px solid #E2E8F0',
-            borderTop:'3px solid #FC8019', borderRadius:'50%',
-            animation:'spin .8s linear infinite' }} />
-          <p style={{ color:'var(--text-2)', fontWeight:600 }}>Loading order...</p>
-          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#FFF5F7' }}>
+        <div style={{ textAlign:'center', display:'flex', flexDirection:'column', alignItems:'center', gap:'16px' }}>
+          <div style={{ width:'36px', height:'36px', border:'3px solid #E2E8F0', borderTop:'3px solid #0F172A', borderRadius:'50%', animation:'spin .8s linear infinite' }} />
+          <p style={{ color:'#64748B', fontWeight:600 }}>Loading order details...</p>
         </div>
       </div>
     );
@@ -169,259 +133,345 @@ export default function OrderStatus() {
 
   if (!order) {
     return (
-      <div style={{ minHeight:'100vh', display:'flex', alignItems:'center',
-        justifyContent:'center', background:'var(--bg)', padding:'24px' }}>
-        <div style={{ textAlign:'center' }}>
-          <p style={{ fontSize:'48px', marginBottom:'12px' }}>🔍</p>
-          <h2 style={{ fontSize:'20px', fontWeight:900, marginBottom:'8px' }}>Order not found</h2>
+      <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#FFF5F7', padding:'24px' }}>
+        <div style={{ textAlign:'center', background:'white', padding:'36px 24px', borderRadius:'24px', border:'1px solid #E2E8F0', maxWidth:'400px' }}>
+          <Package size={52} color="#94A3B8" style={{ margin:'0 auto 12px' }} />
+          <h2 style={{ fontSize:'20px', fontWeight:900, marginBottom:'8px' }}>Order Not Found</h2>
+          <p style={{ color:'#64748B', fontSize:'14px', marginBottom:'20px' }}>Please check your order link or explore our collection.</p>
           <button onClick={() => navigate('/')}
-            style={{ padding:'12px 24px', borderRadius:'12px',
-              background:'var(--primary-grad)', color:'white',
-              fontWeight:800, border:'none', cursor:'pointer' }}>
-            Go Home
+            style={{ padding:'12px 24px', borderRadius:'14px', background:'linear-gradient(135deg, #1A1A2E 0%, #0F3460 100%)', color:'white', fontWeight:800, border:'none', cursor:'pointer' }}>
+            Go to Store
           </button>
         </div>
       </div>
     );
   }
 
-  const pCfg = PAYMENT_STATUS_CONFIG[order.payment_status] || PAYMENT_STATUS_CONFIG.pending;
   const addr = order.shipping_address || {};
+  const isPending = order.payment_status === 'pending' || order.payment_status === 'submitted';
   const isRejected = order.payment_status === 'rejected';
-  const isVerified = order.payment_status === 'verified';
+  const orderDateStr = new Date(order.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short' });
+  const totalAmount = Number(order.total_amount || 0);
+  const taxesApprox = (totalAmount * 0.18).toFixed(2);
+  const itemsSubtotal = (order.items || []).reduce((acc, it) => acc + (Number(it.price || 0) * Number(it.quantity || 1)), 0);
+  const shippingCost = totalAmount > itemsSubtotal ? totalAmount - itemsSubtotal : 0;
 
-  const waContact = () => {
+  function waContact() {
     const msg =
-      `Hello Asmalabel,%0A%0A` +
-      `My payment has not been verified after 10 minutes.%0A%0A` +
-      `Order ID: %23${order.id.slice(0,8).toUpperCase()}%0A` +
-      `Customer: ${addr.fullName || ''}%0A` +
-      `Amount: Rs.${order.total_amount?.toFixed(0)}%0A%0A` +
-      `Please verify my payment.`;
+      `Hello Asmalabel! 👋%0A%0A` +
+      `I need assistance with my order.%0A%0A` +
+      `🔖 Order ID: %23${order.id.slice(0,8).toUpperCase()}%0A` +
+      `💰 Amount: ₹${totalAmount.toFixed(0)}%0A` +
+      `📋 Status: ${order.status}%0A%0A` +
+      `Please assist me.`;
     window.open(`https://wa.me/${SHOP_WA}?text=${msg}`, '_blank');
-  };
+  }
+
+  function handleBuyAgain() {
+    if (Array.isArray(order.items)) {
+      order.items.forEach(it => {
+        addToCart({
+          id: it.product_id || it.id,
+          name: it.name,
+          price: it.price,
+          image_url: it.image_url,
+          unit: it.unit
+        }, it.quantity || 1);
+      });
+      navigate('/cart');
+    }
+  }
+
+  function handleCopyId() {
+    navigator.clipboard.writeText(order.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   return (
-    <div style={{ minHeight:'100vh', background:'var(--bg)', paddingBottom:'100px' }}>
+    <div style={{ minHeight:'100vh', background:'radial-gradient(circle at 50% 0%, #F8FAFC 0%, #F1F5F9 100%)', padding:'24px 16px 80px' }}>
+      <SEO title={`Order #${order.id.slice(0,8).toUpperCase()} | Asmalabel`} robots="noindex, nofollow" />
+      <div style={{ maxWidth:'580px', margin:'0 auto', display:'flex', flexDirection:'column', gap:'16px' }}>
 
-      {/* Header */}
-      <div style={{ background:'white', borderBottom:'1px solid var(--border)',
-        position:'sticky', top:0, zIndex:50 }}>
-        <div className="container-center"
-          style={{ display:'flex', alignItems:'center', gap:'12px', padding:'14px 16px' }}>
-          <button onClick={() => navigate('/orders')}
-            style={{ padding:'8px', borderRadius:'12px', background:'var(--secondary)',
-              border:'none', cursor:'pointer', display:'flex' }}>
-            <Home size={20} color="var(--text-2)" />
+        {/* ── Top Navigation Bar ── */}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <button
+            onClick={() => navigate('/orders')}
+            style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'none', border:'none', fontSize:'14px', fontWeight:800, color:'#0F172A', cursor:'pointer' }}
+          >
+            <ArrowLeft size={18} />
+            <span>All Orders</span>
           </button>
+          <button
+            onClick={() => fetchOrder()}
+            disabled={refreshing}
+            style={{ background:'#FFFFFF', border:'1px solid #E2E8F0', borderRadius:'10px', padding:'6px 12px', fontSize:'12px', fontWeight:700, color:'#475569', cursor:'pointer', display:'flex', alignItems:'center', gap:'4px' }}
+          >
+            <RefreshCw size={13} className={refreshing ? 'spin' : ''} />
+            <span>{refreshing ? 'Updating...' : 'Refresh'}</span>
+          </button>
+        </div>
+
+        {/* ── 1. Top Header: Order # & Date (Image 2) ── */}
+        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between' }}>
           <div>
-            <h1 style={{ fontSize:'17px', fontWeight:900, color:'var(--text)' }}>Order Status</h1>
-            <p style={{ fontSize:'12px', color:'var(--text-3)' }}>
-              #{order.id.slice(0,8).toUpperCase()}
+            <h1 style={{ fontSize:'20px', fontWeight:900, color:'#0F172A', margin:0, letterSpacing:'-0.3px', fontFamily:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif' }}>
+              Order #{order.id.slice(0,8).toUpperCase()}
+            </h1>
+            <p style={{ fontSize:'13px', color:'#64748B', marginTop:'3px', fontWeight:600, margin:0 }}>
+              Confirmed {orderDateStr}
             </p>
           </div>
-          <button onClick={() => fetchOrder(true)} disabled={refreshing}
-            style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:'6px',
-              padding:'8px 14px', borderRadius:'12px', background:'var(--secondary)',
-              border:'none', cursor:'pointer', fontSize:'13px', fontWeight:700,
-              color:'var(--text-2)' }}>
-            <RefreshCw size={15}
-              style={{ animation: refreshing ? 'spin .8s linear infinite' : 'none' }} />
-            {refreshing ? 'Refreshing...' : 'Refresh'}
+          <button
+            onClick={handleCopyId}
+            title="Copy full Order ID"
+            style={{
+              background:'#FFFFFF', border:'1px solid #E2E8F0', borderRadius:'8px',
+              padding:'6px 10px', fontSize:'11.5px', fontWeight:700, color:'#475569',
+              cursor:'pointer', display:'flex', alignItems:'center', gap:'4px'
+            }}
+          >
+            {copied ? <Check size={12} color="#16A34A" /> : <Copy size={12} />}
+            <span>{copied ? 'Copied' : 'ID'}</span>
           </button>
         </div>
-      </div>
 
-      <div className="container-center" style={{ padding:'16px', maxWidth:'600px',
-        display:'flex', flexDirection:'column', gap:'16px' }}>
+        {/* ── 2. "Buy again" Action Button (Image 2) ── */}
+        <button
+          onClick={handleBuyAgain}
+          style={{
+            width: '100%',
+            padding: '13px',
+            borderRadius: '14px',
+            background: '#0F172A',
+            border: 'none',
+            color: '#FFFFFF',
+            fontSize: '14px',
+            fontWeight: 800,
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(15,23,42,0.1)',
+            transition: 'all .2s'
+          }}
+        >
+          Buy again
+        </button>
 
-        {/* Payment status banner */}
-        <div style={{ borderRadius:'20px', padding:'20px',
-          background: pCfg.bg, border:`1.5px solid ${pCfg.border}`,
-          boxShadow:'var(--shadow-sm)' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'12px' }}>
-            <span style={{ fontSize:'28px' }}>{pCfg.icon}</span>
-            <div>
-              <p style={{ fontSize:'15px', fontWeight:900, color: pCfg.color }}>
-                {pCfg.label}
-              </p>
-              <p style={{ fontSize:'12px', color:'var(--text-3)', marginTop:'2px' }}>
-                {new Date(order.created_at).toLocaleString('en-IN')}
-              </p>
+        {/* ── 3. Payment Status Box (Image 2) ── */}
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: '16px',
+          border: '1px solid #E2E8F0',
+          padding: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px'
+        }}>
+          <p style={{ fontSize:'17px', fontWeight:900, color:'#0F172A', margin:0 }}>
+            ₹{totalAmount.toFixed(2)} INR
+          </p>
+          <p style={{ fontSize:'13px', color:'#475569', margin:0, lineHeight:1.5, fontWeight:500 }}>
+            {isPending
+              ? 'This order has a pending payment. The balance will be updated when payment is received.'
+              : isRejected
+              ? `Payment could not be verified: ${order.rejection_reason || 'Please contact support.'}`
+              : 'Payment verified successfully. Thank you for shopping with Asmalabel!'}
+          </p>
+        </div>
+
+        {/* ── 4. Order Confirmation / Status Box (Image 2) ── */}
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: '16px',
+          border: '1px solid #E2E8F0',
+          padding: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px'
+        }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+              <span style={{
+                width:'22px', height:'22px', borderRadius:'50%', background:'#0F172A',
+                color:'#FFFFFF', display:'flex', alignItems:'center', justifyContent:'center',
+                fontSize:'12px', fontWeight:900
+              }}>✓</span>
+              <span style={{ fontSize:'15px', fontWeight:900, color:'#0F172A' }}>
+                {order.status === 'delivered' ? 'Delivered' : order.status === 'shipped' ? 'Shipped' : 'Confirmed'}
+              </span>
             </div>
+            <span style={{ fontSize:'12px', color:'#94A3B8', fontWeight:600 }}>{orderDateStr}</span>
           </div>
 
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
-            {[
-              { l:'Order ID',  v:`#${order.id.slice(0,8).toUpperCase()}` },
-              { l:'Amount',    v:`₹${order.total_amount?.toFixed(0)}` },
-              { l:'Est. Verification', v:'Under 2 mins' },
-              { l:'Items',     v:`${order.items?.length || 0} product(s)` },
-            ].map(({ l, v }) => (
-              <div key={l} style={{ background:'rgba(255,255,255,.7)',
-                borderRadius:'12px', padding:'10px 12px' }}>
-                <p style={{ fontSize:'10px', fontWeight:700, color:'var(--text-3)',
-                  textTransform:'uppercase', letterSpacing:'.4px', marginBottom:'2px' }}>
-                  {l}
-                </p>
-                <p style={{ fontSize:'14px', fontWeight:800, color:'var(--text)' }}>{v}</p>
-              </div>
-            ))}
-          </div>
+          <p style={{ fontSize:'13px', color:'#475569', margin:0, fontWeight:500 }}>
+            {order.status === 'delivered'
+              ? 'Your package has been successfully delivered to your doorstep.'
+              : order.status === 'shipped'
+              ? 'Your items are in transit with our express delivery courier.'
+              : "We're preparing these items for shipping."}
+          </p>
 
-          {/* Verification in progress message */}
-          {order.payment_status === 'submitted' && (
-            <div style={{ marginTop:'14px', background:'rgba(59,130,246,.08)',
-              borderRadius:'12px', padding:'12px', display:'flex',
-              alignItems:'flex-start', gap:'10px' }}>
-              <div style={{ width:'8px', height:'8px', borderRadius:'50%',
-                background:'#3B82F6', marginTop:'5px', flexShrink:0,
-                animation:'pulse 1.5s ease-in-out infinite' }} />
-              <div>
-                <p style={{ fontSize:'13px', fontWeight:800, color:'#1D4ED8',
-                  marginBottom:'2px' }}>
-                  Payment Verification in Progress
-                </p>
-                <p style={{ fontSize:'12px', color:'#3B82F6', lineHeight:1.5 }}>
-                  Thank you for your payment. We are securely verifying your payment.
-                  Verification usually takes less than 2 minutes and may take up to
-                  10 minutes during busy hours.
-                </p>
-              </div>
-            </div>
-          )}
+          {/* Toggle Detailed Timeline */}
+          <button
+            onClick={() => setShowTimeline(!showTimeline)}
+            style={{
+              background:'none', border:'none', padding:'6px 0 0',
+              color:'#2563EB', fontSize:'12.5px', fontWeight:800,
+              cursor:'pointer', display:'inline-flex', alignItems:'center', gap:'4px'
+            }}
+          >
+            <span>{showTimeline ? 'Hide Tracking Steps' : 'View Full Tracking Timeline'}</span>
+            {showTimeline ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
 
-          {/* Rejected message */}
-          {isRejected && (
-            <div style={{ marginTop:'14px', background:'rgba(239,68,68,.08)',
-              borderRadius:'12px', padding:'12px' }}>
-              <p style={{ fontSize:'13px', fontWeight:800, color:'#DC2626',
-                marginBottom:'4px' }}>
-                We could not verify your payment
-              </p>
-              {order.rejection_reason && (
-                <p style={{ fontSize:'12px', color:'#EF4444' }}>
-                  Reason: {order.rejection_reason}
-                </p>
-              )}
-              <p style={{ fontSize:'12px', color:'#B91C1C', marginTop:'4px' }}>
-                Please contact us or retry payment.
-              </p>
-            </div>
-          )}
-
-          {/* Verified success message */}
-          {isVerified && (
-            <div style={{ marginTop:'14px', background:'rgba(22,163,74,.08)',
-              borderRadius:'12px', padding:'12px', textAlign:'center' }}>
-              <p style={{ fontSize:'16px', fontWeight:900, color:'#15803D' }}>
-                🎉 Payment Verified Successfully!
-              </p>
-              <p style={{ fontSize:'13px', color:'#16A34A', marginTop:'4px' }}>
-                Your order has been confirmed. Thank you for shopping with Asmalabel!
-              </p>
+          {showTimeline && (
+            <div style={{ borderTop:'1px solid #F1F5F9', marginTop:'10px', paddingTop:'12px' }}>
+              <ProgressTracker status={order.status} />
             </div>
           )}
         </div>
 
-        {/* Order Progress Tracker */}
-        <div style={{ background:'white', borderRadius:'20px', padding:'20px',
-          boxShadow:'var(--shadow-sm)', border:'1px solid var(--border)' }}>
-          <h3 style={{ fontSize:'15px', fontWeight:900, color:'var(--text)',
-            marginBottom:'20px' }}>Order Progress</h3>
-          <ProgressTracker status={order.status} />
-        </div>
-
-        {/* Order details */}
-        <div style={{ background:'white', borderRadius:'20px', padding:'20px',
-          boxShadow:'var(--shadow-sm)', border:'1px solid var(--border)' }}>
-          <h3 style={{ fontSize:'15px', fontWeight:900, color:'var(--text)',
-            marginBottom:'14px' }}>Order Details</h3>
-          {order.items?.map((item, i) => (
-            <div key={i} style={{ display:'flex', justifyContent:'space-between',
-              alignItems:'center', padding:'8px 0',
-              borderBottom: i < order.items.length - 1 ? '1px solid var(--border)' : 'none' }}>
-              <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                <img src={item.image_url || 'https://placehold.co/40x40?text=?'}
-                  alt={item.name}
-                  style={{ width:'40px', height:'40px', borderRadius:'8px', objectFit:'cover' }} />
-                <div>
-                  <p style={{ fontSize:'13px', fontWeight:700, color:'var(--text)' }}>
+        {/* ── 5. Items Card with Count Badges (Image 2) ── */}
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: '16px',
+          border: '1px solid #E2E8F0',
+          padding: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '14px'
+        }}>
+          {(order.items || []).map((item, idx) => (
+            <div key={idx} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'12px', minWidth:0 }}>
+                <div style={{ position:'relative', width:'54px', height:'54px', flexShrink:0 }}>
+                  <img
+                    src={item.image_url || 'https://placehold.co/60x60?text=Product'}
+                    alt={item.name}
+                    style={{ width:'100%', height:'100%', borderRadius:'12px', objectFit:'cover', background:'#F8FAFC', border:'1px solid #F1F5F9' }}
+                  />
+                  <span style={{
+                    position:'absolute', top:'-6px', right:'-6px',
+                    width:'20px', height:'20px', borderRadius:'50%',
+                    background:'#000000', color:'#FFFFFF',
+                    fontSize:'11px', fontWeight:900,
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    boxShadow:'0 2px 5px rgba(0,0,0,0.3)', border:'1.5px solid #FFFFFF'
+                  }}>
+                    {item.quantity || 1}
+                  </span>
+                </div>
+                <div style={{ minWidth:0 }}>
+                  <p style={{ fontSize:'13.5px', fontWeight:800, color:'#0F172A', margin:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
                     {item.name}
                   </p>
-                  <p style={{ fontSize:'12px', color:'var(--text-3)' }}>
-                    Qty: {item.quantity}
-                  </p>
+                  {item.unit && (
+                    <p style={{ fontSize:'11.5px', color:'#64748B', margin:'2px 0 0', fontWeight:500 }}>
+                      {item.unit}
+                    </p>
+                  )}
                 </div>
               </div>
-              <p style={{ fontSize:'13px', fontWeight:800, color:'var(--text)' }}>
-                ₹{(item.price * item.quantity).toFixed(0)}
-              </p>
+              <span style={{ fontSize:'14px', fontWeight:900, color:'#0F172A', flexShrink:0 }}>
+                ₹{Number(item.price || 0).toFixed(2)}
+              </span>
             </div>
           ))}
-          <div style={{ display:'flex', justifyContent:'space-between',
-            marginTop:'12px', paddingTop:'12px', borderTop:'1px solid var(--border)' }}>
-            <span style={{ fontWeight:900, fontSize:'15px' }}>Total</span>
-            <span style={{ fontWeight:900, fontSize:'18px', color:'var(--primary)' }}>
-              ₹{order.total_amount?.toFixed(0)}
-            </span>
+
+          {/* Pricing Subtotal, Shipping, Total */}
+          <div style={{ borderTop:'1px solid #F1F5F9', paddingTop:'12px', display:'flex', flexDirection:'column', gap:'8px' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:'13.5px', color:'#64748B', fontWeight:600 }}>
+              <span>Subtotal</span>
+              <span style={{ color:'#0F172A', fontWeight:700 }}>₹{itemsSubtotal.toFixed(2)}</span>
+            </div>
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:'13.5px', color:'#64748B', fontWeight:600 }}>
+              <span>Shipping</span>
+              <span style={{ color:'#0F172A', fontWeight:700 }}>{shippingCost > 0 ? `₹${shippingCost.toFixed(2)}` : 'Free'}</span>
+            </div>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginTop:'4px', paddingTop:'8px', borderTop:'1px dashed #E2E8F0' }}>
+              <span style={{ fontSize:'15px', fontWeight:900, color:'#0F172A' }}>Total</span>
+              <div style={{ textAlign:'right' }}>
+                <span style={{ fontSize:'12px', color:'#64748B', fontWeight:700, marginRight:'6px' }}>INR</span>
+                <span style={{ fontSize:'18px', fontWeight:900, color:'#0F172A' }}>₹{totalAmount.toFixed(2)}</span>
+              </div>
+            </div>
+            <p style={{ fontSize:'11.5px', color:'#94A3B8', margin:0, textAlign:'right', fontWeight:500 }}>
+              Including ₹{taxesApprox} in taxes
+            </p>
           </div>
         </div>
 
-        {/* Delivery address */}
-        <div style={{ background:'white', borderRadius:'20px', padding:'20px',
-          boxShadow:'var(--shadow-sm)', border:'1px solid var(--border)' }}>
-          <h3 style={{ fontSize:'15px', fontWeight:900, color:'var(--text)',
-            marginBottom:'12px' }}>Delivery Address</h3>
-          <p style={{ fontSize:'14px', fontWeight:800, color:'var(--text)',
-            marginBottom:'4px' }}>
-            {addr.fullName} · +91 {addr.phone}
-          </p>
-          <p style={{ fontSize:'13px', color:'var(--text-2)', lineHeight:1.6 }}>
-            {addr.houseNo}, {addr.streetArea}<br/>
-            Near {addr.landmark}<br/>
-            {addr.city}, {addr.state} — {addr.pincode}
-          </p>
+        {/* ── 6. Contact & Shipping Information Card (Image 3) ── */}
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: '16px',
+          border: '1px solid #E2E8F0',
+          padding: '18px 16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '14px'
+        }}>
+          {/* Contact */}
+          <div style={{ display:'grid', gridTemplateColumns:'80px 1fr', gap:'8px', fontSize:'13px', alignItems:'flex-start' }}>
+            <span style={{ color:'#64748B', fontWeight:600 }}>Contact</span>
+            <span style={{ color:'#0F172A', fontWeight:700, textDecoration:'underline' }}>
+              {addr.phone ? `+91 ${addr.phone}` : 'Customer Contact'}
+            </span>
+          </div>
+
+          <div style={{ height:'1px', background:'#F1F5F9' }} />
+
+          {/* Ship to */}
+          <div style={{ display:'grid', gridTemplateColumns:'80px 1fr', gap:'8px', fontSize:'13px', alignItems:'flex-start' }}>
+            <span style={{ color:'#64748B', fontWeight:600 }}>Ship to</span>
+            <div style={{ color:'#0F172A', lineHeight:1.5, fontWeight:600 }}>
+              <p style={{ fontWeight:800, margin:0 }}>{addr.fullName || 'Valued Customer'}</p>
+              <p style={{ margin:0, color:'#475569' }}>{addr.houseNo ? `${addr.houseNo}, ` : ''}{addr.streetArea || ''}</p>
+              {addr.landmark && <p style={{ margin:0, color:'#475569' }}>Near {addr.landmark}</p>}
+              <p style={{ margin:0, color:'#475569' }}>
+                {[addr.city, addr.state, addr.pincode, 'India'].filter(Boolean).join(' ')}
+              </p>
+              {addr.phone && <p style={{ margin:'2px 0 0', textDecoration:'underline', fontWeight:700 }}>+91 {addr.phone}</p>}
+            </div>
+          </div>
+
+          <div style={{ height:'1px', background:'#F1F5F9' }} />
+
+          {/* Method */}
+          <div style={{ display:'grid', gridTemplateColumns:'80px 1fr', gap:'8px', fontSize:'13px', alignItems:'center' }}>
+            <span style={{ color:'#64748B', fontWeight:600 }}>Method</span>
+            <span style={{ color:'#0F172A', fontWeight:700 }}>Free Express Shipping</span>
+          </div>
+
+          <div style={{ height:'1px', background:'#F1F5F9' }} />
+
+          {/* Payment */}
+          <div style={{ display:'grid', gridTemplateColumns:'80px 1fr', gap:'8px', fontSize:'13px', alignItems:'flex-start' }}>
+            <span style={{ color:'#64748B', fontWeight:600 }}>Payment</span>
+            <div>
+              <p style={{ fontWeight:800, color:'#0F172A', margin:0 }}>
+                {order.payment_method === 'cod' ? 'Cash on Delivery (COD)' : 'UPI / Online Payment'}
+              </p>
+              <p style={{ fontSize:'12px', color:'#64748B', margin:'2px 0 0', fontWeight:500 }}>
+                ₹{totalAmount.toFixed(2)} INR · {orderDateStr}
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Action buttons */}
-        <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
-          <button onClick={waContact}
-            style={{ width:'100%', padding:'15px', borderRadius:'16px',
-              background:'#25D366', color:'white', fontWeight:900, fontSize:'15px',
-              border:'none', cursor:'pointer', display:'flex', alignItems:'center',
-              justifyContent:'center', gap:'10px',
-              boxShadow:'0 6px 20px rgba(37,211,102,.35)' }}>
-            <MessageCircle size={20} />
-            Contact Asmalabel on WhatsApp
-          </button>
-
-          <a href="tel:+917013942909"
-            style={{ width:'100%', padding:'15px', borderRadius:'16px',
-              background:'white', color:'var(--text)', fontWeight:800, fontSize:'15px',
-              border:'1.5px solid var(--border)', cursor:'pointer',
-              display:'flex', alignItems:'center', justifyContent:'center',
-              gap:'10px', textDecoration:'none', boxShadow:'var(--shadow-sm)' }}>
-            <Phone size={20} color="#3B82F6" />
-            Call Asmalabel
-          </a>
-
-          {isRejected && (
-            <button onClick={() => navigate('/checkout')}
-              style={{ width:'100%', padding:'15px', borderRadius:'16px',
-                background:'var(--primary-grad)', color:'white', fontWeight:900,
-                fontSize:'15px', border:'none', cursor:'pointer',
-                boxShadow:'0 6px 20px rgba(252,128,25,.3)' }}>
-              🔄 Retry Payment
-            </button>
-          )}
-        </div>
+        {/* ── 7. Action Button: WhatsApp ── */}
+        <button
+          onClick={waContact}
+          style={{
+            width:'100%', padding:'13px', borderRadius:'14px',
+            background:'#F0FDF4', color:'#16A34A', fontWeight:800,
+            fontSize:'14px', border:'1px solid #BBF7D0', cursor:'pointer',
+            display:'flex', alignItems:'center', justifyContent:'center', gap:'8px'
+          }}
+        >
+          <MessageCircle size={17} /> Chat with WhatsApp Support
+        </button>
 
       </div>
-      <style>{`
-        @keyframes spin  { to { transform: rotate(360deg); } }
-        @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
-      `}</style>
     </div>
   );
 }
