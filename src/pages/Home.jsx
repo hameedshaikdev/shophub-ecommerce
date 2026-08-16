@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import {
@@ -135,10 +135,8 @@ function DealTimer() {
         <span key={i} style={{display:'flex',alignItems:'center',gap:'6px'}}>
           <div className="flash-timer-card" style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06))',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
             border: '1px solid rgba(255,255,255,0.25)',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.3)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
             color: 'white',
             fontWeight: 900,
             fontSize: '16px',
@@ -149,31 +147,31 @@ function DealTimer() {
             fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
             letterSpacing: '0.5px'
           }}>
-            <span className={i === 2 ? 'flash-timer-sec' : ''}>{pad(v)}</span>
+            {pad(v)}
           </div>
-          {i < 2 && <span style={{fontWeight:900,fontSize:'16px',color:'rgba(255,255,255,0.7)',animation:'timerColonPulse 1s infinite'}}>:</span>}
+          {i < 2 && <span style={{color:'white',fontWeight:900,fontSize:'16px'}}>:</span>}
         </span>
       ))}
     </div>
   );
 }
 
-/* ─── Product Mini Card (for carousels) ───────────────────── */
-function MiniCard({ product }) {
+/* ─── Mini Card (for carousels) ───────────────────────────── */
+const MiniCard = memo(function MiniCardComponent({ product, badge: customBadge }) {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
   if (!product || !product.id) return null;
 
   const inWL = isInWishlist(product.id);
-  const { badge: customBadge, discount_tag: customDisc } = parseProductTags(product);
+  const customDisc = product.original_price && product.original_price > product.price
+    ? `-${Math.round(((product.original_price - product.price) / product.original_price) * 100)}% off`
+    : null;
 
-  // Badge config maps known keywords to styled badges
   const badgeConfig = {
     sale:       { bg: 'linear-gradient(135deg, #FF3B30, #FF6B8B)', color: '#fff', label: 'SALE'       },
     bestseller: { bg: 'linear-gradient(135deg, #FF9500, #FFCC00)', color: '#fff', label: 'BESTSELLER' },
     new:        { bg: 'linear-gradient(135deg, #30D158, #34C759)', color: '#fff', label: 'NEW'        },
     hot:        { bg: 'linear-gradient(135deg, #AF52DE, #5856D6)', color: '#fff', label: 'HOT'        }
   };
-  // If customBadge matches a key, use config; otherwise use the raw label (already may have emoji)
   const badgeKey = (customBadge || '').toLowerCase().replace(/[^a-z]/g, '');
   const badge = customBadge
     ? (badgeConfig[badgeKey] || { bg:'linear-gradient(135deg, #1A1A2E, #0F3460)', color:'#fff', label: customBadge })
@@ -181,8 +179,6 @@ function MiniCard({ product }) {
 
   const pPrice = Number(product.price || 0);
   const pOrig = Number(product.original_price || 0);
-  const disc = pOrig > pPrice && pOrig > 0
-    ? Math.round((1 - pPrice / pOrig) * 100) : null;
   const imgUrl = getProductImage(product);
 
   return (
@@ -190,30 +186,33 @@ function MiniCard({ product }) {
       style={{textDecoration:'none',display:'flex',flexDirection:'column',minWidth:'210px',maxWidth:'210px',flexShrink:0,height:'100%'}}>
       <motion.div
         whileHover={{
-          y: -10,
+          y: -8,
           scale: 1.02,
-          boxShadow: '0 20px 48px -8px rgba(0, 0, 0, 0.16), 0 0 20px rgba(255, 255, 255, 0.3)',
+          boxShadow: '0 20px 48px -8px rgba(0, 0, 0, 0.16)',
           borderColor: 'rgba(255, 255, 255, 0.95)'
         }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          background: 'rgba(255, 255, 255, 0.82)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          background: '#FFFFFF',
           borderRadius: '24px',
           overflow: 'hidden',
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          boxShadow: '0 6px 24px rgba(0, 0, 0, 0.05)',
+          border: '1px solid #E2E8F0',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.05)',
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
           justifyContent: 'space-between'
         }}>
-        <div style={{position:'relative',height:'150px',background:'rgba(245, 247, 250, 0.8)',overflow:'hidden',margin:'6px 6px 0 6px',borderRadius:'18px',flexShrink:0}}>
-          <img src={imgUrl} alt={product.name || 'Product'}
+        <div style={{position:'relative',height:'150px',background:'#F8FAFC',overflow:'hidden',margin:'6px 6px 0 6px',borderRadius:'18px',flexShrink:0}}>
+          <img
+            src={imgUrl}
+            alt={product.name || 'Product'}
+            loading="lazy"
+            decoding="async"
             style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:'18px'}}
-            onError={e=>{e.target.src='https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80';}}/>
+            onError={e=>{e.target.src='https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80';}}
+          />
           {/* Badge tag on home page cards only */}
           {badge && (
             <div style={{position:'absolute',top:'8px',left:'8px',background:badge.bg,
@@ -226,7 +225,7 @@ function MiniCard({ product }) {
           )}
           <button onClick={e=>{e.preventDefault();inWL?removeFromWishlist(product.id):addToWishlist(product);}}
             style={{position:'absolute',bottom:'8px',right:'8px',width:'32px',height:'32px',
-              borderRadius:'9999px',background:'rgba(255,255,255,.9)',backdropFilter:'blur(8px)',
+              borderRadius:'9999px',background:'rgba(255,255,255,.9)',
               border:'1px solid rgba(255,255,255,.9)',cursor:'pointer',
               display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 2px 10px rgba(0,0,0,.08)'}}>
             <Heart size={13} fill={inWL?'#E94560':'none'} color={inWL?'#E94560':'#555'}/>
@@ -244,9 +243,9 @@ function MiniCard({ product }) {
                 <span style={{fontSize:'11px',color:'#94A3B8',textDecoration:'line-through'}}>
                   ₹{pOrig.toFixed(0)}
                 </span>}
-              {(customDisc || disc) && (
+              {customDisc && (
                 <span style={{fontSize:'10px',fontWeight:700,color:'#388E3C'}}>
-                  {customDisc || `-${disc}% off`}
+                  {customDisc}
                 </span>
               )}
             </div>
@@ -263,7 +262,7 @@ function MiniCard({ product }) {
       </motion.div>
     </Link>
   );
-}
+});
 
 /* ─── Horizontal carousel ─────────────────────────────────── */
 function Carousel({ children }) {
@@ -276,23 +275,28 @@ function Carousel({ children }) {
       <button onClick={()=>scroll(-1)}
         className="carousel-arrow carousel-arrow-left"
         style={{position:'absolute',left:'4px',top:'50%',transform:'translateY(-50%)',
-          width:'36px',height:'36px',borderRadius:'9999px',background:'rgba(255,255,255,.95)',
-          backdropFilter:'blur(12px)',border:'1px solid rgba(255,255,255,.9)',
-          boxShadow:'0 4px 16px rgba(0,0,0,.15)',
+          width:'36px',height:'36px',borderRadius:'9999px',background:'#FFFFFF',
+          border:'1px solid #E2E8F0',
+          boxShadow:'0 4px 16px rgba(0,0,0,.12)',
           cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2,flexShrink:0}}>
         <ChevronLeft size={16} color="#475569"/>
       </button>
-      <div ref={ref} style={{display:'flex',gap:'16px',overflowX:'auto',alignItems:'stretch',
+      <div ref={ref} style={{
+        display:'flex',gap:'16px',overflowX:'auto',alignItems:'stretch',
         padding:'6px 48px 16px',
-        scrollbarWidth:'none',msOverflowStyle:'none'}}>
+        scrollbarWidth:'none',msOverflowStyle:'none',
+        WebkitOverflowScrolling:'touch',
+        touchAction:'pan-x pan-y',
+        overscrollBehaviorX:'contain'
+      }}>
         {children}
       </div>
       <button onClick={()=>scroll(1)}
         className="carousel-arrow carousel-arrow-right"
         style={{position:'absolute',right:'4px',top:'50%',transform:'translateY(-50%)',
-          width:'36px',height:'36px',borderRadius:'9999px',background:'rgba(255,255,255,.95)',
-          backdropFilter:'blur(12px)',border:'1px solid rgba(255,255,255,.9)',
-          boxShadow:'0 4px 16px rgba(0,0,0,.15)',
+          width:'36px',height:'36px',borderRadius:'9999px',background:'#FFFFFF',
+          border:'1px solid #E2E8F0',
+          boxShadow:'0 4px 16px rgba(0,0,0,.12)',
           cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2,flexShrink:0}}>
         <ChevronRight size={16} color="#475569"/>
       </button>
@@ -301,7 +305,7 @@ function Carousel({ children }) {
 }
 
 /* ─── Full-Width Hardware-Accelerated Sliding Collections Banner Slider ─── */
-function FullWidthCollectionBannerSlider({ items, onSelectCategory, category }) {
+const FullWidthCollectionBannerSlider = memo(function FullWidthCollectionBannerSliderComponent({ items, onSelectCategory, category }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Desktop Mouse Drag & Mobile Touch Swipe State
@@ -313,7 +317,7 @@ function FullWidthCollectionBannerSlider({ items, onSelectCategory, category }) 
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
-  // Fast endless auto scroll loop (1.7 seconds per slide)
+  // Smooth Auto Scroll loop (3.2 seconds per slide)
   useEffect(() => {
     if (!items || items.length === 0) return;
 
@@ -671,7 +675,7 @@ function FullWidthCollectionBannerSlider({ items, onSelectCategory, category }) 
       </div>
     </div>
   );
-}
+});
 
 /* ─── Collection Card ─────────────────────────────────────── */
 function CollectionCard({ cls='', label, title, count, img, onClick, dark=false }) {

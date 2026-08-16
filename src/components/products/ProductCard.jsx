@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star, Eye, Plus } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { getProductImage, parseProductTags } from '../../utils/productImages';
 
-export default function ProductCard({ product, onQuickView }) {
+function ProductCardComponent({ product, onQuickView }) {
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
   const [added,    setAdded]    = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -72,9 +72,10 @@ export default function ProductCard({ product, onQuickView }) {
             src={imageUrl}
             alt={product.name || 'Product'}
             loading="lazy"
+            decoding="async"
             onError={() => setImgError(true)}
-            whileHover={{ scale: 1.10 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ scale: 1.08 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#FAF8FC', display: 'block' }}
           />
 
@@ -228,3 +229,6 @@ export default function ProductCard({ product, onQuickView }) {
     </Link>
   );
 }
+
+const ProductCard = memo(ProductCardComponent);
+export default ProductCard;

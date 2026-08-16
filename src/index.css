@@ -71,12 +71,37 @@ input, textarea, select { outline:none; border:none; font-family:inherit; backgr
 body {
   font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: radial-gradient(circle at 50% 0%, #F1F5F9 0%, #F8FAFC 50%, #EEF2F6 100%);
-  background-attachment: fixed;
+  background-attachment: scroll;
   color: var(--text);
   overflow-x: hidden;
   max-width: 100vw;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-y pinch-zoom;
+}
+
+@media(min-width: 1024px) {
+  body {
+    background-attachment: fixed;
+  }
+}
+
+/* ── Mobile 60FPS Hardware Acceleration & Touch Optimization ── */
+@media (max-width: 768px) {
+  .sh-header-wrapper,
+  .pd-sticky-header,
+  .collections-section,
+  nav[style*="fixed"] {
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+
+  .sh-grid-products > * {
+    content-visibility: auto;
+    contain-intrinsic-size: 260px;
+  }
 }
 
 /* ── Global Editorial Heading Typography ── */
