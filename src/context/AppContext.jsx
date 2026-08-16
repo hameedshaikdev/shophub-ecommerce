@@ -119,6 +119,13 @@ export function AppProvider({ children }) {
     // Purge fake unsplash mock media items if present from old cache
     mediaLib = mediaLib.filter(m => !m.url?.includes('images.unsplash.com/photo-1617606002806'));
 
+    let tailoringCols = Array.isArray(data.collections?.tailoring) ? data.collections.tailoring : DEFAULT_CMS_DATA.collections.tailoring;
+    const hasPresserFeet = tailoringCols.some(c => c.id === 'presser_feet' || c.label?.toLowerCase().includes('presser'));
+    if (!hasPresserFeet) {
+      const pfDefault = DEFAULT_CMS_DATA.collections.tailoring.find(c => c.id === 'presser_feet');
+      if (pfDefault) tailoringCols = [...tailoringCols, pfDefault];
+    }
+
     const updated = {
       hero: {
         tailoring: heroTailoring,
@@ -126,7 +133,7 @@ export function AppProvider({ children }) {
       },
       flashDeals: { ...DEFAULT_CMS_DATA.flashDeals, ...(data.flashDeals || {}) },
       collections: {
-        tailoring: Array.isArray(data.collections?.tailoring) ? data.collections.tailoring : DEFAULT_CMS_DATA.collections.tailoring,
+        tailoring: tailoringCols,
         fashion: Array.isArray(data.collections?.fashion) ? data.collections.fashion : DEFAULT_CMS_DATA.collections.fashion
       },
       newArrivals: { ...DEFAULT_CMS_DATA.newArrivals, ...(data.newArrivals || {}) },

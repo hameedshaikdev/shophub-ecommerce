@@ -24,7 +24,10 @@ const IMAGE_MAP = {
   'kurti': 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&auto=format&fit=crop&q=80',
   'anarkali': 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&auto=format&fit=crop&q=80',
   'handbag': 'https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=800&auto=format&fit=crop&q=80',
-  'jewelry': 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&auto=format&fit=crop&q=80'
+  'presser foot': '/images/collections/presser_feet.jpg',
+  'presser feet': '/images/collections/presser_feet.jpg',
+  'zipper foot': '/images/collections/presser_feet.jpg',
+  'buttonhole foot': '/images/collections/presser_feet.jpg',
 };
 
 const CATEGORY_FALLBACKS = {
@@ -33,6 +36,7 @@ const CATEGORY_FALLBACKS = {
   threads: 'https://images.unsplash.com/photo-1617606002806-94e279c22567?w=800&auto=format&fit=crop&q=80',
   needles: 'https://images.unsplash.com/photo-1594498258009-2e2bde84459e?w=800&auto=format&fit=crop&q=80',
   measuring: 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=800&auto=format&fit=crop&q=80',
+  presser_feet: '/images/collections/presser_feet.jpg',
   dresses: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80',
   tops: 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=800&auto=format&fit=crop&q=80',
   bottoms: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&auto=format&fit=crop&q=80',

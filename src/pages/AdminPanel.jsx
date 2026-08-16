@@ -108,7 +108,7 @@ function ProductModal({ product, onClose, onSave }) {
     active: product?.active??true,
   });
   const [customSubCat, setCustomSubCat] = useState(() => {
-    return !!(product?.sub_category && !['machines','scissors','threads','needles','measuring','dresses','tops','bottoms','ethnic','accessories'].includes(product.sub_category));
+    return !!(product?.sub_category && !['machines','scissors','threads','needles','measuring','presser_feet','dresses','tops','bottoms','ethnic','accessories'].includes(product.sub_category));
   });
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -344,10 +344,10 @@ function ProductModal({ product, onClose, onSave }) {
                   }
                 }} style={S}>
                 <option value="">Sub category</option>
-                {(form.category==='tailoring'?['machines','scissors','threads','needles','measuring']:['dresses','tops','bottoms','ethnic','accessories']).map(s=><option key={s} value={s}>{s}</option>)}
+                {(form.category==='tailoring'?['machines','scissors','threads','needles','measuring','presser_feet']:['dresses','tops','bottoms','ethnic','accessories']).map(s=><option key={s} value={s}>{s}</option>)}
                 <option value="custom">✏️ + Custom Subcategory...</option>
               </select>
-              {(customSubCat || (form.sub_category && !['machines','scissors','threads','needles','measuring','dresses','tops','bottoms','ethnic','accessories'].includes(form.sub_category))) && (
+              {(customSubCat || (form.sub_category && !['machines','scissors','threads','needles','measuring','presser_feet','dresses','tops','bottoms','ethnic','accessories'].includes(form.sub_category))) && (
                 <input placeholder="Type custom subcategory (e.g. blouses)"
                   value={form.sub_category}
                   onChange={e => setForm(p => ({ ...p, sub_category: e.target.value }))}
