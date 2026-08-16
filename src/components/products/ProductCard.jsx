@@ -44,7 +44,7 @@ function ProductCardComponent({ product, onQuickView }) {
     : getProductImage(product);
 
   return (
-    <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', minWidth: 0, boxSizing: 'border-box' }}>
       <motion.div
         whileHover={{
           y: -6,
@@ -63,6 +63,9 @@ function ProductCardComponent({ product, onQuickView }) {
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
+          width: '100%',
+          minWidth: 0,
+          boxSizing: 'border-box',
           transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
         }}>
 
@@ -103,61 +106,62 @@ function ProductCardComponent({ product, onQuickView }) {
             </div>
           )}
 
-          {/* Wishlist Button — Perfect Circle */}
+          {/* Wishlist Button — Clean Top Right */}
           <motion.button
             onClick={handleWish}
-            whileHover={{ scale: 1.14 }}
+            whileHover={{ scale: 1.12 }}
             whileTap={{ scale: 0.88 }}
             title={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+            className="card-action-btn card-wish-btn"
             style={{
-              position: 'absolute', top: '16px', right: '8px', zIndex: 3,
-              width: '34px', height: '34px', borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.92)',
-              backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+              position: 'absolute', top: '8px', right: '8px', zIndex: 3,
+              width: '32px', height: '32px', borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.95)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '1px solid rgba(255, 255, 255, 0.9)',
-              cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.12)'
+              border: '1px solid rgba(226, 232, 240, 0.8)',
+              cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.08)'
             }}>
             <Heart size={14} fill={inWishlist ? '#EF4444' : 'none'} color={inWishlist ? '#EF4444' : '#475569'} />
           </motion.button>
 
-          {/* Quick View Button — Perfect Circle */}
+          {/* Quick View Button — Desktop Only */}
           {onQuickView && (
             <motion.button
               onClick={handleQuickViewClick}
-              whileHover={{ scale: 1.14 }}
+              whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.88 }}
               title="Quick View"
+              className="card-action-btn desktop-only-quickview"
               style={{
-                position: 'absolute', top: '58px', right: '8px', zIndex: 3,
-                width: '34px', height: '34px', borderRadius: '50%',
-                background: 'rgba(255, 255, 255, 0.92)',
-                backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+                position: 'absolute', top: '46px', right: '8px', zIndex: 3,
+                width: '32px', height: '32px', borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.95)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: '1px solid rgba(255, 255, 255, 0.9)',
-                cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.12)'
+                border: '1px solid rgba(226, 232, 240, 0.8)',
+                cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.08)'
               }}>
               <Eye size={14} color="#475569" />
             </motion.button>
           )}
 
-          {/* Add to Cart Button — Perfect Circle with Cart + Plus Symbol */}
+          {/* Add to Cart Button — Clean Bottom Right */}
           {product.stock !== 0 && (
             <motion.button
               onClick={handleAdd}
-              whileHover={{ scale: 1.14 }}
+              whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.88 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               title="Add to Cart"
+              className="card-action-btn card-cart-btn"
               style={{
                 position: 'absolute', bottom: '8px', right: '8px', zIndex: 3,
-                width: '34px', height: '34px', borderRadius: '50%',
+                width: '32px', height: '32px', borderRadius: '50%',
                 background: added
                   ? 'linear-gradient(135deg, #10B981, #059669)'
                   : 'linear-gradient(135deg, #0F172A, #1E293B)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: '2px solid rgba(255, 255, 255, 0.6)', cursor: 'pointer', color: 'white',
-                boxShadow: `0 4px 14px ${added ? 'rgba(16,185,129,.45)' : 'rgba(15,23,42,.38)'}`,
+                border: '2px solid rgba(255, 255, 255, 0.8)', cursor: 'pointer', color: 'white',
+                boxShadow: `0 4px 14px ${added ? 'rgba(16,185,129,.45)' : 'rgba(15,23,42,.35)'}`,
                 transition: 'background .25s ease, box-shadow .25s ease'
               }}>
               {added ? (

@@ -1367,10 +1367,11 @@ export default function Home() {
               background:'rgba(255,255,255,0.76)', backdropFilter:'blur(20px)',
               WebkitBackdropFilter:'blur(20px)',
               border:'1px solid rgba(255,255,255,0.9)', borderRadius:'9999px',
-              padding:'6px 14px', marginBottom:'24px', flexWrap:'wrap', gap:'8px',
-              boxShadow:'0 4px 16px rgba(15,23,42,0.04)'
+              padding:'6px 14px', marginBottom:'20px', flexWrap:'nowrap', gap:'8px',
+              boxShadow:'0 4px 16px rgba(15,23,42,0.04)',
+              width:'100%', maxWidth:'100%', boxSizing:'border-box', overflow:'hidden'
             }}>
-              <div className="sh-scroll-hide" style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', fontWeight:700, color:'#475569', overflowX:'auto' }}>
+              <div className="sh-scroll-hide" style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', fontWeight:700, color:'#475569', overflowX:'auto', width:'100%', WebkitOverflowScrolling:'touch' }}>
                 <ArrowUpDown size={14} color="#E94560" style={{ flexShrink: 0 }} />
                 <span style={{ flexShrink: 0 }}>Sort:</span>
                 {[
@@ -1397,9 +1398,9 @@ export default function Home() {
         {loading && (
           <div className="sh-grid-products">
             {[...Array(8)].map((_,i) => (
-              <div key={i} style={{borderRadius:'20px',overflow:'hidden',background:'white',boxShadow:'var(--shadow-sm)'}}>
-                <div className="sh-skel" style={{height:'200px',borderRadius:0}}/>
-                <div style={{padding:'16px',display:'flex',flexDirection:'column',gap:'10px'}}>
+              <div key={i} style={{borderRadius:'20px',overflow:'hidden',background:'white',boxShadow:'var(--shadow-sm)',minWidth:0,width:'100%'}}>
+                <div className="sh-skel" style={{height:'180px',borderRadius:0}}/>
+                <div style={{padding:'14px',display:'flex',flexDirection:'column',gap:'8px'}}>
                   <div className="sh-skel" style={{height:'13px',width:'80%'}}/>
                   <div className="sh-skel" style={{height:'11px',width:'50%'}}/>
                   <div className="sh-skel" style={{height:'18px',width:'38%',marginTop:'4px'}}/>
@@ -1418,7 +1419,7 @@ export default function Home() {
                 if (sortBy === 'rating') return (b.rating || 4.8) - (a.rating || 4.8);
                 return 0;
               }).map(p => (
-                <motion.div key={p.id} variants={sc} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <motion.div key={p.id} variants={sc} style={{ height: '100%', display: 'flex', flexDirection: 'column', minWidth: 0, width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                   <ProductCard product={p} onQuickView={setQuickViewProduct} />
                 </motion.div>
               ))}
