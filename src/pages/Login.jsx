@@ -83,7 +83,7 @@ export default function Login() {
   // ── Forgot Password Screen ───────────────────────────────────────────────
   if (forgotMode) {
     return (
-      <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'24px' }}>
+      <div style={{ flex:'1 0 auto', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'40px 20px', width:'100%', boxSizing:'border-box' }}>
         <div style={{ width:'100%', maxWidth:'400px' }}>
           <button onClick={() => { setForgotMode(false); setForgotSent(false); setError(''); }}
             style={{ display:'flex', alignItems:'center', gap:'6px', background:'none', border:'none', cursor:'pointer', color:'var(--text-2)', fontSize:'14px', fontWeight:700, marginBottom:'24px' }}>
@@ -152,7 +152,7 @@ export default function Login() {
 
   // ── Main Login Screen ────────────────────────────────────────────────────
   return (
-    <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'24px' }}>
+    <div style={{ flex:'1 0 auto', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'40px 20px', width:'100%', boxSizing:'border-box' }}>
       <SEO title="Sign In | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/login" />
       <div style={{ width:'100%', maxWidth:'420px' }}>
 

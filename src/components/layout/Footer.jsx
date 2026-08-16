@@ -19,8 +19,15 @@ export default function Footer() {
   const email = f.email || 'as.businezzz@gmail.com';
   const copyright = f.copyright || '© 2026 AS HUB · All Rights Reserved';
 
+  const hasBottomNav = !['/checkout', '/login', '/signup'].includes(location.pathname);
+
   return (
-    <footer style={{ background:'#0F172A', paddingBottom:'calc(90px + env(safe-area-inset-bottom, 0px))' }}>
+    <footer style={{
+      background: '#0F172A',
+      marginTop: 'auto',
+      width: '100%',
+      paddingBottom: hasBottomNav ? 'calc(80px + env(safe-area-inset-bottom, 0px))' : 'calc(32px + env(safe-area-inset-bottom, 0px))'
+    }}>
       <div style={{ maxWidth:'560px', margin:'0 auto',
         padding:'48px 24px 40px', textAlign:'center',
         display:'flex', flexDirection:'column', alignItems:'center', gap:'22px' }}>

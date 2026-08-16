@@ -407,11 +407,13 @@ div[style*="overflow"]::-webkit-scrollbar {
 }
 .sh-subtabs-inner {
   display: flex; gap: 6px;
-  overflow-x: auto; padding: 12px 0;
+  overflow-x: auto; padding: 6px 0;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 .sh-subtab {
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 20px; border-radius: var(--r-pill);
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 18px; border-radius: var(--r-pill);
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   font-size: 13px; font-weight: 700;
   letter-spacing: -0.01em;
@@ -420,6 +422,7 @@ div[style*="overflow"]::-webkit-scrollbar {
   color: var(--text-2);
   background: rgba(241, 245, 249, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.8);
+  cursor: pointer;
 }
 .sh-subtab:hover { color: #0F172A; background: rgba(15, 23, 42, 0.08); transform: translateY(-2px); }
 .sh-subtab.active,
@@ -430,6 +433,82 @@ div[style*="overflow"]::-webkit-scrollbar {
   box-shadow: 0 6px 20px rgba(15, 23, 42, 0.25) !important;
 }
 .sh-subtab-icon { font-size: 15px; }
+.sh-subtab-icon-svg { flex-shrink: 0; }
+
+/* ── Unified Products Filter & Sort Toolbar ── */
+.sh-products-toolbar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  position: sticky;
+  top: 60px;
+  z-index: 40;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.sh-sort-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-top: 1px solid #F1F5F9;
+  padding-top: 6px;
+  gap: 8px;
+  overflow-x: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sh-sort-btn {
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.sh-sort-btn:hover {
+  background: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
+@media (max-width: 768px) {
+  .banner-explore-tag {
+    display: none !important;
+  }
+  .sh-products-toolbar {
+    border-radius: 12px;
+    padding: 6px 8px;
+    margin-bottom: 12px;
+    top: 52px;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  }
+  .sh-subtab {
+    padding: 5px 11px !important;
+    font-size: 11.5px !important;
+    gap: 5px !important;
+  }
+  .sh-sort-row {
+    padding-top: 4px;
+    gap: 4px;
+  }
+  .sh-sort-btn {
+    padding: 3px 8px !important;
+    font-size: 10.5px !important;
+    border-radius: 9999px !important;
+  }
+}
 
 /* ── Product Detail Single Unified Card (Amazon/Flipkart Style) ── */
 .pd-page-wrapper {
@@ -1769,7 +1848,7 @@ img, video, svg {
   }
 }
 
-/* ─── 9. PRODUCT CARD — Perfectly Circular Action Buttons ─── */
+/* ─── 9. PRODUCT CARD — Perfectly Circular Action Buttons & Full Width Add to Cart ─── */
 .card-action-btn {
   width: 32px !important;
   height: 32px !important;
@@ -1797,12 +1876,45 @@ img, video, svg {
   right: 8px !important;
 }
 
-.card-cart-btn {
-  bottom: 8px !important;
-  right: 8px !important;
+.card-full-add-btn {
+  transition: all 0.2s ease !important;
 }
 
-@media (max-width: 640px) {
+.card-full-add-btn:hover {
+  filter: brightness(1.08);
+}
+
+.card-full-add-btn:active {
+  transform: scale(0.98);
+}
+
+/* ─── 10. PRODUCT DETAIL PAGE — Mobile Sticky Bottom Bar ─── */
+.pd-mobile-sticky-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .pd-mobile-sticky-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 990;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid #E2E8F0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    box-sizing: border-box;
+  }
+  .pd-content-container {
+    padding-bottom: 90px !important;
+  }
   .card-action-btn {
     width: 28px !important;
     height: 28px !important;
@@ -1815,10 +1927,6 @@ img, video, svg {
   }
   .card-quickview-btn {
     top: 38px !important;
-    right: 6px !important;
-  }
-  .card-cart-btn {
-    bottom: 6px !important;
     right: 6px !important;
   }
 }

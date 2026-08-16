@@ -577,6 +577,58 @@ export default function ProductDetail() {
 
       </div>
 
+      {/* ── MOBILE STICKY BOTTOM BAR (Image 2 & Image 3 Reference) ── */}
+      <div className="pd-mobile-sticky-bar">
+        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+            <span style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', letterSpacing: '-0.3px' }}>
+              ₹{priceNum.toFixed(0)}
+            </span>
+            {origPriceNum > priceNum && (
+              <span style={{ fontSize: '11px', color: '#94A3B8', textDecoration: 'line-through' }}>
+                MRP ₹{origPriceNum.toFixed(0)}
+              </span>
+            )}
+          </div>
+          {(discount_tag || discount) && (
+            <span style={{ fontSize: '10px', fontWeight: 800, color: '#16A34A' }}>
+              {discount_tag || `${discount}% OFF`}
+            </span>
+          )}
+        </div>
+
+        <button
+          onClick={handleAddToCart}
+          disabled={product.stock === 0}
+          style={{
+            flex: 1,
+            maxWidth: '240px',
+            padding: '12px 18px',
+            borderRadius: '12px',
+            background: added
+              ? 'linear-gradient(135deg, #10B981, #059669)'
+              : product.stock === 0
+                ? '#E2E8F0'
+                : 'linear-gradient(135deg, #0F172A, #1E293B)',
+            color: product.stock === 0 ? '#94A3B8' : '#FFFFFF',
+            fontSize: '13px',
+            fontWeight: 800,
+            letterSpacing: '0.5px',
+            border: 'none',
+            cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            boxShadow: added ? '0 4px 14px rgba(16,185,129,0.35)' : '0 4px 16px rgba(15,23,42,0.25)',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <ShoppingCart size={15} strokeWidth={2.5} />
+          {added ? '✓ Added' : 'Add to Cart'}
+        </button>
+      </div>
+
       {/* ── FULL SCREEN PHOTO LIGHTBOX VIEWER ── */}
       <AnimatePresence>
         {lightboxOpen && (

@@ -69,27 +69,27 @@ function ProductCardComponent({ product, onQuickView }) {
           transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
         }}>
 
-        {/* Image area — slightly larger aspect ratio with image zoom */}
-        <div style={{ position: 'relative', width: '100%', aspectRatio: '1.04', overflow: 'hidden', background: '#f8fafc', flexShrink: 0 }}>
+        {/* Image area with embedded rating pill (Flipkart style) */}
+        <div style={{ position: 'relative', width: '100%', aspectRatio: '1.02', overflow: 'hidden', background: '#F8FAFC', flexShrink: 0 }}>
           <motion.img
             src={imageUrl}
             alt={product.name || 'Product'}
             loading="lazy"
             decoding="async"
             onError={() => setImgError(true)}
-            whileHover={{ scale: 1.08 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#FAF8FC', display: 'block' }}
           />
 
           {/* Top-Left Badge (SALE, NEW, etc.) */}
           {badge && (
             <div style={{
-              position: 'absolute', top: '10px', left: '10px',
+              position: 'absolute', top: '6px', left: '6px',
               background: 'linear-gradient(135deg, #1A1A2E, #0F3460)', color: 'white',
-              fontSize: '9px', fontWeight: 800, letterSpacing: '.4px',
-              padding: '4px 9px', borderRadius: '6px',
-              boxShadow: '0 2px 8px rgba(0,0,0,.3)',
+              fontSize: '8.5px', fontWeight: 800, letterSpacing: '.3px',
+              padding: '2px 7px', borderRadius: '4px',
+              boxShadow: '0 2px 6px rgba(0,0,0,.2)',
               zIndex: 2, maxWidth: '65%', whiteSpace: 'nowrap',
               overflow: 'hidden', textOverflow: 'ellipsis'
             }}>
@@ -97,16 +97,28 @@ function ProductCardComponent({ product, onQuickView }) {
             </div>
           )}
 
+          {/* Bottom-Left Embedded Rating Pill (Flipkart style from img2) */}
+          <div style={{
+            position: 'absolute', bottom: '6px', left: '6px',
+            background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(6px)',
+            padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(226, 232, 240, 0.9)',
+            display: 'flex', alignItems: 'center', gap: '3px', zIndex: 2,
+            boxShadow: '0 2px 6px rgba(0,0,0,0.06)'
+          }}>
+            <span style={{ fontSize: '10.5px', fontWeight: 800, color: '#0F172A' }}>4.8</span>
+            <Star size={10} fill="#F59E0B" color="#F59E0B" />
+          </div>
+
           {/* Out of Stock Overlay */}
           {product.stock === 0 && (
-            <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,.75)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: '#555', padding: '5px 12px', background: 'white', borderRadius: '6px', border: '1px solid #eee' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4 }}>
+              <span style={{ fontSize: '10px', fontWeight: 800, color: '#555', padding: '3px 8px', background: 'white', borderRadius: '4px', border: '1px solid #eee' }}>
                 Out of Stock
               </span>
             </div>
           )}
 
-          {/* Wishlist Button — Perfect Circle Top Right */}
+          {/* Top-Right Wishlist Button */}
           <motion.button
             onClick={handleWish}
             whileHover={{ scale: 1.12 }}
@@ -114,19 +126,19 @@ function ProductCardComponent({ product, onQuickView }) {
             title={inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
             className="card-action-btn card-wish-btn"
             style={{
-              position: 'absolute', top: '8px', right: '8px', zIndex: 3,
-              width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
+              position: 'absolute', top: '6px', right: '6px', zIndex: 3,
+              width: '28px', height: '28px', minWidth: '28px', minHeight: '28px',
               aspectRatio: '1 / 1', borderRadius: '50%', padding: 0,
               background: 'rgba(255, 255, 255, 0.95)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '1px solid rgba(226, 232, 240, 0.9)',
-              cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+              border: inWishlist ? '1.5px solid #EF4444' : '1px solid rgba(226, 232, 240, 0.9)',
+              cursor: 'pointer', boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)',
               boxSizing: 'border-box', flexShrink: 0
             }}>
-            <Heart size={14} fill={inWishlist ? '#EF4444' : 'none'} color={inWishlist ? '#EF4444' : '#475569'} />
+            <Heart size={13} fill={inWishlist ? '#EF4444' : 'none'} color={inWishlist ? '#EF4444' : '#475569'} />
           </motion.button>
 
-          {/* Quick View Button — Perfect Circle Middle Right (Mobile & Desktop) */}
+          {/* Top-Right Quick View Button */}
           {onQuickView && (
             <motion.button
               onClick={handleQuickViewClick}
@@ -135,104 +147,92 @@ function ProductCardComponent({ product, onQuickView }) {
               title="Quick View"
               className="card-action-btn card-quickview-btn"
               style={{
-                position: 'absolute', top: '44px', right: '8px', zIndex: 3,
-                width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
+                position: 'absolute', top: '38px', right: '6px', zIndex: 3,
+                width: '28px', height: '28px', minWidth: '28px', minHeight: '28px',
                 aspectRatio: '1 / 1', borderRadius: '50%', padding: 0,
                 background: 'rgba(255, 255, 255, 0.95)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: '1px solid rgba(226, 232, 240, 0.9)',
-                cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                cursor: 'pointer', boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)',
                 boxSizing: 'border-box', flexShrink: 0
               }}>
-              <Eye size={14} color="#475569" />
-            </motion.button>
-          )}
-
-          {/* Add to Cart Button — Perfect Circle Bottom Right */}
-          {product.stock !== 0 && (
-            <motion.button
-              onClick={handleAdd}
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.88 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              title="Add to Cart"
-              className="card-action-btn card-cart-btn"
-              style={{
-                position: 'absolute', bottom: '8px', right: '8px', zIndex: 3,
-                width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
-                aspectRatio: '1 / 1', borderRadius: '50%', padding: 0,
-                background: added
-                  ? 'linear-gradient(135deg, #10B981, #059669)'
-                  : 'linear-gradient(135deg, #0F172A, #1E293B)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: '1px solid rgba(255, 255, 255, 0.8)', cursor: 'pointer', color: 'white',
-                boxShadow: `0 3px 10px ${added ? 'rgba(16,185,129,.45)' : 'rgba(15,23,42,.35)'}`,
-                boxSizing: 'border-box', flexShrink: 0
-              }}>
-              {added ? (
-                <span style={{ fontSize: '12px', fontWeight: 'bold' }}>✓</span>
-              ) : (
-                <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <ShoppingCart size={13} />
-                  <Plus size={7} strokeWidth={3.5} style={{ position: 'absolute', top: '-3px', right: '-4px', color: '#FFFFFF' }} />
-                </div>
-              )}
+              <Eye size={13} color="#475569" />
             </motion.button>
           )}
         </div>
 
-        {/* Info section — clean, minimal like Flipkart */}
-        <div style={{ padding: '10px 12px 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-
-          {/* Rating */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} size={10} fill={i < 4 ? '#FFB800' : 'none'} color={i < 4 ? '#FFB800' : '#D1D5DB'} />
-            ))}
-            <span style={{ fontSize: '10px', color: '#888', marginLeft: '3px', fontWeight: 600 }}>(4.8)</span>
-          </div>
-
-          {/* Product Name */}
-          <p style={{
-            fontSize: '13px', fontWeight: 600, color: '#212121', lineHeight: 1.3,
-            display: '-webkit-box', WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical', overflow: 'hidden', margin: 0
-          }}>
-            {product.name}
-          </p>
-
-          {/* Unit */}
-          {product.unit && (
-            <p style={{ fontSize: '11px', color: '#888', margin: 0, fontWeight: 400 }}>
-              {product.unit}
+        {/* Compact Info Section (Zero Wasted Vertical Height) */}
+        <div style={{ padding: '8px 10px 10px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '4px' }}>
+          <div>
+            {/* Product Name — 1 line truncated */}
+            <p style={{
+              fontSize: '12.5px', fontWeight: 700, color: '#0F172A', lineHeight: 1.3,
+              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0
+            }}>
+              {product.name}
             </p>
-          )}
 
-          {/* Price row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: 'auto', paddingTop: '6px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '15px', fontWeight: 700, color: '#212121' }}>
-              ₹{priceNum.toFixed(0)}
-            </span>
-            {origPriceNum > priceNum && (
-              <span style={{ fontSize: '11px', color: '#aaa', textDecoration: 'line-through', fontWeight: 400 }}>
-                ₹{origPriceNum.toFixed(0)}
+            {/* Price row */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '3px', flexWrap: 'nowrap' }}>
+              <span style={{ fontSize: '14.5px', fontWeight: 900, color: '#0F172A', whiteSpace: 'nowrap' }}>
+                ₹{priceNum.toFixed(0)}
               </span>
-            )}
-            {(discount_tag || discount) && (
-              <span style={{
-                fontSize: '10px', fontWeight: 700, color: '#388E3C',
-              }}>
-                {discount_tag || `-${discount}% off`}
-              </span>
-            )}
+              {origPriceNum > priceNum && (
+                <span style={{ fontSize: '10.5px', color: '#94A3B8', textDecoration: 'line-through', whiteSpace: 'nowrap' }}>
+                  ₹{origPriceNum.toFixed(0)}
+                </span>
+              )}
+              {(discount_tag || discount) && (
+                <span style={{ fontSize: '10px', fontWeight: 800, color: '#16A34A', whiteSpace: 'nowrap' }}>
+                  {discount_tag || `${discount}% off`}
+                </span>
+              )}
+            </div>
           </div>
 
-          {/* Low stock */}
-          {product.stock !== undefined && product.stock > 0 && product.stock < 10 && (
-            <span style={{ fontSize: '10px', fontWeight: 700, color: '#E94560' }}>
-              Only {product.stock} left!
-            </span>
-          )}
+          {/* Compact Full-Width Add to Cart Button */}
+          <motion.button
+            onClick={handleAdd}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.96 }}
+            disabled={product.stock === 0}
+            className="card-full-add-btn"
+            style={{
+              width: '100%',
+              marginTop: '4px',
+              padding: '6px 8px',
+              height: '30px',
+              borderRadius: '7px',
+              background: added
+                ? 'linear-gradient(135deg, #10B981, #059669)'
+                : product.stock === 0
+                  ? '#F1F5F9'
+                  : 'linear-gradient(135deg, #1A1A2E, #0F3460)',
+              color: product.stock === 0 ? '#94A3B8' : '#FFFFFF',
+              fontSize: '11px',
+              fontWeight: 800,
+              letterSpacing: '0.3px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '5px',
+              border: 'none',
+              cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+              boxShadow: added ? '0 3px 10px rgba(16,185,129,.3)' : '0 2px 8px rgba(26,26,46,.2)',
+              transition: 'all 0.2s ease',
+              boxSizing: 'border-box'
+            }}
+          >
+            {added ? (
+              <span>✓ Added</span>
+            ) : product.stock === 0 ? (
+              <span>Out of Stock</span>
+            ) : (
+              <>
+                <ShoppingCart size={12} strokeWidth={2.2} /> Add to Cart
+              </>
+            )}
+          </motion.button>
         </div>
       </motion.div>
     </Link>

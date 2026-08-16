@@ -35,14 +35,14 @@ const CONTENT = {
       { id:'other_tools',  label:'Other Tools',       emoji:'🛠️', desc:'Crafting essentials', image: '/images/collections/kit_atelier_real.jpg' },
     ],
     subs: [
-      {id:'all',icon:'◈',label:'All'},
-      {id:'machines',icon:'⚙',label:'Tailoring Kit'},
-      {id:'scissors',icon:'✂',label:'Scissors'},
-      {id:'threads',icon:'〇',label:'Threads'},
-      {id:'presser_feet',icon:'🦶',label:'Presser Feet'},
-      {id:'needles',icon:'↑',label:'Needles'},
-      {id:'measuring',icon:'↔',label:'Measuring'},
-      {id:'other_tools',icon:'🛠',label:'Other Tools'},
+      { id: 'all',          icon: 'Sparkles',          label: 'All' },
+      { id: 'machines',     icon: 'Package',           label: 'Tailoring Kit' },
+      { id: 'scissors',     icon: 'Scissors',          label: 'Scissors' },
+      { id: 'threads',      icon: 'CircleDot',         label: 'Threads' },
+      { id: 'presser_feet', icon: 'SlidersHorizontal', label: 'Presser Feet' },
+      { id: 'needles',      icon: 'Pin',               label: 'Needles' },
+      { id: 'measuring',    icon: 'Ruler',             label: 'Measuring' },
+      { id: 'other_tools',  icon: 'Wrench',            label: 'Other Tools' },
     ],
   },
   fashion: {
@@ -60,12 +60,12 @@ const CONTENT = {
       { id:'accessories', label:'Accessories',      emoji:'👜', desc:'Complete the look'},
     ],
     subs: [
-      {id:'all',icon:'◈',label:'All'},
-      {id:'dresses',icon:'♛',label:'Dresses'},
-      {id:'tops',icon:'△',label:'Tops'},
-      {id:'bottoms',icon:'▽',label:'Bottoms'},
-      {id:'ethnic',icon:'✦',label:'Ethnic'},
-      {id:'accessories',icon:'◇',label:'Accessories'},
+      { id: 'all',         icon: 'Sparkles',    label: 'All' },
+      { id: 'dresses',     icon: 'Crown',       label: 'Dresses' },
+      { id: 'tops',        icon: 'Shirt',       label: 'Tops' },
+      { id: 'bottoms',     icon: 'Layers',      label: 'Bottoms' },
+      { id: 'ethnic',      icon: 'Sparkles',    label: 'Ethnic' },
+      { id: 'accessories', icon: 'ShoppingBag', label: 'Accessories' },
     ],
   },
 };
@@ -558,6 +558,7 @@ const FullWidthCollectionBannerSlider = memo(function FullWidthCollectionBannerS
                 )}
 
                 <div
+                  className="banner-explore-tag"
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -1342,58 +1343,50 @@ export default function Home() {
 
       {/* ══ ALL PRODUCTS ════════════════════════════════════ */}
       <div ref={productsRef} className="sh-container products-section-container" style={{padding:'48px 0 0'}}>
-        {/* Category Filter Bar */}
-        <div ref={filterRef} style={{
-          background:'rgba(255,255,255,0.92)', backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
-          border:'1px solid #E2E8F0', borderRadius:'16px', padding:'4px 8px', marginBottom:'16px',
-          position:'sticky', top:'60px', zIndex:40, boxShadow:'0 4px 20px rgba(0,0,0,0.04)'
-        }}>
-          <CategoryFilter categories={c.subs} selected={sub} onSelect={setSub}/>
-        </div>
+        {/* Unified Category & Sort Toolbar */}
+        <div ref={filterRef} className="sh-products-toolbar">
+          {/* Row 1: Subcategory filter chips */}
+          <CategoryFilter categories={c.subs} selected={sub} onSelect={setSub} />
 
-        <Reveal>
-          {searchQuery && (
-            <div style={{ marginBottom:'12px' }}>
-              <h2 style={{ fontSize:'20px', fontWeight:800, color:'#0A0A0A', margin:0 }}>
-                Results for "{searchQuery}"
-              </h2>
-            </div>
-          )}
-
-          {/* Interactive Glass Sort Controls */}
+          {/* Row 2: Inline minimalist Sort controls (Left-aligned) */}
           {!loading && products.length > 0 && (
-            <div style={{
-              display:'flex', alignItems:'center', justifyContent:'space-between',
-              background:'rgba(255,255,255,0.76)', backdropFilter:'blur(20px)',
-              WebkitBackdropFilter:'blur(20px)',
-              border:'1px solid rgba(255,255,255,0.9)', borderRadius:'9999px',
-              padding:'6px 14px', marginBottom:'20px', flexWrap:'nowrap', gap:'8px',
-              boxShadow:'0 4px 16px rgba(15,23,42,0.04)',
-              width:'100%', maxWidth:'100%', boxSizing:'border-box', overflow:'hidden'
-            }}>
-              <div className="sh-scroll-hide" style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', fontWeight:700, color:'#475569', overflowX:'auto', width:'100%', WebkitOverflowScrolling:'touch' }}>
-                <ArrowUpDown size={14} color="#E94560" style={{ flexShrink: 0 }} />
-                <span style={{ flexShrink: 0 }}>Sort:</span>
+            <div className="sh-sort-row sh-scroll-hide">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: 800, color: '#64748B', flexShrink: 0, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                <ArrowUpDown size={12} color="#64748B" />
+                <span>Sort:</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
                 {[
                   ['featured', 'Featured'],
                   ['price-low', 'Price: Low to High'],
                   ['price-high', 'Price: High to Low'],
                   ['rating', 'Top Rated']
                 ].map(([val, label]) => (
-                  <button key={val} onClick={() => setSortBy(val)}
+                  <button
+                    key={val}
+                    onClick={() => setSortBy(val)}
+                    className="sh-sort-btn"
                     style={{
-                      padding:'5px 13px', borderRadius:'9999px', fontSize:'12px', fontWeight:800,
-                      background: sortBy === val ? 'linear-gradient(135deg, #1A1A2E, #0F3460)' : 'transparent',
-                      color: sortBy === val ? 'white' : '#64748B',
-                      border: 'none', cursor:'pointer', transition:'all .25s ease', flexShrink: 0
-                    }}>
+                      background: sortBy === val ? 'linear-gradient(135deg, #1A1A2E, #0F3460)' : '#F8FAFC',
+                      color: sortBy === val ? '#FFFFFF' : '#475569',
+                      border: sortBy === val ? 'none' : '1px solid #E2E8F0',
+                    }}
+                  >
                     {label}
                   </button>
                 ))}
               </div>
             </div>
           )}
-        </Reveal>
+        </div>
+
+        {searchQuery && (
+          <div style={{ marginBottom: '12px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#0A0A0A', margin: 0 }}>
+              Results for "{searchQuery}"
+            </h2>
+          </div>
+        )}
 
         {loading && (
           <div className="sh-grid-products">

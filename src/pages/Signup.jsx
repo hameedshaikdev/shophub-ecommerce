@@ -98,7 +98,7 @@ export default function Signup() {
 
   // ── Main Signup Screen ────────────────────────────────────────────────────
   return (
-    <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'24px' }}>
+    <div style={{ flex:'1 0 auto', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'40px 20px', width:'100%', boxSizing:'border-box' }}>
       <SEO title="Create Account | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/signup" />
       <div style={{ width:'100%', maxWidth:'420px' }}>
 

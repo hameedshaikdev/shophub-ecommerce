@@ -47,9 +47,9 @@ function AppInner() {
   }
 
   return (
-    <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', background:'var(--bg)' }}>
+    <div style={{ minHeight:'100dvh', display:'flex', flexDirection:'column', background:'var(--bg)', width:'100%' }}>
       <Header />
-      <main style={{ flex:1 }} id="main-content">
+      <main style={{ flex:'1 0 auto', display:'flex', flexDirection:'column', width:'100%' }} id="main-content">
         <Routes>
           <Route path="/"              element={<Home />} />
           <Route path="/product/:id"   element={<ProductDetail />} />
