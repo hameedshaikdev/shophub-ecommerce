@@ -162,20 +162,23 @@ const MiniCard = memo(function MiniCardComponent({ product, badge: customBadge }
   if (!product || !product.id) return null;
 
   const inWL = isInWishlist(product.id);
-  const customDisc = product.original_price && product.original_price > product.price
-    ? `-${Math.round(((product.original_price - product.price) / product.original_price) * 100)}% off`
-    : null;
+  const { badge: parsedBadge, discount_tag: customDisc } = parseProductTags(product);
 
-  const badgeConfig = {
-    sale:       { bg: 'linear-gradient(135deg, #FF3B30, #FF6B8B)', color: '#fff', label: 'SALE'       },
-    bestseller: { bg: 'linear-gradient(135deg, #FF9500, #FFCC00)', color: '#fff', label: 'BESTSELLER' },
-    new:        { bg: 'linear-gradient(135deg, #30D158, #34C759)', color: '#fff', label: 'NEW'        },
-    hot:        { bg: 'linear-gradient(135deg, #AF52DE, #5856D6)', color: '#fff', label: 'HOT'        }
-  };
-  const badgeKey = (customBadge || '').toLowerCase().replace(/[^a-z]/g, '');
-  const badge = customBadge
-    ? (badgeConfig[badgeKey] || { bg:'linear-gradient(135deg, #1A1A2E, #0F3460)', color:'#fff', label: customBadge })
-    : null;
+  let badge = null;
+  if (customBadge && typeof customBadge === 'object') {
+    badge = customBadge;
+  } else if (typeof customBadge === 'string' && customBadge.trim()) {
+    const badgeKey = customBadge.toLowerCase().replace(/[^a-z]/g, '');
+    const badgeConfig = {
+      sale:       { bg: 'linear-gradient(135deg, #FF3B30, #FF6B8B)', color: '#fff', label: 'SALE'       },
+      bestseller: { bg: 'linear-gradient(135deg, #FF9500, #FFCC00)', color: '#fff', label: 'BESTSELLER' },
+      new:        { bg: 'linear-gradient(135deg, #30D158, #34C759)', color: '#fff', label: 'NEW'        },
+      hot:        { bg: 'linear-gradient(135deg, #AF52DE, #5856D6)', color: '#fff', label: 'HOT'        }
+    };
+    badge = badgeConfig[badgeKey] || { bg: 'linear-gradient(135deg, #1A1A2E, #0F3460)', color: '#fff', label: customBadge };
+  } else if (parsedBadge) {
+    badge = { bg: 'linear-gradient(135deg, #1A1A2E, #0F3460)', color: '#fff', label: parsedBadge };
+  }
 
   const pPrice = Number(product.price || 0);
   const pOrig = Number(product.original_price || 0);
@@ -317,13 +320,15 @@ const FullWidthCollectionBannerSlider = memo(function FullWidthCollectionBannerS
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
-  // Smooth Auto Scroll loop (3.2 seconds per slide)
+  // Smooth Auto Scroll loop (4.5 seconds per slide)
   useEffect(() => {
     if (!items || items.length === 0) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % items.length);
-    }, 1700);
+      if (!isDragging.current && !touchStartX.current) {
+        setCurrentIndex((prev) => (prev + 1) % items.length);
+      }
+    }, 4500);
 
     return () => clearInterval(interval);
   }, [items]);
@@ -523,25 +528,6 @@ const FullWidthCollectionBannerSlider = memo(function FullWidthCollectionBannerS
                   pointerEvents: 'none'
                 }}
               >
-                <span
-                  style={{
-                    fontSize: '10px',
-                    fontWeight: 800,
-                    color: '#FFFFFF',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1.2px',
-                    display: 'inline-block',
-                    background: 'rgba(15, 23, 42, 0.65)',
-                    backdropFilter: 'blur(10px)',
-                    padding: '3px 10px',
-                    borderRadius: '9999px',
-                    marginBottom: '6px',
-                    border: '1px solid rgba(255,255,255,0.2)'
-                  }}
-                >
-                  Collection {String(idx + 1).padStart(2, '0')} of {String(items.length).padStart(2, '0')}
-                </span>
-
                 <h3
                   style={{
                     fontSize: 'clamp(18px, 3.5vw, 34px)',
