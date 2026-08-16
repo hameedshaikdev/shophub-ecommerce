@@ -131,7 +131,7 @@ function ProductCardComponent({ product, onQuickView }) {
               aspectRatio: '1 / 1', borderRadius: '50%', padding: 0,
               background: 'rgba(255, 255, 255, 0.95)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: inWishlist ? '1.5px solid #EF4444' : '1px solid rgba(226, 232, 240, 0.9)',
+              border: '1px solid rgba(226, 232, 240, 0.9)',
               cursor: 'pointer', boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)',
               boxSizing: 'border-box', flexShrink: 0
             }}>
