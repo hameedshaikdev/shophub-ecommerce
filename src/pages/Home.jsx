@@ -300,6 +300,379 @@ function Carousel({ children }) {
   );
 }
 
+/* ─── Full-Width Hardware-Accelerated Sliding Collections Banner Slider ─── */
+function FullWidthCollectionBannerSlider({ items, onSelectCategory, category }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Desktop Mouse Drag & Mobile Touch Swipe State
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const dragDistance = useRef(0);
+
+  // Touch handlers
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  // Fast endless auto scroll loop (1.7 seconds per slide)
+  useEffect(() => {
+    if (!items || items.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % items.length);
+    }, 1700);
+
+    return () => clearInterval(interval);
+  }, [items]);
+
+  // Preload images for instant 0-delay rendering
+  useEffect(() => {
+    if (!items) return;
+    items.forEach(item => {
+      const src = item.image || item.img;
+      if (src) {
+        const img = new Image();
+        img.src = src;
+      }
+    });
+  }, [items]);
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % items.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+  };
+
+  // Mobile Touch Gestures
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 30) handleNext();
+    else if (diff < -30) handlePrev();
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
+
+  // Desktop Mouse Drag Events
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    isDragging.current = true;
+    startX.current = e.clientX;
+    dragDistance.current = 0;
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDragging.current) return;
+      dragDistance.current = startX.current - e.clientX;
+    };
+
+    const handleMouseUp = () => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+      const diff = dragDistance.current;
+      if (diff > 30) handleNext();
+      else if (diff < -30) handlePrev();
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [items]);
+
+  const handleBannerClick = (id) => {
+    if (Math.abs(dragDistance.current) < 15) {
+      onSelectCategory(id);
+    }
+  };
+
+  if (!items || items.length === 0) return null;
+
+  return (
+    <div style={{ position: 'relative', width: '100%' }}>
+      {/* Top Header Controls */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <p style={{ fontSize: '11px', fontWeight: 800, color: '#8E8E93', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '4px' }}>
+            {category === 'tailoring' ? 'Browse by category' : 'Shop by Style'}
+          </p>
+          <h2 style={{ fontSize: 'clamp(20px, 4vw, 32px)', fontWeight: 900, color: '#0A0A0A', letterSpacing: '-1px', margin: 0 }}>
+            {category === 'tailoring' ? 'Our Collections' : 'Find Your Look'}
+          </h2>
+        </div>
+
+        {/* Counter & Nav Buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{ fontSize: '12px', fontWeight: 800, color: '#64748B', letterSpacing: '1px' }}>
+            {String(currentIndex + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
+          </span>
+
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={handlePrev}
+              style={{
+                width: '38px', height: '38px', borderRadius: '50%',
+                background: '#FFFFFF', border: '1px solid #E2E8F0',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all 0.2s ease'
+              }}
+              aria-label="Previous collection banner"
+            >
+              <ChevronLeft size={18} color="#0F172A" />
+            </button>
+            <button
+              onClick={handleNext}
+              style={{
+                width: '38px', height: '38px', borderRadius: '50%',
+                background: '#FFFFFF', border: '1px solid #E2E8F0',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all 0.2s ease'
+              }}
+              aria-label="Next collection banner"
+            >
+              <ChevronRight size={18} color="#0F172A" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Full-Width Widescreen Sliding Banner Container with Manual Touch & Mouse Drag */}
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: 'clamp(180px, 28vw, 400px)',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          background: '#FAFAFA',
+          boxShadow: '0 16px 40px rgba(0,0,0,0.08)',
+          border: '1px solid #E2E8F0',
+          cursor: 'grab',
+          userSelect: 'none'
+        }}
+      >
+        {/* Hardware-Accelerated Continuous Track */}
+        <div
+          style={{
+            display: 'flex',
+            width: '100%',
+            height: '100%',
+            transform: `translate3d(-${currentIndex * 100}%, 0, 0)`,
+            transition: 'transform 0.55s cubic-bezier(0.25, 1, 0.5, 1)',
+            willChange: 'transform'
+          }}
+        >
+          {items.map((item, idx) => (
+            <div
+              key={item.id || idx}
+              onClick={() => handleBannerClick(item.id)}
+              style={{
+                position: 'relative',
+                flex: '0 0 100%',
+                width: '100%',
+                height: '100%',
+                cursor: 'pointer'
+              }}
+            >
+              {/* Full-width Image */}
+              <img
+                src={item.image || item.img}
+                alt={item.label || item.title}
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                  userSelect: 'none',
+                  WebkitUserDrag: 'none'
+                }}
+              />
+
+              {/* Bottom-Left Overlay Text Directly on Image */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 'clamp(14px, 4vw, 32px)',
+                  bottom: 'clamp(14px, 4vw, 32px)',
+                  maxWidth: '520px',
+                  zIndex: 3,
+                  pointerEvents: 'none'
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '10px',
+                    fontWeight: 800,
+                    color: '#FFFFFF',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1.2px',
+                    display: 'inline-block',
+                    background: 'rgba(15, 23, 42, 0.65)',
+                    backdropFilter: 'blur(10px)',
+                    padding: '3px 10px',
+                    borderRadius: '9999px',
+                    marginBottom: '6px',
+                    border: '1px solid rgba(255,255,255,0.2)'
+                  }}
+                >
+                  Collection {String(idx + 1).padStart(2, '0')} of {String(items.length).padStart(2, '0')}
+                </span>
+
+                <h3
+                  style={{
+                    fontSize: 'clamp(18px, 3.5vw, 34px)',
+                    fontWeight: 900,
+                    color: '#FFFFFF',
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    margin: '2px 0 4px 0',
+                    letterSpacing: '-0.5px',
+                    textShadow: '0 2px 12px rgba(0,0,0,0.7)'
+                  }}
+                >
+                  {item.label || item.title}
+                </h3>
+
+                {item.desc && (
+                  <p
+                    style={{
+                      fontSize: 'clamp(11px, 1.6vw, 14px)',
+                      fontWeight: 600,
+                      color: 'rgba(255,255,255,0.95)',
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      margin: '0 0 10px 0',
+                      textShadow: '0 2px 8px rgba(0,0,0,0.7)'
+                    }}
+                  >
+                    {item.desc}
+                  </p>
+                )}
+
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '7px 15px',
+                    borderRadius: '9999px',
+                    background: 'rgba(15, 23, 42, 0.85)',
+                    backdropFilter: 'blur(12px)',
+                    color: '#FFFFFF',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
+                    fontFamily: "'Plus Jakarta Sans', sans-serif"
+                  }}
+                >
+                  Explore Collection <ArrowRight size={13} color="#FFFFFF" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Floating Desktop Edge Arrows (Hidden on Mobile via Inline Media Query or flex) */}
+        <button
+          className="desktop-banner-arrow"
+          onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+          style={{
+            position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)',
+            width: '42px', height: '42px', borderRadius: '50%',
+            background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)',
+            border: '1px solid #E2E8F0',
+            color: '#0F172A', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 6, boxShadow: '0 6px 20px rgba(0,0,0,0.1)'
+          }}
+          aria-label="Previous banner"
+        >
+          <ChevronLeft size={18} color="#0F172A" />
+        </button>
+
+        <button
+          className="desktop-banner-arrow"
+          onClick={(e) => { e.stopPropagation(); handleNext(); }}
+          style={{
+            position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)',
+            width: '42px', height: '42px', borderRadius: '50%',
+            background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)',
+            border: '1px solid #E2E8F0',
+            color: '#0F172A', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 6, boxShadow: '0 6px 20px rgba(0,0,0,0.1)'
+          }}
+          aria-label="Next banner"
+        >
+          <ChevronRight size={18} color="#0F172A" />
+        </button>
+
+        {/* Bottom Center Indicator Dots Bar */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '10px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            gap: '6px',
+            alignItems: 'center',
+            zIndex: 6,
+            background: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(12px)',
+            padding: '5px 12px',
+            borderRadius: '9999px',
+            border: '1px solid rgba(255,255,255,0.25)',
+            maxWidth: '90%',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          {items.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentIndex(idx);
+              }}
+              style={{
+                width: currentIndex === idx ? '20px' : '6px',
+                height: '6px',
+                minWidth: currentIndex === idx ? '20px' : '6px',
+                minHeight: '6px',
+                borderRadius: '9999px',
+                background: currentIndex === idx ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                padding: 0,
+                flexShrink: 0
+              }}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Collection Card ─────────────────────────────────────── */
 function CollectionCard({ cls='', label, title, count, img, onClick, dark=false }) {
   return (
@@ -940,38 +1313,15 @@ export default function Home() {
       )}
 
 
-      {/* ══ FEATURED COLLECTIONS ════════════════════════════ */}
+      {/* ══ FEATURED COLLECTIONS (FULL-WIDTH AUTO-SCROLLING BANNER SLIDER) ════════════════════ */}
       {c.collections && c.collections.length > 0 && (
-        <div className="collections-section" style={{padding:'48px 0 32px',background:'#FAFAFA'}}>
+        <div className="collections-section" style={{padding:'32px 0 12px',background:'#FAFAFA',overflow:'hidden'}}>
           <div className="sh-container">
-            <Reveal>
-              <div style={{marginBottom:'20px'}}>
-                <p style={{fontSize:'11px',fontWeight:700,color:'#8E8E93',textTransform:'uppercase',letterSpacing:'2px',marginBottom:'4px'}}>
-                  {activeCategory==='tailoring'?'Browse by category':'Shop by Style'}
-                </p>
-                <h2 style={{fontSize:'clamp(22px,4vw,32px)',fontWeight:900,color:'#0A0A0A',letterSpacing:'-1px'}}>
-                  {activeCategory==='tailoring'?'Our Collections':'Find Your Look'}
-                </h2>
-              </div>
-            </Reveal>
-
-            <div className="collections-grid">
-              {c.collections.filter(item => item.active !== false).map((item, idx) => {
-                const classes = ['cg-featured', 'cg-med', 'cg-small', 'cg-wide', 'cg-row3', 'cg-row3', 'cg-row3'];
-                const cls = classes[idx] || 'cg-small';
-                return (
-                  <CollectionCard
-                    key={item.id || idx}
-                    cls={cls}
-                    label={item.emoji || 'Category'}
-                    title={item.label || item.title}
-                    count={item.desc || ''}
-                    img={item.image || item.img}
-                    onClick={() => { setSub(item.id); scrollTo(productsRef); }}
-                  />
-                );
-              })}
-            </div>
+            <FullWidthCollectionBannerSlider
+              items={c.collections.filter(item => item.active !== false)}
+              category={activeCategory}
+              onSelectCategory={(id) => { setSub(id); scrollTo(productsRef); }}
+            />
           </div>
         </div>
       )}
@@ -979,7 +1329,7 @@ export default function Home() {
 
       {/* ══ NEW ARRIVALS ════════════════════════════════════ */}
       {activeCms?.newArrivals?.enabled !== false && newArrivals.length > 0 && (
-        <div className="new-arrivals-section" style={{padding:'48px 0 24px',background:'#F8F9FA'}}>
+        <div className="new-arrivals-section" style={{padding:'20px 0 20px',background:'#F8F9FA'}}>
           <div className="sh-container">
             <Reveal>
               <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'20px'}}>
@@ -1247,6 +1597,10 @@ export default function Home() {
         }
         @media (min-width: 1600px) {
           .hero-image-collage { transform: scale(1) !important; }
+        }
+
+        @media (max-width: 640px) {
+          .desktop-banner-arrow { display: none !important; }
         }
 
         /* ── Carousel: arrows inside, no overflow ── */

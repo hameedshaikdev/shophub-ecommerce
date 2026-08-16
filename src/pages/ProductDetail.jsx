@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -23,9 +23,16 @@ export default function ProductDetail() {
   const [quantity,     setQuantity]     = useState(1);
   const [added,        setAdded]        = useState(false);
   const [selImg,       setSelImg]       = useState(0);
+
+  // Touch & Mouse Drag Gesture Tracking
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
+  const dragDistance = useRef(0);
+
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [zoomScale,    setZoomScale]    = useState(1);
-  const [touchStartX,  setTouchStartX]  = useState(null);
 
   const inWishlist = product ? isInWishlist(product.id) : false;
   const { cleanDesc, badge, discount_tag } = parseProductTags(product);
@@ -55,15 +62,30 @@ export default function ProductDetail() {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const handleTouchStart = (e) => setTouchStartX(e.touches[0].clientX);
-  const handleTouchEnd = (e, total) => {
-    if (touchStartX === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) < 40) return;
-    if (dx < 0) setSelImg(i => Math.min(i + 1, total - 1)); // swipe left → next
-    else        setSelImg(i => Math.max(i - 1, 0));           // swipe right → prev
-    setTouchStartX(null);
+  // Touch Handlers
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
   };
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (total) => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 30) setSelImg(i => Math.min(i + 1, total - 1));
+    else if (diff < -30) setSelImg(i => Math.max(i - 1, 0));
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
+
+  // Mouse Drag Handlers
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    isDragging.current = true;
+    dragStartX.current = e.clientX;
+    dragDistance.current = 0;
+  };
+
   const handlePrev = () => setSelImg(i => Math.max(i - 1, 0));
   const handleNext = (total) => setSelImg(i => Math.min(i + 1, total - 1));
 
@@ -91,6 +113,29 @@ export default function ProductDetail() {
     mainImage,
     ...(product.images || []),
   ] : [];
+
+  useEffect(() => {
+    const handleGlobalMouseMove = (e) => {
+      if (!isDragging.current) return;
+      dragDistance.current = dragStartX.current - e.clientX;
+    };
+
+    const handleGlobalMouseUp = () => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+      const total = allImages.length;
+      if (dragDistance.current > 30) handleNext(total);
+      else if (dragDistance.current < -30) handlePrev();
+      dragDistance.current = 0;
+    };
+
+    window.addEventListener('mousemove', handleGlobalMouseMove);
+    window.addEventListener('mouseup', handleGlobalMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleGlobalMouseMove);
+      window.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [allImages.length]);
 
   /* ── Loading ── */
   if (loading) {
@@ -180,16 +225,27 @@ export default function ProductDetail() {
             <div
               className="pd-image-frame"
               onTouchStart={handleTouchStart}
-              onTouchEnd={(e) => handleTouchEnd(e, allImages.length)}
-              onClick={() => { setLightboxOpen(true); setZoomScale(1); }}>
+              onTouchMove={handleTouchMove}
+              onTouchEnd={() => handleTouchEnd(allImages.length)}
+              onMouseDown={handleMouseDown}
+              style={{ cursor: 'grab', userSelect: 'none' }}
+              onClick={() => {
+                if (Math.abs(dragDistance.current) < 15) {
+                  setLightboxOpen(true);
+                  setZoomScale(1);
+                }
+              }}>
 
               <motion.img
                 key={selImg}
                 src={currentImg}
                 alt={product.name}
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.28, ease: 'easeOut' }}
+                style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
                 onError={e => { e.target.src = 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80'; }}
               />
 

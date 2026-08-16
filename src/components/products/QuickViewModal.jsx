@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, ShoppingCart, Star, ShieldCheck, Truck, Sparkles, Plus, Minus, Play, Tv, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -11,11 +11,16 @@ export default function QuickViewModal({ product, onClose }) {
   const [imgError, setImgError] = useState(false);
   const [added, setAdded] = useState(false);
 
-  if (!product) return null;
+  // Touch Swipe & Desktop Mouse Drag Gesture Tracking
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
+  const dragDistance = useRef(0);
 
-  const inWL = isInWishlist(product.id);
-  const { cleanDesc, discount_tag } = parseProductTags(product);
-  const discount = product.original_price && product.original_price > product.price
+  const inWL = product ? isInWishlist(product.id) : false;
+  const { cleanDesc, discount_tag } = parseProductTags(product || {});
+  const discount = product && product.original_price && product.original_price > product.price
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : null;
 
@@ -24,6 +29,57 @@ export default function QuickViewModal({ product, onClose }) {
     ? product.images
     : [mainImage];
   const currentImg = imgError ? 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80' : (allImages[selImg] || mainImage);
+
+  // Mobile Touch Gestures
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 30) setSelImg(i => Math.min(i + 1, allImages.length - 1));
+    else if (diff < -30) setSelImg(i => Math.max(i - 1, 0));
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
+
+  // Desktop Mouse Drag Gestures
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    isDragging.current = true;
+    dragStartX.current = e.clientX;
+    dragDistance.current = 0;
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDragging.current) return;
+      dragDistance.current = dragStartX.current - e.clientX;
+    };
+
+    const handleMouseUp = () => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+      const diff = dragDistance.current;
+      if (diff > 30) {
+        setSelImg(i => Math.min(i + 1, allImages.length - 1));
+      } else if (diff < -30) {
+        setSelImg(i => Math.max(i - 1, 0));
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [allImages.length]);
+
+  if (!product) return null;
 
   const handleAddToCart = () => {
     setAdded(true);
@@ -126,20 +182,29 @@ export default function QuickViewModal({ product, onClose }) {
               background: 'rgba(241, 245, 249, 0.5)',
               position: 'relative'
             }}>
-              <div style={{
-                position: 'relative',
-                width: '100%',
-                aspectRatio: '1',
-                borderRadius: '24px',
-                overflow: 'hidden',
-                boxShadow: '0 12px 32px rgba(0,0,0,0.08)',
-                background: '#FAF8FC'
-              }}>
+              <div
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onMouseDown={handleMouseDown}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  aspectRatio: '1',
+                  borderRadius: '24px',
+                  overflow: 'hidden',
+                  boxShadow: '0 12px 32px rgba(0,0,0,0.08)',
+                  background: '#FAF8FC',
+                  cursor: 'grab',
+                  userSelect: 'none'
+                }}>
                 <img
                   src={currentImg}
                   alt={product.name}
+                  draggable={false}
+                  onDragStart={(e) => e.preventDefault()}
                   onError={() => setImgError(true)}
-                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', userSelect: 'none', WebkitUserDrag: 'none' }}
                 />
 
                 {discount && (
