@@ -106,7 +106,7 @@ function ProductCardComponent({ product, onQuickView }) {
             </div>
           )}
 
-          {/* Wishlist Button — Clean Top Right */}
+          {/* Wishlist Button — Perfect Circle Top Right */}
           <motion.button
             onClick={handleWish}
             whileHover={{ scale: 1.12 }}
@@ -115,36 +115,40 @@ function ProductCardComponent({ product, onQuickView }) {
             className="card-action-btn card-wish-btn"
             style={{
               position: 'absolute', top: '8px', right: '8px', zIndex: 3,
-              width: '32px', height: '32px', borderRadius: '50%',
+              width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
+              aspectRatio: '1 / 1', borderRadius: '50%', padding: 0,
               background: 'rgba(255, 255, 255, 0.95)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '1px solid rgba(226, 232, 240, 0.8)',
-              cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.08)'
+              border: '1px solid rgba(226, 232, 240, 0.9)',
+              cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+              boxSizing: 'border-box', flexShrink: 0
             }}>
             <Heart size={14} fill={inWishlist ? '#EF4444' : 'none'} color={inWishlist ? '#EF4444' : '#475569'} />
           </motion.button>
 
-          {/* Quick View Button — Desktop Only */}
+          {/* Quick View Button — Perfect Circle Middle Right (Mobile & Desktop) */}
           {onQuickView && (
             <motion.button
               onClick={handleQuickViewClick}
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.88 }}
               title="Quick View"
-              className="card-action-btn desktop-only-quickview"
+              className="card-action-btn card-quickview-btn"
               style={{
-                position: 'absolute', top: '46px', right: '8px', zIndex: 3,
-                width: '32px', height: '32px', borderRadius: '50%',
+                position: 'absolute', top: '44px', right: '8px', zIndex: 3,
+                width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
+                aspectRatio: '1 / 1', borderRadius: '50%', padding: 0,
                 background: 'rgba(255, 255, 255, 0.95)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: '1px solid rgba(226, 232, 240, 0.8)',
-                cursor: 'pointer', boxShadow: '0 3px 10px rgba(0, 0, 0, 0.08)'
+                border: '1px solid rgba(226, 232, 240, 0.9)',
+                cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                boxSizing: 'border-box', flexShrink: 0
               }}>
               <Eye size={14} color="#475569" />
             </motion.button>
           )}
 
-          {/* Add to Cart Button — Clean Bottom Right */}
+          {/* Add to Cart Button — Perfect Circle Bottom Right */}
           {product.stock !== 0 && (
             <motion.button
               onClick={handleAdd}
@@ -155,21 +159,22 @@ function ProductCardComponent({ product, onQuickView }) {
               className="card-action-btn card-cart-btn"
               style={{
                 position: 'absolute', bottom: '8px', right: '8px', zIndex: 3,
-                width: '32px', height: '32px', borderRadius: '50%',
+                width: '32px', height: '32px', minWidth: '32px', minHeight: '32px',
+                aspectRatio: '1 / 1', borderRadius: '50%', padding: 0,
                 background: added
                   ? 'linear-gradient(135deg, #10B981, #059669)'
                   : 'linear-gradient(135deg, #0F172A, #1E293B)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: '2px solid rgba(255, 255, 255, 0.8)', cursor: 'pointer', color: 'white',
-                boxShadow: `0 4px 14px ${added ? 'rgba(16,185,129,.45)' : 'rgba(15,23,42,.35)'}`,
-                transition: 'background .25s ease, box-shadow .25s ease'
+                border: '1px solid rgba(255, 255, 255, 0.8)', cursor: 'pointer', color: 'white',
+                boxShadow: `0 3px 10px ${added ? 'rgba(16,185,129,.45)' : 'rgba(15,23,42,.35)'}`,
+                boxSizing: 'border-box', flexShrink: 0
               }}>
               {added ? (
-                <span style={{ fontSize: '13px', fontWeight: 'bold' }}>✓</span>
+                <span style={{ fontSize: '12px', fontWeight: 'bold' }}>✓</span>
               ) : (
                 <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ShoppingCart size={13} />
-                  <Plus size={8} strokeWidth={3.5} style={{ position: 'absolute', top: '-4px', right: '-5px', color: '#FFFFFF' }} />
+                  <Plus size={7} strokeWidth={3.5} style={{ position: 'absolute', top: '-3px', right: '-4px', color: '#FFFFFF' }} />
                 </div>
               )}
             </motion.button>
