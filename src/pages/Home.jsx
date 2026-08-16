@@ -29,9 +29,9 @@ const CONTENT = {
       { id:'machines',     label:'Tailoring Kit',     emoji:'🧰', desc:'Complete atelier set', image: '/images/collections/sewing_machines.png' },
       { id:'scissors',     label:'Scissors & Blades',  emoji:'✂️', desc:'Precision cut',      image: '/images/collections/scissors.png' },
       { id:'threads',      label:'Threads & Yarn',    emoji:'🧵', desc:'Premium quality',    image: '/images/collections/threads.png' },
+      { id:'presser_feet', label:'Presser Feet',      emoji:'🦶', desc:'Precision machine feet', image: '/images/collections/presser_feet.jpg' },
       { id:'needles',      label:'Needles',           emoji:'🪡', desc:'Sharp & durable',    image: '/images/collections/needles.png' },
       { id:'measuring',    label:'Measuring Tools',   emoji:'📏', desc:'Accurate tools',     image: '/images/collections/measuring.png' },
-      { id:'presser_feet', label:'Presser Feet',      emoji:'🦶', desc:'Precision machine feet', image: '/images/collections/presser_feet.jpg' },
     ],
     subs: [
       {id:'all',icon:'◈',label:'All'},

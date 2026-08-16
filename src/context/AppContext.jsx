@@ -120,10 +120,13 @@ export function AppProvider({ children }) {
     mediaLib = mediaLib.filter(m => !m.url?.includes('images.unsplash.com/photo-1617606002806'));
 
     let tailoringCols = Array.isArray(data.collections?.tailoring) ? data.collections.tailoring : DEFAULT_CMS_DATA.collections.tailoring;
-    const hasPresserFeet = tailoringCols.some(c => c.id === 'presser_feet' || c.label?.toLowerCase().includes('presser'));
-    if (!hasPresserFeet) {
-      const pfDefault = DEFAULT_CMS_DATA.collections.tailoring.find(c => c.id === 'presser_feet');
-      if (pfDefault) tailoringCols = [...tailoringCols, pfDefault];
+    const pfItem = tailoringCols.find(c => c.id === 'presser_feet' || c.label?.toLowerCase().includes('presser'))
+                   || DEFAULT_CMS_DATA.collections.tailoring.find(c => c.id === 'presser_feet');
+    const rest = tailoringCols.filter(c => c.id !== 'presser_feet' && !c.label?.toLowerCase().includes('presser'));
+    if (rest.length >= 3 && pfItem) {
+      tailoringCols = [...rest.slice(0, 3), pfItem, ...rest.slice(3)];
+    } else {
+      tailoringCols = DEFAULT_CMS_DATA.collections.tailoring;
     }
 
     const updated = {
