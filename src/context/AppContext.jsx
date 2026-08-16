@@ -122,11 +122,17 @@ export function AppProvider({ children }) {
     let tailoringCols = Array.isArray(data.collections?.tailoring) ? data.collections.tailoring : DEFAULT_CMS_DATA.collections.tailoring;
     const pfItem = tailoringCols.find(c => c.id === 'presser_feet' || c.label?.toLowerCase().includes('presser'))
                    || DEFAULT_CMS_DATA.collections.tailoring.find(c => c.id === 'presser_feet');
-    const rest = tailoringCols.filter(c => c.id !== 'presser_feet' && !c.label?.toLowerCase().includes('presser'));
+    const otItem = tailoringCols.find(c => c.id === 'other_tools' || c.label?.toLowerCase().includes('other'))
+                   || DEFAULT_CMS_DATA.collections.tailoring.find(c => c.id === 'other_tools');
+    
+    let rest = tailoringCols.filter(c => c.id !== 'presser_feet' && c.id !== 'other_tools' && !c.label?.toLowerCase().includes('presser') && !c.label?.toLowerCase().includes('other'));
     if (rest.length >= 3 && pfItem) {
       tailoringCols = [...rest.slice(0, 3), pfItem, ...rest.slice(3)];
     } else {
       tailoringCols = DEFAULT_CMS_DATA.collections.tailoring;
+    }
+    if (otItem && !tailoringCols.some(c => c.id === 'other_tools')) {
+      tailoringCols.push(otItem);
     }
 
     const updated = {
@@ -173,8 +179,9 @@ export function AppProvider({ children }) {
       try {
         const { data, error } = await supabase.from('homepage_cms').select('*').eq('id', 'published').single();
         if (!error && data?.content) {
-          setCmsData(data.content);
-          localStorage.setItem('ashub_homepage_cms', JSON.stringify(data.content));
+          const clean = getSanitizedCms(data.content);
+          setCmsData(clean);
+          localStorage.setItem('ashub_homepage_cms', JSON.stringify(clean));
         }
       } catch { /* use local */ }
     }

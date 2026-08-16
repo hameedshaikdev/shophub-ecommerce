@@ -32,15 +32,17 @@ const CONTENT = {
       { id:'presser_feet', label:'Presser Feet',      emoji:'🦶', desc:'Precision machine feet', image: '/images/collections/presser_feet.jpg' },
       { id:'needles',      label:'Needles',           emoji:'🪡', desc:'Sharp & durable',    image: '/images/collections/needles.png' },
       { id:'measuring',    label:'Measuring Tools',   emoji:'📏', desc:'Accurate tools',     image: '/images/collections/measuring.png' },
+      { id:'other_tools',  label:'Other Tools',       emoji:'🛠️', desc:'Crafting essentials', image: '/images/collections/all_tools.png' },
     ],
     subs: [
       {id:'all',icon:'◈',label:'All'},
       {id:'machines',icon:'⚙',label:'Tailoring Kit'},
       {id:'scissors',icon:'✂',label:'Scissors'},
       {id:'threads',icon:'〇',label:'Threads'},
+      {id:'presser_feet',icon:'🦶',label:'Presser Feet'},
       {id:'needles',icon:'↑',label:'Needles'},
       {id:'measuring',icon:'↔',label:'Measuring'},
-      {id:'presser_feet',icon:'🦶',label:'Presser Feet'},
+      {id:'other_tools',icon:'🛠',label:'Other Tools'},
     ],
   },
   fashion: {
