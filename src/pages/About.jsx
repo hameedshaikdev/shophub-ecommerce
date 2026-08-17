@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../config/supabase';
 import SEO from '../components/common/SEO';
+import { GPayLogo, PhonePeLogo, PaytmLogo, CredLogo, WhatsAppIcon } from '../components/common/UpiIcons';
 
 /* ── Fallback counts shown while loading or if DB not yet set up ── */
 const FALLBACK = {
@@ -643,25 +644,20 @@ export default function About() {
                 </p>
                 <div className="sh-scroll-hide" style={{ display:'flex', gap:'8px', overflowX:'auto', paddingBottom:'4px', marginBottom:'14px', alignItems:'center' }}>
                   {[
-                    { name: 'Google Pay', icon: '/icons/gpay.jpg', isSquare: true },
-                    { name: 'PhonePe', icon: '/icons/phonepe.png', isRound: true },
-                    { name: 'Paytm', icon: '/icons/paytm.png', isContain: true },
-                    { name: 'CRED', icon: '/icons/cred.png', isContain: true }
-                  ].map(app => (
-                    <div key={app.name} style={{
+                    { name: 'Google Pay', Logo: GPayLogo },
+                    { name: 'PhonePe',    Logo: PhonePeLogo },
+                    { name: 'Paytm',      Logo: PaytmLogo },
+                    { name: 'CRED',       Logo: CredLogo }
+                  ].map(({ name, Logo }) => (
+                    <div key={name} style={{
                       display: 'inline-flex', alignItems: 'center', gap: '7px',
                       padding: '6px 12px', borderRadius: '10px',
                       background: '#FFFFFF', border: '1px solid #FDE68A',
                       boxShadow: '0 2px 6px rgba(180, 83, 9, 0.04)',
                       flexShrink: 0
                     }}>
-                      <img src={app.icon} alt={app.name} style={{
-                        width: '18px', height: '18px',
-                        objectFit: 'contain',
-                        borderRadius: app.isRound ? '50%' : (app.isSquare ? '4px' : '2px'),
-                        display: 'block'
-                      }} />
-                      <span style={{ fontSize: '12px', fontWeight: 800, color: '#92400E' }}>{app.name}</span>
+                      <Logo size={18} />
+                      <span style={{ fontSize: '12px', fontWeight: 800, color: '#92400E' }}>{name}</span>
                     </div>
                   ))}
                 </div>
@@ -776,7 +772,7 @@ export default function About() {
                     style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
                       padding:'12px 20px', borderRadius:'12px', background:'#25D366',
                       color:'white', fontSize:'13px', fontWeight:800, textDecoration:'none' }}>
-                    <img src="/icons/whatsapp.png" alt="WhatsApp" style={{ width:'18px', height:'18px', objectFit:'cover', borderRadius:'5px' }} /> Chat on WhatsApp
+                    <WhatsAppIcon size={18} /> Chat on WhatsApp
                   </a>
                   <a href="mailto:as.businezzz@gmail.com"
                     style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',

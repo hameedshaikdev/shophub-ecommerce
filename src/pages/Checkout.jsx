@@ -12,6 +12,7 @@ import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
 import { getProductImage } from '../utils/productImages';
 import SEO from '../components/common/SEO';
+import { GPayLogo, PhonePeLogo, CredLogo, PaytmLogo } from '../components/common/UpiIcons';
 
 /* ─── Shop config ───────────────────────────────────────────── */
 const SHOP = {
@@ -72,60 +73,7 @@ function StepDot({ n, current }) {
   );
 }
 
-/* ─── Authentic UPI Logos (From User Uploaded Images) ───────── */
-function GPayLogo({ size = 22 }) {
-  return (
-    <img
-      src="/icons/gpay.jpg"
-      alt="Google Pay"
-      style={{
-        width: `${size}px`, height: `${size}px`,
-        objectFit: 'contain', flexShrink: 0, display: 'block',
-        borderRadius: '5px'
-      }}
-    />
-  );
-}
-
-function PhonePeLogo({ size = 22 }) {
-  return (
-    <img
-      src="/icons/phonepe.png"
-      alt="PhonePe"
-      style={{
-        width: `${size}px`, height: `${size}px`,
-        objectFit: 'contain', flexShrink: 0, display: 'block'
-      }}
-    />
-  );
-}
-
-function CredLogo({ size = 22 }) {
-  return (
-    <img
-      src="/icons/cred.png"
-      alt="CRED"
-      style={{
-        width: `${size}px`, height: `${size}px`,
-        objectFit: 'contain', flexShrink: 0, display: 'block',
-        borderRadius: '6px'
-      }}
-    />
-  );
-}
-
-function PaytmLogo({ size = 20 }) {
-  return (
-    <img
-      src="/icons/paytm.png"
-      alt="Paytm"
-      style={{
-        width: `${Math.round(size * 1.8)}px`, height: `${size}px`,
-        objectFit: 'contain', flexShrink: 0, display: 'block'
-      }}
-    />
-  );
-}
+/* ─── Authentic Vector UPI Logos imported from UpiIcons.jsx ───────── */
 
 /* ─── Main Component ────────────────────────────────────────── */
 const AVAILABLE_COUPONS = {

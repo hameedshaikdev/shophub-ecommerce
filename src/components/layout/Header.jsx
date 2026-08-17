@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Search, ShoppingCart, User, LogOut, Shield, Menu, X, ChevronRight, Heart, Package, Info, MessageCircle } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { supabase } from '../../config/supabase';
+import { WhatsAppIcon } from '../common/UpiIcons';
 
 const TAILORING_BG = '#9C80AA';
 const FASHION_BG   = 'linear-gradient(180deg,#B8D4F0 0%,#DCEEFF 100%)';
@@ -374,7 +375,7 @@ export default function Header() {
                 target="_blank" rel="noopener noreferrer" onClick={() => setDrawer(false)}
                 className="sh-drawer-card-item">
                 <div className="sh-drawer-icon-box" style={{ background:'rgba(34, 197, 94, 0.12)' }}>
-                  <img src="/icons/whatsapp.png" alt="WhatsApp" style={{ width:'20px', height:'20px', objectFit:'cover', borderRadius:'6px' }} />
+                  <WhatsAppIcon size={20} />
                 </div>
                 <div style={{ flex:1 }}>
                   <p style={{ fontSize:'14px', fontWeight:700, color:'#111827', margin:0 }}>WhatsApp Support</p>
