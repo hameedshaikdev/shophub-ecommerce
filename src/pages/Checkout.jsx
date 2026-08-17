@@ -75,6 +75,51 @@ function StepDot({ n, current }) {
 
 /* ─── Authentic Vector UPI Logos imported from UpiIcons.jsx ───────── */
 
+/* ─── Accurate UPI App Launcher Helper ────────────────────────── */
+function getUpiAppUrl(appName, shopUpiId, shopUpiName, amount) {
+  const pa = shopUpiId;
+  const pn = encodeURIComponent(shopUpiName);
+  const am = Number(amount || 0).toFixed(2);
+  const baseUpi = `pa=${pa}&pn=${pn}&am=${am}&cu=INR`;
+  const isAndroid = typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent);
+  const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  const cleanName = (appName || '').toLowerCase().trim();
+
+  if (isAndroid) {
+    let pkg = '';
+    if (cleanName.includes('google') || cleanName.includes('gpay')) {
+      pkg = 'com.google.android.apps.nfc.phone';
+    } else if (cleanName.includes('phonepe')) {
+      pkg = 'com.phonepe.app';
+    } else if (cleanName.includes('paytm')) {
+      pkg = 'net.one97.paytm';
+    } else if (cleanName.includes('cred')) {
+      pkg = 'com.cred.club';
+    }
+    if (pkg) {
+      return `intent://pay?${baseUpi}#Intent;scheme=upi;package=${pkg};end`;
+    }
+  }
+
+  if (isIOS) {
+    if (cleanName.includes('google') || cleanName.includes('gpay')) {
+      return `gpay://upi/pay?${baseUpi}`;
+    }
+    if (cleanName.includes('phonepe')) {
+      return `phonepe://pay?${baseUpi}`;
+    }
+    if (cleanName.includes('paytm')) {
+      return `paytmmp://pay?${baseUpi}`;
+    }
+    if (cleanName.includes('cred')) {
+      return `cred://pay?${baseUpi}`;
+    }
+  }
+
+  return `upi://pay?${baseUpi}`;
+}
+
 /* ─── Main Component ────────────────────────────────────────── */
 const AVAILABLE_COUPONS = {
   'ASMA10':    { type: 'percent', val: 10,  desc: '10% OFF Storewide' },
@@ -107,10 +152,46 @@ export default function Checkout() {
   const [instantUpiOpen, setInstantUpiOpen] = useState(false);
   const [customUpiId,   setCustomUpiId]   = useState('');
 
+  const handleUpiAppClick = (appName, e) => {
+    if (e) e.preventDefault();
+    const url = getUpiAppUrl(appName, SHOP.upiId, SHOP.upiName, total);
+    copy(SHOP.upiId, 'upi');
+    const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = url;
+    } else {
+      alert(`Opening ${appName}...\n\nMerchant UPI ID (${SHOP.upiId}) copied to clipboard!\nScan the QR Code or paste the UPI ID in ${appName} on your phone to complete payment.`);
+    }
+  };
+
   const handlePayWithCustomUpi = () => {
-    if (!customUpiId.trim()) return;
-    const upiUrl = `upi://pay?pa=${SHOP.upiId}&pn=${encodeURIComponent(SHOP.upiName)}&am=${total.toFixed(2)}&cu=INR`;
-    window.location.href = upiUrl;
+    const rawVpa = customUpiId.trim();
+    if (!rawVpa) return;
+
+    let targetApp = '';
+    const lower = rawVpa.toLowerCase();
+    if (lower.includes('@ok') || lower.includes('@gpay')) {
+      targetApp = 'Google Pay';
+    } else if (lower.includes('@ybl') || lower.includes('@ibl') || lower.includes('@axl') || lower.includes('@phonepe')) {
+      targetApp = 'PhonePe';
+    } else if (lower.includes('@paytm')) {
+      targetApp = 'PayTM';
+    } else if (lower.includes('@cred')) {
+      targetApp = 'CRED UPI';
+    }
+
+    const url = targetApp
+      ? getUpiAppUrl(targetApp, SHOP.upiId, SHOP.upiName, total)
+      : `upi://pay?pa=${SHOP.upiId}&pn=${encodeURIComponent(SHOP.upiName)}&am=${total.toFixed(2)}&cu=INR`;
+
+    copy(SHOP.upiId, 'upi');
+
+    const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = url;
+    } else {
+      alert(`Merchant UPI ID (${SHOP.upiId}) copied to clipboard!\nAmount: ₹${total.toFixed(2)}\n\nPlease open your UPI App (${rawVpa || 'Google Pay / PhonePe / Paytm'}) to complete payment.`);
+    }
   };
 
   const handleApplyCoupon = (e) => {
@@ -881,18 +962,19 @@ export default function Checkout() {
                   { name:'CRED UPI',   Logo: CredLogo },
                   { name:'PayTM',      Logo: PaytmLogo },
                 ].map(({ name, Logo }, idx) => (
-                  <a
+                  <button
                     key={idx}
-                    href={`upi://pay?pa=${SHOP.upiId}&pn=${encodeURIComponent(SHOP.upiName)}&am=${total.toFixed(2)}&cu=INR`}
+                    type="button"
+                    onClick={(e) => handleUpiAppClick(name, e)}
                     style={{
                       padding:'11px 12px', borderRadius:'12px', background:'#F8FAFC', border:'1px solid #E2E8F0',
-                      display:'flex', alignItems:'center', justifyContent:'center', gap:'8px', textDecoration:'none',
-                      color:'#0F172A', fontWeight:800, fontSize:'13px', transition:'all .15s ease'
+                      display:'flex', alignItems:'center', justifyContent:'center', gap:'8px',
+                      color:'#0F172A', fontWeight:800, fontSize:'13px', cursor:'pointer', transition:'all .15s ease'
                     }}
                   >
                     <Logo size={18} />
                     <span>{name}</span>
-                  </a>
+                  </button>
                 ))}
               </div>
 
@@ -1051,18 +1133,19 @@ export default function Checkout() {
                             { name:'CRED UPI',   Logo: CredLogo },
                             { name:'PayTM',      Logo: PaytmLogo },
                           ].map(({ name, Logo }, idx) => (
-                            <a
+                            <button
                               key={idx}
-                              href={`upi://pay?pa=${SHOP.upiId}&pn=${encodeURIComponent(SHOP.upiName)}&am=${total.toFixed(2)}&cu=INR`}
+                              type="button"
+                              onClick={(e) => handleUpiAppClick(name, e)}
                               style={{
                                 padding:'9px 10px', borderRadius:'10px', background:'#FFFFFF', border:'1px solid #E2E8F0',
-                                display:'flex', alignItems:'center', justifyContent:'center', gap:'7px', textDecoration:'none',
-                                color:'#0F172A', fontWeight:800, fontSize:'12px', transition:'all .15s ease'
+                                display:'flex', alignItems:'center', justifyContent:'center', gap:'7px',
+                                color:'#0F172A', fontWeight:800, fontSize:'12px', cursor:'pointer', transition:'all .15s ease'
                               }}
                             >
                               <Logo size={16} />
                               <span>{name}</span>
-                            </a>
+                            </button>
                           ))}
                         </div>
                       </div>
