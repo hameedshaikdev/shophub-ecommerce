@@ -7,7 +7,7 @@ import {
   Plus, Edit2, Trash2, Eye, X, Save, Upload,
   AlertTriangle, AlertCircle, Download, Printer,
   Menu, Settings, TrendingUp, ShieldCheck, Home, Sparkles,
-  RotateCcw, Calendar, Copy, Check
+  RotateCcw, Calendar, Copy, Check, Tag, Target, Sliders
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { supabase } from '../config/supabase';
@@ -1138,7 +1138,7 @@ export default function AdminPanel() {
   const { user, setUser } = useApp();
 
   /* ── state ── */
-  const [page,       setPage]       = useState('orders');   // orders | products | more
+  const [page,       setPage]       = useState('orders');   // orders | products | coupons | cms | more
   const [orderTab,   setOrderTab]   = useState('all_pending');
   const [orders,     setOrders]     = useState([]);
   const [allOrders,  setAllOrders]  = useState([]);
@@ -1150,6 +1150,109 @@ export default function AdminPanel() {
   const [search,     setSearch]     = useState('');
   const [catFilter,  setCatFilter]  = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
+
+  // ── COUPON MANAGEMENT STATE ──
+  const DEFAULT_COUPONS = [
+    {
+      code: 'ASMA10',
+      desc: '10% OFF Storewide',
+      type: 'percent',
+      val: 10,
+      scope: 'ALL_PRODUCTS',
+      applicableProductIds: [],
+      applicableCategory: '',
+      minItemPrice: 0,
+      minCartTotal: 0,
+      maxDiscount: 500,
+      active: true,
+      hidden: false
+    },
+    {
+      code: 'WELCOME50',
+      desc: '₹50 OFF on Orders Above ₹299',
+      type: 'flat',
+      val: 50,
+      scope: 'ALL_PRODUCTS',
+      applicableProductIds: [],
+      applicableCategory: '',
+      minItemPrice: 0,
+      minCartTotal: 299,
+      maxDiscount: 0,
+      active: true,
+      hidden: false
+    },
+    {
+      code: 'TAILOR100',
+      desc: '₹100 OFF Tailoring Supplies',
+      type: 'flat',
+      val: 100,
+      scope: 'SPECIFIC_CATEGORY',
+      applicableProductIds: [],
+      applicableCategory: 'tailoring',
+      minItemPrice: 0,
+      minCartTotal: 499,
+      maxDiscount: 0,
+      active: true,
+      hidden: false
+    },
+    {
+      code: 'FASHION20',
+      desc: '20% OFF Women\'s Fashion Items',
+      type: 'percent',
+      val: 20,
+      scope: 'SPECIFIC_CATEGORY',
+      applicableProductIds: [],
+      applicableCategory: 'fashion',
+      minItemPrice: 999,
+      minCartTotal: 0,
+      maxDiscount: 1000,
+      active: true,
+      hidden: false
+    }
+  ];
+
+  const [couponsList, setCouponsList] = useState(() => {
+    try {
+      const stored = localStorage.getItem('asmalabel_coupons_list');
+      return stored ? JSON.parse(stored) : DEFAULT_COUPONS;
+    } catch {
+      return DEFAULT_COUPONS;
+    }
+  });
+
+  const [productSubTab, setProductSubTab] = useState('catalog'); // catalog | coupons
+  const [couponModalOpen, setCouponModalOpen] = useState(false);
+  const [editingCoupon, setEditingCoupon] = useState(null);
+  const [couponForm, setCouponForm] = useState({
+    code: '', desc: '', type: 'percent', val: 10,
+    scope: 'ALL_PRODUCTS', applicableProductIds: [],
+    applicableCategory: 'tailoring', minItemPrice: 0, minCartTotal: 0,
+    maxDiscount: 0, active: true, hidden: false
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('asmalabel_coupons_list', JSON.stringify(couponsList));
+    } catch (e) { console.error(e); }
+  }, [couponsList]);
+
+  const handleToggleCouponActive = (code) => {
+    setCouponsList(prev => prev.map(c => c.code === code ? { ...c, active: !c.active } : c));
+    toast('Coupon status updated', 'success');
+  };
+
+  const handleToggleCouponHidden = (code) => {
+    setCouponsList(prev => prev.map(c => c.code === code ? { ...c, hidden: !c.hidden } : c));
+    toast('Coupon visibility updated', 'success');
+  };
+
+  const handleDeleteCoupon = (code) => {
+    if (window.confirm(`Delete coupon ${code}?`)) {
+      setCouponsList(prev => prev.filter(c => c.code !== code));
+      toast(`Coupon ${code} deleted`, 'info');
+    }
+  };
+
   const [resetMetrics, setResetMetrics] = useState(() => {
     try {
       return localStorage.getItem('ashub_analytics_reset') === 'true';
@@ -1865,6 +1968,7 @@ buildPages(4);
               {[
                 { key:'orders',    label:'Orders',    icon:ShoppingBag },
                 { key:'products',  label:'Products',  icon:Package },
+                { key:'coupons',   label:'Coupons',   icon:Tag },
                 { key:'cms',       label:'CMS',       icon:Sparkles },
                 { key:'more',      label:'More',      icon:Settings },
               ].map(({ key, label, icon:Icon }) => (
@@ -2034,18 +2138,44 @@ buildPages(4);
           {page==='products' && (
             <div className="page-enter" style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
 
-              {/* Toolbar */}
-              <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', padding:'14px', boxSizing:'border-box' }}>
-                <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'10px' }}>
-                  <div>
-                    <h1 style={{ fontSize:'16px', fontWeight:900, color:'#111827', margin:0 }}>Products</h1>
-                    <p style={{ fontSize:'11px', color:'#6B7280', margin:0 }}>Manage stock &amp; catalog</p>
-                  </div>
-                  <button onClick={()=>setModal('add')}
-                    style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:'4px', padding:'7px 12px', borderRadius:'9px', background:'#0F172A', color:'#FFFFFF', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer', flexShrink:0 }}>
-                    <Plus size={14} /> Add
-                  </button>
-                </div>
+              {/* Sub-tab Pill Switcher */}
+              <div style={{ display: 'flex', gap: '6px', background: '#FFFFFF', padding: '4px', borderRadius: '12px', border: '1px solid #E5E7EB', width: 'fit-content' }}>
+                <button
+                  onClick={() => setProductSubTab('catalog')}
+                  style={{
+                    padding: '6px 14px', borderRadius: '9px', fontSize: '12px', fontWeight: 800, border: 'none', cursor: 'pointer',
+                    background: productSubTab === 'catalog' ? '#0F172A' : 'transparent',
+                    color: productSubTab === 'catalog' ? '#FFFFFF' : '#475569'
+                  }}
+                >
+                  📦 Products Catalog ({products.length})
+                </button>
+                <button
+                  onClick={() => setProductSubTab('coupons')}
+                  style={{
+                    padding: '6px 14px', borderRadius: '9px', fontSize: '12px', fontWeight: 800, border: 'none', cursor: 'pointer',
+                    background: productSubTab === 'coupons' ? '#0F172A' : 'transparent',
+                    color: productSubTab === 'coupons' ? '#FFFFFF' : '#475569'
+                  }}
+                >
+                  🏷️ Coupons &amp; Promo Rules ({couponsList.length})
+                </button>
+              </div>
+
+              {productSubTab === 'catalog' && (
+                <>
+                  {/* Toolbar */}
+                  <div style={{ background:'#FFFFFF', borderRadius:'14px', border:'1px solid #E5E7EB', padding:'14px', boxSizing:'border-box' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'10px' }}>
+                      <div>
+                        <h1 style={{ fontSize:'16px', fontWeight:900, color:'#111827', margin:0 }}>Products</h1>
+                        <p style={{ fontSize:'11px', color:'#6B7280', margin:0 }}>Manage stock &amp; catalog</p>
+                      </div>
+                      <button onClick={()=>setModal('add')}
+                        style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:'4px', padding:'7px 12px', borderRadius:'9px', background:'#0F172A', color:'#FFFFFF', fontWeight:800, fontSize:'12px', border:'none', cursor:'pointer', flexShrink:0 }}>
+                        <Plus size={14} /> Add
+                      </button>
+                    </div>
                 <div className="admin-products-toolbar-row" style={{ display:'flex', gap:'6px', alignItems:'center', flexWrap:'wrap', width:'100%', boxSizing:'border-box' }}>
                   <div style={{ position:'relative', flex:'1 1 120px', minWidth:'120px' }}>
                     <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search..."
@@ -2151,6 +2281,297 @@ buildPages(4);
                   })}
                 </div>
               )}
+              </>
+              )}
+
+              {/* COUPONS SUB-TAB / TAB VIEW */}
+              {(productSubTab === 'coupons' || page === 'coupons') && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {/* Toolbar */}
+                  <div style={{ background: '#FFFFFF', borderRadius: '14px', border: '1px solid #E5E7EB', padding: '16px', boxSizing: 'border-box' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                      <div>
+                        <h1 style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', margin: 0, letterSpacing: '-0.3px' }}>
+                          Promo Coupons &amp; Discount Rules 🏷️
+                        </h1>
+                        <p style={{ fontSize: '12px', color: '#64748B', margin: '2px 0 0' }}>
+                          Configure item-specific rules, price tag restrictions, category caps &amp; storewide promo codes
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setEditingCoupon(null);
+                          setCouponForm({
+                            code: '', desc: '', type: 'percent', val: 10,
+                            scope: 'ALL_PRODUCTS', applicableProductIds: [],
+                            applicableCategory: 'tailoring', minItemPrice: 0, minCartTotal: 0,
+                            maxDiscount: 0, active: true, hidden: false
+                          });
+                          setCouponModalOpen(true);
+                        }}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '6px',
+                          padding: '9px 16px', borderRadius: '10px', background: '#0F172A',
+                          color: '#FFFFFF', fontWeight: 800, fontSize: '12.5px', border: 'none', cursor: 'pointer',
+                          boxShadow: '0 4px 12px rgba(15,23,42,0.15)'
+                        }}
+                      >
+                        <Plus size={15} /> Create New Coupon
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Coupon Cards Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '14px' }}>
+                    {couponsList.map((cpn) => (
+                      <div key={cpn.code} style={{
+                        background: '#FFFFFF', borderRadius: '16px', border: cpn.active ? '1.5px solid #CBD5E1' : '1px dashed #CBD5E1',
+                        padding: '16px', boxShadow: '0 4px 14px rgba(15,23,42,0.03)', opacity: cpn.active ? 1 : 0.6,
+                        display: 'flex', flexDirection: 'column', gap: '10px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '16px', fontWeight: 900, color: '#0F172A', letterSpacing: '0.5px' }}>
+                              {cpn.code}
+                            </span>
+                            <span style={{
+                              fontSize: '11px', fontWeight: 900, padding: '2px 8px', borderRadius: '6px',
+                              background: cpn.type === 'percent' ? '#DCFCE7' : '#FEF3C7',
+                              color: cpn.type === 'percent' ? '#166534' : '#92400E'
+                            }}>
+                              {cpn.type === 'percent' ? `${cpn.val}% OFF` : `₹${cpn.val} OFF`}
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            {cpn.hidden && (
+                              <span style={{ fontSize: '10px', fontWeight: 800, background: '#F1F5F9', color: '#64748B', padding: '2px 6px', borderRadius: '4px' }}>
+                                Hidden
+                              </span>
+                            )}
+                            <span style={{ fontSize: '10px', fontWeight: 800, background: cpn.active ? '#DCFCE7' : '#FEE2E2', color: cpn.active ? '#166534' : '#991B1B', padding: '2px 6px', borderRadius: '4px' }}>
+                              {cpn.active ? 'Active' : 'Disabled'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <p style={{ fontSize: '12.5px', color: '#475569', margin: 0, fontWeight: 500 }}>
+                          {cpn.desc}
+                        </p>
+
+                        {/* Rules & Applicability badges */}
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: '11px' }}>
+                          <span style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '3px 8px', borderRadius: '6px', color: '#334155', fontWeight: 700 }}>
+                            Scope: {
+                              cpn.scope === 'ALL_PRODUCTS' ? '🌐 Storewide (All Items)' :
+                              cpn.scope === 'SPECIFIC_CATEGORY' ? `🏷️ Category: ${cpn.applicableCategory}` :
+                              cpn.scope === 'SELECTED_PRODUCTS' ? `📦 Specific Items (${cpn.applicableProductIds?.length || 0})` :
+                              cpn.scope === 'MIN_PRICE_TAG' ? `💰 Price Tag ≥ ₹${cpn.minItemPrice}` : 'Storewide'
+                            }
+                          </span>
+                          {cpn.minCartTotal > 0 && (
+                            <span style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '3px 8px', borderRadius: '6px', color: '#334155', fontWeight: 700 }}>
+                              Min Cart: ₹{cpn.minCartTotal}
+                            </span>
+                          )}
+                          {cpn.maxDiscount > 0 && (
+                            <span style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '3px 8px', borderRadius: '6px', color: '#334155', fontWeight: 700 }}>
+                              Max Cap: ₹{cpn.maxDiscount}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Action buttons */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '10px', borderTop: '1px solid #F1F5F9', marginTop: 'auto' }}>
+                          <button
+                            onClick={() => handleToggleCouponActive(cpn.code)}
+                            style={{
+                              flex: 1, padding: '6px', borderRadius: '8px', fontSize: '11.5px', fontWeight: 800, cursor: 'pointer', border: 'none',
+                              background: cpn.active ? '#FFFBEB' : '#ECFDF5', color: cpn.active ? '#D97706' : '#059669'
+                            }}
+                          >
+                            {cpn.active ? 'Disable' : 'Enable'}
+                          </button>
+                          <button
+                            onClick={() => handleToggleCouponHidden(cpn.code)}
+                            style={{
+                              flex: 1, padding: '6px', borderRadius: '8px', fontSize: '11.5px', fontWeight: 800, cursor: 'pointer', border: 'none',
+                              background: '#F1F5F9', color: '#475569'
+                            }}
+                          >
+                            {cpn.hidden ? 'Show' : 'Hide'}
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditingCoupon(cpn);
+                              setCouponForm({ ...cpn });
+                              setCouponModalOpen(true);
+                            }}
+                            style={{
+                              padding: '6px 12px', borderRadius: '8px', fontSize: '11.5px', fontWeight: 800, cursor: 'pointer', border: 'none',
+                              background: '#EFF6FF', color: '#1D4ED8'
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteCoupon(cpn.code)}
+                            style={{
+                              padding: '6px 12px', borderRadius: '8px', fontSize: '11.5px', fontWeight: 800, cursor: 'pointer', border: 'none',
+                              background: '#FEF2F2', color: '#DC2626'
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            </div>
+          )}
+
+          {/* ── DEDICATED COUPONS MAIN TAB ── */}
+          {page==='coupons' && (
+            <div className="page-enter" style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
+              {/* Toolbar */}
+              <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', padding: '16px', boxSizing: 'border-box' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                  <div>
+                    <h1 style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', margin: 0, letterSpacing: '-0.3px' }}>
+                      Promo Coupons &amp; Discount Rules 🏷️
+                    </h1>
+                    <p style={{ fontSize: '12px', color: '#64748B', margin: '2px 0 0' }}>
+                      Configure item-specific rules, price tag restrictions, category caps &amp; storewide promo codes
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setEditingCoupon(null);
+                      setCouponForm({
+                        code: '', desc: '', type: 'percent', val: 10,
+                        scope: 'ALL_PRODUCTS', applicableProductIds: [],
+                        applicableCategory: 'tailoring', minItemPrice: 0, minCartTotal: 0,
+                        maxDiscount: 0, active: true, hidden: false
+                      });
+                      setCouponModalOpen(true);
+                    }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '6px',
+                      padding: '9px 16px', borderRadius: '10px', background: '#0F172A',
+                      color: '#FFFFFF', fontWeight: 800, fontSize: '12.5px', border: 'none', cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(15,23,42,0.15)'
+                    }}
+                  >
+                    <Plus size={15} /> Create New Coupon
+                  </button>
+                </div>
+              </div>
+
+              {/* Coupon Cards Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '14px' }}>
+                {couponsList.map((cpn) => (
+                  <div key={cpn.code} style={{
+                    background: '#FFFFFF', borderRadius: '16px', border: cpn.active ? '1.5px solid #CBD5E1' : '1px dashed #CBD5E1',
+                    padding: '16px', boxShadow: '0 4px 14px rgba(15,23,42,0.03)', opacity: cpn.active ? 1 : 0.6,
+                    display: 'flex', flexDirection: 'column', gap: '10px'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '16px', fontWeight: 900, color: '#0F172A', letterSpacing: '0.5px' }}>
+                          {cpn.code}
+                        </span>
+                        <span style={{
+                          fontSize: '11px', fontWeight: 900, padding: '2px 8px', borderRadius: '6px',
+                          background: cpn.type === 'percent' ? '#DCFCE7' : '#FEF3C7',
+                          color: cpn.type === 'percent' ? '#166534' : '#92400E'
+                        }}>
+                          {cpn.type === 'percent' ? `${cpn.val}% OFF` : `₹${cpn.val} OFF`}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        {cpn.hidden && (
+                          <span style={{ fontSize: '10px', fontWeight: 800, background: '#F1F5F9', color: '#64748B', padding: '2px 6px', borderRadius: '4px' }}>
+                            Hidden
+                          </span>
+                        )}
+                        <span style={{ fontSize: '10px', fontWeight: 800, background: cpn.active ? '#DCFCE7' : '#FEE2E2', color: cpn.active ? '#166534' : '#991B1B', padding: '2px 6px', borderRadius: '4px' }}>
+                          {cpn.active ? 'Active' : 'Disabled'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <p style={{ fontSize: '12.5px', color: '#475569', margin: 0, fontWeight: 500 }}>
+                      {cpn.desc}
+                    </p>
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: '11px' }}>
+                      <span style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '3px 8px', borderRadius: '6px', color: '#334155', fontWeight: 700 }}>
+                        Scope: {
+                          cpn.scope === 'ALL_PRODUCTS' ? '🌐 Storewide (All Items)' :
+                          cpn.scope === 'SPECIFIC_CATEGORY' ? `🏷️ Category: ${cpn.applicableCategory}` :
+                          cpn.scope === 'SELECTED_PRODUCTS' ? `📦 Specific Items (${cpn.applicableProductIds?.length || 0})` :
+                          cpn.scope === 'MIN_PRICE_TAG' ? `💰 Price Tag ≥ ₹${cpn.minItemPrice}` : 'Storewide'
+                        }
+                      </span>
+                      {cpn.minCartTotal > 0 && (
+                        <span style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '3px 8px', borderRadius: '6px', color: '#334155', fontWeight: 700 }}>
+                          Min Cart: ₹{cpn.minCartTotal}
+                        </span>
+                      )}
+                      {cpn.maxDiscount > 0 && (
+                        <span style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '3px 8px', borderRadius: '6px', color: '#334155', fontWeight: 700 }}>
+                          Max Cap: ₹{cpn.maxDiscount}
+                        </span>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '10px', borderTop: '1px solid #F1F5F9', marginTop: 'auto' }}>
+                      <button
+                        onClick={() => handleToggleCouponActive(cpn.code)}
+                        style={{
+                          flex: 1, padding: '6px', borderRadius: '8px', fontSize: '11.5px', fontWeight: 800, cursor: 'pointer', border: 'none',
+                          background: cpn.active ? '#FFFBEB' : '#ECFDF5', color: cpn.active ? '#D97706' : '#059669'
+                        }}
+                      >
+                        {cpn.active ? 'Disable' : 'Enable'}
+                      </button>
+                      <button
+                        onClick={() => handleToggleCouponHidden(cpn.code)}
+                        style={{
+                          flex: 1, padding: '6px', borderRadius: '8px', fontSize: '11.5px', fontWeight: 800, cursor: 'pointer', border: 'none',
+                          background: '#F1F5F9', color: '#475569'
+                        }}
+                      >
+                        {cpn.hidden ? 'Show' : 'Hide'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingCoupon(cpn);
+                          setCouponForm({ ...cpn });
+                          setCouponModalOpen(true);
+                        }}
+                        style={{
+                          padding: '6px 12px', borderRadius: '8px', fontSize: '11.5px', fontWeight: 800, cursor: 'pointer', border: 'none',
+                          background: '#EFF6FF', color: '#1D4ED8'
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCoupon(cpn.code)}
+                        style={{
+                          padding: '6px 12px', borderRadius: '8px', fontSize: '11.5px', fontWeight: 800, cursor: 'pointer', border: 'none',
+                          background: '#FEF2F2', color: '#DC2626'
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -2464,6 +2885,255 @@ buildPages(4);
       <AnimatePresence>
         {modal && (
           <ProductModal product={modal==='add'?null:modal} onClose={()=>setModal(null)} onSave={()=>{setModal(null);fetchProducts();}}/>
+        )}
+      </AnimatePresence>
+
+      {/* Coupon Modal */}
+      <AnimatePresence>
+        {couponModalOpen && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
+              style={{ background: '#FFFFFF', borderRadius: '20px', padding: '24px', width: '100%', maxWidth: '540px', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+              
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', margin: 0 }}>
+                  {editingCoupon ? `Edit Coupon: ${editingCoupon.code}` : 'Create New Promo Coupon 🏷️'}
+                </h2>
+                <button onClick={() => setCouponModalOpen(false)} style={{ background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <X size={16} color="#64748B" />
+                </button>
+              </div>
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const code = (couponForm.code || '').trim().toUpperCase();
+                if (!code) { toast('Please enter a coupon code', 'warning'); return; }
+                const val = Number(couponForm.val);
+                if (isNaN(val) || val <= 0) { toast('Please enter a valid discount value', 'warning'); return; }
+
+                const updatedCoupon = {
+                  ...couponForm,
+                  code,
+                  val,
+                  minItemPrice: Number(couponForm.minItemPrice || 0),
+                  minCartTotal: Number(couponForm.minCartTotal || 0),
+                  maxDiscount: Number(couponForm.maxDiscount || 0),
+                };
+
+                if (editingCoupon) {
+                  setCouponsList(prev => prev.map(c => c.code === editingCoupon.code ? updatedCoupon : c));
+                  toast(`Coupon ${code} updated!`, 'success');
+                } else {
+                  if (couponsList.some(c => c.code === code)) {
+                    toast(`Coupon code ${code} already exists`, 'warning');
+                    return;
+                  }
+                  setCouponsList(prev => [updatedCoupon, ...prev]);
+                  toast(`Coupon ${code} created successfully!`, 'success');
+                }
+                setCouponModalOpen(false);
+              }} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+
+                {/* Code & Type */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '4px' }}>COUPON CODE *</label>
+                    <input
+                      value={couponForm.code}
+                      onChange={e => setCouponForm({ ...couponForm, code: e.target.value.toUpperCase() })}
+                      placeholder="e.g. ASMA10"
+                      required
+                      disabled={!!editingCoupon}
+                      style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '4px' }}>DISCOUNT TYPE *</label>
+                    <select
+                      value={couponForm.type}
+                      onChange={e => setCouponForm({ ...couponForm, type: e.target.value })}
+                      style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', fontWeight: 700, boxSizing: 'border-box' }}
+                    >
+                      <option value="percent">Percentage (% OFF)</option>
+                      <option value="flat">Flat Amount (₹ OFF)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '4px' }}>DESCRIPTION / TITLE *</label>
+                  <input
+                    value={couponForm.desc}
+                    onChange={e => setCouponForm({ ...couponForm, desc: e.target.value })}
+                    placeholder="e.g. 10% OFF on Tailoring Tools"
+                    required
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                {/* Discount Value & Max Cap */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '4px' }}>
+                      {couponForm.type === 'percent' ? 'PERCENTAGE OFF (%)' : 'FLAT AMOUNT OFF (₹)'} *
+                    </label>
+                    <input
+                      type="number"
+                      value={couponForm.val}
+                      onChange={e => setCouponForm({ ...couponForm, val: e.target.value })}
+                      placeholder="10"
+                      required
+                      min="1"
+                      style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', fontWeight: 800, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '4px' }}>MAX DISCOUNT CAP (₹)</label>
+                    <input
+                      type="number"
+                      value={couponForm.maxDiscount}
+                      onChange={e => setCouponForm({ ...couponForm, maxDiscount: e.target.value })}
+                      placeholder="0 for no max cap"
+                      min="0"
+                      style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                </div>
+
+                {/* APPLICABILITY SCOPE */}
+                <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 900, color: '#0F172A' }}>
+                    🎯 APPLICABILITY &amp; ITEM SCOPE
+                  </label>
+                  <select
+                    value={couponForm.scope}
+                    onChange={e => setCouponForm({ ...couponForm, scope: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12.5px', fontWeight: 700, boxSizing: 'border-box' }}
+                  >
+                    <option value="ALL_PRODUCTS">🌐 Storewide (Applies to all products)</option>
+                    <option value="SPECIFIC_CATEGORY">🏷️ Specific Category Only</option>
+                    <option value="SELECTED_PRODUCTS">📦 Selected / Specific Items Only</option>
+                    <option value="MIN_PRICE_TAG">💰 Price Tag Condition (Item price ≥ ₹X)</option>
+                  </select>
+
+                  {/* Scope Details */}
+                  {couponForm.scope === 'SPECIFIC_CATEGORY' && (
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '4px' }}>SELECT CATEGORY</label>
+                      <select
+                        value={couponForm.applicableCategory}
+                        onChange={e => setCouponForm({ ...couponForm, applicableCategory: e.target.value })}
+                        style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', fontWeight: 700, boxSizing: 'border-box' }}
+                      >
+                        <option value="tailoring">Tailoring Tools &amp; Supplies</option>
+                        <option value="fashion">Women's Fashion &amp; Dresses</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {couponForm.scope === 'MIN_PRICE_TAG' && (
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '4px' }}>MINIMUM ITEM PRICE TAG (₹)</label>
+                      <input
+                        type="number"
+                        value={couponForm.minItemPrice}
+                        onChange={e => setCouponForm({ ...couponForm, minItemPrice: e.target.value })}
+                        placeholder="e.g. 499"
+                        style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
+                      />
+                      <span style={{ fontSize: '10.5px', color: '#64748B', display: 'block', marginTop: '3px' }}>
+                        Coupon will only apply to individual cart items priced at or above this amount.
+                      </span>
+                    </div>
+                  )}
+
+                  {couponForm.scope === 'SELECTED_PRODUCTS' && (
+                    <div>
+                      <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '4px' }}>
+                        CHOOSE SPECIFIC PRODUCTS ({couponForm.applicableProductIds?.length || 0} selected)
+                      </label>
+                      <div style={{ maxHeight: '140px', overflowY: 'auto', border: '1px solid #CBD5E1', borderRadius: '8px', padding: '8px', background: '#FFFFFF', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {products.map(p => {
+                          const isSelected = (couponForm.applicableProductIds || []).includes(p.id);
+                          return (
+                            <label key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11.5px', color: '#334155', cursor: 'pointer', padding: '2px 0' }}>
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={e => {
+                                  const curr = couponForm.applicableProductIds || [];
+                                  const updated = e.target.checked
+                                    ? [...curr, p.id]
+                                    : curr.filter(id => id !== p.id);
+                                  setCouponForm({ ...couponForm, applicableProductIds: updated });
+                                }}
+                                style={{ accentColor: '#0F172A' }}
+                              />
+                              <span style={{ fontWeight: isSelected ? 800 : 500 }}>{p.name} (₹{p.price})</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Min Cart Total */}
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '4px' }}>MINIMUM TOTAL CART VALUE (₹)</label>
+                  <input
+                    type="number"
+                    value={couponForm.minCartTotal}
+                    onChange={e => setCouponForm({ ...couponForm, minCartTotal: e.target.value })}
+                    placeholder="0 for no minimum"
+                    min="0"
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12.5px', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                {/* Status Toggles */}
+                <div style={{ display: 'flex', gap: '16px', paddingTop: '4px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 700, color: '#334155', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={couponForm.active}
+                      onChange={e => setCouponForm({ ...couponForm, active: e.target.checked })}
+                      style={{ accentColor: '#0F172A', width: '16px', height: '16px' }}
+                    />
+                    Active (Can be redeemed)
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 700, color: '#334155', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={couponForm.hidden}
+                      onChange={e => setCouponForm({ ...couponForm, hidden: e.target.checked })}
+                      style={{ accentColor: '#0F172A', width: '16px', height: '16px' }}
+                    />
+                    Hide from public list
+                  </label>
+                </div>
+
+                {/* Action buttons */}
+                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setCouponModalOpen(false)}
+                    style={{ flex: 1, padding: '11px', borderRadius: '10px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', fontWeight: 800, cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{ flex: 1, padding: '11px', borderRadius: '10px', border: 'none', background: '#0F172A', color: '#FFFFFF', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 12px rgba(15,23,42,0.2)' }}
+                  >
+                    {editingCoupon ? 'Save Changes' : 'Create Coupon'}
+                  </button>
+                </div>
+
+              </form>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 

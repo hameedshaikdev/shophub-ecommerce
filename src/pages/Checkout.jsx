@@ -120,14 +120,22 @@ function getUpiAppUrl(appName, shopUpiId, shopUpiName, amount) {
   return `upi://pay?${baseUpi}`;
 }
 
-/* ─── Main Component ────────────────────────────────────────── */
-const AVAILABLE_COUPONS = {
-  'ASMA10':    { type: 'percent', val: 10,  desc: '10% OFF Storewide' },
-  'WELCOME50': { type: 'flat',    val: 50,  desc: '₹50 OFF' },
-  'FIRSTBUY':  { type: 'percent', val: 5,   desc: '5% First Order Special' },
-  'TAILOR100': { type: 'flat',    val: 100, desc: '₹100 OFF Tailoring Supplies' },
+const DEFAULT_COUPONS = [
+  { code: 'ASMA10', desc: '10% OFF Storewide', type: 'percent', val: 10, scope: 'ALL_PRODUCTS', active: true },
+  { code: 'WELCOME50', desc: '₹50 OFF on Orders Above ₹299', type: 'flat', val: 50, scope: 'ALL_PRODUCTS', minCartTotal: 299, active: true },
+  { code: 'TAILOR100', desc: '₹100 OFF Tailoring Supplies', type: 'flat', val: 100, scope: 'SPECIFIC_CATEGORY', applicableCategory: 'tailoring', minCartTotal: 499, active: true },
+  { code: 'FASHION20', desc: '20% OFF Women\'s Fashion Items', type: 'percent', val: 20, scope: 'SPECIFIC_CATEGORY', applicableCategory: 'fashion', minItemPrice: 999, active: true }
+];
+
+const getStoredCoupons = () => {
+  try {
+    const stored = localStorage.getItem('asmalabel_coupons_list');
+    if (stored) return JSON.parse(stored);
+  } catch (e) { console.error(e); }
+  return DEFAULT_COUPONS;
 };
 
+/* ─── Main Component ────────────────────────────────────────── */
 export default function Checkout() {
   const navigate = useNavigate();
   const { cart, getCartTotal, user, clearCart, loading: authLoading, addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useApp();
@@ -151,6 +159,8 @@ export default function Checkout() {
   const [addressTag,    setAddressTag]    = useState('Home');
   const [instantUpiOpen, setInstantUpiOpen] = useState(false);
   const [customUpiId,   setCustomUpiId]   = useState('');
+
+  const rawSubtotal = getCartTotal ? getCartTotal() : cart.reduce((acc, item) => acc + (Number(item.price || 0) * Number(item.quantity || 1)), 0);
 
   const handleUpiAppClick = (appName, e) => {
     if (e) e.preventDefault();
@@ -199,15 +209,73 @@ export default function Checkout() {
     setCouponError('');
     const code = (promoInput || '').trim().toUpperCase();
     if (!code) {
-      setCouponError('Please enter a coupon code');
+      setCouponError('Please enter a coupon code.');
       return;
     }
-    if (AVAILABLE_COUPONS[code]) {
-      setAppliedCoupon({ code, ...AVAILABLE_COUPONS[code] });
-      setPromoInput('');
-    } else {
-      setCouponError('Invalid coupon code. Try ASMA10 or WELCOME50');
+
+    const couponsList = getStoredCoupons();
+    const targetCpn = couponsList.find(c => (c.code || '').toUpperCase() === code);
+
+    if (!targetCpn || targetCpn.active === false) {
+      setCouponError(`Invalid or inactive coupon code "${code}".`);
+      return;
     }
+
+    if (targetCpn.minCartTotal > 0 && rawSubtotal < targetCpn.minCartTotal) {
+      setCouponError(`Order subtotal must be at least ₹${targetCpn.minCartTotal} to use code ${targetCpn.code}.`);
+      return;
+    }
+
+    // Filter cart for eligible items based on Scope
+    const eligibleItems = cart.filter(item => {
+      if (targetCpn.scope === 'SPECIFIC_CATEGORY') {
+        return (item.category || '').toLowerCase() === (targetCpn.applicableCategory || '').toLowerCase();
+      }
+      if (targetCpn.scope === 'SELECTED_PRODUCTS') {
+        return Array.isArray(targetCpn.applicableProductIds) && targetCpn.applicableProductIds.includes(item.id);
+      }
+      if (targetCpn.scope === 'MIN_PRICE_TAG') {
+        return Number(item.price || 0) >= Number(targetCpn.minItemPrice || 0);
+      }
+      return true; // ALL_PRODUCTS
+    });
+
+    const eligibleSubtotal = eligibleItems.reduce((acc, item) => acc + (Number(item.price || 0) * Number(item.quantity || 1)), 0);
+
+    if (eligibleSubtotal === 0) {
+      if (targetCpn.scope === 'SPECIFIC_CATEGORY') {
+        const catName = targetCpn.applicableCategory === 'tailoring' ? 'Tailoring Supplies' : 'Fashion';
+        setCouponError(`Coupon ${targetCpn.code} is only valid for ${catName} items.`);
+      } else if (targetCpn.scope === 'SELECTED_PRODUCTS') {
+        setCouponError(`Coupon ${targetCpn.code} only applies to specific selected products.`);
+      } else if (targetCpn.scope === 'MIN_PRICE_TAG') {
+        setCouponError(`Coupon ${targetCpn.code} only applies to individual items priced at or above ₹${targetCpn.minItemPrice}.`);
+      } else {
+        setCouponError(`No items in your cart qualify for coupon ${targetCpn.code}.`);
+      }
+      return;
+    }
+
+    let discountAmount = 0;
+    if (targetCpn.type === 'percent') {
+      discountAmount = (eligibleSubtotal * Number(targetCpn.val)) / 100;
+      if (targetCpn.maxDiscount > 0) {
+        discountAmount = Math.min(discountAmount, Number(targetCpn.maxDiscount));
+      }
+    } else {
+      discountAmount = Math.min(Number(targetCpn.val), eligibleSubtotal);
+    }
+
+    setAppliedCoupon({
+      code: targetCpn.code,
+      desc: targetCpn.desc,
+      type: targetCpn.type,
+      val: targetCpn.val,
+      scope: targetCpn.scope,
+      discountAmount,
+      eligibleSubtotal
+    });
+    setPromoInput('');
   };
 
   const handleRemoveCoupon = () => {
@@ -215,14 +283,9 @@ export default function Checkout() {
     setCouponError('');
   };
 
-  const rawSubtotal = getCartTotal ? getCartTotal() : cart.reduce((acc, item) => acc + (Number(item.price || 0) * Number(item.quantity || 1)), 0);
   let couponDiscount = 0;
   if (appliedCoupon) {
-    if (appliedCoupon.type === 'percent') {
-      couponDiscount = (rawSubtotal * appliedCoupon.val) / 100;
-    } else if (appliedCoupon.type === 'flat') {
-      couponDiscount = Math.min(appliedCoupon.val, rawSubtotal);
-    }
+    couponDiscount = Number(appliedCoupon.discountAmount || 0);
   }
   const total = Math.max(0, rawSubtotal - couponDiscount);
 
