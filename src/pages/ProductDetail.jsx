@@ -7,7 +7,8 @@ import {
   ChevronRight, ChevronUp, ChevronDown, MessageCircle,
   Maximize2, X, Play, Tv, ExternalLink,
   ArrowDown, Zap, Clock, Calendar, CheckCircle2,
-  Home, BadgeCheck, ShieldCheck, ArrowRight, ThumbsUp, ThumbsDown, Check, Send
+  Home, BadgeCheck, ShieldCheck, ArrowRight, ThumbsUp, ThumbsDown, Check, Send,
+  MapPin, Trash2, Edit2, CheckCircle, Building, Briefcase
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { supabase } from '../config/supabase';
@@ -51,6 +52,66 @@ export default function ProductDetail() {
 
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [zoomScale,    setZoomScale]    = useState(1);
+
+  // ── Delivery Address Management System ──
+  const DEFAULT_ADDRESSES = useMemo(() => [
+    {
+      id: 'addr_default_1',
+      tag: 'HOME',
+      fullName: 'Shaik Abdul Hameed',
+      phone: '7013942909',
+      houseNo: '25-2-1709',
+      streetArea: 'Pragathi nagar, Podalkur Road',
+      landmark: 'Near Little Flower School',
+      city: 'Nellore',
+      state: 'Andhra Pradesh',
+      pincode: '524004',
+      isDefault: true
+    }
+  ], []);
+
+  const [savedAddresses, setSavedAddresses] = useState(() => {
+    try {
+      const stored = localStorage.getItem('asmalabel_saved_addresses');
+      return stored ? JSON.parse(stored) : DEFAULT_ADDRESSES;
+    } catch {
+      return DEFAULT_ADDRESSES;
+    }
+  });
+
+  const [activeAddressId, setActiveAddressId] = useState(() => {
+    try {
+      return localStorage.getItem('asmalabel_active_address_id') || 'addr_default_1';
+    } catch {
+      return 'addr_default_1';
+    }
+  });
+
+  const [addressModalOpen, setAddressModalOpen] = useState(false);
+  const [showAddressForm,  setShowAddressForm]  = useState(false);
+  const [editingAddress,   setEditingAddress]   = useState(null);
+  const [addressForm, setAddressForm] = useState({
+    tag: 'HOME', fullName: '', phone: '', houseNo: '',
+    streetArea: '', landmark: '', city: 'Nellore', state: 'Andhra Pradesh', pincode: '524004'
+  });
+
+  const activeAddress = useMemo(() => {
+    return savedAddresses.find(a => a.id === activeAddressId) || savedAddresses[0] || DEFAULT_ADDRESSES[0];
+  }, [savedAddresses, activeAddressId, DEFAULT_ADDRESSES]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('asmalabel_saved_addresses', JSON.stringify(savedAddresses));
+    } catch (e) { console.error(e); }
+  }, [savedAddresses]);
+
+  useEffect(() => {
+    try {
+      if (activeAddressId) {
+        localStorage.setItem('asmalabel_active_address_id', activeAddressId);
+      }
+    } catch (e) { console.error(e); }
+  }, [activeAddressId]);
 
   // Live Dispatch Countdown Timer
   const [timeLeft, setTimeLeft] = useState({ hours: '00', minutes: '23', seconds: '46' });
@@ -610,13 +671,37 @@ export default function ProductDetail() {
 
             {/* ── DELIVERY DETAILS & PINCODE / SELLER BLOCK ── */}
             <div className="pd-delivery-details-card">
-              <span className="pd-card-heading-title">Delivery details</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span className="pd-card-heading-title" style={{ margin: 0 }}>Delivery details</span>
+                <button
+                  type="button"
+                  onClick={() => setAddressModalOpen(true)}
+                  style={{
+                    fontSize: '12px', fontWeight: 800, color: '#0F172A',
+                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Change
+                </button>
+              </div>
               
-              <div className="pd-delivery-address-pill">
+              <div
+                className="pd-delivery-address-pill"
+                onClick={() => setAddressModalOpen(true)}
+                style={{ cursor: 'pointer', transition: 'all .15s ease' }}
+                title="Click to select or edit delivery address"
+              >
                 <div style={{ display:'flex', alignItems:'center', gap:'8px', minWidth: 0, overflow:'hidden' }}>
-                  <Home size={16} color="#0F172A" style={{ flexShrink: 0 }} />
+                  {activeAddress?.tag === 'Office' ? (
+                    <Briefcase size={16} color="#0F172A" style={{ flexShrink: 0 }} />
+                  ) : activeAddress?.tag === 'Other' ? (
+                    <Building size={16} color="#0F172A" style={{ flexShrink: 0 }} />
+                  ) : (
+                    <Home size={16} color="#0F172A" style={{ flexShrink: 0 }} />
+                  )}
                   <span className="pd-address-line">
-                    <strong>HOME</strong> 25-2-1709, Pragathi nagar, Podalkur Road, Nellore
+                    <strong>{activeAddress?.tag || 'HOME'}</strong> {activeAddress?.houseNo ? `${activeAddress.houseNo}, ` : ''}{activeAddress?.streetArea || 'Pragathi nagar, Podalkur Road'}, {activeAddress?.city || 'Nellore'}
                   </span>
                 </div>
                 <ChevronRight size={15} color="#94A3B8" style={{ flexShrink: 0 }} />
@@ -1321,6 +1406,340 @@ export default function ProductDetail() {
                 ))}
               </div>
             )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── ADDRESS SELECTION & MANAGEMENT MODAL ── */}
+      <AnimatePresence>
+        {addressModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 10000,
+              background: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(6px)',
+              WebkitBackdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', padding: '16px', boxSizing: 'border-box'
+            }}
+            onClick={() => { setAddressModalOpen(false); setShowAddressForm(false); setEditingAddress(null); }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              style={{
+                width: '100%', maxWidth: '520px', background: '#FFFFFF',
+                borderRadius: '24px', padding: '24px', boxShadow: '0 25px 60px rgba(0,0,0,0.2)',
+                border: '1px solid #E2E8F0', maxHeight: '90vh', overflowY: 'auto',
+                boxSizing: 'border-box'
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', paddingBottom: '14px', borderBottom: '1px solid #F1F5F9' }}>
+                <div>
+                  <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', margin: 0, letterSpacing: '-0.3px' }}>
+                    {showAddressForm ? (editingAddress ? 'Edit Address' : 'Add New Address') : 'Select Delivery Address'}
+                  </h3>
+                  <p style={{ fontSize: '12px', color: '#64748B', margin: '2px 0 0', fontWeight: 500 }}>
+                    {showAddressForm ? 'Fill details to save address' : 'Choose or add a delivery location'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => { setAddressModalOpen(false); setShowAddressForm(false); setEditingAddress(null); }}
+                  style={{
+                    width: '32px', height: '32px', borderRadius: '50%', background: '#F8FAFC',
+                    border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', cursor: 'pointer', color: '#64748B'
+                  }}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* VIEW 1: Address List */}
+              {!showAddressForm && (
+                <div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+                    {savedAddresses.map((addr) => {
+                      const isSelected = addr.id === activeAddressId;
+                      return (
+                        <div
+                          key={addr.id}
+                          onClick={() => setActiveAddressId(addr.id)}
+                          style={{
+                            background: isSelected ? '#F8FAFC' : '#FFFFFF',
+                            borderRadius: '16px',
+                            border: isSelected ? '2px solid #0F172A' : '1px solid #E2E8F0',
+                            padding: '16px',
+                            cursor: 'pointer',
+                            transition: 'all .15s ease',
+                            position: 'relative'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                              <span style={{
+                                fontSize: '10.5px', fontWeight: 900, textTransform: 'uppercase',
+                                padding: '3px 8px', borderRadius: '6px',
+                                background: addr.tag === 'Office' ? '#EFF6FF' : addr.tag === 'Other' ? '#F5F3FF' : '#FEF3C7',
+                                color: addr.tag === 'Office' ? '#1D4ED8' : addr.tag === 'Other' ? '#6D28D9' : '#D97706',
+                                letterSpacing: '0.5px'
+                              }}>
+                                {addr.tag || 'HOME'}
+                              </span>
+                              <strong style={{ fontSize: '14px', color: '#0F172A' }}>{addr.fullName}</strong>
+                              <span style={{ fontSize: '13px', color: '#64748B' }}>• {addr.phone}</span>
+                            </div>
+
+                            {isSelected && (
+                              <span style={{
+                                display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                fontSize: '11px', fontWeight: 900, color: '#16A34A', background: '#DCFCE7',
+                                padding: '3px 8px', borderRadius: '99px'
+                              }}>
+                                <CheckCircle size={12} color="#16A34A" /> Selected
+                              </span>
+                            )}
+                          </div>
+
+                          <p style={{ fontSize: '13px', color: '#334155', lineHeight: 1.5, margin: '0 0 12px' }}>
+                            {addr.houseNo ? `${addr.houseNo}, ` : ''}{addr.streetArea}
+                            {addr.landmark ? `, Near ${addr.landmark}` : ''}<br />
+                            <strong>{addr.city}, {addr.state} - {addr.pincode}</strong>
+                          </p>
+
+                          {/* Action Bar */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', paddingTop: '10px', borderTop: '1px solid #F1F5F9' }}>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingAddress(addr);
+                                setAddressForm(addr);
+                                setShowAddressForm(true);
+                              }}
+                              style={{
+                                display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                fontSize: '12px', fontWeight: 800, color: '#0F172A',
+                                background: 'none', border: 'none', cursor: 'pointer', padding: 0
+                              }}
+                            >
+                              <Edit2 size={13} /> Edit
+                            </button>
+
+                            {savedAddresses.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const updated = savedAddresses.filter(a => a.id !== addr.id);
+                                  setSavedAddresses(updated);
+                                  if (activeAddressId === addr.id && updated.length > 0) {
+                                    setActiveAddressId(updated[0].id);
+                                  }
+                                }}
+                                style={{
+                                  display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                  fontSize: '12px', fontWeight: 800, color: '#EF4444',
+                                  background: 'none', border: 'none', cursor: 'pointer', padding: 0
+                                }}
+                              >
+                                <Trash2 size={13} /> Delete
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Add New Address Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingAddress(null);
+                      setAddressForm({
+                        tag: 'HOME', fullName: '', phone: '', houseNo: '',
+                        streetArea: '', landmark: '', city: 'Nellore', state: 'Andhra Pradesh', pincode: '524004'
+                      });
+                      setShowAddressForm(true);
+                    }}
+                    style={{
+                      width: '100%', padding: '13px', borderRadius: '14px',
+                      background: '#FFFFFF', border: '1.5px dashed #CBD5E1', color: '#0F172A',
+                      fontWeight: 800, fontSize: '13.5px', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                      transition: 'all .15s ease'
+                    }}
+                  >
+                    <Plus size={16} /> Add New Address
+                  </button>
+                </div>
+              )}
+
+              {/* VIEW 2: Add / Edit Address Form */}
+              {showAddressForm && (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!addressForm.fullName || !addressForm.phone || !addressForm.streetArea || !addressForm.pincode) {
+                      alert('Please fill out all required address fields.');
+                      return;
+                    }
+
+                    if (editingAddress) {
+                      const updated = savedAddresses.map(a => a.id === editingAddress.id ? { ...addressForm, id: editingAddress.id } : a);
+                      setSavedAddresses(updated);
+                      setActiveAddressId(editingAddress.id);
+                    } else {
+                      const newId = `addr_${Date.now()}`;
+                      const newAddr = { ...addressForm, id: newId };
+                      const updated = [...savedAddresses, newAddr];
+                      setSavedAddresses(updated);
+                      setActiveAddressId(newId);
+                    }
+
+                    setShowAddressForm(false);
+                    setEditingAddress(null);
+                    if (showToast) showToast('Delivery address saved!');
+                  }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
+                >
+                  {/* Tag Selector */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '6px' }}>
+                      Address Tag / Type
+                    </label>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {['HOME', 'OFFICE', 'OTHER'].map(tag => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => setAddressForm({ ...addressForm, tag })}
+                          style={{
+                            flex: 1, padding: '8px 0', borderRadius: '10px',
+                            background: addressForm.tag === tag ? '#0F172A' : '#F8FAFC',
+                            color: addressForm.tag === tag ? '#FFFFFF' : '#475569',
+                            fontWeight: 800, fontSize: '12px', border: '1px solid #E2E8F0', cursor: 'pointer'
+                          }}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Full Name *</label>
+                      <input
+                        required
+                        value={addressForm.fullName}
+                        onChange={e => setAddressForm({ ...addressForm, fullName: e.target.value })}
+                        placeholder="e.g. Shaik Abdul Hameed"
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #CBD5E1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Mobile Number *</label>
+                      <input
+                        required
+                        value={addressForm.phone}
+                        onChange={e => setAddressForm({ ...addressForm, phone: e.target.value })}
+                        placeholder="10-digit phone"
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #CBD5E1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Flat / House No. / Building</label>
+                    <input
+                      value={addressForm.houseNo}
+                      onChange={e => setAddressForm({ ...addressForm, houseNo: e.target.value })}
+                      placeholder="e.g. D.No 25-2-1709"
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #CBD5E1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Street Address / Area *</label>
+                    <input
+                      required
+                      value={addressForm.streetArea}
+                      onChange={e => setAddressForm({ ...addressForm, streetArea: e.target.value })}
+                      placeholder="e.g. Pragathi nagar, Podalkur Road"
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #CBD5E1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Landmark (Optional)</label>
+                      <input
+                        value={addressForm.landmark}
+                        onChange={e => setAddressForm({ ...addressForm, landmark: e.target.value })}
+                        placeholder="e.g. Near Little Flower School"
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #CBD5E1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>Pincode *</label>
+                      <input
+                        required
+                        value={addressForm.pincode}
+                        onChange={e => setAddressForm({ ...addressForm, pincode: e.target.value })}
+                        placeholder="e.g. 524004"
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #CBD5E1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>City *</label>
+                      <input
+                        required
+                        value={addressForm.city}
+                        onChange={e => setAddressForm({ ...addressForm, city: e.target.value })}
+                        placeholder="Nellore"
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #CBD5E1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '4px' }}>State *</label>
+                      <input
+                        required
+                        value={addressForm.state}
+                        onChange={e => setAddressForm({ ...addressForm, state: e.target.value })}
+                        placeholder="Andhra Pradesh"
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #CBD5E1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddressForm(false)}
+                      style={{ flex: 1, padding: '12px', borderRadius: '12px', background: '#F1F5F9', border: 'none', color: '#475569', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      style={{ flex: 1, padding: '12px', borderRadius: '12px', background: '#0F172A', border: 'none', color: '#FFFFFF', fontWeight: 900, fontSize: '13.5px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(15,23,42,0.15)' }}
+                    >
+                      Save Address
+                    </button>
+                  </div>
+                </form>
+              )}
+
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
