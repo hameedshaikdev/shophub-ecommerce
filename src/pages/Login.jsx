@@ -226,44 +226,42 @@ export default function Login() {
 
       <div style={{ width: '100%', maxWidth: '420px', position: 'relative', zIndex: 1 }}>
 
-        {/* ── Beautiful Asmalabel Branding Header ── */}
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <Link to="/" style={{ textDecoration: 'none', display: 'block', marginBottom: '8px' }}>
-            <h1 style={{
-              fontFamily: '"Playfair Display", "Cinzel", "Cormorant Garamond", Georgia, serif',
-              fontSize: '36px',
-              fontWeight: 900,
-              color: '#0F172A',
-              margin: 0,
-              letterSpacing: '-0.8px',
-              lineHeight: 1.1
-            }}>
-              Asmalabel
-            </h1>
-          </Link>
-          <div style={{ display: 'block' }}>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '6px',
-              padding: '4px 14px', borderRadius: '99px',
-              background: 'rgba(15, 23, 42, 0.05)', border: '1px solid rgba(15, 23, 42, 0.08)'
-            }}>
-              <Sparkles size={11} color="#B88346" />
-              <span style={{ color: '#475569', fontSize: '11.5px', fontWeight: 700, letterSpacing: '0.3px', textTransform: 'uppercase' }}>
-                Boutique Tailoring &amp; Fashion
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Main Professional Card ── */}
+        {/* ── Main Professional Login Panel ── */}
         <div style={{
           background: '#FFFFFF',
           borderRadius: '28px',
-          padding: '32px 28px',
+          padding: '36px 28px 32px',
           boxShadow: '0 20px 45px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02)',
           border: '1.5px solid #E2E8F0'
         }}>
-          <h2 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', marginBottom: '4px', textAlign: 'center', letterSpacing: '-0.3px' }}>
+          {/* Brand Header inside Login Panel */}
+          <div style={{ textAlign: 'center', marginBottom: '22px' }}>
+            <Link to="/" style={{ textDecoration: 'none', display: 'block', marginBottom: '4px' }}>
+              <h1 style={{
+                fontFamily: '"Playfair Display", "Cinzel", "Cormorant Garamond", Georgia, serif',
+                fontSize: '34px',
+                fontWeight: 900,
+                color: '#0F172A',
+                margin: 0,
+                letterSpacing: '-0.8px',
+                lineHeight: 1.1
+              }}>
+                Asmalabel
+              </h1>
+            </Link>
+            <p style={{
+              color: '#475569',
+              fontSize: '11.5px',
+              fontWeight: 750,
+              letterSpacing: '0.4px',
+              textTransform: 'uppercase',
+              margin: '4px 0 0'
+            }}>
+              Boutique Tailoring &amp; Fashion
+            </p>
+          </div>
+
+          <h2 style={{ fontSize: '20px', fontWeight: 900, color: '#0F172A', marginBottom: '4px', textAlign: 'center', letterSpacing: '-0.3px' }}>
             Welcome Back 👋
           </h2>
           <p style={{ color: '#64748B', fontSize: '13px', marginBottom: '24px', textAlign: 'center', fontWeight: 500 }}>
