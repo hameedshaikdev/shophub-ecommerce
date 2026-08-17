@@ -363,10 +363,16 @@ const FullWidthCollectionBannerSlider = memo(function FullWidthCollectionBannerS
   };
 
   const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    const diff = touchStartX.current - touchEndX.current;
-    if (diff > 30) handleNext();
-    else if (diff < -30) handlePrev();
+    if (touchStartX.current && touchEndX.current) {
+      const diff = touchStartX.current - touchEndX.current;
+      if (diff > 30) handleNext();
+      else if (diff < -30) handlePrev();
+    }
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
+
+  const handleTouchCancel = () => {
     touchStartX.current = 0;
     touchEndX.current = 0;
   };
@@ -1559,6 +1565,15 @@ export default function Home() {
 
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
+
+        @keyframes mobileCollageMarqueeLoop {
+          0% {
+            transform: translate3d(0, 0, 0);
+          }
+          100% {
+            transform: translate3d(-50%, 0, 0);
+          }
+        }
 
         /* Hero responsive */
         @media (max-width: 768px) {
