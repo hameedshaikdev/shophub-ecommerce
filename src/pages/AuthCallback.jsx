@@ -90,8 +90,8 @@ export default function AuthCallback() {
 
   return (
     <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#F8FAFC', gap:'16px' }}>
-      <div style={{ fontSize:'36px', fontWeight:900, background:'linear-gradient(135deg,#FC8019,#FF9F1C)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
-        AS HUB
+      <div style={{ fontSize:'32px', fontWeight:900, fontFamily: '"Playfair Display", "Cinzel", Georgia, serif', color: '#0F172A' }}>
+        Asmalabel
       </div>
 
       {error ? (

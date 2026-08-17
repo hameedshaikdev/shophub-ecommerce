@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 import { supabase } from '../config/supabase';
 import { useApp } from '../context/AppContext';
 import SEO from '../components/common/SEO';
@@ -40,7 +40,7 @@ export default function Login() {
       navigate(redirect);
     } catch (err) {
       setError(err.message === 'Invalid login credentials'
-        ? 'Wrong email or password. Please try again.'
+        ? 'Invalid email or password. Please check your credentials and try again.'
         : err.message);
     } finally { setLoading(false); }
   };
@@ -83,63 +83,120 @@ export default function Login() {
   // ── Forgot Password Screen ───────────────────────────────────────────────
   if (forgotMode) {
     return (
-      <div style={{ flex:'1 0 auto', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'40px 20px', width:'100%', boxSizing:'border-box' }}>
-        <div style={{ width:'100%', maxWidth:'400px' }}>
-          <button onClick={() => { setForgotMode(false); setForgotSent(false); setError(''); }}
-            style={{ display:'flex', alignItems:'center', gap:'6px', background:'none', border:'none', cursor:'pointer', color:'var(--text-2)', fontSize:'14px', fontWeight:700, marginBottom:'24px' }}>
-            ← Back to Login
+      <div style={{
+        flex: '1 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: 'linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%)',
+        padding: '40px 20px', width: '100%', boxSizing: 'border-box', minHeight: 'calc(100vh - 120px)'
+      }}>
+        <SEO title="Reset Password | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/login" />
+        <div style={{ width: '100%', maxWidth: '420px' }}>
+          
+          <button
+            onClick={() => { setForgotMode(false); setForgotSent(false); setError(''); }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '99px',
+              padding: '8px 16px', cursor: 'pointer', color: '#475569',
+              fontSize: '13px', fontWeight: 700, marginBottom: '20px',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.03)', transition: 'all .15s ease'
+            }}
+          >
+            ← Back to Sign In
           </button>
 
-          <div style={{ background:'white', borderRadius:'28px', padding:'36px', boxShadow:'var(--shadow-lg)', border:'1px solid var(--border)' }}>
+          <div style={{
+            background: '#FFFFFF', borderRadius: '28px', padding: '36px 28px',
+            boxShadow: '0 20px 45px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02)',
+            border: '1.5px solid #E2E8F0', textAlign: 'left'
+          }}>
             {forgotSent ? (
-              <div style={{ textAlign:'center' }}>
-                <div style={{ fontSize:'56px', marginBottom:'16px' }}>📧</div>
-                <h2 style={{ fontSize:'22px', fontWeight:900, color:'var(--text)', marginBottom:'8px' }}>Check Your Email!</h2>
-                <p style={{ color:'var(--text-2)', fontSize:'14px', lineHeight:1.7, marginBottom:'24px' }}>
-                  We sent a password reset link to<br/>
-                  <strong style={{ color:'var(--text)' }}>{forgotEmail}</strong>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{
+                  width: '64px', height: '64px', borderRadius: '50%', background: '#DCFCE7',
+                  border: '2px solid #86EFAC', display: 'inline-flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: '28px', marginBottom: '16px'
+                }}>
+                  📧
+                </div>
+                <h2 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', marginBottom: '8px', letterSpacing: '-0.3px' }}>
+                  Check Your Inbox
+                </h2>
+                <p style={{ color: '#64748B', fontSize: '13.5px', lineHeight: 1.6, marginBottom: '20px' }}>
+                  We've sent a password reset link to<br />
+                  <strong style={{ color: '#0F172A', wordBreak: 'break-all' }}>{forgotEmail}</strong>
                 </p>
-                <p style={{ fontSize:'13px', color:'var(--text-3)', marginBottom:'20px' }}>
-                  Didn't receive it? Check spam folder or try again.
+                <p style={{ fontSize: '12px', color: '#94A3B8', marginBottom: '20px' }}>
+                  Didn't see it? Please check your spam folder or request a new link below.
                 </p>
-                <button onClick={() => setForgotSent(false)}
-                  style={{ width:'100%', padding:'13px', borderRadius:'14px', background:'var(--primary-grad)', color:'white', fontWeight:800, fontSize:'15px', border:'none', cursor:'pointer' }}>
-                  Resend Email
+                <button
+                  onClick={() => setForgotSent(false)}
+                  style={{
+                    width: '100%', padding: '14px', borderRadius: '14px',
+                    background: '#0F172A', color: '#FFFFFF', fontWeight: 800,
+                    fontSize: '14px', border: 'none', cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(15, 23, 42, 0.15)'
+                  }}
+                >
+                  Resend Reset Email
                 </button>
               </div>
             ) : (
               <>
-                <div style={{ fontSize:'40px', marginBottom:'12px' }}>🔑</div>
-                <h2 style={{ fontSize:'22px', fontWeight:900, color:'var(--text)', marginBottom:'6px' }}>Forgot Password?</h2>
-                <p style={{ color:'var(--text-2)', fontSize:'14px', marginBottom:'24px', lineHeight:1.6 }}>
-                  No worries! Enter your email and we'll send you a reset link instantly.
+                <div style={{
+                  width: '54px', height: '54px', borderRadius: '18px', background: '#F1F5F9',
+                  border: '1px solid #CBD5E1', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: '24px', marginBottom: '16px'
+                }}>
+                  🔑
+                </div>
+                <h2 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', marginBottom: '6px', letterSpacing: '-0.3px' }}>
+                  Forgot Password?
+                </h2>
+                <p style={{ color: '#64748B', fontSize: '13.5px', marginBottom: '22px', lineHeight: 1.5 }}>
+                  Enter your registered email address and we'll send you an instant password reset link.
                 </p>
 
                 {error && (
-                  <div style={{ background:'rgba(239,68,68,.07)', border:'1px solid rgba(239,68,68,.2)', borderRadius:'12px', padding:'10px 14px', fontSize:'13px', fontWeight:600, color:'#DC2626', marginBottom:'16px' }}>
+                  <div style={{
+                    background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '12px',
+                    padding: '10px 14px', fontSize: '13px', fontWeight: 700, color: '#DC2626', marginBottom: '16px'
+                  }}>
                     {error}
                   </div>
                 )}
 
-                <form onSubmit={onForgotSubmit} style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
+                <form onSubmit={onForgotSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div>
-                    <label style={{ display:'block', fontSize:'13px', fontWeight:700, color:'var(--text)', marginBottom:'8px' }}>
-                      Your Email Address
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 800, color: '#334155', marginBottom: '7px' }}>
+                      Email Address
                     </label>
-                    <div style={{ position:'relative' }}>
-                      <Mail size={16} color="var(--text-3)" style={{ position:'absolute', left:'14px', top:'50%', transform:'translateY(-50%)' }} />
+                    <div style={{ position: 'relative' }}>
+                      <Mail size={16} color="#94A3B8" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
                       <input
-                        type="email" value={forgotEmail} onChange={e => { setForgotEmail(e.target.value); setError(''); }}
-                        placeholder="you@example.com" required
-                        style={{ width:'100%', padding:'13px 14px 13px 42px', borderRadius:'14px', border:'1.5px solid #e5e7eb', fontSize:'14px', fontFamily:'inherit', outline:'none' }}
-                        onFocus={e => e.target.style.borderColor='var(--primary)'}
-                        onBlur={e => e.target.style.borderColor='#e5e7eb'}
+                        type="email"
+                        value={forgotEmail}
+                        onChange={e => { setForgotEmail(e.target.value); setError(''); }}
+                        placeholder="e.g. name@domain.com"
+                        required
+                        style={{
+                          width: '100%', padding: '13px 14px 13px 42px', borderRadius: '14px',
+                          border: '1.5px solid #CBD5E1', fontSize: '14px', outline: 'none',
+                          boxSizing: 'border-box', background: '#FFFFFF', color: '#0F172A'
+                        }}
                       />
                     </div>
                   </div>
-                  <button type="submit" disabled={forgotLoad}
-                    style={{ padding:'13px', borderRadius:'14px', background:'var(--primary-grad)', color:'white', fontWeight:800, fontSize:'15px', border:'none', cursor:'pointer', opacity:forgotLoad?.6:1 }}>
-                    {forgotLoad ? 'Sending...' : 'Send Reset Link 📧'}
+                  <button
+                    type="submit"
+                    disabled={forgotLoad}
+                    style={{
+                      padding: '14px', borderRadius: '14px', background: '#0F172A', color: '#FFFFFF',
+                      fontWeight: 800, fontSize: '14.5px', border: 'none', cursor: 'pointer',
+                      opacity: forgotLoad ? 0.7 : 1, boxShadow: '0 4px 14px rgba(15, 23, 42, 0.15)',
+                      transition: 'all .15s ease'
+                    }}
+                  >
+                    {forgotLoad ? 'Sending...' : 'Send Reset Link →'}
                   </button>
                 </form>
               </>
@@ -150,101 +207,233 @@ export default function Login() {
     );
   }
 
-  // ── Main Login Screen ────────────────────────────────────────────────────
+  // ── Main Luxury Login Screen ─────────────────────────────────────────────
   return (
-    <div style={{ flex:'1 0 auto', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:'40px 20px', width:'100%', boxSizing:'border-box' }}>
+    <div style={{
+      flex: '1 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%)',
+      padding: '40px 20px', width: '100%', boxSizing: 'border-box', minHeight: 'calc(100vh - 120px)',
+      position: 'relative', overflow: 'hidden'
+    }}>
       <SEO title="Sign In | Asmalabel" robots="noindex, nofollow" canonical="https://asmalabel.in/login" />
-      <div style={{ width:'100%', maxWidth:'420px' }}>
 
-        {/* Logo */}
-        <div style={{ textAlign:'center', marginBottom:'24px' }}>
-          <Link to="/" style={{ fontSize:'28px', fontWeight:900, background:'var(--primary-grad)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', textDecoration:'none' }}>
-            AS HUB
+      {/* Decorative ambient background glow */}
+      <div style={{
+        position: 'absolute', width: '380px', height: '380px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, rgba(192, 132, 252, 0.08) 50%, transparent 80%)',
+        top: '10%', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none'
+      }} />
+
+      <div style={{ width: '100%', maxWidth: '420px', position: 'relative', zIndex: 1 }}>
+
+        {/* ── Beautiful Asmalabel Branding Header ── */}
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <Link to="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
+            <h1 style={{
+              fontFamily: '"Playfair Display", "Cinzel", "Cormorant Garamond", Georgia, serif',
+              fontSize: '34px',
+              fontWeight: 900,
+              color: '#0F172A',
+              margin: 0,
+              letterSpacing: '-0.8px',
+              lineHeight: 1.1
+            }}>
+              Asmalabel
+            </h1>
           </Link>
-          <p style={{ color:'var(--text-3)', fontSize:'13px', marginTop:'4px' }}>Quality Tailoring & Fashion</p>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            marginTop: '6px', padding: '3px 12px', borderRadius: '99px',
+            background: 'rgba(15, 23, 42, 0.05)', border: '1px solid rgba(15, 23, 42, 0.08)'
+          }}>
+            <Sparkles size={11} color="#B88346" />
+            <span style={{ color: '#475569', fontSize: '11.5px', fontWeight: 700, letterSpacing: '0.3px', textTransform: 'uppercase' }}>
+              Boutique Tailoring &amp; Fashion
+            </span>
+          </div>
         </div>
 
-        <div style={{ background:'white', borderRadius:'28px', padding:'28px', boxShadow:'var(--shadow-lg)', border:'1px solid var(--border)' }}>
-          <h1 style={{ fontSize:'22px', fontWeight:900, color:'var(--text)', marginBottom:'4px', textAlign:'center' }}>Welcome Back 👋</h1>
-          <p style={{ color:'var(--text-2)', fontSize:'13px', marginBottom:'24px', textAlign:'center' }}>Sign in to continue shopping</p>
+        {/* ── Main Professional Card ── */}
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: '28px',
+          padding: '32px 28px',
+          boxShadow: '0 20px 45px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02)',
+          border: '1.5px solid #E2E8F0'
+        }}>
+          <h2 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', marginBottom: '4px', textAlign: 'center', letterSpacing: '-0.3px' }}>
+            Welcome Back 👋
+          </h2>
+          <p style={{ color: '#64748B', fontSize: '13px', marginBottom: '24px', textAlign: 'center', fontWeight: 500 }}>
+            Sign in to access your orders, wishlist &amp; profile
+          </p>
 
           {error && (
-            <div style={{ background:'rgba(239,68,68,.07)', border:'1px solid rgba(239,68,68,.2)', borderRadius:'12px', padding:'10px 14px', fontSize:'13px', fontWeight:600, color:'#DC2626', marginBottom:'16px' }}>
+            <div style={{
+              background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '14px',
+              padding: '11px 14px', fontSize: '13px', fontWeight: 700, color: '#DC2626',
+              marginBottom: '18px', textAlign: 'left', lineHeight: 1.5
+            }}>
               {error}
             </div>
           )}
 
-          {/* Google Sign In */}
-          <button onClick={onGoogle} disabled={googleLoad}
-            style={{ width:'100%', padding:'13px', borderRadius:'14px', background:'white', border:'1.5px solid #E2E8F0', display:'flex', alignItems:'center', justifyContent:'center', gap:'10px', cursor:'pointer', fontSize:'14px', fontWeight:700, color:'var(--text)', boxShadow:'var(--shadow-xs)', marginBottom:'16px', transition:'all .2s', opacity:googleLoad?.7:1 }}
-            onMouseEnter={e => e.currentTarget.style.borderColor='#94A3B8'}
-            onMouseLeave={e => e.currentTarget.style.borderColor='#E2E8F0'}>
-            {/* Google G logo */}
+          {/* ── Google Sign In Button ── */}
+          <button
+            onClick={onGoogle}
+            disabled={googleLoad}
+            style={{
+              width: '100%', padding: '13px 16px', borderRadius: '14px',
+              background: '#FFFFFF', border: '1.5px solid #CBD5E1',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+              cursor: 'pointer', fontSize: '14px', fontWeight: 800, color: '#0F172A',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.03)', marginBottom: '20px',
+              opacity: googleLoad ? 0.7 : 1, transition: 'all .15s ease'
+            }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = '#0F172A'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = '#CBD5E1'}
+          >
+            {/* Official Google Multicolor G Logo */}
             <svg width="20" height="20" viewBox="0 0 48 48">
-              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
             </svg>
-            {googleLoad ? 'Opening Google...' : 'Continue with Google'}
+            <span>{googleLoad ? 'Opening Google...' : 'Continue with Google'}</span>
           </button>
 
           {/* Divider */}
-          <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'16px' }}>
-            <div style={{ flex:1, height:'1px', background:'#E2E8F0' }} />
-            <span style={{ fontSize:'12px', color:'var(--text-3)', fontWeight:600 }}>or sign in with email</span>
-            <div style={{ flex:1, height:'1px', background:'#E2E8F0' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+            <div style={{ flex: 1, height: '1px', background: '#E2E8F0' }} />
+            <span style={{ fontSize: '12px', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              or sign in with email
+            </span>
+            <div style={{ flex: 1, height: '1px', background: '#E2E8F0' }} />
           </div>
 
           {/* Email Login Form */}
-          <form onSubmit={onSubmit} style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
+          <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              <label style={{ display:'block', fontSize:'13px', fontWeight:700, color:'var(--text)', marginBottom:'7px' }}>Email Address</label>
-              <div style={{ position:'relative' }}>
-                <Mail size={16} color="var(--text-3)" style={{ position:'absolute', left:'14px', top:'50%', transform:'translateY(-50%)' }} />
-                <input name="email" type="email" value={form.email} onChange={onChange} required
+              <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 800, color: '#334155', marginBottom: '7px' }}>
+                Email Address
+              </label>
+              <div style={{ position: 'relative' }}>
+                <Mail size={16} color="#94A3B8" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
+                <input
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={onChange}
+                  required
                   placeholder="you@example.com"
-                  style={{ width:'100%', padding:'12px 14px 12px 42px', borderRadius:'14px', border:'1.5px solid #e5e7eb', fontSize:'14px', fontFamily:'inherit', outline:'none' }}
-                  onFocus={e => e.target.style.borderColor='var(--primary)'}
-                  onBlur={e => e.target.style.borderColor='#e5e7eb'} />
+                  style={{
+                    width: '100%', padding: '13px 14px 13px 42px', borderRadius: '14px',
+                    border: '1.5px solid #CBD5E1', fontSize: '14px', outline: 'none',
+                    boxSizing: 'border-box', background: '#FFFFFF', color: '#0F172A',
+                    transition: 'all .15s ease'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#0F172A'}
+                  onBlur={e => e.target.style.borderColor = '#CBD5E1'}
+                />
               </div>
             </div>
 
             <div>
-              <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'7px' }}>
-                <label style={{ fontSize:'13px', fontWeight:700, color:'var(--text)' }}>Password</label>
-                <button type="button" onClick={() => setForgotMode(true)}
-                  style={{ fontSize:'12px', fontWeight:700, color:'var(--primary)', background:'none', border:'none', cursor:'pointer', padding:0 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '7px' }}>
+                <label style={{ fontSize: '12.5px', fontWeight: 800, color: '#334155' }}>
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setForgotMode(true)}
+                  style={{
+                    fontSize: '12px', fontWeight: 800, color: '#0F172A',
+                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                    textDecoration: 'underline'
+                  }}
+                >
                   Forgot password?
                 </button>
               </div>
-              <div style={{ position:'relative' }}>
-                <Lock size={16} color="var(--text-3)" style={{ position:'absolute', left:'14px', top:'50%', transform:'translateY(-50%)' }} />
-                <input name="password" type={showPwd?'text':'password'} value={form.password} onChange={onChange} required
+              <div style={{ position: 'relative' }}>
+                <Lock size={16} color="#94A3B8" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
+                <input
+                  name="password"
+                  type={showPwd ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={onChange}
+                  required
                   placeholder="••••••••"
-                  style={{ width:'100%', padding:'12px 44px 12px 42px', borderRadius:'14px', border:'1.5px solid #e5e7eb', fontSize:'14px', fontFamily:'inherit', outline:'none' }}
-                  onFocus={e => e.target.style.borderColor='var(--primary)'}
-                  onBlur={e => e.target.style.borderColor='#e5e7eb'} />
-                <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  style={{ position:'absolute', right:'14px', top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', padding:0, margin:0 }}>
-                  {showPwd ? <EyeOff size={16} color="var(--text-3)"/> : <Eye size={16} color="var(--text-3)"/>}
+                  style={{
+                    width: '100%', padding: '13px 44px 13px 42px', borderRadius: '14px',
+                    border: '1.5px solid #CBD5E1', fontSize: '14px', outline: 'none',
+                    boxSizing: 'border-box', background: '#FFFFFF', color: '#0F172A',
+                    transition: 'all .15s ease'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#0F172A'}
+                  onBlur={e => e.target.style.borderColor = '#CBD5E1'}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPwd(!showPwd)}
+                  style={{
+                    position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center', padding: 0, margin: 0
+                  }}
+                  title={showPwd ? 'Hide Password' : 'Show Password'}
+                >
+                  {showPwd ? <EyeOff size={16} color="#64748B" /> : <Eye size={16} color="#64748B" />}
                 </button>
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className="sh-btn"
-              style={{ width:'100%', justifyContent:'center', padding:'13px', opacity:loading?.6:1 }}>
-              {loading ? 'Signing in…' : <><span>Sign In</span> <ArrowRight size={16}/></>}
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: '100%', padding: '14px', borderRadius: '14px',
+                background: '#0F172A', color: '#FFFFFF', fontWeight: 900,
+                fontSize: '15px', border: 'none', cursor: 'pointer',
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                opacity: loading ? 0.7 : 1, boxShadow: '0 4px 14px rgba(15, 23, 42, 0.18)',
+                transition: 'all .15s ease'
+              }}
+            >
+              {loading ? (
+                'Signing in...'
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight size={16} />
+                </>
+              )}
             </button>
           </form>
 
-          <p style={{ textAlign:'center', marginTop:'20px', fontSize:'13px', color:'var(--text-2)' }}>
+          {/* New Customer Callout */}
+          <div style={{
+            marginTop: '22px', paddingTop: '18px', borderTop: '1px solid #F1F5F9',
+            textAlign: 'center', fontSize: '13px', color: '#64748B'
+          }}>
             New customer?{' '}
-            <Link to="/signup" style={{ color:'var(--primary)', fontWeight:800, textDecoration:'none' }}>
-              Create account — it's free!
+            <Link to="/signup" style={{ color: '#0F172A', fontWeight: 900, textDecoration: 'none' }}>
+              Create an account →
             </Link>
-          </p>
+          </div>
+
         </div>
+
+        {/* Security Badge */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+          marginTop: '20px', color: '#94A3B8', fontSize: '11.5px', fontWeight: 600
+        }}>
+          <ShieldCheck size={14} color="#64748B" />
+          <span>256-bit SSL Encrypted &amp; Secure Authentication</span>
+        </div>
+
       </div>
     </div>
   );

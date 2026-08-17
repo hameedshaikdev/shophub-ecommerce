@@ -17,7 +17,7 @@ export default function Footer() {
   const waNum = s.whatsapp || '917013942909';
   const phone = f.phone || '7013942909';
   const email = f.email || 'as.businezzz@gmail.com';
-  const copyright = f.copyright || '© 2026 AS HUB · All Rights Reserved';
+  const copyright = f.copyright || '© 2026 Asmalabel · All Rights Reserved';
 
   const hasBottomNav = !['/checkout', '/login', '/signup'].includes(location.pathname);
 

@@ -86,7 +86,7 @@ export default function Signup() {
           </div>
           <h2 style={{ fontSize:'24px', fontWeight:900, color:'var(--text)', marginBottom:'8px' }}>Account Created! 🎉</h2>
           <p style={{ color:'var(--text-2)', fontSize:'14px', lineHeight:1.7, marginBottom:'8px' }}>
-            Welcome to AS HUB, <strong>{form.name}</strong>!<br/>
+            Welcome to Asmalabel, <strong>{form.name}</strong>!<br/>
             Taking you to login...
           </p>
           <div style={{ width:'40px', height:'4px', background:'var(--primary-grad)', borderRadius:'99px', margin:'20px auto 0', animation:'grow 2.5s linear forwards' }} />
@@ -104,10 +104,20 @@ export default function Signup() {
 
         {/* Logo */}
         <div style={{ textAlign:'center', marginBottom:'24px' }}>
-          <Link to="/" style={{ fontSize:'28px', fontWeight:900, background:'var(--primary-grad)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', textDecoration:'none' }}>
-            AS HUB
+          <Link to="/" style={{ textDecoration:'none', display:'inline-block' }}>
+            <h1 style={{
+              fontFamily: '"Playfair Display", "Cinzel", "Cormorant Garamond", Georgia, serif',
+              fontSize: '34px',
+              fontWeight: 900,
+              color: '#0F172A',
+              margin: 0,
+              letterSpacing: '-0.8px',
+              lineHeight: 1.1
+            }}>
+              Asmalabel
+            </h1>
           </Link>
-          <p style={{ color:'var(--text-3)', fontSize:'13px', marginTop:'4px' }}>Quality Tailoring & Fashion</p>
+          <p style={{ color:'var(--text-3)', fontSize:'13px', marginTop:'4px' }}>Boutique Tailoring &amp; Fashion</p>
         </div>
 
         <div style={{ background:'white', borderRadius:'28px', padding:'28px', boxShadow:'var(--shadow-lg)', border:'1px solid var(--border)' }}>
