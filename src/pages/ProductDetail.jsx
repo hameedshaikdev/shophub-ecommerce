@@ -154,19 +154,28 @@ export default function ProductDetail() {
   }, []);
 
   const inWishlist = product ? isInWishlist(product.id) : false;
-  const { cleanDesc, discount_tag, colors: parsedColors, bundle } = parseProductTags(product);
+  
+  // Memoize parsed tags & bundle to prevent infinite re-render loop (React Error #185)
+  const parsedTags = useMemo(() => parseProductTags(product), [product]);
+  const { cleanDesc, discount_tag, colors: parsedColors, bundle } = parsedTags;
 
   const [bundleCompanions, setBundleCompanions] = useState([]);
 
-  useEffect(() => {
-    if (!bundle?.enabled) {
-      setBundleCompanions([]);
-      return;
-    }
+  // Compute a stable string key for bundle companions
+  const bundleKey = useMemo(() => {
+    if (!bundle?.enabled) return '';
     const cIds = bundle?.companionIds?.length
       ? bundle.companionIds
       : (bundle?.companionId ? [bundle.companionId] : []);
+    return cIds.join(',');
+  }, [bundle]);
 
+  useEffect(() => {
+    if (!bundleKey) {
+      setBundleCompanions([]);
+      return;
+    }
+    const cIds = bundleKey.split(',').filter(Boolean);
     if (cIds.length > 0) {
       (async () => {
         try {
@@ -181,21 +190,25 @@ export default function ProductDetail() {
     } else {
       setBundleCompanions([]);
     }
-  }, [bundle?.companionIds, bundle?.companionId, bundle?.enabled]);
+  }, [bundleKey]);
 
   useEffect(() => {
+    if (!id) return;
     (async () => {
       setLoading(true);
       try {
         const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
         if (error) throw error;
         setProduct(data);
+
+        const parsed = parseProductTags(data);
         const availableColors = (data?.colors && Array.isArray(data.colors) && data.colors.length > 0)
           ? data.colors
-          : (parsedColors || []);
+          : (parsed.colors || []);
         if (availableColors.length > 0) {
           setSelectedColor(availableColors[0]);
         }
+
         if (data) {
           const { data: rel } = await supabase.from('products').select('*')
             .eq('category', data.category).eq('active', true)
@@ -344,12 +357,31 @@ export default function ProductDetail() {
     };
   }, [allImages.length]);
 
-  /* ── Loading ── */
+  /* ── Luxury Brand Loading Spinner ── */
   if (loading) {
     return (
-      <div style={{ minHeight:'60vh', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)' }}>
-        <div style={{ width:'40px', height:'40px', border:'3px solid rgba(226,232,240,0.8)', borderTop:'3px solid #E94560', borderRadius:'50%', animation:'spin .8s linear infinite' }} />
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <div style={{
+        minHeight: '65vh', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', background: '#F8FAFC', gap: '16px'
+      }}>
+        <div style={{
+          position: 'relative', width: '56px', height: '56px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: '50%',
+            border: '3.5px solid #E2E8F0', borderTop: '3.5px solid #0F172A',
+            animation: 'spin 0.85s linear infinite'
+          }} />
+          <Sparkles size={20} color="#B88346" />
+        </div>
+        <span style={{
+          fontFamily: '"Playfair Display", "Cinzel", "Cormorant Garamond", Georgia, serif',
+          fontSize: '20px', fontWeight: 900, color: '#0F172A', letterSpacing: '-0.5px'
+        }}>
+          Asmalabel
+        </span>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
@@ -752,7 +784,7 @@ export default function ProductDetail() {
 
                     <div className="pd-peace-badge-item">
                       <div className="pd-peace-icon-wrap">
-                        <BadgeCheck size={16} color="#0F172A" />
+                        <BadgeCheck size={16} color="#16A34A" />
                       </div>
                       <span>Asma label verified</span>
                     </div>
