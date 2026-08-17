@@ -1233,8 +1233,26 @@ export default function AdminPanel() {
   useEffect(() => {
     try {
       localStorage.setItem('asmalabel_coupons_list', JSON.stringify(couponsList));
+      window.dispatchEvent(new Event('storage'));
     } catch (e) { console.error(e); }
   }, [couponsList]);
+
+  const openCouponModal = (cpn = null) => {
+    fetchProducts();
+    if (cpn) {
+      setEditingCoupon(cpn);
+      setCouponForm({ ...cpn });
+    } else {
+      setEditingCoupon(null);
+      setCouponForm({
+        code: '', desc: '', type: 'percent', val: 10,
+        scope: 'ALL_PRODUCTS', applicableProductIds: [],
+        applicableCategory: 'tailoring', minItemPrice: 0, minCartTotal: 0,
+        maxDiscount: 0, active: true, hidden: false
+      });
+    }
+    setCouponModalOpen(true);
+  };
 
   const handleToggleCouponActive = (code) => {
     setCouponsList(prev => prev.map(c => c.code === code ? { ...c, active: !c.active } : c));
@@ -1316,7 +1334,7 @@ export default function AdminPanel() {
   useEffect(() => {
     if (user?.email !== ADMIN_EMAIL) return;
     if (page === 'orders' || page === 'dashboard') { fetchOrders(); fetchCounts(); }
-    if (page === 'products' || page === 'dashboard' || page === 'more') fetchProducts();
+    if (page === 'products' || page === 'coupons' || page === 'dashboard' || page === 'more') fetchProducts();
   }, [page, orderTab, dateFilter]);
 
   useEffect(() => {
@@ -2299,16 +2317,7 @@ buildPages(4);
                         </p>
                       </div>
                       <button
-                        onClick={() => {
-                          setEditingCoupon(null);
-                          setCouponForm({
-                            code: '', desc: '', type: 'percent', val: 10,
-                            scope: 'ALL_PRODUCTS', applicableProductIds: [],
-                            applicableCategory: 'tailoring', minItemPrice: 0, minCartTotal: 0,
-                            maxDiscount: 0, active: true, hidden: false
-                          });
-                          setCouponModalOpen(true);
-                        }}
+                        onClick={() => openCouponModal()}
                         style={{
                           display: 'flex', alignItems: 'center', gap: '6px',
                           padding: '9px 16px', borderRadius: '10px', background: '#0F172A',
@@ -2401,11 +2410,7 @@ buildPages(4);
                             {cpn.hidden ? 'Show' : 'Hide'}
                           </button>
                           <button
-                            onClick={() => {
-                              setEditingCoupon(cpn);
-                              setCouponForm({ ...cpn });
-                              setCouponModalOpen(true);
-                            }}
+                            onClick={() => openCouponModal(cpn)}
                             style={{
                               padding: '6px 12px', borderRadius: '8px', fontSize: '11.5px', fontWeight: 800, cursor: 'pointer', border: 'none',
                               background: '#EFF6FF', color: '#1D4ED8'
@@ -2447,16 +2452,7 @@ buildPages(4);
                     </p>
                   </div>
                   <button
-                    onClick={() => {
-                      setEditingCoupon(null);
-                      setCouponForm({
-                        code: '', desc: '', type: 'percent', val: 10,
-                        scope: 'ALL_PRODUCTS', applicableProductIds: [],
-                        applicableCategory: 'tailoring', minItemPrice: 0, minCartTotal: 0,
-                        maxDiscount: 0, active: true, hidden: false
-                      });
-                      setCouponModalOpen(true);
-                    }}
+                    onClick={() => openCouponModal()}
                     style={{
                       display: 'flex', alignItems: 'center', gap: '6px',
                       padding: '9px 16px', borderRadius: '10px', background: '#0F172A',
@@ -2547,11 +2543,7 @@ buildPages(4);
                         {cpn.hidden ? 'Show' : 'Hide'}
                       </button>
                       <button
-                        onClick={() => {
-                          setEditingCoupon(cpn);
-                          setCouponForm({ ...cpn });
-                          setCouponModalOpen(true);
-                        }}
+                        onClick={() => openCouponModal(cpn)}
                         style={{
                           padding: '6px 12px', borderRadius: '8px', fontSize: '11.5px', fontWeight: 800, cursor: 'pointer', border: 'none',
                           background: '#EFF6FF', color: '#1D4ED8'
@@ -3050,31 +3042,48 @@ buildPages(4);
 
                   {couponForm.scope === 'SELECTED_PRODUCTS' && (
                     <div>
-                      <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '4px' }}>
-                        CHOOSE SPECIFIC PRODUCTS ({couponForm.applicableProductIds?.length || 0} selected)
-                      </label>
-                      <div style={{ maxHeight: '140px', overflowY: 'auto', border: '1px solid #CBD5E1', borderRadius: '8px', padding: '8px', background: '#FFFFFF', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        {products.map(p => {
-                          const isSelected = (couponForm.applicableProductIds || []).includes(p.id);
-                          return (
-                            <label key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11.5px', color: '#334155', cursor: 'pointer', padding: '2px 0' }}>
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={e => {
-                                  const curr = couponForm.applicableProductIds || [];
-                                  const updated = e.target.checked
-                                    ? [...curr, p.id]
-                                    : curr.filter(id => id !== p.id);
-                                  setCouponForm({ ...couponForm, applicableProductIds: updated });
-                                }}
-                                style={{ accentColor: '#0F172A' }}
-                              />
-                              <span style={{ fontWeight: isSelected ? 800 : 500 }}>{p.name} (₹{p.price})</span>
-                            </label>
-                          );
-                        })}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <label style={{ fontSize: '11px', fontWeight: 800, color: '#475569', margin: 0 }}>
+                          CHOOSE SPECIFIC PRODUCTS ({couponForm.applicableProductIds?.length || 0} selected)
+                        </label>
+                        {products.length === 0 && (
+                          <button
+                            type="button"
+                            onClick={fetchProducts}
+                            style={{ fontSize: '10.5px', fontWeight: 800, color: '#2563EB', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                          >
+                            ↻ Load Products
+                          </button>
+                        )}
                       </div>
+                      {products.length === 0 ? (
+                        <div style={{ padding: '14px', textAlign: 'center', fontSize: '12px', color: '#64748B', border: '1px solid #CBD5E1', borderRadius: '8px', background: '#FFFFFF' }}>
+                          Loading product catalog... Click <strong>↻ Load Products</strong> above if not loaded.
+                        </div>
+                      ) : (
+                        <div style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid #CBD5E1', borderRadius: '8px', padding: '8px', background: '#FFFFFF', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          {products.map(p => {
+                            const isSelected = (couponForm.applicableProductIds || []).includes(p.id);
+                            return (
+                              <label key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#334155', cursor: 'pointer', padding: '4px 6px', borderRadius: '6px', background: isSelected ? '#F1F5F9' : 'transparent' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={e => {
+                                    const curr = couponForm.applicableProductIds || [];
+                                    const updated = e.target.checked
+                                      ? [...curr, p.id]
+                                      : curr.filter(id => id !== p.id);
+                                    setCouponForm({ ...couponForm, applicableProductIds: updated });
+                                  }}
+                                  style={{ accentColor: '#0F172A', width: '15px', height: '15px' }}
+                                />
+                                <span style={{ fontWeight: isSelected ? 800 : 500 }}>{p.name} — <strong style={{ color: '#059669' }}>₹{p.price}</strong></span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

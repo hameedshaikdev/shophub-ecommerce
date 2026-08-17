@@ -201,12 +201,34 @@ export default function Profile() {
 
   const displayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Member';
 
-  const COUPONS_LIST = [
-    { code: 'ASMA10', desc: '10% OFF on all tailoring supplies & fashion', min: 'Min Order: ₹499' },
-    { code: 'WELCOME50', desc: 'Flat ₹50 OFF for all members', min: 'Min Order: ₹299' },
-    { code: 'FIRSTBUY', desc: '5% Extra discount on your order', min: 'No Minimum Order' },
-    { code: 'TAILOR100', desc: '₹100 OFF on premium scissors & tools', min: 'Min Order: ₹999' },
+  const DEFAULT_COUPONS = [
+    { code: 'ASMA10', desc: '10% OFF Storewide', type: 'percent', val: 10, scope: 'ALL_PRODUCTS', active: true, hidden: false },
+    { code: 'WELCOME50', desc: '₹50 OFF on Orders Above ₹299', type: 'flat', val: 50, scope: 'ALL_PRODUCTS', minCartTotal: 299, active: true, hidden: false },
+    { code: 'TAILOR100', desc: '₹100 OFF Tailoring Supplies', type: 'flat', val: 100, scope: 'SPECIFIC_CATEGORY', applicableCategory: 'tailoring', minCartTotal: 499, active: true, hidden: false },
+    { code: 'FASHION20', desc: '20% OFF Women\'s Fashion Items', type: 'percent', val: 20, scope: 'SPECIFIC_CATEGORY', applicableCategory: 'fashion', minItemPrice: 999, active: true, hidden: false }
   ];
+
+  const [couponsList, setCouponsList] = useState([]);
+
+  useEffect(() => {
+    const loadCoupons = () => {
+      try {
+        const stored = localStorage.getItem('asmalabel_coupons_list');
+        if (stored) {
+          setCouponsList(JSON.parse(stored));
+          return;
+        }
+      } catch (e) { console.error(e); }
+      setCouponsList(DEFAULT_COUPONS);
+    };
+
+    loadCoupons();
+    window.addEventListener('storage', loadCoupons);
+    return () => window.removeEventListener('storage', loadCoupons);
+  }, []);
+
+  // Filter coupons: ONLY show Active & NON-hidden coupons in Profile page!
+  const visibleCoupons = couponsList.filter(c => c.active !== false && c.hidden !== true);
 
   function copyCouponCode(code) {
     navigator.clipboard.writeText(code);
@@ -803,28 +825,66 @@ export default function Profile() {
               </form>
             )}
 
-            {/* ── 4. COUPONS MODAL ── */}
+            {/* ── 4. COUPONS MODAL (DYNAMICALLY SYNCED WITH ADMIN) ── */}
             {activeModal === 'coupons' && (
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 900, marginBottom: '6px', color: '#0F172A' }}>Available Coupons</h3>
                 <p style={{ fontSize: '13px', color: '#64748B', marginBottom: '16px' }}>Copy and apply these at checkout to save instantly!</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {COUPONS_LIST.map((c) => (
-                    <div key={c.code} style={{ background: '#F8FAFC', border: '1.5px dashed #CBD5E1', borderRadius: '14px', padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div>
-                        <span style={{ fontSize: '14px', fontWeight: 900, color: '#0F172A', letterSpacing: '0.5px' }}>{c.code}</span>
-                        <p style={{ fontSize: '12px', color: '#475569', margin: '2px 0 0', fontWeight: 600 }}>{c.desc}</p>
-                        <span style={{ fontSize: '10.5px', color: '#94A3B8' }}>{c.min}</span>
+                
+                {visibleCoupons.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '30px 10px', color: '#64748B', fontSize: '13px' }}>
+                    <Gift size={36} color="#CBD5E1" style={{ marginBottom: '8px' }} />
+                    <p style={{ fontWeight: 700, margin: 0 }}>No active public coupons available right now.</p>
+                    <p style={{ fontSize: '11.5px', color: '#94A3B8', marginTop: '4px' }}>Check back soon for new special deals &amp; promos!</p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {visibleCoupons.map((c) => (
+                      <div key={c.code} style={{ background: '#F8FAFC', border: '1.5px dashed #CBD5E1', borderRadius: '14px', padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                            <span style={{ fontSize: '15px', fontWeight: 900, color: '#0F172A', letterSpacing: '0.5px' }}>{c.code}</span>
+                            <span style={{
+                              fontSize: '10px', fontWeight: 900, padding: '2px 6px', borderRadius: '5px',
+                              background: c.type === 'percent' ? '#DCFCE7' : '#FEF3C7',
+                              color: c.type === 'percent' ? '#166534' : '#92400E'
+                            }}>
+                              {c.type === 'percent' ? `${c.val}% OFF` : `₹${c.val} OFF`}
+                            </span>
+                          </div>
+                          <p style={{ fontSize: '12px', color: '#475569', margin: 0, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {c.desc}
+                          </p>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px', fontSize: '10.5px', color: '#64748B', fontWeight: 600 }}>
+                            <span>
+                              {c.minCartTotal > 0 ? `Min Order: ₹${c.minCartTotal}` : 'No Minimum Order'}
+                            </span>
+                            <span>•</span>
+                            <span>
+                              {
+                                c.scope === 'ALL_PRODUCTS' ? 'Storewide' :
+                                c.scope === 'SPECIFIC_CATEGORY' ? `${c.applicableCategory === 'tailoring' ? 'Tailoring Supplies' : 'Women\'s Fashion'}` :
+                                c.scope === 'SELECTED_PRODUCTS' ? 'Selected Products' :
+                                c.scope === 'MIN_PRICE_TAG' ? `Item Price ≥ ₹${c.minItemPrice}` : 'Storewide'
+                              }
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => copyCouponCode(c.code)}
+                          style={{
+                            padding: '8px 14px', borderRadius: '8px', flexShrink: 0,
+                            background: copiedCoupon === c.code ? '#16A34A' : '#0F172A',
+                            color: '#fff', fontSize: '12px', fontWeight: 800, border: 'none', cursor: 'pointer',
+                            transition: 'all 200ms ease'
+                          }}
+                        >
+                          {copiedCoupon === c.code ? 'COPIED ✓' : 'COPY'}
+                        </button>
                       </div>
-                      <button
-                        onClick={() => copyCouponCode(c.code)}
-                        style={{ padding: '7px 12px', borderRadius: '8px', background: copiedCoupon === c.code ? '#16A34A' : '#0F172A', color: '#fff', fontSize: '12px', fontWeight: 800, border: 'none', cursor: 'pointer' }}
-                      >
-                        {copiedCoupon === c.code ? 'COPIED' : 'COPY'}
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
