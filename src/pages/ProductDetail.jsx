@@ -565,7 +565,7 @@ export default function ProductDetail() {
                 <Heart size={18} fill={inWishlist ? '#EF4444' : 'none'} color={inWishlist ? '#EF4444' : '#475569'} />
               </motion.button>
 
-              {/* Share Product Button (Flipkart Style) */}
+              {/* Share Product Button (Paper Rocket pointing Right) */}
               <motion.button onClick={(e) => { e.stopPropagation(); handleShareProduct(e); }}
                 whileHover={{ scale: 1.1 }} whileTap={{ scale: .92 }}
                 className="pd-share-circle"
@@ -573,7 +573,7 @@ export default function ProductDetail() {
                 {shared ? (
                   <Check size={16} color="#16A34A" />
                 ) : (
-                  <Send size={16} color="#475569" style={{ transform: 'rotate(-20deg)', marginLeft: '-2px' }} />
+                  <Send size={16} color="#475569" style={{ transform: 'rotate(45deg) translate(-1px, 1px)' }} />
                 )}
               </motion.button>
             </div>
