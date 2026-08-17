@@ -103,11 +103,11 @@ export default function Signup() {
       <div style={{ width:'100%', maxWidth:'420px' }}>
 
         {/* Logo */}
-        <div style={{ textAlign:'center', marginBottom:'24px' }}>
-          <Link to="/" style={{ textDecoration:'none', display:'inline-block' }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <Link to="/" style={{ textDecoration: 'none', display: 'block', marginBottom: '8px' }}>
             <h1 style={{
               fontFamily: '"Playfair Display", "Cinzel", "Cormorant Garamond", Georgia, serif',
-              fontSize: '34px',
+              fontSize: '36px',
               fontWeight: 900,
               color: '#0F172A',
               margin: 0,
@@ -117,7 +117,9 @@ export default function Signup() {
               Asmalabel
             </h1>
           </Link>
-          <p style={{ color:'var(--text-3)', fontSize:'13px', marginTop:'4px' }}>Boutique Tailoring &amp; Fashion</p>
+          <p style={{ color: '#475569', fontSize: '12px', fontWeight: 700, letterSpacing: '0.3px', textTransform: 'uppercase', margin: 0 }}>
+            Boutique Tailoring &amp; Fashion
+          </p>
         </div>
 
         <div style={{ background:'white', borderRadius:'28px', padding:'28px', boxShadow:'var(--shadow-lg)', border:'1px solid var(--border)' }}>

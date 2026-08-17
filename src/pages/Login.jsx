@@ -228,10 +228,10 @@ export default function Login() {
 
         {/* ── Beautiful Asmalabel Branding Header ── */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <Link to="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
+          <Link to="/" style={{ textDecoration: 'none', display: 'block', marginBottom: '8px' }}>
             <h1 style={{
               fontFamily: '"Playfair Display", "Cinzel", "Cormorant Garamond", Georgia, serif',
-              fontSize: '34px',
+              fontSize: '36px',
               fontWeight: 900,
               color: '#0F172A',
               margin: 0,
@@ -241,15 +241,17 @@ export default function Login() {
               Asmalabel
             </h1>
           </Link>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            marginTop: '6px', padding: '3px 12px', borderRadius: '99px',
-            background: 'rgba(15, 23, 42, 0.05)', border: '1px solid rgba(15, 23, 42, 0.08)'
-          }}>
-            <Sparkles size={11} color="#B88346" />
-            <span style={{ color: '#475569', fontSize: '11.5px', fontWeight: 700, letterSpacing: '0.3px', textTransform: 'uppercase' }}>
-              Boutique Tailoring &amp; Fashion
-            </span>
+          <div style={{ display: 'block' }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              padding: '4px 14px', borderRadius: '99px',
+              background: 'rgba(15, 23, 42, 0.05)', border: '1px solid rgba(15, 23, 42, 0.08)'
+            }}>
+              <Sparkles size={11} color="#B88346" />
+              <span style={{ color: '#475569', fontSize: '11.5px', fontWeight: 700, letterSpacing: '0.3px', textTransform: 'uppercase' }}>
+                Boutique Tailoring &amp; Fashion
+              </span>
+            </div>
           </div>
         </div>
 
